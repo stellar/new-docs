@@ -14,8 +14,10 @@ if (!contentfulConfig.spaceId || !contentfulConfig.accessToken) {
 module.exports = {
   siteMetadata: {
     title: "Stellar - Develop the world's new financial system",
+    description:
+      "Stellar is an open platform for building financial products that connect people everywhere.",
   },
-  pathPrefix: "/gatsby-contentful-starter",
+  pathPrefix: "/",
   plugins: [
     "gatsby-transformer-remark",
     "gatsby-transformer-sharp",
