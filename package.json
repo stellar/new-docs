@@ -7,6 +7,10 @@
     "url": "https://github.com/contentful-userland/gatsby-contentful-starter/issues"
   },
   "dependencies": {
+    "@lingui/cli": "^2.7.4",
+    "@lingui/core": "^2.7.4",
+    "@lingui/macro": "^2.7.4",
+    "@lingui/react": "^2.7.4",
     "@mdx-js/mdx": "^1.0.14",
     "@mdx-js/react": "^1.0.6",
     "core-js": "2",
@@ -15,6 +19,7 @@
     "gatsby-mdx": "^0.6.2",
     "gatsby-plugin-react-helmet": "^3.0.0",
     "gatsby-plugin-sharp": "^2.0.35",
+    "gatsby-plugin-styled-components": "^3.0.7",
     "gatsby-source-contentful": "^2.0.53",
     "gatsby-transformer-remark": "^2.3.12",
     "gatsby-transformer-sharp": "^2.1.18",
@@ -22,7 +27,9 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.0",
-    "sharp": "^0.22.0"
+    "sharp": "^0.22.0",
+    "styled-components": "^4.2.0",
+    "styled-normalize": "^8.0.6"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.0",
@@ -64,5 +71,17 @@
     "setup": "node ./bin/setup.js",
     "heroku-postbuild": "gatsby build",
     "cleanup-repository": "rimraf bin contentful && yarn remove contentful-import chalk inquirer rimraf "
+  },
+  "lingui": {
+    "fallbackLocale": "",
+    "sourceLocale": "",
+    "localeDir": "<rootDir>/src/locale",
+    "srcPathDirs": [
+      "<rootDir>/src"
+    ],
+    "srcPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "format": "lingui"
   }
 }

@@ -65,3 +65,5 @@ public
 
 # contentful config file
 .contentful.json
+
+.DS_Store
