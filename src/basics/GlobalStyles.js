@@ -43,11 +43,7 @@ const GlobalStyles = createGlobalStyle`
   twitter-widget {
     margin: auto;
   }
-`;
 
-// Gatsby will double-load fonts if they're included in both SSR and browser
-// global styles.
-export const SsrStyles = createGlobalStyle`
 @font-face {
   font-display: swap;
   font-family: suisse;

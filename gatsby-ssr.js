@@ -1,10 +1,7 @@
 import React from "react";
 
-import { SsrStyles } from "./src/basics/GlobalStyles";
+import Providers from "./src/components/Providers";
 
 export const wrapRootElement = ({ element }) => (
-  <>
-    <SsrStyles />
-    {element}
-  </>
+  <Providers>{element}</Providers>
 );

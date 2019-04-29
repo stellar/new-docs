@@ -67,3 +67,7 @@ public
 .contentful.json
 
 .DS_Store
+
+# Lingui build/production files
+src/locale/_build/
+src/locale/**/*.js

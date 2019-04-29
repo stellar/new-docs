@@ -1,10 +1,18 @@
 {
-  "name": "gatsby-contentful-starter",
-  "description": "Starter Contentful Gatsby Blog",
-  "version": "1.0.0",
-  "author": "Stefan Judis <stefanjudis@gmail.com>",
-  "bugs": {
-    "url": "https://github.com/contentful-userland/gatsby-contentful-starter/issues"
+  "name": "stellar.org",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "gatsby develop",
+    "lint": "eslint --ext .js,.jsx --ignore-pattern public .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "lingui compile; gatsby build",
+    "check-not-master": "[ \"$(git rev-parse --abbrev-ref HEAD)\" = \"master\" ] && echo \"\\033[31mDon't commit to master\" && exit 1 || exit 0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "concurrently --kill-others 'yarn check-not-master'  'pretty-quick --staged' 'lingui extract'"
+    }
   },
   "dependencies": {
     "@lingui/cli": "^2.7.4",
@@ -32,49 +40,34 @@
     "styled-normalize": "^8.0.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-macros": "^2.5.1",
+    "babel-plugin-styled-components": "^1.10.0",
     "chalk": "^2.4.1",
+    "concurrently": "^4.1.0",
     "contentful-import": "^7.4.0",
     "eslint": "^5.6.1",
     "eslint-plugin-react": "^7.11.1",
     "gatsby": "^2.3.30",
+    "husky": "^2.1.0",
     "inquirer": "^6.2.0",
     "prettier": "^1.14.3",
+    "pretty-quick": "^1.10.0",
     "rimraf": "^2.6.2",
     "yargs-parser": "^11.0.0"
   },
-  "homepage": "https://github.com/contentful-userland/gatsby-contentful-starter#readme",
-  "keywords": [
-    "gatsby",
-    "contentful"
-  ],
+  "homepage": "https://stellar.org",
   "license": "MIT",
-  "main": "n/a",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/contentful-userland/gatsby-contentful-starter.git"
-  },
-  "scripts": {
-    "start": "gatsby develop",
-    "lint": "eslint --ext .js,.jsx --ignore-pattern public .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write 'src/**/*.js' 'src/**/*.md' 'bin/*.js'",
-    "build": "gatsby build",
-    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
-    "fix-semi": "eslint --quiet --ignore-pattern node_modules --ignore-pattern public --parser babel-eslint --no-eslintrc --rule '{\"semi\": [2, \"never\"], \"no-extra-semi\": [2]}' --fix *.js bin/*.js",
-    "setup": "node ./bin/setup.js",
-    "heroku-postbuild": "gatsby build",
-    "cleanup-repository": "rimraf bin contentful && yarn remove contentful-import chalk inquirer rimraf "
-  },
   "lingui": {
     "fallbackLocale": "",
-    "sourceLocale": "",
+    "sourceLocale": "en",
     "localeDir": "<rootDir>/src/locale",
     "srcPathDirs": [
       "<rootDir>/src"
