@@ -19,12 +19,19 @@ module.exports = {
   },
   pathPrefix: "/",
   plugins: [
+    "gatsby-mdx",
     "gatsby-transformer-remark",
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sharp",
     "gatsby-plugin-styled-components",
-    "gatsby-mdx",
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `content`,
+        path: `${__dirname}/src/content/`,
+      },
+    },
     {
       resolve: "gatsby-source-contentful",
       options: contentfulConfig,
