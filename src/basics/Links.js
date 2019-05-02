@@ -6,7 +6,9 @@ import { defaultLocale } from "../constants/i18n";
 
 import { LocaleContext } from "../components/Locale";
 
-const basicLinkStyles = ``;
+const basicLinkStyles = `
+  text-decoration: none;
+`;
 const BasicLink = styled(GatsbyLink)`
   ${basicLinkStyles}
 `;
@@ -14,14 +16,18 @@ export const ExternalLink = styled.a`
   ${basicLinkStyles}
 `;
 
-export const Link = ({ to, href, ...props }) => {
+export const Link = ({ href, ...props }) => {
   const locale = React.useContext(LocaleContext);
-  if (href) {
+
+  const { href: derivedHref } = new URL(href, location.origin);
+
+  // If these are equal, it's an external link
+  if (href === derivedHref) {
     return <ExternalLink href={href} {...props} />;
   }
   return (
     <BasicLink
-      to={locale === defaultLocale ? to : `/${locale}${to}`}
+      to={locale === defaultLocale ? href : `/${locale}${href}`}
       {...props}
     />
   );
