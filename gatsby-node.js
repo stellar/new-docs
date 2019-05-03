@@ -61,6 +61,7 @@ exports.createPages = async ({ graphql, actions }) => {
             node {
               title
               slug
+              updatedAt
             }
           }
         }
@@ -92,6 +93,7 @@ exports.onCreatePage = ({ page, actions }) => {
         locale: defaultLocale,
         contentfulLocale: contentfulLocale[defaultLocale],
         catalog: catalogs[defaultLocale],
+        lastModified: new Date().toISOString(),
       },
     });
     supportedLanguages.forEach((locale) => {
@@ -103,6 +105,7 @@ exports.onCreatePage = ({ page, actions }) => {
           locale,
           contentfulLocale: contentfulLocale[locale],
           catalog: catalogs[locale],
+          lastModified: new Date().toISOString(),
         },
       });
     });
