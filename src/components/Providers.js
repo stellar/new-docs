@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { ThemeProvider } from "styled-components";
 
 import { PALETTE } from "../constants/styles";
@@ -13,5 +14,9 @@ const Providers = ({ children }) => (
     </>
   </ThemeProvider>
 );
+
+Providers.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default Providers;

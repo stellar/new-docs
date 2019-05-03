@@ -1,6 +1,9 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link as GatsbyLink } from "gatsby";
 import styled from "styled-components";
+import url from "url";
+import { Location } from "@reach/router";
 
 import { defaultLocale } from "../constants/i18n";
 
@@ -18,17 +21,25 @@ export const ExternalLink = styled.a`
 
 export const Link = ({ href, ...props }) => {
   const locale = React.useContext(LocaleContext);
-
-  const { href: derivedHref } = new URL(href, location.origin);
-
-  // If these are equal, it's an external link
-  if (href === derivedHref) {
-    return <ExternalLink href={href} {...props} />;
-  }
   return (
-    <BasicLink
-      to={locale === defaultLocale ? href : `/${locale}${href}`}
-      {...props}
-    />
+    <Location>
+      {({ location }) => {
+        const { host } = url.parse(href, location.origin);
+        // If a host is defined, it's external
+        if (host) {
+          return <ExternalLink href={href} {...props} />;
+        }
+        return (
+          <BasicLink
+            to={locale === defaultLocale ? href : `/${locale}${href}`}
+            {...props}
+          />
+        );
+      }}
+    </Location>
   );
+};
+
+Link.propTypes = {
+  href: PropTypes.string.isRequired,
 };

@@ -16,6 +16,7 @@ const LayoutBase = ({ pageContext, children }) => {
 };
 
 LayoutBase.propTypes = {
+  children: PropTypes.node.isRequired,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
     catalog: PropTypes.object.isRequired,
