@@ -1,7 +1,9 @@
+const { groupBy } = require("lodash");
 const { defaultLocale, supportedLanguages } = require("./i18n");
 
-const getLocaleFromPath = (path) => {
-  const maybeLocale = path.split("/")[1];
+const getPathInfo = ({ path, context }) => {
+  const [_, maybeLocale, ...rest] = path.split("/");
+  const pathWithoutLocale = rest.join("/").replace(/\/$/, "");
 
   // All of our translated pages begin with the locale code, like `/es/blah`.
   // If the second section (because the leading slash means the 0th will be '')
@@ -12,33 +14,55 @@ const getLocaleFromPath = (path) => {
   if (supportedLanguages.includes(maybeLocale)) {
     return {
       locale: maybeLocale,
+      path: pathWithoutLocale,
+      originalPath: path,
       isTopLevel: false,
+      context,
     };
   }
   return {
     locale: defaultLocale,
+    path: `${maybeLocale}/${pathWithoutLocale}`.replace(/\/$/, ""),
+    originalPath: path,
     isTopLevel: true,
+    context,
   };
 };
 
 const serializeLocale = (locale) => {
-  return ({ site, allSitePage }) =>
-    allSitePage.edges
-      .filter(({ node }) => {
-        const { locale: pathLocale, isTopLevel } = getLocaleFromPath(node.path);
-        if (locale === defaultLocale) {
-          return pathLocale === locale && isTopLevel;
-        }
-        return pathLocale === locale;
-      })
-      .map((edge) => {
-        return {
-          url: site.siteMetadata.siteUrl + edge.node.path,
-          changefreq: `daily`,
-          priority: 0.7,
-          lastmodISO: edge.node.context.lastModified,
-        };
-      });
+  return ({ site, allSitePage }) => {
+    const { edges } = allSitePage;
+    const pages = edges.map(({ node }) => getPathInfo(node));
+    const byPath = groupBy(pages, "path");
+    const pagesWithAlternates = Object.values(byPath).reduce(
+      (accum, pageVersions) => {
+        const mainPage = pageVersions.find(
+          (pageVersion) => pageVersion.locale === locale,
+        );
+        const alternates = pageVersions.filter(
+          (pageVersion) => pageVersion.locale !== locale,
+        );
+        accum.push({
+          main: mainPage,
+          alternates,
+        });
+        return accum;
+      },
+      [],
+    );
+
+    return pagesWithAlternates.map(({ main, alternates }) => {
+      return {
+        url: site.siteMetadata.siteUrl + main.originalPath,
+        lastmodISO: main.context.lastModified,
+        links: alternates.map((a) => ({
+          lang: a.locale,
+          url: site.siteMetadata.siteUrl + a.originalPath,
+          lastmodISO: a.context.lastModified,
+        })),
+      };
+    });
+  };
 };
 
 const query = `

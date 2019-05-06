@@ -94,6 +94,13 @@ exports.onCreatePage = ({ page, actions }) => {
         contentfulLocale: contentfulLocale[defaultLocale],
         catalog: catalogs[defaultLocale],
         lastModified: new Date().toISOString(),
+        // List alternate pages so we can include head <link>s to them
+        alternateUrls: supportedLanguages
+          .filter((l) => l !== defaultLocale)
+          .map((l) => ({
+            locale: l,
+            path: `/${l}${page.path}`,
+          })),
       },
     });
     supportedLanguages.forEach((locale) => {
@@ -106,6 +113,13 @@ exports.onCreatePage = ({ page, actions }) => {
           contentfulLocale: contentfulLocale[locale],
           catalog: catalogs[locale],
           lastModified: new Date().toISOString(),
+          // List alternate pages so we can include head <link>s to them
+          alternateUrls: supportedLanguages
+            .filter((l) => l !== locale)
+            .map((l) => ({
+              locale: l,
+              path: l === defaultLocale ? page.path : `/${l}${page.path}`,
+            })),
         },
       });
     });
