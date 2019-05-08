@@ -36,6 +36,7 @@ module.exports = {
   pathPrefix: "/",
   plugins: [
     "gatsby-mdx",
+    "gatsby-plugin-react-svg",
     "gatsby-transformer-remark",
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",

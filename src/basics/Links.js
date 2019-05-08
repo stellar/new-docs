@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link as GatsbyLink } from "gatsby";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import url from "url";
 import { Location } from "@reach/router";
 
@@ -9,8 +9,10 @@ import { defaultLocale } from "../constants/i18n";
 
 import { LocaleContext } from "../components/Locale";
 
-const basicLinkStyles = `
+const basicLinkStyles = css`
   text-decoration: none;
+  color: ${({ theme }) => theme.text};
+  font-weight: bolder;
 `;
 const BasicLink = styled(GatsbyLink)`
   ${basicLinkStyles}

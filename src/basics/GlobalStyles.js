@@ -10,9 +10,10 @@ const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.text};
   }
   body {
-    background: ${({ theme }) => theme.background};
+    background: ${({ theme }) => theme.body};
     min-height: 100vh;
     padding: 0;
+    padding-top: 5rem;
     margin: 0;
   }
   ${styledNormalize}
@@ -24,6 +25,7 @@ const GlobalStyles = createGlobalStyle`
     font-size: 16px;
     font-weight: 400;
     font-family: 'suisse', 'Georgia', serif;
+    line-height: 1;
   }
   /* http://tachyons.io/docs/layout/box-sizing/ */
   body * {

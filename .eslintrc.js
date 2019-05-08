@@ -41,6 +41,7 @@ module.exports = {
     "object-shorthand": 1,
     "react/no-access-state-in-setstate": 1,
     "require-await": 1,
+    "no-sequences": 1,
 
     // ERROR
     "jsx-a11y/anchor-is-valid": [
