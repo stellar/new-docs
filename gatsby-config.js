@@ -11,6 +11,7 @@ const {
   DEPLOY_PRIME_URL: NETLIFY_DEPLOY_URL = NETLIFY_SITE_URL,
   CONTEXT: NETLIFY_ENV = NODE_ENV,
 } = process.env;
+const isProdBuild = NODE_ENV === "production";
 const isNetlifyProduction = NETLIFY_ENV === "production";
 const siteUrl = isNetlifyProduction ? NETLIFY_SITE_URL : NETLIFY_DEPLOY_URL;
 
@@ -41,7 +42,16 @@ module.exports = {
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sharp",
-    "gatsby-plugin-eslint",
+    {
+      resolve: "gatsby-plugin-eslint",
+      options: {
+        stages: ["build-javascript", "develop"],
+        options: {
+          failOnError: isProdBuild,
+          failOnWarning: isProdBuild,
+        },
+      },
+    },
     {
       resolve: "gatsby-plugin-sitemap",
       options: {

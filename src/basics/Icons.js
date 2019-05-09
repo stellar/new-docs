@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const ArrowInCircle = styled.button`
@@ -31,4 +32,9 @@ const ArrowInCircle = styled.button`
  */
 export const IconArrowInCircle = ({ bgColor, arrowColor }) => {
   return <ArrowInCircle bgColor={bgColor} arrowColor={arrowColor} />;
+};
+
+IconArrowInCircle.propTypes = {
+  bgColor: PropTypes.string.isRequired,
+  arrowColor: PropTypes.string.isRequired,
 };
