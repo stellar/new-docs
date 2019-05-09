@@ -22,6 +22,7 @@ module.exports = {
     "react/jsx-wrap-multilines": 0,
     "react/no-unescaped-entities": 0,
     "arrow-body-style": 0,
+    "import/no-unresolved": 0,
 
     // WARN
     "no-console": ["warn", { allow: ["assert"] }],

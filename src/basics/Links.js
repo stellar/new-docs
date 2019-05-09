@@ -5,9 +5,9 @@ import styled, { css } from "styled-components";
 import url from "url";
 import { Location } from "@reach/router";
 
-import { defaultLocale } from "../constants/i18n";
+import { defaultLocale } from "constants/i18n";
 
-import { LocaleContext } from "../components/Locale";
+import { LocaleContext } from "components/Locale";
 
 const basicLinkStyles = css`
   text-decoration: none;

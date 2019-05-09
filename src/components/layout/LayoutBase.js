@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import Helmet from "react-helmet";
 import styled, { ThemeProvider } from "styled-components";
 
-import favicon from "../../assets/favicon/favicon.ico";
+import favicon from "assets/favicon/favicon.ico";
 
-import Locale from "../Locale";
-import Navigation, { defaultTheme } from "../Navigation";
-import Footer from "../Footer";
+import Locale from "components/Locale";
+import Navigation, { defaultTheme } from "components/Navigation";
+import Footer from "components/Footer";
 
 const El = styled.div``;
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { H2 as BasicH2 } from "../../basics/Text";
+import { H2 as BasicH2 } from "basics/Text";
 
 export const H2 = styled(BasicH2)`
   font-weight: normal;
