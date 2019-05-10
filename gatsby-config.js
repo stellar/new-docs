@@ -38,7 +38,6 @@ module.exports = {
   pathPrefix: "/",
   plugins: [
     "gatsby-mdx",
-    "gatsby-plugin-react-svg",
     "gatsby-transformer-remark",
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",
@@ -60,6 +59,15 @@ module.exports = {
         output: "/sitemap.xml",
         query: sitemapQuery,
         serialize: serializeLocale("en"),
+      },
+    },
+    {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        path: `${__dirname}/src/assets/`,
+        rule: {
+          include: /icons/,
+        },
       },
     },
     {
