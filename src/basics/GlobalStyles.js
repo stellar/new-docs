@@ -24,7 +24,7 @@ const GlobalStyles = createGlobalStyle`
   button {
     font-size: 16px;
     font-weight: 400;
-    font-family: 'suisse', 'Georgia', serif;
+    font-family: 'suisse', sans-serif;
     line-height: 1;
   }
   /* http://tachyons.io/docs/layout/box-sizing/ */

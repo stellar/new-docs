@@ -1,4 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+import { MEDIA_QUERIES, PALETTE } from "constants/styles";
 
 import { H2 as BasicH2 } from "basics/Text";
 
@@ -7,13 +9,50 @@ export const H2 = styled(BasicH2)`
   color: ${({ theme }) => theme.medium};
 `;
 
+export const NavImage = styled.img`
+  width: 100%;
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    display: none;
+  }
+`;
+
 export const Block = styled.div`
   margin: 0 auto 2rem;
-  width: 21rem;
+  @media (${MEDIA_QUERIES.gtLaptop}) {
+    width: 23rem;
+  }
 `;
 
 export const NavTab = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(27rem, 1fr));
   margin: 0 -1rem;
+  white-space: initial;
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    margin: 0;
+  }
+`;
+
+export const NavItem = styled.div`
+  padding: 2rem 0;
+  margin: 0 1.5rem;
+  color: ${({ theme }) => theme.link};
+
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          @media (${MEDIA_QUERIES.gtLaptop}) {
+            border-bottom: 3px solid ${({ theme }) => theme.link};
+            margin-bottom: -3px;
+          }
+          @media (${MEDIA_QUERIES.ltLaptop}) {
+            background: ${PALETTE.white};
+          }
+        `
+      : ""};
+
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    font-size: 3.75rem;
+    padding: 0.5rem 0;
+  }
 `;

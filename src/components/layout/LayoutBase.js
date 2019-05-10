@@ -9,7 +9,10 @@ import Locale from "components/Locale";
 import Navigation, { defaultTheme } from "components/Navigation";
 import Footer from "components/Footer";
 
-const El = styled.div``;
+const El = styled.div`
+  overflow: hidden;
+`;
+const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
 
 const LayoutBase = ({
   metadata,
@@ -40,6 +43,7 @@ const LayoutBase = ({
       </ThemeProvider>
       <El>{children}</El>
       <Footer />
+      <ModalTargetEl />
     </Locale>
   );
 };

@@ -1,4 +1,5 @@
 export const PALETTE = {
+  white: "#ffffff",
   dark: "#000000",
   medium: "#979797",
   light: "#fbfaf7",
@@ -17,23 +18,20 @@ export const THEME = {
 
 // Screen sizes are minimums. Anything between that and the next size.
 export const SCREEN_SIZES = {
-  mobile: "400px",
-  tablet: "769px",
-  laptop: "1025px",
-  desktop: "1440px",
+  mobile: 400,
+  tablet: 769,
+  laptop: 1025,
+  desktop: 1440,
 };
 
 export const MEDIA_QUERIES = {
-  mobile: `screen and (min-width: ${SCREEN_SIZES.mobile}) and (max-width: ${
-    SCREEN_SIZES.tablet
-  })`,
-  tablet: `screen and (min-width: ${SCREEN_SIZES.tablet}) and (max-width: ${
-    SCREEN_SIZES.laptop
-  })`,
-  laptop: `screen and (min-width: ${SCREEN_SIZES.laptop}) and (max-width: ${
-    SCREEN_SIZES.desktop
-  })`,
-  desktop: `creen and (min-width: ${SCREEN_SIZES.desktop})`,
+  gtMobile: `min-width: ${SCREEN_SIZES.mobile}px`,
+  ltTablet: `max-width: ${SCREEN_SIZES.tablet}px`,
+  gtTablet: `min-width: ${SCREEN_SIZES.tablet}px`,
+  ltLaptop: `max-width: ${SCREEN_SIZES.laptop}px`,
+  gtLaptop: `min-width: ${SCREEN_SIZES.laptop}px`,
+  ltDesktop: `max-width: ${SCREEN_SIZES.desktop}px`,
+  gtDesktop: `min-width: ${SCREEN_SIZES.desktop}px`,
 };
 
 export const Z_INDEXES = {

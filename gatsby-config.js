@@ -19,6 +19,7 @@ const siteUrl = isNetlifyProduction ? NETLIFY_SITE_URL : NETLIFY_DEPLOY_URL;
 const contentfulConfig = {
   spaceId: process.env.CONTENTFUL_SPACE_ID,
   accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN,
+  downloadLocal: true,
 };
 if (!contentfulConfig.spaceId || !contentfulConfig.accessToken) {
   throw new Error(
