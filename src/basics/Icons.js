@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-const ArrowInCircle = styled.button`
+export const arrowIconStyle = css`
   position: relative;
   width: 30px;
   height: 30px;
@@ -25,6 +25,9 @@ const ArrowInCircle = styled.button`
   }
 `;
 
+const ArrowInCircle = styled.button`
+  ${arrowIconStyle}
+`;
 /**
  * @desc Arrow in Circle Icon
  * @param String

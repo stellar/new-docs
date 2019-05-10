@@ -42,6 +42,7 @@ module.exports = {
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sharp",
+    "gatsby-plugin-styled-components",
     {
       resolve: "gatsby-plugin-eslint",
       options: {
@@ -69,7 +70,6 @@ module.exports = {
         serialize: serializeLocale("es"),
       },
     },
-    "gatsby-plugin-styled-components",
     {
       resolve: `gatsby-source-filesystem`,
       options: {
