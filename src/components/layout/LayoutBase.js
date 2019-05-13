@@ -20,33 +20,31 @@ const LayoutBase = ({
   description = "",
   children,
   navTheme = defaultTheme,
-}) => {
-  return (
-    <Locale
-      language={pageContext.locale}
-      catalog={pageContext.catalog}
-      alternateUrls={pageContext.alternateUrls}
-    >
-      <Helmet>
-        <title>{metadata.title}</title>
-        <link rel="shortcut icon" href={favicon} type="image/x-icon" />
-        <meta
-          name="description"
-          content={`${metadata.description}${description && ` ${description}`}`}
-        />
-        <meta property="og:title" content={metadata.title} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={metadata.siteUrl} />
-      </Helmet>
-      <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-        <Navigation />
-      </ThemeProvider>
-      <El>{children}</El>
-      <Footer />
-      <ModalTargetEl />
-    </Locale>
-  );
-};
+}) => (
+  <Locale
+    language={pageContext.locale}
+    catalog={pageContext.catalog}
+    alternateUrls={pageContext.alternateUrls}
+  >
+    <Helmet>
+      <title>{metadata.title}</title>
+      <link rel="shortcut icon" href={favicon} type="image/x-icon" />
+      <meta
+        name="description"
+        content={`${metadata.description}${description && ` ${description}`}`}
+      />
+      <meta property="og:title" content={metadata.title} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={metadata.siteUrl} />
+    </Helmet>
+    <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
+      <Navigation />
+    </ThemeProvider>
+    <El>{children}</El>
+    <Footer />
+    <ModalTargetEl />
+  </Locale>
+);
 
 LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,

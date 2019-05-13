@@ -15,10 +15,10 @@ const basicLinkStyles = css`
   font-weight: bolder;
 `;
 const BasicLink = styled(GatsbyLink)`
-  ${basicLinkStyles}
+  ${basicLinkStyles};
 `;
 export const ExternalLink = styled.a`
-  ${basicLinkStyles}
+  ${basicLinkStyles};
 `;
 
 export const Link = ({ href, ...props }) => {

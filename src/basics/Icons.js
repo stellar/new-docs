@@ -26,16 +26,18 @@ export const arrowIconStyle = css`
 `;
 
 const ArrowInCircle = styled.button`
-  ${arrowIconStyle}
+  ${arrowIconStyle};
 `;
 /**
  * @desc Arrow in Circle Icon
- * @param String
+ * @param {string} bgColor Background color
+ * @param {string} arrowColor Arrow color
  * Example: The Circle Arrow in Footer's Email Address input
+ * @return {React} React elements
  */
-export const IconArrowInCircle = ({ bgColor, arrowColor }) => {
-  return <ArrowInCircle bgColor={bgColor} arrowColor={arrowColor} />;
-};
+export const IconArrowInCircle = ({ bgColor, arrowColor }) => (
+  <ArrowInCircle bgColor={bgColor} arrowColor={arrowColor} />
+);
 
 IconArrowInCircle.propTypes = {
   bgColor: PropTypes.string.isRequired,

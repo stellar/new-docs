@@ -9,22 +9,22 @@ const headingBase = ({ theme }) => `
   color: ${theme.text};
 `;
 export const H1 = styled.h1`
-  ${headingBase}
+  ${headingBase};
 `;
 export const H2 = styled.h2`
-  ${headingBase}
+  ${headingBase};
 `;
 export const H3 = styled.h3`
-  ${headingBase}
+  ${headingBase};
 `;
 export const H4 = styled.h4`
-  ${headingBase}
+  ${headingBase};
 `;
 export const H5 = styled.h5`
-  ${headingBase}
+  ${headingBase};
 `;
 export const H6 = styled.h6`
-  ${headingBase}
+  ${headingBase};
 `;
 
 export const Quote = styled.blockquote``;
