@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import Helmet from "react-helmet";
 import styled, { ThemeProvider } from "styled-components";
 
+import { setup as setupI18n } from "helpers/translate";
+
 import favicon from "assets/favicon/favicon.ico";
 
 import Locale from "components/Locale";
@@ -14,37 +16,51 @@ const El = styled.div`
 `;
 const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
 
-const LayoutBase = ({
-  metadata,
-  pageContext,
-  description = "",
-  children,
-  navTheme = defaultTheme,
-}) => (
-  <Locale
-    language={pageContext.locale}
-    catalog={pageContext.catalog}
-    alternateUrls={pageContext.alternateUrls}
-  >
-    <Helmet>
-      <title>{metadata.title}</title>
-      <link rel="shortcut icon" href={favicon} type="image/x-icon" />
-      <meta
-        name="description"
-        content={`${metadata.description}${description && ` ${description}`}`}
-      />
-      <meta property="og:title" content={metadata.title} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={metadata.siteUrl} />
-    </Helmet>
-    <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-      <Navigation />
-    </ThemeProvider>
-    <El>{children}</El>
-    <Footer />
-    <ModalTargetEl />
-  </Locale>
-);
+/**
+ * Written as a class component specifically so that `setupI18n` can be run
+ * before the render method of any children.
+ */
+class LayoutBase extends React.Component {
+  componentWillMount() {
+    const { locale, catalog } = this.props.pageContext;
+    setupI18n(locale, catalog);
+  }
+  render() {
+    const {
+      metadata,
+      pageContext,
+      description = "",
+      children,
+      navTheme = defaultTheme,
+    } = this.props;
+    return (
+      <Locale
+        language={pageContext.locale}
+        catalog={pageContext.catalog}
+        alternateUrls={pageContext.alternateUrls}
+      >
+        <Helmet>
+          <title>{metadata.title}</title>
+          <link rel="shortcut icon" href={favicon} type="image/x-icon" />
+          <meta
+            name="description"
+            content={`${metadata.description}${description &&
+              ` ${description}`}`}
+          />
+          <meta property="og:title" content={metadata.title} />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content={metadata.siteUrl} />
+        </Helmet>
+        <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
+          <Navigation />
+        </ThemeProvider>
+        <El>{children}</El>
+        <Footer />
+        <ModalTargetEl />
+      </Locale>
+    );
+  }
+}
 
 LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,
