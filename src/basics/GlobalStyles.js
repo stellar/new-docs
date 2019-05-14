@@ -13,7 +13,6 @@ const GlobalStyles = createGlobalStyle`
     background: ${({ theme }) => theme.body};
     min-height: 100vh;
     padding: 0;
-    padding-top: 5rem;
     margin: 0;
   }
   ${styledNormalize}

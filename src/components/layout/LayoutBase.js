@@ -13,6 +13,7 @@ import Footer from "components/Footer";
 
 const El = styled.div`
   overflow: hidden;
+  ${({ padNav }) => padNav && `padding-top: 5rem;`}
 `;
 const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
 
@@ -32,6 +33,8 @@ class LayoutBase extends React.Component {
       description = "",
       children,
       navTheme = defaultTheme,
+      scrollOpacity,
+      padNav = true,
     } = this.props;
     return (
       <Locale
@@ -52,9 +55,9 @@ class LayoutBase extends React.Component {
           <meta property="og:url" content={metadata.siteUrl} />
         </Helmet>
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-          <Navigation />
+          <Navigation scrollOpacity={scrollOpacity} />
         </ThemeProvider>
-        <El>{children}</El>
+        <El padNav={padNav}>{children}</El>
         <Footer />
         <ModalTargetEl />
       </Locale>
@@ -70,6 +73,8 @@ LayoutBase.propTypes = {
   }).isRequired,
   description: PropTypes.string,
   navTheme: PropTypes.object,
+  scrollOpacity: PropTypes.number,
+  padNav: PropTypes.bool,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
     catalog: PropTypes.object.isRequired,

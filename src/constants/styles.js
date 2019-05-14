@@ -13,6 +13,7 @@ export const PALETTE = {
 export const THEME = {
   body: PALETTE.light,
   text: PALETTE.dark,
+  contrast: PALETTE.white,
   medium: PALETTE.medium,
 };
 

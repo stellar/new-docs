@@ -43,7 +43,7 @@ export const NavItem = styled.div`
       ? css`
           @media (${MEDIA_QUERIES.gtLaptop}) {
             border-bottom: 3px solid ${({ theme }) => theme.link};
-            margin-bottom: -3px;
+            padding-bottom: calc(2rem - 3px);
           }
           @media (${MEDIA_QUERIES.ltLaptop}) {
             background: ${PALETTE.white};
