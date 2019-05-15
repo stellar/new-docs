@@ -41,3 +41,11 @@ export const Z_INDEXES = {
   modal: 20,
   tooltip: 30,
 };
+
+export const CSS_TRANSITION_SPEED = {
+  default: "250ms",
+};
+
+export const CSS_TRANSITION_DELAY = {
+  default: "50ms",
+};
