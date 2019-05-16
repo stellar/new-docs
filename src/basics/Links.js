@@ -11,7 +11,7 @@ import { LocaleContext } from "components/Locale";
 
 const basicLinkStyles = css`
   text-decoration: none;
-  color: ${({ theme }) => theme.text};
+  color: inherit;
   font-weight: bolder;
 `;
 const BasicLink = styled(GatsbyLink)`
@@ -23,12 +23,19 @@ export const ExternalLink = styled.a`
 
 export const Link = ({ href, ...props }) => {
   const locale = React.useContext(LocaleContext);
+  if (!href && process.env.NODE_ENV !== "production") {
+    // dev-only warning so links don't asplode
+    // eslint-disable-next-line no-console
+    console.warn(`A link was made with no href. Children is ${props.children}`);
+    return <span {...props} />;
+  }
   return (
     <Location>
       {({ location }) => {
         const { host } = url.parse(href, location.origin);
-        // If a host is defined, it's external
-        if (host) {
+        // If a host is defined, it's external. We also want the browser to
+        // handle hash links.
+        if (host || href[0] === "#") {
           return <ExternalLink href={href} {...props} />;
         }
         return (
@@ -44,4 +51,5 @@ export const Link = ({ href, ...props }) => {
 
 Link.propTypes = {
   href: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
 };

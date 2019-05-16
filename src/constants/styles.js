@@ -1,6 +1,7 @@
 export const PALETTE = {
   white: "#ffffff",
   dark: "#000000",
+  lightGrey: "#999999",
   mediumGrey: "#979797",
   darkGrey: "#4a4a49",
   light: "#fbfaf7",
@@ -15,7 +16,8 @@ export const THEME = {
   body: PALETTE.light,
   text: PALETTE.dark,
   contrast: PALETTE.white,
-  medium: PALETTE.medium,
+  medium: PALETTE.mediumGrey,
+  lightGrey: PALETTE.lightGrey,
 };
 
 // Screen sizes are minimums. Anything between that and the next size.

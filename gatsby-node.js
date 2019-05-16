@@ -33,6 +33,15 @@ exports.onCreateNode = ({ node, actions }) => {
       value: locale,
     });
   }
+  if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
+    const value = path.parse(node.fileAbsolutePath.split("src/content")[1]).dir;
+    console.log(`Adding 'path' field to ${node.internal.type}, '${value}'`);
+    createNodeField({
+      node,
+      name: "path",
+      value,
+    });
+  }
 };
 
 // Build an object of catalogs keyed by the locale string.
@@ -52,6 +61,7 @@ exports.createPages = async ({ graphql, actions }) => {
               fileAbsolutePath
               fields {
                 locale
+                path
               }
             }
           }
