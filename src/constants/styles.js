@@ -8,7 +8,7 @@ export const PALETTE = {
   yellow: "#ffa51e",
   orange: "#ff5500",
   green: "#00aa46",
-  purple: "#7700ff",
+  purple: "#7d00ff",
   teal: "#21b0a4",
 };
 
