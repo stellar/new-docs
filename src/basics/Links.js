@@ -21,13 +21,17 @@ export const ExternalLink = styled.a`
   ${basicLinkStyles};
 `;
 
-export const Link = ({ href, ...props }) => {
+export const Link = ({ href, newTab, ...props }) => {
   const locale = React.useContext(LocaleContext);
+  const finalProps = {
+    ...props,
+    ...(newTab && { rel: "noreferrer", target: "_blank" }),
+  };
   if (!href && process.env.NODE_ENV !== "production") {
     // dev-only warning so links don't asplode
     // eslint-disable-next-line no-console
     console.warn(`A link was made with no href. Children is ${props.children}`);
-    return <span {...props} />;
+    return <span {...finalProps} />;
   }
   return (
     <Location>
@@ -36,12 +40,12 @@ export const Link = ({ href, ...props }) => {
         // If a host is defined, it's external. We also want the browser to
         // handle hash links.
         if (host || href[0] === "#") {
-          return <ExternalLink href={href} {...props} />;
+          return <ExternalLink href={href} {...finalProps} />;
         }
         return (
           <BasicLink
             to={locale === defaultLocale ? href : `/${locale}${href}`}
-            {...props}
+            {...finalProps}
           />
         );
       }}
@@ -52,4 +56,5 @@ export const Link = ({ href, ...props }) => {
 Link.propTypes = {
   href: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
+  newTab: PropTypes.bool,
 };

@@ -41,7 +41,7 @@ export const Preformatted = styled.pre``;
 export const Code = styled.code``;
 export const Italic = styled.em``;
 export const Bold = styled.strong``;
-export const Muted = styled(Text)`
+export const Muted = styled(Text).attrs(() => ({ as: "span" }))`
   color: ${({ theme }) => theme.medium};
 `;
 export const Strike = styled(Text)`
