@@ -1,6 +1,7 @@
 export const PALETTE = {
   white: "#ffffff",
   dark: "#000000",
+  lighterGrey: "#f4f4f3",
   lightGrey: "#999999",
   mediumGrey: "#979797",
   darkGrey: "#4a4a49",
@@ -14,6 +15,7 @@ export const PALETTE = {
 
 export const THEME = {
   body: PALETTE.light,
+  bodyAlt: PALETTE.lighterGrey,
   text: PALETTE.dark,
   contrast: PALETTE.white,
   medium: PALETTE.mediumGrey,
