@@ -20,6 +20,7 @@ export const THEME = {
   contrast: PALETTE.white,
   medium: PALETTE.mediumGrey,
   lightGrey: PALETTE.lightGrey,
+  darkGrey: PALETTE.darkGrey,
 };
 
 // Screen sizes are minimums. Anything between that and the next size.
@@ -41,6 +42,8 @@ export const MEDIA_QUERIES = {
 };
 
 export const Z_INDEXES = {
+  watermarkBase: -10,
+  watermark: -5,
   body: 0,
   nav: 10,
   modal: 20,
