@@ -50,6 +50,7 @@
     "gatsby-transformer-remark": "^2.3.12",
     "gatsby-transformer-sharp": "^2.1.18",
     "hast-to-hyperscript": "^7.0.0",
+    "intersection-observer": "^0.7.0",
     "lodash": "^4.17.11",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
