@@ -30,6 +30,7 @@ class LayoutBase extends React.Component {
     const {
       metadata,
       pageContext,
+      title,
       description = "",
       children,
       navTheme = defaultTheme,
@@ -42,15 +43,14 @@ class LayoutBase extends React.Component {
         catalog={pageContext.catalog}
         alternateUrls={pageContext.alternateUrls}
       >
-        <Helmet>
-          <title>{metadata.title}</title>
+        <Helmet title={title} defaultTitle={metadata.title}>
           <link rel="shortcut icon" href={favicon} type="image/x-icon" />
           <meta
             name="description"
             content={`${metadata.description}${description &&
               ` ${description}`}`}
           />
-          <meta property="og:title" content={metadata.title} />
+          <meta property="og:title" content={title || metadata.title} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content={metadata.siteUrl} />
         </Helmet>
@@ -71,6 +71,7 @@ LayoutBase.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
   }).isRequired,
+  title: PropTypes.string,
   description: PropTypes.string,
   navTheme: PropTypes.object,
   scrollOpacity: PropTypes.number,

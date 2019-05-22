@@ -37,7 +37,15 @@ module.exports = {
   },
   pathPrefix: "/",
   plugins: [
-    "gatsby-mdx",
+    {
+      resolve: "gatsby-mdx",
+      options: {
+        gatsbyRemarkPlugins: [
+          "gatsby-remark-autolink-headers",
+          "gatsby-remark-smartypants",
+        ],
+      },
+    },
     "gatsby-transformer-remark",
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",
