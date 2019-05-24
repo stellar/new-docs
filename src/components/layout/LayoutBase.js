@@ -17,14 +17,10 @@ const El = styled.div`
 `;
 const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
 
-/**
- * Written as a class component specifically so that `setupI18n` can be run
- * before the render method of any children.
- */
 class LayoutBase extends React.Component {
-  componentWillMount() {
-    const { locale, catalog } = this.props.pageContext;
-    setupI18n(locale, catalog);
+  componentDidMount() {
+    const { locale } = this.props.pageContext;
+    setupI18n(locale);
   }
   render() {
     const {
@@ -40,7 +36,6 @@ class LayoutBase extends React.Component {
     return (
       <Locale
         language={pageContext.locale}
-        catalog={pageContext.catalog}
         alternateUrls={pageContext.alternateUrls}
       >
         <Helmet title={title} defaultTitle={metadata.title}>
