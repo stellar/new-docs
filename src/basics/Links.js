@@ -21,7 +21,7 @@ export const ExternalLink = styled.a`
   ${basicLinkStyles};
 `;
 
-export const Link = ({ href, newTab, ...props }) => {
+export const Link = ({ href, newTab, skipLocale, ...props }) => {
   const locale = React.useContext(LocaleContext);
   const finalProps = {
     ...props,
@@ -33,6 +33,7 @@ export const Link = ({ href, newTab, ...props }) => {
     console.warn(`A link was made with no href. Children is ${props.children}`);
     return <span {...finalProps} />;
   }
+
   return (
     <Location>
       {({ location }) => {
@@ -42,11 +43,10 @@ export const Link = ({ href, newTab, ...props }) => {
         if (host || href[0] === "#") {
           return <ExternalLink href={href} {...finalProps} />;
         }
+        const hrefWithLocale =
+          locale === defaultLocale ? href : `/${locale}${href}`;
         return (
-          <BasicLink
-            to={locale === defaultLocale ? href : `/${locale}${href}`}
-            {...finalProps}
-          />
+          <BasicLink to={skipLocale ? href : hrefWithLocale} {...finalProps} />
         );
       }}
     </Location>
@@ -57,4 +57,5 @@ Link.propTypes = {
   href: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   newTab: PropTypes.bool,
+  skipLocale: PropTypes.bool,
 };

@@ -40,10 +40,7 @@ module.exports = {
     {
       resolve: "gatsby-mdx",
       options: {
-        gatsbyRemarkPlugins: [
-          "gatsby-remark-autolink-headers",
-          "gatsby-remark-smartypants",
-        ],
+        gatsbyRemarkPlugins: ["gatsby-remark-smartypants"],
       },
     },
     "gatsby-transformer-remark",
