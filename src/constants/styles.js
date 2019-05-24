@@ -26,7 +26,7 @@ export const THEME = {
 
 // Screen sizes are minimums. Anything between that and the next size.
 export const SCREEN_SIZES = {
-  mobile: 400,
+  mobile: 420,
   tablet: 769,
   laptop: 1025,
   desktop: 1440,
