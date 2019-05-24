@@ -10,9 +10,14 @@ const headingBase = ({ theme }) => `
 `;
 export const H1 = styled.h1`
   ${headingBase};
+  font-size: 2.5rem;
+  margin: 1.25em 0 0.67em;
+  letter-spacing: -1.2px;
 `;
 export const H2 = styled.h2`
   ${headingBase};
+  margin: 1.25em 0 0.67em;
+  letter-spacing: -1.2px;
 `;
 export const H3 = styled.h3`
   ${headingBase};

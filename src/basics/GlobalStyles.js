@@ -14,6 +14,7 @@ const GlobalStyles = createGlobalStyle`
     min-height: 100vh;
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
   }
   ${styledNormalize}
   body,
