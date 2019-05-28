@@ -38,17 +38,21 @@ class LayoutBase extends React.Component {
         language={pageContext.locale}
         alternateUrls={pageContext.alternateUrls}
       >
-        <Helmet title={title} defaultTitle={metadata.title}>
-          <link rel="shortcut icon" href={favicon} type="image/x-icon" />
-          <meta
-            name="description"
-            content={`${metadata.description}${description &&
-              ` ${description}`}`}
-          />
-          <meta property="og:title" content={title || metadata.title} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={metadata.siteUrl} />
-        </Helmet>
+        <Helmet
+          title={title}
+          defaultTitle={metadata.title}
+          meta={[
+            {
+              name: "description",
+              content: `${metadata.description}${description &&
+                ` ${description}`}`,
+            },
+            { property: "og:title", content: title || metadata.title },
+            { property: "og:type", content: "website" },
+            { property: "og:url", content: metadata.siteUrl },
+          ]}
+          link={[{ rel: "shortcut icon", href: favicon, type: "image/x-icon" }]}
+        />
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
           <Navigation scrollOpacity={scrollOpacity} />
         </ThemeProvider>
@@ -63,17 +67,16 @@ class LayoutBase extends React.Component {
 LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,
   metadata: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
+    title: PropTypes.node.isRequired,
+    description: PropTypes.node.isRequired,
   }).isRequired,
-  title: PropTypes.string,
-  description: PropTypes.string,
+  title: PropTypes.node,
+  description: PropTypes.node,
   navTheme: PropTypes.object,
   scrollOpacity: PropTypes.number,
   padNav: PropTypes.bool,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
-    catalog: PropTypes.object.isRequired,
   }).isRequired,
 };
 

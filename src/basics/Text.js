@@ -52,6 +52,8 @@ export const Muted = styled(Text).attrs(() => ({ as: "span" }))`
 export const Strike = styled(Text)`
   text-decoration: line-through;
 `;
-export const HorizontalRule = styled.hr``;
+export const HorizontalRule = styled.hr`
+  margin: 2rem 0;
+`;
 
 export const Small = styled.small``;
