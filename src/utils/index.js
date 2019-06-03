@@ -14,5 +14,13 @@ export const getGridItemWidthPercent = ({ col }) => {
  * * Example: 2019
  * @return {string} full year
  */
-
 export const getCurrentYear = () => new Date().getFullYear();
+
+/**
+ * @desc get a random value within a range (min, max)
+ * @param {number} min - minimum value of the range
+ * @param {number} max - maximum value of the range
+ * @return {number} random float value between min and max
+ */
+export const getRandomValue = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);

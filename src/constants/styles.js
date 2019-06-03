@@ -12,6 +12,7 @@ export const PALETTE = {
   green: "#00aa46",
   purple: "#7d00ff",
   teal: "#21b0a4",
+  coolBlue: "#39abd4",
 };
 
 export const THEME = {
