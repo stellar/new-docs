@@ -6,18 +6,14 @@ export const arrowIconStyle = css`
   position: relative;
   width: 30px;
   height: 30px;
-  border-radius: 30px;
+  border-radius: 50%;
+  border-style: none;
   background-color: ${(props) => props.bgColor};
 
   ::after {
     content: "\u2192";
     color: ${(props) => props.arrowColor};
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
+    position: relative;
     line-height: 30px;
     vertical-align: middle;
     height: 30px;
