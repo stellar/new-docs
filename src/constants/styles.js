@@ -30,7 +30,7 @@ export const SCREEN_SIZES = {
   mobile: 420,
   tablet: 769,
   laptop: 1025,
-  desktop: 1440,
+  desktop: 1281,
 };
 
 export const MEDIA_QUERIES = {
