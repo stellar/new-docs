@@ -71,6 +71,7 @@ exports.createPages = async ({ graphql, actions }) => {
             node {
               title
               slug
+              category
               updatedAt
             }
           }
