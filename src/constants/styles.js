@@ -1,3 +1,5 @@
+import tinycolor from "tinycolor2";
+
 export const PALETTE = {
   white: "#ffffff",
   dark: "#000000",
@@ -23,6 +25,9 @@ export const THEME = {
   medium: PALETTE.mediumGrey,
   lightGrey: PALETTE.lightGrey,
   darkGrey: PALETTE.darkGrey,
+  border: tinycolor(PALETTE.lightGrey)
+    .setAlpha(0.5)
+    .toRgbString(),
 };
 
 // Screen sizes are minimums. Anything between that and the next size.
@@ -59,3 +64,5 @@ export const CSS_TRANSITION_SPEED = {
 export const CSS_TRANSITION_DELAY = {
   default: "50ms",
 };
+
+export const NAV_HEIGHT = 80;

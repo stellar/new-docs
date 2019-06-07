@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import Helmet from "react-helmet";
 import styled, { ThemeProvider } from "styled-components";
 
+import { NAV_HEIGHT } from "constants/styles";
+
 import { setup as setupI18n } from "helpers/translate";
 
 import favicon from "assets/favicon/favicon.ico";
@@ -10,6 +12,7 @@ import favicon from "assets/favicon/favicon.ico";
 import Locale from "components/Locale";
 import Navigation, { defaultTheme } from "components/Navigation";
 import Footer from "components/Footer";
+import SubPageHeading from "components/SubPageHeading";
 
 const El = styled.div`
   overflow: hidden;
@@ -18,9 +21,18 @@ const El = styled.div`
 const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
 
 class LayoutBase extends React.Component {
+  subpageHeading = null;
+  state = {
+    scrollLimit: 1,
+  };
   componentDidMount() {
     const { locale } = this.props.pageContext;
     setupI18n(locale);
+
+    if (this.props.isNavTransparent) {
+      const { height } = this.heading.getBoundingClientRect();
+      this.setState({ scrollLimit: height - NAV_HEIGHT });
+    }
   }
   render() {
     const {
@@ -28,11 +40,12 @@ class LayoutBase extends React.Component {
       pageContext,
       title,
       description = "",
+      subpage = null,
       children,
       navTheme = defaultTheme,
-      scrollOpacity,
-      padNav = true,
+      isNavTransparent = false,
     } = this.props;
+
     return (
       <Locale
         language={pageContext.locale}
@@ -54,9 +67,22 @@ class LayoutBase extends React.Component {
           link={[{ rel: "shortcut icon", href: favicon, type: "image/x-icon" }]}
         />
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-          <Navigation scrollOpacity={scrollOpacity} />
+          <Navigation
+            scrollOpacity={isNavTransparent ? this.state.scrollLimit : 0}
+          />
         </ThemeProvider>
-        <El padNav={padNav}>{children}</El>
+        <El padNav={!isNavTransparent}>
+          {subpage && (
+            <SubPageHeading
+              scrollLimit={this.state.scrollLimit}
+              ref={(node) => {
+                this.heading = node;
+              }}
+              {...subpage}
+            />
+          )}
+          {children}
+        </El>
         <Footer />
         <ModalTargetEl />
       </Locale>
@@ -72,9 +98,9 @@ LayoutBase.propTypes = {
   }).isRequired,
   title: PropTypes.node,
   description: PropTypes.node,
+  subpage: PropTypes.object,
   navTheme: PropTypes.object,
-  scrollOpacity: PropTypes.number,
-  padNav: PropTypes.bool,
+  isNavTransparent: PropTypes.bool,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
   }).isRequired,
