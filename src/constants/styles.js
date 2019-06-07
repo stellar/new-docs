@@ -66,3 +66,12 @@ export const CSS_TRANSITION_DELAY = {
 };
 
 export const NAV_HEIGHT = 80;
+
+export const DEFAULT_COLUMN_WIDTH = {
+  leftColumn: 15,
+  rightColumn: 18,
+  gridArea: {
+    gtDesktop: 3.5,
+    ltDesktop: 2.5,
+  },
+};
