@@ -102,6 +102,7 @@ exports.onCreatePage = ({ page, actions }) => {
       ...page,
       context: {
         locale: defaultLocale,
+        urlPath: page.path,
         contentfulLocale: contentfulLocale[defaultLocale],
         lastModified: new Date().toISOString(),
         // List alternate pages so we can include head <link>s to them
@@ -120,6 +121,7 @@ exports.onCreatePage = ({ page, actions }) => {
         context: {
           ...page.context,
           locale,
+          urlPath: page.path,
           contentfulLocale: contentfulLocale[locale],
           lastModified: new Date().toISOString(),
           // List alternate pages so we can include head <link>s to them
