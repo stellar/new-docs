@@ -16,9 +16,10 @@ const basicImageStyles = `
   max-width: 100%;
 `;
 
-const GatsbyImageEl = styled(GatsbyImage)`
+export const GatsbyImageEl = styled(GatsbyImage)`
   ${basicImageStyles};
 `;
+
 export const BasicImage = styled.img`
   ${basicImageStyles};
 `;
