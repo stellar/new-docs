@@ -1,8 +1,12 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-export const Text = styled.p`
+const textStyles = css`
   line-height: 1.5;
   color: ${({ theme }) => theme.text};
+`;
+
+export const Text = styled.p`
+  ${textStyles}
 `;
 
 const headingBase = ({ theme }) => `
@@ -33,8 +37,12 @@ export const H6 = styled.h6`
 `;
 
 export const Quote = styled.blockquote``;
-export const List = styled.ul``;
-export const OrderedList = styled.ol``;
+export const List = styled.ul`
+  ${textStyles}
+`;
+export const OrderedList = styled.ol`
+  ${textStyles}
+`;
 export const ListItem = styled.li``;
 export const Table = styled.table``;
 export const TableHead = styled.thead``;

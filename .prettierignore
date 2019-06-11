@@ -1,2 +1,3 @@
 locale/
 package.json
+*.mdx
