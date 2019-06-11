@@ -1,8 +1,7 @@
-import tinycolor from "tinycolor2";
-
 export const PALETTE = {
   white: "#ffffff",
   dark: "#000000",
+  lightestGrey: "#cccccc",
   lighterGrey: "#f4f4f3",
   lightGrey: "#999999",
   mediumGrey: "#979797",
@@ -25,9 +24,7 @@ export const THEME = {
   medium: PALETTE.mediumGrey,
   lightGrey: PALETTE.lightGrey,
   darkGrey: PALETTE.darkGrey,
-  border: tinycolor(PALETTE.lightGrey)
-    .setAlpha(0.5)
-    .toRgbString(),
+  border: PALETTE.lightestGrey,
 };
 
 // Screen sizes are minimums. Anything between that and the next size.
@@ -73,5 +70,28 @@ export const DEFAULT_COLUMN_WIDTH = {
   gridArea: {
     gtDesktop: 3.5,
     ltDesktop: 2.5,
+  },
+};
+
+export const NAV_THEMES = {
+  default: {
+    background: THEME.body,
+    border: THEME.border,
+    link: THEME.text,
+    cta: {
+      body: PALETTE.yellow,
+      text: PALETTE.light,
+    },
+    logo: PALETTE.dark,
+  },
+  dark: {
+    background: PALETTE.dark,
+    border: PALETTE.darkGrey,
+    link: "#bbbbbb",
+    cta: {
+      body: PALETTE.light,
+      text: PALETTE.dark,
+    },
+    logo: PALETTE.light,
   },
 };

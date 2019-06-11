@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 import Helmet from "react-helmet";
 import styled, { ThemeProvider } from "styled-components";
 
-import { NAV_HEIGHT } from "constants/styles";
+import { NAV_HEIGHT, NAV_THEMES } from "constants/styles";
 
 import { setup as setupI18n } from "helpers/translate";
 
 import favicon from "assets/favicon/favicon.ico";
 
 import Locale from "components/Locale";
-import Navigation, { defaultTheme } from "components/Navigation";
+import Navigation from "components/Navigation";
 import Footer from "components/Footer";
 import SubPageHeading from "components/SubPageHeading";
 
@@ -42,7 +42,7 @@ class LayoutBase extends React.Component {
       description = "",
       subpage = null,
       children,
-      navTheme = defaultTheme,
+      navTheme = NAV_THEMES.default,
       isNavTransparent = false,
     } = this.props;
 
