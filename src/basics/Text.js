@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { PALETTE } from "constants/styles";
 
 const textStyles = css`
   line-height: 1.5;
@@ -61,7 +62,9 @@ export const Strike = styled(Text)`
   text-decoration: line-through;
 `;
 export const HorizontalRule = styled.hr`
-  margin: 2rem 0;
+  margin: 3rem 0;
+  border-color: ${PALETTE.light};
+  background-color: ${PALETTE.light};
 `;
 
 export const Small = styled.small``;

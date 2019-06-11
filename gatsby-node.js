@@ -4,6 +4,7 @@ const path = require("path");
 const {
   createContentfulPages,
 } = require("./buildHelpers/createContentfulPages");
+const { createContentfulBlog } = require("./buildHelpers/createContentfulBlog");
 const {
   createMdxPages,
   getFileName,
@@ -89,6 +90,7 @@ exports.createPages = async ({ graphql, actions }) => {
 
   const posts = result.data.allContentfulBlogPost.edges;
   createContentfulPages({ posts, actions, catalogs });
+  createContentfulBlog({ posts, actions, catalogs });
 };
 
 exports.onCreatePage = ({ page, actions }) => {
