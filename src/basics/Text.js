@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { PALETTE } from "constants/styles";
+import { PALETTE, MEDIA_QUERIES } from "constants/styles";
 
 const textStyles = css`
   line-height: 1.5;
@@ -37,7 +37,33 @@ export const H6 = styled.h6`
   ${headingBase};
 `;
 
-export const Quote = styled.blockquote``;
+export const Quote = styled.blockquote`
+  position: relative;
+  margin: 2.3rem 0;
+  width: 100%;
+
+  p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.29;
+    color: ${PALETTE.dark};
+    margin-left: 2.4rem;
+  }
+
+  ::before {
+    content: "“";
+    font-size: 4rem;
+    font-weight: 500;
+    position: absolute;
+    left: -0.2rem;
+    top: -1rem;
+    width: auto;
+  }
+
+  @media (${MEDIA_QUERIES.gtLaptop}) {
+    width: 80%;
+  }
+`;
 export const List = styled.ul`
   ${textStyles}
 `;

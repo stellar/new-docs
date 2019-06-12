@@ -71,18 +71,20 @@ class LayoutBase extends React.Component {
             scrollOpacity={isNavTransparent ? this.state.scrollLimit : 0}
           />
         </ThemeProvider>
-        <El padNav={!isNavTransparent}>
-          {subpage && (
-            <SubPageHeading
-              scrollLimit={this.state.scrollLimit}
-              ref={(node) => {
-                this.heading = node;
-              }}
-              {...subpage}
-            />
-          )}
-          {children}
-        </El>
+        <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
+          <El padNav={!isNavTransparent}>
+            {subpage && (
+              <SubPageHeading
+                scrollLimit={this.state.scrollLimit}
+                ref={(node) => {
+                  this.heading = node;
+                }}
+                {...subpage}
+              />
+            )}
+            {children}
+          </El>
+        </ThemeProvider>
         <Footer />
         <ModalTargetEl />
       </Locale>
