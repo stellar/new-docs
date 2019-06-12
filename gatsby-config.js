@@ -40,10 +40,32 @@ module.exports = {
     {
       resolve: "gatsby-mdx",
       options: {
-        gatsbyRemarkPlugins: ["gatsby-remark-smartypants"],
+        gatsbyRemarkPlugins: [
+          "gatsby-remark-smartypants",
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              showLineNumbers: true,
+              noInlineHighlight: true,
+            },
+          },
+        ],
       },
     },
-    "gatsby-transformer-remark",
+    {
+      resolve: "gatsby-transformer-remark",
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              showLineNumbers: true,
+              noInlineHighlight: true,
+            },
+          },
+        ],
+      },
+    },
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sharp",
