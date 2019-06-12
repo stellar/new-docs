@@ -29,6 +29,8 @@ const getPathInfo = ({ path, context }) => {
   };
 };
 
+const checkIsBlogPostRegex = /blog\/.+/;
+
 const serializeLocale = (locale) => {
   return ({ site, allSitePage }) => {
     const { edges } = allSitePage;
@@ -42,6 +44,14 @@ const serializeLocale = (locale) => {
         const alternates = pageVersions.filter(
           (pageVersion) => pageVersion.locale !== locale,
         );
+
+        // Don't include blog posts on international sitemaps
+        if (
+          locale !== defaultLocale &&
+          checkIsBlogPostRegex.test(mainPage.originalPath)
+        ) {
+          return accum;
+        }
         accum.push({
           main: mainPage,
           alternates,

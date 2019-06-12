@@ -89,8 +89,8 @@ export const NAV_THEMES = {
     border: PALETTE.darkGrey,
     link: "#bbbbbb",
     cta: {
-      body: PALETTE.light,
-      text: PALETTE.dark,
+      body: PALETTE.purple,
+      text: PALETTE.light,
     },
     logo: PALETTE.light,
   },

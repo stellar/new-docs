@@ -8,6 +8,5 @@ export const slugify = (string) =>
     .replace(/[“‘”’'",.<>/?[\]\\|{}=+()]/g, "")
     .trim()
     .split(" ")
-    .filter((x) => x.length > 2)
     .join("-")
     .toLowerCase();
