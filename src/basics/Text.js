@@ -70,6 +70,9 @@ export const List = styled.ul`
 export const OrderedList = styled.ol`
   ${textStyles}
 `;
+export const Small = styled.small`
+  font-size: 75%;
+`;
 export const ListItem = styled.li``;
 export const Table = styled.table``;
 export const TableHead = styled.thead``;
@@ -92,5 +95,3 @@ export const HorizontalRule = styled.hr`
   border-color: ${PALETTE.light};
   background-color: ${PALETTE.light};
 `;
-
-export const Small = styled.small``;
