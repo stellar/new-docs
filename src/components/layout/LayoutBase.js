@@ -7,7 +7,13 @@ import { NAV_HEIGHT, NAV_THEMES } from "constants/styles";
 
 import { setup as setupI18n } from "helpers/translate";
 
-import favicon from "assets/favicon/favicon.ico";
+import faviconIco from "assets/favicon/favicon.ico";
+import favicon16 from "assets/favicon/favicon-16x16.png";
+import favicon32 from "assets/favicon/favicon-32x32.png";
+import favicon96 from "assets/favicon/favicon-96x96.png";
+import favicon180 from "assets/favicon/apple-icon-180x180.png";
+import favicon192 from "assets/favicon/android-chrome-192x192.png";
+import favicon512 from "assets/favicon/android-chrome-512x512.png";
 
 import Locale from "components/Locale";
 import Navigation from "components/Navigation";
@@ -64,7 +70,15 @@ class LayoutBase extends React.Component {
             { property: "og:type", content: "website" },
             { property: "og:url", content: metadata.siteUrl },
           ]}
-          link={[{ rel: "shortcut icon", href: favicon, type: "image/x-icon" }]}
+          link={[
+            { rel: "shortcut icon", href: faviconIco, type: "image/x-icon" },
+            { rel: "icon", href: favicon16, type: "image/x-icon" },
+            { rel: "icon", href: favicon32, type: "image/x-icon" },
+            { rel: "icon", href: favicon96, type: "image/x-icon" },
+            { rel: "apple-touch-icon", href: favicon180, type: "image/x-icon" },
+            { rel: "icon", href: favicon192, type: "image/x-icon" },
+            { rel: "icon", href: favicon512, type: "image/x-icon" },
+          ]}
         />
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
           <Navigation
