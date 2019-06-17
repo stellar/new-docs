@@ -91,7 +91,7 @@ export const Strike = styled(Text)`
   text-decoration: line-through;
 `;
 export const HorizontalRule = styled.hr`
-  margin: 3rem 0;
-  border-color: ${PALETTE.light};
-  background-color: ${PALETTE.light};
+  margin: 2rem 0;
+  border: none;
+  border-bottom: 1px solid ${({ theme }) => theme.border};
 `;
