@@ -96,3 +96,21 @@ export const NAV_THEMES = {
     logo: PALETTE.light,
   },
 };
+
+export const SUBPAGE_THEMES = {
+  default: {
+    bgColor: PALETTE.light,
+    fgColor: PALETTE.dark,
+    categoryColor: PALETTE.purple,
+  },
+  yellow: {
+    bgColor: PALETTE.yellow,
+    fgColor: PALETTE.light,
+    categoryColor: PALETTE.lightYellow,
+  },
+  dark: {
+    bgColor: PALETTE.dark,
+    fgColor: PALETTE.light,
+    categoryColor: PALETTE.purple,
+  },
+};
