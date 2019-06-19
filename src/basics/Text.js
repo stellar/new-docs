@@ -65,21 +65,68 @@ export const Quote = styled.blockquote`
   }
 `;
 export const List = styled.ul`
-  ${textStyles}
+  padding: 0;
+
+  li {
+    padding-left: 1.2rem;
+    &:before {
+      color: ${PALETTE.yellow};
+      font-size: 1.5rem;
+      line-height: 1.7rem;
+      content: "\\002022";
+      position: absolute;
+      left: 0;
+    }
+  }
 `;
 export const OrderedList = styled.ol`
-  ${textStyles}
+  padding: 0;
+  li {
+    padding-left: 1.4rem;
+    counter-increment: my-awesome-counter;
+    &:before {
+      font-weight: bold;
+      color: ${PALETTE.yellow};
+      content: counter(my-awesome-counter);
+      position: absolute;
+      left: 0;
+    }
+  }
 `;
 export const Small = styled.small`
   font-size: 75%;
 `;
-export const ListItem = styled.li``;
-export const Table = styled.table``;
+export const ListItem = styled.li`
+  color: ${({ theme }) => theme.darkGrey};
+  font-size: 1.1rem;
+  line-height: 1.7;
+  position: relative;
+  padding-bottom: 1rem;
+  list-style: none;
+`;
+export const Table = styled.table`
+  width: 100%;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+`;
 export const TableHead = styled.thead``;
-export const TableHeadCell = styled.th``;
+export const TableHeadCell = styled.th`
+  font-size: 0.9rem;
+  line-height: 2.5rem;
+  text-align: left;
+  border-bottom: 1px solid ${PALETTE.lightestGrey};
+  color: ${({ theme }) => theme.text};
+  padding: 0 1.25rem;
+`;
 export const TableBody = styled.tbody``;
 export const TableRow = styled.tr``;
-export const TableCell = styled.td``;
+export const TableCell = styled.td`
+  font-size: 1rem;
+  background-color: ${({ theme }) => theme.contrast};
+  color: ${({ theme }) => theme.darkGrey};
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid ${PALETTE.lightestGrey};
+`;
 export const Preformatted = styled.pre``;
 export const Code = styled.code``;
 export const Italic = styled.em``;
