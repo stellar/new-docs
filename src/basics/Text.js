@@ -68,21 +68,30 @@ export const List = styled.ul`
   padding: 0;
 
   li {
-    padding-left: 1.2rem;
+    padding-left: 1rem;
     &:before {
       color: ${PALETTE.yellow};
-      font-size: 1.5rem;
-      line-height: 1.7rem;
+      line-height: 1.5;
+      font-size: 1.1rem;
       content: "\\002022";
       position: absolute;
       left: 0;
+
+      @media (${MEDIA_QUERIES.gtTablet}) {
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+    }
+
+    @media (${MEDIA_QUERIES.gtTablet}) {
+      padding-left: 1.2rem;
     }
   }
 `;
 export const OrderedList = styled.ol`
   padding: 0;
   li {
-    padding-left: 1.4rem;
+    padding-left: 1.2rem;
     counter-increment: my-awesome-counter;
     &:before {
       font-weight: bold;
@@ -90,6 +99,10 @@ export const OrderedList = styled.ol`
       content: counter(my-awesome-counter);
       position: absolute;
       left: 0;
+    }
+
+    @media (${MEDIA_QUERIES.gtTablet}) {
+      padding-left: 1.4rem;
     }
   }
 `;
@@ -103,6 +116,11 @@ export const ListItem = styled.li`
   position: relative;
   padding-bottom: 1rem;
   list-style: none;
+
+  @media (${MEDIA_QUERIES.ltTablet}) {
+    line-height: 1.5;
+    font-size: 1rem;
+  }
 `;
 export const Table = styled.table`
   width: 100%;
@@ -112,7 +130,7 @@ export const Table = styled.table`
 export const TableHead = styled.thead``;
 export const TableHeadCell = styled.th`
   font-size: 0.9rem;
-  line-height: 2.5rem;
+  line-height: 2.5;
   text-align: left;
   border-bottom: 1px solid ${PALETTE.lightestGrey};
   color: ${({ theme }) => theme.text};
