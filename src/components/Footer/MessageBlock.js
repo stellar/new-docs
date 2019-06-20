@@ -4,6 +4,7 @@ import { Trans } from "@lingui/macro";
 import styled from "styled-components";
 
 import { PALETTE } from "constants/styles";
+import { REGEX } from "constants/regex";
 import { Link } from "basics/Links";
 
 const ResponseStatusEl = styled.span`
@@ -18,13 +19,12 @@ const LinkEl = styled(Link)`
 `;
 
 const RegexErrorMessage = ({ errorMessage }) => {
-  const linkAttrRegex = /\s*(['"])(https?:\/\/.+?)\1/g;
-  const MESSAGE_URL = errorMessage.match(linkAttrRegex);
+  const MESSAGE_URL = errorMessage.match(REGEX.extractHttpsUrl);
 
   if (MESSAGE_URL) {
     const firstMessage = errorMessage.split("<a href")[0];
     const CONVERT_URL_TO_VALID = errorMessage
-      .match(/\s*(['"])(https?:\/\/.+?)\1/g)[0]
+      .match(REGEX.extractHttpsUrl)[0]
       .replace(/"/g, "");
 
     return (

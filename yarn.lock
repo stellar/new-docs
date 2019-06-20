@@ -5606,6 +5606,14 @@ gatsby-source-filesystem@^2.0.32:
     valid-url "^1.0.9"
     xstate "^3.1.0"
 
+gatsby-source-rss-feed@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/gatsby-source-rss-feed/-/gatsby-source-rss-feed-1.1.1.tgz#f929e8bdb3b74bcfcc7402d0b1db100727f14301"
+  integrity sha512-plPlNJl74gQAnfocu6g0wH9bD5P2Radq4ujANhMWoc+fjIhOJAXy3Iq9FYXrZhMG/PrG2aYNPP0DGUzxP3tvCw==
+  dependencies:
+    lodash "^4.17.11"
+    rss-parser "^3.6.2"
+
 gatsby-telemetry@^1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/gatsby-telemetry/-/gatsby-telemetry-1.0.9.tgz#f9192d5bf72fb239d477e9b556a7dc040c4a566b"
@@ -11311,6 +11319,14 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rss-parser@^3.6.2:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/rss-parser/-/rss-parser-3.7.1.tgz#86d15d1c84b860d1aff1c00a2149278a9fe64c0b"
+  integrity sha512-1JKFzLHeteNandmlVBUWgLPmipFEllhdUQlmNvkXd6ju4VFOlGr0VmtlQaxzZoVysG2nbGb8eAtzNqQTxzQ+AQ==
+  dependencies:
+    entities "^1.1.1"
+    xml2js "^0.4.19"
+
 run-async@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-2.3.0.tgz#0371ab4ae0bdd720d4166d7dfda64ff7a445a6c0"
@@ -13586,7 +13602,7 @@ xml2js@0.4.17:
     sax ">=0.6.0"
     xmlbuilder "^4.1.0"
 
-xml2js@^0.4.5:
+xml2js@^0.4.19, xml2js@^0.4.5:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.19.tgz#686c20f213209e94abf0d1bcf1efaa291c7827a7"
   integrity sha512-esZnJZJOiJR9wWKMyuvSE1y6Dq5LCuJanqhxslH2bxM6duahNZ+HMpCLhBQGZkbX6xRf8x1Y2eJlgt2q3qo49Q==

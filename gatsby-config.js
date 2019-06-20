@@ -117,5 +117,12 @@ module.exports = {
       resolve: "gatsby-source-contentful",
       options: contentfulConfig,
     },
+    {
+      resolve: `gatsby-source-rss-feed`,
+      options: {
+        url: `https://medium.com/feed/stellar-community`,
+        name: `MediumBlog`,
+      },
+    },
   ],
 };
