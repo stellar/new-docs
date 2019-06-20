@@ -10,6 +10,10 @@ export const Text = styled.p`
   ${textStyles}
 `;
 
+export const Colored = styled.span`
+  color: ${(props) => props.color};
+`;
+
 const headingBase = ({ theme }) => `
   color: ${theme.text};
 `;
@@ -145,8 +149,53 @@ export const TableCell = styled.td`
   padding: 1.1rem 1.25rem;
   border-bottom: 1px solid ${PALETTE.lightestGrey};
 `;
-export const Preformatted = styled.pre``;
-export const Code = styled.code``;
+export const Code = styled.code`
+  border-radius: 3px;
+  border: solid 0.5px ${({ theme }) => theme.medium};
+  background-color: ${PALETTE.lighterYellow};
+  padding: 0.125rem 0.25rem;
+`;
+export const Preformatted = styled.pre`
+  &&& {
+    position: relative;
+    background-color: ${PALETTE.lighterGrey};
+    padding: 1.25rem 0;
+    padding-left: 2.2rem;
+    font-size: 0.8rem;
+    line-height: 1.7em;
+    border: 1px solid ${({ theme }) => theme.border};
+    border-radius: 0.5rem;
+    color: ${PALETTE.darkGrey};
+  }
+
+  & ${Code} {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0;
+    padding-left: 1rem;
+    border: none;
+    background-color: transparent;
+    overflow: auto;
+    line-height: inherit;
+  }
+  && .line-numbers-rows {
+    bottom: 0;
+    border: none;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    margin: -1px;
+    padding: 1.25rem 0;
+    padding-left: 0.8rem;
+    text-shadow: none;
+    line-height: inherit;
+
+    // This is gross but gotta override
+    & > span::before {
+      font-size: 12px;
+      color: ${({ theme }) => theme.contrast};
+    }
+  }
+`;
 export const Italic = styled.em``;
 export const Bold = styled.strong``;
 export const Muted = styled(Text).attrs(() => ({ as: "span" }))`
