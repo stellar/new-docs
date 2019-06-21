@@ -3,6 +3,7 @@ import { PALETTE, MEDIA_QUERIES } from "constants/styles";
 
 const textStyles = css`
   line-height: 1.5;
+  letter-spacing: -0.4px;
   color: ${({ theme }) => theme.text};
 `;
 
