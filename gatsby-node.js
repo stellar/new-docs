@@ -1,5 +1,6 @@
 const Promise = require("bluebird");
 const path = require("path");
+const execa = require("execa");
 
 const {
   createContentfulPages,
@@ -23,11 +24,6 @@ exports.onCreateNode = ({ node, actions }) => {
     // For any MDX files, we want to know if they have a locale associated with
     // them. Pull it from the filename.
     const locale = getLocale(filename);
-    console.log(
-      `Adding 'locale' field to ${
-        node.internal.type
-      } ${filename}, '${locale}'.`,
-    );
     createNodeField({
       node,
       name: "locale",
@@ -36,7 +32,6 @@ exports.onCreateNode = ({ node, actions }) => {
   }
   if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
     const value = path.parse(node.fileAbsolutePath.split("src/content")[1]).dir;
-    console.log(`Adding 'path' field to ${node.internal.type}, '${value}'`);
     createNodeField({
       node,
       name: "path",
@@ -46,10 +41,8 @@ exports.onCreateNode = ({ node, actions }) => {
 };
 
 // Build an object of catalogs keyed by the locale string.
-const catalogs = supportedLanguages.reduce((accum, locale) => {
-  accum[locale] = require(`./src/locale/${locale}/messages.js`);
-  return accum;
-}, {});
+// This happens during preBootstrap;
+let catalogs;
 
 exports.createPages = async ({ graphql, actions }) => {
   const result = await graphql(
@@ -146,4 +139,16 @@ exports.onCreateWebpackConfig = ({ actions }) => {
       modules: ["node_modules", "src"],
     },
   });
+};
+
+// Build lingui catalogs
+exports.onPreBootstrap = async () => {
+  console.log("[i18n] Building Lingui catalogs…");
+  await execa("yarn", ["compile-i18n"]);
+  console.log("[i18n] Done!");
+
+  catalogs = supportedLanguages.reduce((accum, locale) => {
+    accum[locale] = require(`./src/locale/${locale}/messages.js`);
+    return accum;
+  }, {});
 };
