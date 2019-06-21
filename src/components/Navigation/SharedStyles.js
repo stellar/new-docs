@@ -11,6 +11,7 @@ export const H2 = styled(BasicH2)`
 
 export const NavImage = styled.img`
   width: 100%;
+  margin-top: 1.5rem;
   @media (${MEDIA_QUERIES.ltLaptop}) {
     display: none;
   }
