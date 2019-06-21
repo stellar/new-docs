@@ -11,7 +11,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "concurrently 'yarn check-not-master' 'pretty-quick --staged' 'lingui extract; git add */locale/*/*.json'"
+      "pre-commit": "concurrently 'yarn check-not-master' 'pretty-quick --staged' 'lingui extract --clean; git add */locale/*/*.json'"
     }
   },
   "dependencies": {
