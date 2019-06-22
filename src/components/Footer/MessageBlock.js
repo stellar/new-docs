@@ -8,7 +8,7 @@ import { REGEX } from "constants/regex";
 import { Link } from "basics/Links";
 
 const ResponseStatusEl = styled.span`
-  position: absolute;
+  position: relative;
   color: ${(props) => (props.isError ? PALETTE.orange : PALETTE.green)};
   padding-top: 0.625rem;
   font-size: 0.75rem;
@@ -36,7 +36,7 @@ const RegexErrorMessage = ({ errorMessage }) => {
       </>
     );
   }
-  return <Trans>errorMessage</Trans>;
+  return <Trans>{errorMessage}</Trans>;
 };
 
 RegexErrorMessage.propTypes = {
