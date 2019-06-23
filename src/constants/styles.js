@@ -13,9 +13,13 @@ export const PALETTE = {
   yellow: "#ffa51e",
   orange: "#ff5500",
   green: "#00aa46",
+  lightPurple: "#975581",
   purple: "#7d00ff",
   teal: "#21b0a4",
   coolBlue: "#39abd4",
+  darkCoolBlue: "#0c0d71",
+  coolPurple: "#501e83",
+  coolPink: "#97557f",
 };
 
 export const THEME = {
@@ -100,18 +104,23 @@ export const NAV_THEMES = {
 
 export const SUBPAGE_THEMES = {
   default: {
-    bgColor: PALETTE.light,
+    background: PALETTE.light,
     fgColor: PALETTE.dark,
     categoryColor: PALETTE.purple,
   },
   yellow: {
-    bgColor: PALETTE.yellow,
+    background: PALETTE.yellow,
     fgColor: PALETTE.light,
     categoryColor: PALETTE.lightYellow,
   },
   dark: {
-    bgColor: PALETTE.dark,
+    background: PALETTE.dark,
     fgColor: PALETTE.light,
     categoryColor: PALETTE.purple,
+  },
+  lumens: {
+    background: "", // Brought in on lumen page as an optimization
+    fgColor: PALETTE.light,
+    categoryColor: PALETTE.lightPurple,
   },
 };

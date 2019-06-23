@@ -94,7 +94,7 @@ module.exports = {
       options: {
         path: `${__dirname}/src/assets/`,
         rule: {
-          include: /icons/,
+          include: [/icons/, /svg\//],
         },
       },
     },
