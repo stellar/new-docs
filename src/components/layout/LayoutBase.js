@@ -14,6 +14,7 @@ import favicon96 from "assets/favicon/favicon-96x96.png";
 import favicon180 from "assets/favicon/apple-icon-180x180.png";
 import favicon192 from "assets/favicon/android-chrome-192x192.png";
 import favicon512 from "assets/favicon/android-chrome-512x512.png";
+import StellarLogo from "assets/images/stellar-logo.png";
 
 import Locale from "components/Locale";
 import Navigation from "components/Navigation";
@@ -31,6 +32,7 @@ class LayoutBase extends React.Component {
   state = {
     scrollLimit: 1,
   };
+
   componentDidMount() {
     const { locale } = this.props.pageContext;
     setupI18n(locale);
@@ -48,6 +50,7 @@ class LayoutBase extends React.Component {
       description = "",
       subpage = null,
       children,
+      previewImage,
       navTheme = NAV_THEMES.default,
       isNavTransparent = false,
     } = this.props;
@@ -69,6 +72,23 @@ class LayoutBase extends React.Component {
             { property: "og:title", content: title || metadata.title },
             { property: "og:type", content: "website" },
             { property: "og:url", content: metadata.siteUrl },
+            {
+              property: "og:image",
+              content: previewImage || StellarLogo,
+            },
+            {
+              property: "twitter:card",
+              content: `${metadata.description}${description &&
+                ` ${description}`}`,
+            },
+            {
+              property: "twitter:site",
+              content: "@StellarOrg",
+            },
+            {
+              property: "twitter:site",
+              content: "@StellarOrg",
+            },
           ]}
           link={[
             { rel: "shortcut icon", href: faviconIco, type: "image/x-icon" },
@@ -113,6 +133,7 @@ LayoutBase.propTypes = {
     description: PropTypes.node.isRequired,
   }).isRequired,
   title: PropTypes.node,
+  previewImage: PropTypes.string,
   description: PropTypes.node,
   subpage: PropTypes.object,
   navTheme: PropTypes.object,
