@@ -13,6 +13,7 @@ export const Text = styled.p`
 
 export const Colored = styled.span`
   color: ${(props) => props.color};
+  font-size: ${(props) => (props.fontSize ? props.fontSize : "default")};
 `;
 
 const headingBase = ({ theme }) => `
