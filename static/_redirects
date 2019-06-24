@@ -1,0 +1,4 @@
+# Services still hosted on old infrastructure.
+/developers/* https://www.stellar.org/developers/:splat/ 200
+/laboratory/* https://www.stellar.org/laboratory/:splat/ 200
+/account-viewer/* https://www.stellar.org/account-viewer/:splat/ 200
