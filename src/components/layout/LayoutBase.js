@@ -19,7 +19,6 @@ import StellarLogo from "assets/images/stellar-logo.png";
 import Locale from "components/Locale";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
-import SubPageHeading from "components/SubPageHeading";
 
 const El = styled.div`
   overflow: hidden;
@@ -38,6 +37,13 @@ class LayoutBase extends React.Component {
     setupI18n(locale);
 
     if (this.props.isNavTransparent) {
+      if (!this.heading && process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          "[LayoutBase]: `isNavTransparent` is true but there's no `leading` element. Did you forget the subpage header?",
+        );
+        return;
+      }
       const { height } = this.heading.getBoundingClientRect();
       this.setState({ scrollLimit: height - NAV_HEIGHT });
     }
@@ -48,8 +54,9 @@ class LayoutBase extends React.Component {
       pageContext,
       title,
       description = "",
-      subpage = null,
       children,
+      leading = null,
+      trailing = null,
       previewImage,
       navTheme = NAV_THEMES.default,
       isNavTransparent = false,
@@ -109,16 +116,15 @@ class LayoutBase extends React.Component {
         </ThemeProvider>
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
           <El padNav={!isNavTransparent}>
-            {subpage && (
-              <SubPageHeading
-                scrollLimit={this.state.scrollLimit}
-                ref={(node) => {
+            {leading &&
+              React.cloneElement(leading, {
+                scrollLimit: this.state.scrollLimit,
+                ref: (node) => {
                   this.heading = node;
-                }}
-                {...subpage}
-              />
-            )}
+                },
+              })}
             {children}
+            {trailing}
           </El>
         </ThemeProvider>
         <Footer />
@@ -129,7 +135,9 @@ class LayoutBase extends React.Component {
 }
 
 LayoutBase.propTypes = {
+  leading: PropTypes.node,
   children: PropTypes.node.isRequired,
+  trailing: PropTypes.node,
   metadata: PropTypes.shape({
     title: PropTypes.node.isRequired,
     description: PropTypes.node.isRequired,
@@ -137,7 +145,6 @@ LayoutBase.propTypes = {
   title: PropTypes.node,
   previewImage: PropTypes.string,
   description: PropTypes.node,
-  subpage: PropTypes.object,
   navTheme: PropTypes.object,
   isNavTransparent: PropTypes.bool,
   pageContext: PropTypes.shape({
