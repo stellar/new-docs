@@ -66,27 +66,29 @@ class LayoutBase extends React.Component {
           meta={[
             {
               name: "description",
-              content: `${metadata.description}${description &&
-                ` ${description}`}`,
+              content: description || metadata.description,
             },
             { property: "og:title", content: title || metadata.title },
             { property: "og:type", content: "website" },
+            {
+              property: "og:description",
+              content: description || metadata.description,
+            },
             { property: "og:url", content: metadata.siteUrl },
             {
               property: "og:image",
               content: previewImage || StellarLogo,
             },
             {
-              property: "twitter:card",
-              content: `${metadata.description}${description &&
-                ` ${description}`}`,
+              name: "twitter:card",
+              content: "summary",
             },
             {
               property: "twitter:site",
               content: "@StellarOrg",
             },
             {
-              property: "twitter:site",
+              property: "twitter:creator",
               content: "@StellarOrg",
             },
           ]}
