@@ -18,6 +18,9 @@ export const PALETTE = {
   teal: "#21b0a4",
   coolBlue: "#39abd4",
   darkCoolBlue: "#0c0d71",
+  lightestCoolPurple: "#b3a6ed",
+  lighterCoolPurple: "#af80f8",
+  lightCoolPurple: "#7b35f7",
   coolPurple: "#501e83",
   coolPink: "#97557f",
 };
