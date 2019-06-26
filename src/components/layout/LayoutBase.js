@@ -67,6 +67,8 @@ class LayoutBase extends React.Component {
         ? metadata.siteUrl + pageContext.urlPath
         : metadata.siteUrl;
 
+    const previewImageUrl = previewImage && metadata.siteUrl + previewImage;
+
     return (
       <Locale
         language={pageContext.locale}
@@ -89,7 +91,7 @@ class LayoutBase extends React.Component {
             { property: "og:url", content: siteUrl },
             {
               property: "og:image",
-              content: previewImage || StellarLogo,
+              content: previewImageUrl || StellarLogo,
             },
             {
               name: "twitter:card",
