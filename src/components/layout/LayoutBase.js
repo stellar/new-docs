@@ -62,6 +62,11 @@ class LayoutBase extends React.Component {
       isNavTransparent = false,
     } = this.props;
 
+    const siteUrl =
+      pageContext && pageContext.urlPath
+        ? metadata.siteUrl + pageContext.urlPath
+        : metadata.siteUrl;
+
     return (
       <Locale
         language={pageContext.locale}
@@ -81,7 +86,7 @@ class LayoutBase extends React.Component {
               property: "og:description",
               content: description || metadata.description,
             },
-            { property: "og:url", content: metadata.siteUrl },
+            { property: "og:url", content: siteUrl },
             {
               property: "og:image",
               content: previewImage || StellarLogo,
