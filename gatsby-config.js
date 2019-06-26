@@ -99,15 +99,6 @@ module.exports = {
       },
     },
     {
-      // Make sure each locale's sitemap is present in static/robots.txt
-      resolve: "gatsby-plugin-sitemap",
-      options: {
-        output: "/sitemap.es.xml",
-        query: sitemapQuery,
-        serialize: serializeLocale("es"),
-      },
-    },
-    {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `content`,
