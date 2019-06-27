@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet";
 import styled, { ThemeProvider } from "styled-components";
 
 import { NAV_HEIGHT, NAV_THEMES } from "constants/styles";
