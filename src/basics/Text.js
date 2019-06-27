@@ -50,7 +50,7 @@ export const Quote = styled.blockquote`
 
   p {
     font-size: 1.5rem;
-    font-weight: 500;
+    font-weight: normal;
     line-height: 1.29;
     color: ${PALETTE.dark};
     margin-left: 2.4rem;
@@ -210,4 +210,10 @@ export const HorizontalRule = styled.hr`
   margin: 2rem 0;
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border};
+`;
+export const Sup = styled.sup`
+  font-size: 0.687rem;
+  color: ${PALETTE.yellow};
+  font-weight: bold;
+  padding-left 2px;
 `;
