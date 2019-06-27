@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 
 import { MEDIA_QUERIES, PALETTE } from "constants/styles";
 
+import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
 
 export const H2 = styled(BasicH2)`
@@ -9,7 +10,7 @@ export const H2 = styled(BasicH2)`
   color: ${({ theme }) => theme.medium};
 `;
 
-export const NavImage = styled.img`
+export const NavImage = styled(Image)`
   width: 100%;
   margin-top: 1.5rem;
   @media (${MEDIA_QUERIES.ltLaptop}) {
