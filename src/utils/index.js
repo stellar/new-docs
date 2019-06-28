@@ -24,3 +24,27 @@ export const getCurrentYear = () => new Date().getFullYear();
  */
 export const getRandomValue = (min, max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
+
+/**
+ * @desc Shorten large numbers into abbreviations (i.e. 1,500 = 1.5k)
+ * @param {number} number - the number to shorten
+ * @return {string} a number with a symbol
+ */
+export const abbreviateNumber = (number) => {
+  const newVal = parseInt(number, 10);
+  const suffixes = ["", "k", "m", "b", "t"];
+  // eslint-disable-next-line prefer-template
+  const suffixNum = Math.floor(("" + newVal).length / 3);
+  const shortValue = parseFloat(
+    (suffixNum !== 0 ? newVal / 1000 ** suffixNum : newVal).toPrecision(5),
+  );
+  return shortValue + suffixes[suffixNum];
+};
+
+/**
+ * @desc Add a comma in every 3 digit (i.e. 26000 = 26,000)
+ * @param {number} number - the number to apply a comma
+ * @return {string} a number with a comma
+ */
+export const numberWithCommas = (number) =>
+  number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

@@ -1,3 +1,5 @@
+import tinycolor from "tinycolor2";
+
 export const PALETTE = {
   white: "#ffffff",
   dark: "#000000",
@@ -45,6 +47,7 @@ export const SCREEN_SIZES = {
 };
 
 export const MEDIA_QUERIES = {
+  ltMobile: `max-width: ${SCREEN_SIZES.mobile}px`,
   gtMobile: `min-width: ${SCREEN_SIZES.mobile}px`,
   ltTablet: `max-width: ${SCREEN_SIZES.tablet}px`,
   gtTablet: `min-width: ${SCREEN_SIZES.tablet}px`,
@@ -65,6 +68,7 @@ export const Z_INDEXES = {
 
 export const CSS_TRANSITION_SPEED = {
   default: "250ms",
+  slow: "500ms",
 };
 
 export const CSS_TRANSITION_DELAY = {
@@ -86,7 +90,9 @@ export const NAV_THEMES = {
   default: {
     background: THEME.body,
     border: THEME.border,
-    link: THEME.text,
+    link: tinycolor(THEME.text)
+      .setAlpha(0.7)
+      .toRgbString(),
     cta: {
       body: PALETTE.yellow,
       text: PALETTE.light,
@@ -96,7 +102,9 @@ export const NAV_THEMES = {
   dark: {
     background: PALETTE.dark,
     border: PALETTE.darkGrey,
-    link: "#bbbbbb",
+    link: tinycolor(PALETTE.light)
+      .setAlpha(0.8)
+      .toRgbString(),
     cta: {
       body: PALETTE.purple,
       text: PALETTE.light,
