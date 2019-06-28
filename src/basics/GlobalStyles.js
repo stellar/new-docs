@@ -15,6 +15,8 @@ const GlobalStyles = createGlobalStyle`
     padding: 0;
     margin: 0;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   ${styledNormalize}
   body,
