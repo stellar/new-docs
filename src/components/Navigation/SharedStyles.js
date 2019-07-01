@@ -19,9 +19,12 @@ export const NavImage = styled(Image)`
 `;
 
 export const Block = styled.div`
-  margin: 0 auto 2rem;
-  @media (${MEDIA_QUERIES.gtLaptop}) {
-    width: 23rem;
+  width: 23rem;
+  margin: 0 auto 2.5rem;
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    width: inherit;
+    margin: 0 auto 1.5rem;
+    padding: 0 0.625rem 2.5rem;
   }
 `;
 
@@ -54,7 +57,9 @@ export const NavItem = styled.div`
       : ""};
 
   @media (${MEDIA_QUERIES.ltLaptop}) {
+    font-weight: bold;
     font-size: 3.75rem;
-    padding: 0.5rem 0;
+    padding: 0.1rem 0;
+    margin: 0 0.5rem;
   }
 `;
