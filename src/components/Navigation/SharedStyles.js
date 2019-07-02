@@ -58,8 +58,10 @@ export const NavItem = styled.div`
 
   @media (${MEDIA_QUERIES.ltLaptop}) {
     font-weight: bold;
-    font-size: 3.75rem;
+    font-size: 3.5rem;
     padding: 0.1rem 0;
     margin: 0 0.5rem;
+    color: ${({ theme }) => theme.text};
+    opacity: 0.8;
   }
 `;
