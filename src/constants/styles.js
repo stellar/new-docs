@@ -5,6 +5,7 @@ export const PALETTE = {
   dark: "#000000",
   lightBlack: "#1e1e1e",
   lightestGrey: "#cccccc",
+  notQuiteLightestGray: "#d8d8d8",
   lighterGrey: "#f4f4f3",
   lightGrey: "#999999",
   mediumGrey: "#979797",
@@ -133,5 +134,11 @@ export const SUBPAGE_THEMES = {
     background: "", // Brought in on lumen page as an optimization
     fgColor: PALETTE.light,
     categoryColor: PALETTE.lightPurple,
+  },
+  bland: {
+    background: PALETTE.light,
+    fgColor: PALETTE.dark,
+    categoryColor: PALETTE.notQuiteLightestGray,
+    isTextFilled: true,
   },
 };
