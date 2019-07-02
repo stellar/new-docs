@@ -45,6 +45,15 @@ const GlobalStyles = createGlobalStyle`
       url("/fonts/suisseintl-regular-webfont.woff2") format("woff2");
     font-weight: 400;
   }
+  @font-face {
+    font-display: swap;
+    font-family: suisse;
+    font-style: italic
+    src:
+      url("/fonts/suisseintl-regularitalic-webfont.woff") format("woff"),
+      url("/fonts/suisseintl-regularitalic-webfont.woff2") format("woff2");
+    font-weight: 400;
+  }
 
   @font-face {
     font-display: swap;
@@ -54,6 +63,15 @@ const GlobalStyles = createGlobalStyle`
       url("/fonts/suisseintl-light-webfont.woff2") format("woff2");
     font-weight: 300;
   }
+  @font-face {
+    font-display: swap;
+    font-family: suisse;
+    font-style: italic
+    src:
+      url("/fonts/suisseintl-lightitalic-webfont.woff") format("woff"),
+      url("/fonts/suisseintl-lightitalic-webfont.woff2") format("woff2");
+    font-weight: 300;
+  }
 
   @font-face {
     font-display: swap;
@@ -61,6 +79,15 @@ const GlobalStyles = createGlobalStyle`
     src:
       url("/fonts/suisseintl-semibold-webfont.woff") format("woff"),
       url("/fonts/suisseintl-semibold-webfont.woff2") format("woff2");
+    font-weight: 500;
+  }
+  @font-face {
+    font-display: swap;
+    font-family: suisse;
+    font-style: italic
+    src:
+      url("/fonts/suisseintl-semibolditalic-webfont.woff") format("woff"),
+      url("/fonts/suisseintl-semibolditalic-webfont.woff2") format("woff2");
     font-weight: 500;
   }
 

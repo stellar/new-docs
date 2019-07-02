@@ -3,7 +3,6 @@ import { PALETTE, MEDIA_QUERIES } from "constants/styles";
 
 const textStyles = css`
   line-height: 1.5;
-  letter-spacing: -0.4px;
   color: ${({ theme }) => theme.text};
 `;
 
@@ -78,7 +77,6 @@ export const List = styled.ul`
     &:before {
       color: ${PALETTE.yellow};
       line-height: 1.5;
-      font-size: 1.1rem;
       content: "\\002022";
       position: absolute;
       left: 0;
@@ -117,7 +115,6 @@ export const Small = styled.small`
 `;
 export const ListItem = styled.li`
   color: ${({ theme }) => theme.darkGrey};
-  font-size: 1.1rem;
   line-height: 1.7;
   position: relative;
   padding-bottom: 1rem;

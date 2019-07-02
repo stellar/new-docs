@@ -123,5 +123,11 @@ module.exports = {
         name: `MediumBlog`,
       },
     },
+    {
+      resolve: "gatsby-plugin-google-analytics",
+      options: {
+        trackingId: "UA-53373928-4",
+      },
+    },
   ],
 };
