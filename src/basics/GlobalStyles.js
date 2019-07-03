@@ -38,7 +38,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   @font-face {
-    font-display: swap;
+    font-display: block;
     font-family: suisse;
     src:
       url("/fonts/suisseintl-regular-webfont.woff") format("woff"),
@@ -74,7 +74,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   @font-face {
-    font-display: swap;
+    font-display: block;
     font-family: suisse;
     src:
       url("/fonts/suisseintl-semibold-webfont.woff") format("woff"),
