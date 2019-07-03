@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { PALETTE, MEDIA_QUERIES } from "constants/styles";
+import { PALETTE, MEDIA_QUERIES, FONT_WEIGHT } from "constants/styles";
 
 const textStyles = css`
   line-height: 1.5;
@@ -49,7 +49,7 @@ export const Quote = styled.blockquote`
 
   p {
     font-size: 1.5rem;
-    font-weight: normal;
+    font-weight: ${FONT_WEIGHT.normal};
     line-height: 1.29;
     color: ${PALETTE.dark};
     margin-left: 2.4rem;
@@ -58,7 +58,7 @@ export const Quote = styled.blockquote`
   ::before {
     content: "“";
     font-size: 4rem;
-    font-weight: 500;
+    font-weight: ${FONT_WEIGHT.bold};
     position: absolute;
     left: -0.2rem;
     top: -1rem;
@@ -98,7 +98,7 @@ export const OrderedList = styled.ol`
     padding-left: 1.2rem;
     counter-increment: my-awesome-counter;
     &:before {
-      font-weight: bold;
+      font-weight: ${FONT_WEIGHT.bold};
       color: ${PALETTE.yellow};
       content: counter(my-awesome-counter);
       position: absolute;
@@ -212,6 +212,6 @@ export const HorizontalRule = styled.hr`
 export const Sup = styled.sup`
   font-size: 0.687rem;
   color: ${PALETTE.yellow};
-  font-weight: bold;
+  font-weight: ${FONT_WEIGHT.bold};
   padding-left 2px;
 `;

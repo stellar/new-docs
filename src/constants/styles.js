@@ -67,6 +67,12 @@ export const Z_INDEXES = {
   tooltip: 30,
 };
 
+export const FONT_WEIGHT = {
+  light: "300",
+  normal: "400",
+  bold: "500",
+};
+
 export const CSS_TRANSITION_SPEED = {
   default: "250ms",
   slow: "500ms",

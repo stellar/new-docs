@@ -1,12 +1,12 @@
 import styled, { css } from "styled-components";
 
-import { MEDIA_QUERIES, PALETTE } from "constants/styles";
+import { MEDIA_QUERIES, PALETTE, FONT_WEIGHT } from "constants/styles";
 
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
 
 export const H2 = styled(BasicH2)`
-  font-weight: normal;
+  font-weight: ${FONT_WEIGHT.normal};
   color: ${({ theme }) => theme.medium};
 `;
 
@@ -58,7 +58,7 @@ export const NavItem = styled.div`
       : ""};
 
   @media (${MEDIA_QUERIES.ltLaptop}) {
-    font-weight: bold;
+    font-weight: ${FONT_WEIGHT.bold};
     font-size: 3.5rem;
     padding: 0.1rem 0;
     margin: 0 0.5rem;

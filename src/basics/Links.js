@@ -6,13 +6,14 @@ import url from "url";
 import { Location } from "@reach/router";
 
 import { defaultLocale } from "constants/i18n";
+import { FONT_WEIGHT } from "constants/styles";
 
 import { LocaleContext } from "components/Locale";
 
 const basicLinkStyles = css`
   text-decoration: none;
   color: inherit;
-  font-weight: bolder;
+  font-weight: ${FONT_WEIGHT.bold};
 `;
 const BasicLink = styled(GatsbyLink)`
   ${basicLinkStyles};
