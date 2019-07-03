@@ -35,6 +35,7 @@ export const NavTab = styled.div`
   white-space: initial;
   @media (${MEDIA_QUERIES.ltLaptop}) {
     margin: 0;
+    grid-template-columns: 1fr;
   }
 `;
 
