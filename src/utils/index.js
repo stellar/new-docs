@@ -32,9 +32,9 @@ export const getRandomValue = (min, max) =>
  */
 export const abbreviateNumber = (number) => {
   const newVal = parseInt(number, 10);
-  const suffixes = ["", "k", "m", "b", "t"];
+  const suffixes = ["", "k", "M", "B", "T"];
   // eslint-disable-next-line prefer-template
-  const suffixNum = Math.floor(("" + newVal).length / 3);
+  const suffixNum = Math.floor((("" + newVal).length - 1) / 3);
   const shortValue = parseFloat(
     (suffixNum !== 0 ? newVal / 1000 ** suffixNum : newVal).toPrecision(5),
   );
