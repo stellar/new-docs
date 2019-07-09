@@ -7,6 +7,9 @@ const {
 } = require("./buildHelpers/createContentfulPages");
 const { createContentfulBlog } = require("./buildHelpers/createContentfulBlog");
 const {
+  createContentfulNewsletter,
+} = require("./buildHelpers/createContentfulNewsletter");
+const {
   createMdxPages,
   getFileName,
   getLocale,
@@ -70,6 +73,13 @@ exports.createPages = async ({ graphql, actions }) => {
             }
           }
         }
+        allContentfulNewsletter {
+          edges {
+            node {
+              slug
+            }
+          }
+        }
       }
     `,
   );
@@ -84,6 +94,9 @@ exports.createPages = async ({ graphql, actions }) => {
   const posts = result.data.allContentfulBlogPost.edges;
   createContentfulPages({ posts, actions, catalogs });
   createContentfulBlog({ posts, actions, catalogs });
+
+  const newsletters = result.data.allContentfulNewsletter.edges;
+  createContentfulNewsletter({ newsletters, actions, catalogs });
 };
 
 exports.onCreatePage = ({ page, actions }) => {
