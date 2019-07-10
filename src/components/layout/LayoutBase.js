@@ -66,8 +66,16 @@ class LayoutBase extends React.Component {
       pageContext && pageContext.urlPath
         ? metadata.siteUrl + pageContext.urlPath
         : metadata.siteUrl;
+    const isContentful = pageContext && pageContext.contentfulLocale;
+    let previewImageUrl;
 
-    const previewImageUrl = previewImage && metadata.siteUrl + previewImage;
+    if (previewImage) {
+      if (isContentful) {
+        previewImageUrl = previewImage;
+      } else {
+        previewImageUrl = metadata.siteUrl + previewImage;
+      }
+    }
 
     return (
       <Locale
