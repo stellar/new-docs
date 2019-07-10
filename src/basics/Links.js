@@ -56,7 +56,7 @@ export const Link = ({ href, newTab, skipLocale, ...props }) => {
 
 Link.propTypes = {
   href: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   newTab: PropTypes.bool,
   skipLocale: PropTypes.bool,
 };

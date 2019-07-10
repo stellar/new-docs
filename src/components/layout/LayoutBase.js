@@ -37,10 +37,17 @@ class LayoutBase extends React.Component {
     setupI18n(locale);
 
     if (this.props.isNavTransparent) {
-      if (!this.heading && process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== "production" && !this.props.leading) {
         // eslint-disable-next-line no-console
         console.error(
           "[LayoutBase]: `isNavTransparent` is true but there's no `leading` element. Did you forget the subpage header?",
+        );
+        return;
+      }
+      if (process.env.NODE_ENV !== "production" && !this.heading) {
+        // eslint-disable-next-line no-console
+        console.error(
+          "[LayoutBase]: `isNavTransparent` is true and there's a `leading` prop, but there's no node for the `leading` element. Did you forget to `forwardRef`?",
         );
         return;
       }
