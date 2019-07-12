@@ -24,10 +24,15 @@ export const BasicImage = styled.img`
   ${basicImageStyles};
 `;
 
-export const Image = ({ src, ...props }) =>
-  src ? <BasicImage {...props} src={src} /> : <GatsbyImageEl {...props} />;
+export const Image = ({ src, imgStyle, ...props }) =>
+  src ? (
+    <BasicImage {...props} src={src} style={imgStyle} />
+  ) : (
+    <GatsbyImageEl {...props} />
+  );
 
 Image.propTypes = {
+  imgStyle: PropTypes.object,
   src: PropTypes.string,
 };
 
