@@ -15,6 +15,10 @@ const {
   getLocale,
 } = require("./buildHelpers/createMdxPages");
 const {
+  createProjectDirectory,
+  queryFragment: projectDirectoryQueryFragment,
+} = require("./buildHelpers/createProjectDirectory");
+const {
   contentfulLocale,
   defaultLocale,
   supportedLanguages,
@@ -80,6 +84,7 @@ exports.createPages = async ({ graphql, actions }) => {
             }
           }
         }
+        ${projectDirectoryQueryFragment}
       }
     `,
   );
@@ -97,6 +102,10 @@ exports.createPages = async ({ graphql, actions }) => {
 
   const newsletters = result.data.allContentfulNewsletter.edges;
   createContentfulNewsletter({ newsletters, actions, catalogs });
+
+  const { totalCount: projectCount } = result.data.allContentfulProject;
+  const byCategory = result.data.allContentfulProjectCategory;
+  createProjectDirectory({ projectCount, byCategory, actions });
 };
 
 exports.onCreatePage = ({ page, actions }) => {
