@@ -6,6 +6,7 @@ import { CSS_TRANSITION_SPEED } from "constants/styles";
 import { ARROW_SIZES } from "constants/arrows";
 
 import ArrowIcon from "assets/icons/arrow.svg";
+import CloseIcon from "assets/icons/close.svg";
 
 const ArrowEl = styled.div`
   display: inline-block;
@@ -20,6 +21,21 @@ const ArrowEl = styled.div`
       ({ big: "20px", medium: "15px", small: "12px" }[props.size])};
     height: 100%;
     stroke: ${(props) => props.arrowColor};
+  }
+`;
+
+const CloseEl = styled.div`
+  position: relative;
+  width: 100%;
+
+  svg {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    stroke: ${(props) => props.color};
   }
 `;
 
@@ -44,4 +60,14 @@ Arrow.propTypes = {
   size: PropTypes.string,
   className: PropTypes.string,
   noMargin: PropTypes.bool,
+};
+
+export const CloseX = ({ color }) => (
+  <CloseEl color={color}>
+    <CloseIcon />
+  </CloseEl>
+);
+
+CloseX.propTypes = {
+  color: PropTypes.string.isRequired,
 };
