@@ -217,5 +217,5 @@ export const Sup = styled.sup`
   font-size: 0.687rem;
   color: ${PALETTE.yellow};
   font-weight: ${FONT_WEIGHT.bold};
-  padding-left 2px;
+  padding-left: 2px;
 `;
