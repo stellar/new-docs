@@ -148,6 +148,10 @@ export const TableCell = styled.td`
   color: ${({ theme }) => theme.darkGrey};
   padding: 1.1rem 1.25rem;
   border-bottom: 1px solid ${PALETTE.lightestGrey};
+
+  @media (${MEDIA_QUERIES.ltMobile}) {
+    padding: 1.1rem 0.9rem;
+  }
 `;
 export const Code = styled.code`
   border-radius: 3px;
