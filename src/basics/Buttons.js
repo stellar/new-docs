@@ -6,6 +6,8 @@ export const BasicButton = styled.button`
   padding: 0;
   color: ${({ theme }) => theme.text};
   letter-spacing: -0.4px;
+  cursor: pointer;
+  font-size: inherit;
 `;
 export const Button = styled(BasicButton)`
   border: none;

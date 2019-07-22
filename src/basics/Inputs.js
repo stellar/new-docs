@@ -2,19 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+import { ARROW_SIZES } from "constants/arrows";
 import { FONT_WEIGHT, PALETTE } from "constants/styles";
+
+import { Arrow } from "basics/Icons";
 
 const SelectWrapperEl = styled.div`
   position: relative;
   margin-bottom: 2rem;
-
-  &:before {
-    content: "⬇";
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    color: ${PALETTE.yellow};
-  }
 `;
 const LabelEl = styled.label`
   font-size: 0.875rem;
@@ -32,6 +27,13 @@ const SelectEl = styled.select`
   border-radius: 0;
   appearance: none;
 `;
+const ArrowEl = styled(Arrow)`
+  transform: rotate(90deg);
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  color: ${PALETTE.yellow};
+`;
 
 export const Select = React.forwardRef(
   ({ children, className, label, ...props }, ref) => (
@@ -42,6 +44,7 @@ export const Select = React.forwardRef(
           {children}
         </SelectEl>
       </LabelEl>
+      <ArrowEl size={ARROW_SIZES.small} arrowColor={PALETTE.yellow} />
     </SelectWrapperEl>
   ),
 );
