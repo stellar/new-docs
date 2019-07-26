@@ -23,11 +23,13 @@ export const H1 = styled.h1`
   font-size: 2.5rem;
   margin: 1.25em 0 0.67em;
   letter-spacing: -1.2px;
+  font-weight: ${FONT_WEIGHT.bold};
 `;
 export const H2 = styled.h2`
   ${headingBase};
   margin: 3.125rem 0 1.56rem;
   letter-spacing: -1.2px;
+  font-weight: ${FONT_WEIGHT.bold};
 `;
 export const H3 = styled.h3`
   ${headingBase};
