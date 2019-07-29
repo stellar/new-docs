@@ -203,7 +203,9 @@ export const Preformatted = styled.pre`
   }
 `;
 export const Italic = styled.em``;
-export const Bold = styled.strong``;
+export const Bold = styled.strong`
+  font-weight: ${FONT_WEIGHT.bold};
+`;
 export const Muted = styled(Text).attrs(() => ({ as: "span" }))`
   color: ${({ theme }) => theme.medium};
 `;
