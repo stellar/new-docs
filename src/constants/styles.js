@@ -86,6 +86,7 @@ export const CSS_TRANSITION_DELAY = {
 };
 
 export const NAV_HEIGHT = 80;
+export const NAV_HEIGHT_WITH_BANNER = 120;
 
 export const DEFAULT_COLUMN_WIDTH = {
   leftColumn: 15,
