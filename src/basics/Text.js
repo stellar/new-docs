@@ -73,9 +73,23 @@ export const Quote = styled.blockquote`
 `;
 export const List = styled.ul`
   padding: 0;
+`;
+export const OrderedList = styled.ol`
+  padding: 0;
+`;
+export const ListItem = styled.li`
+  color: ${({ theme }) => theme.darkGrey};
+  line-height: 1.7;
+  position: relative;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  list-style: none;
 
-  li {
+  ${(props) =>
+    props.hasDot !== false &&
+    css`${List} & {
     padding-left: 1rem;
+
     &:before {
       color: ${PALETTE.yellow};
       line-height: 1.5;
@@ -93,10 +107,8 @@ export const List = styled.ul`
       padding-left: 1.2rem;
     }
   }
-`;
-export const OrderedList = styled.ol`
-  padding: 0;
-  li {
+
+  ${OrderedList} & {
     padding-left: 1.2rem;
     counter-increment: my-awesome-counter;
     &:before {
@@ -106,26 +118,28 @@ export const OrderedList = styled.ol`
       position: absolute;
       left: 0;
     }
+    `}
 
     @media (${MEDIA_QUERIES.gtTablet}) {
-      padding-left: 1.4rem;
+      ${(props) =>
+        props.hasDot !== false
+          ? `padding-left: .4rem`
+          : `padding-left: 1.4rem;`};
     }
   }
-`;
-export const Small = styled.small`
-  font-size: 75%;
-`;
-export const ListItem = styled.li`
-  color: ${({ theme }) => theme.darkGrey};
-  line-height: 1.7;
-  position: relative;
-  padding-bottom: 1rem;
-  list-style: none;
 
   @media (${MEDIA_QUERIES.ltTablet}) {
     line-height: 1.5;
     font-size: 1rem;
   }
+
+  & input[type=checkbox] {
+    margin-left: -0.15rem;
+    margin-right: .15rem;
+  }
+`;
+export const Small = styled.small`
+  font-size: 75%;
 `;
 export const Table = styled.table`
   word-break: normal;
