@@ -122,7 +122,7 @@ export const ListItem = styled.li`
 
     @media (${MEDIA_QUERIES.gtTablet}) {
       ${(props) =>
-        props.hasDot !== false
+        props.hasDot === false
           ? `padding-left: .4rem`
           : `padding-left: 1.4rem;`};
     }
