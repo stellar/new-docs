@@ -27,7 +27,6 @@ const El = styled.div`
 const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
 
 class LayoutBase extends React.Component {
-  subpageHeading = null;
   state = {
     scrollLimit: 1,
   };
@@ -52,9 +51,12 @@ class LayoutBase extends React.Component {
         return;
       }
       const { height } = this.heading.getBoundingClientRect();
-      this.setState({ scrollLimit: height - NAV_HEIGHT });
+      this.setState({
+        scrollLimit: height - NAV_HEIGHT,
+      });
     }
   }
+
   render() {
     const {
       metadata,
@@ -143,6 +145,12 @@ class LayoutBase extends React.Component {
                 scrollLimit: this.state.scrollLimit,
                 ref: (node) => {
                   this.heading = node;
+
+                  const { ref } = leading;
+                  if (ref) {
+                    ref.current = node;
+                  }
+                  return ref;
                 },
               })}
             {children}
