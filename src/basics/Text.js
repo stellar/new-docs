@@ -71,61 +71,63 @@ export const Quote = styled.blockquote`
     width: 80%;
   }
 `;
-export const List = styled.ul`
+
+const listBase = css`
   padding: 0;
-
-  li {
-    padding-left: 1rem;
-    &:before {
-      color: ${PALETTE.yellow};
-      line-height: 1.5;
-      content: "\\002022";
-      position: absolute;
-      left: 0;
-
-      @media (${MEDIA_QUERIES.gtTablet}) {
-        font-size: 1.5rem;
-        line-height: 1;
-      }
-    }
-
-    @media (${MEDIA_QUERIES.gtTablet}) {
-      padding-left: 1.2rem;
-    }
-  }
+  padding-left: 2rem;
+`;
+export const List = styled.ul`
+  ${listBase}
 `;
 export const OrderedList = styled.ol`
-  padding: 0;
-  li {
-    padding-left: 1.2rem;
-    counter-increment: my-awesome-counter;
-    &:before {
-      font-weight: ${FONT_WEIGHT.bold};
-      color: ${PALETTE.yellow};
-      content: counter(my-awesome-counter);
-      position: absolute;
-      left: 0;
-    }
+  ${listBase}
+`;
+const lineHeight = 1.5;
+const bulletPosition = css`
+  position: absolute;
+  left: -2rem;
+`;
+export const ListItem = styled.li`
+  color: ${({ theme }) => theme.darkGrey};
+  line-height: ${lineHeight};
+  position: relative;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  list-style: none;
 
-    @media (${MEDIA_QUERIES.gtTablet}) {
-      padding-left: 1.4rem;
-    }
+  ${(props) =>
+    props.hasDot !== false &&
+    css`
+      ${List} > &:before {
+        font-size: 1.5rem;
+        line-height: 0.9;
+        color: ${PALETTE.darkGray};
+        content: "\\002022";
+        ${bulletPosition}
+      }
+
+      ${OrderedList} > &:before {
+        counter-increment: ordered-list-counter;
+        line-height: ${lineHeight};
+        font-weight: ${FONT_WEIGHT.bold};
+        color: ${PALETTE.darkGray};
+        content: counter(ordered-list-counter);
+        ${bulletPosition}
+      }
+    `}
+
+  @media (${MEDIA_QUERIES.ltTablet}) {
+    font-size: 1rem;
+  }
+
+  & input[type=checkbox] {
+    ${bulletPosition}
+    margin-top: .25rem;
+    margin-left: -.125rem;
   }
 `;
 export const Small = styled.small`
   font-size: 75%;
-`;
-export const ListItem = styled.li`
-  color: ${({ theme }) => theme.darkGrey};
-  line-height: 1.7;
-  position: relative;
-  padding-bottom: 1rem;
-  list-style: none;
-
-  @media (${MEDIA_QUERIES.ltTablet}) {
-    line-height: 1.5;
-    font-size: 1rem;
-  }
 `;
 export const Table = styled.table`
   word-break: normal;
