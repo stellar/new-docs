@@ -71,13 +71,10 @@ export const Quote = styled.blockquote`
     width: 80%;
   }
 `;
+
 const listBase = css`
   padding: 0;
-  padding-left: 1rem;
-
-  @media (${MEDIA_QUERIES.gtTablet}) {
-    padding-left: 1.2rem;
-  }
+  padding-left: 2rem;
 `;
 export const List = styled.ul`
   ${listBase}
@@ -86,6 +83,10 @@ export const OrderedList = styled.ol`
   ${listBase}
 `;
 const lineHeight = 1.5;
+const bulletPosition = css`
+  position: absolute;
+  left: -2rem;
+`;
 export const ListItem = styled.li`
   color: ${({ theme }) => theme.darkGrey};
   line-height: ${lineHeight};
@@ -100,20 +101,18 @@ export const ListItem = styled.li`
       ${List} > &:before {
         font-size: 1.5rem;
         line-height: 0.9;
-        color: ${PALETTE.yellow};
+        color: ${PALETTE.darkGray};
         content: "\\002022";
-        position: absolute;
-        left: -1rem;
+        ${bulletPosition}
       }
 
       ${OrderedList} > &:before {
         counter-increment: ordered-list-counter;
         line-height: ${lineHeight};
         font-weight: ${FONT_WEIGHT.bold};
-        color: ${PALETTE.yellow};
+        color: ${PALETTE.darkGray};
         content: counter(ordered-list-counter);
-        position: absolute;
-        left: -1rem;
+        ${bulletPosition}
       }
     `}
 
@@ -122,8 +121,7 @@ export const ListItem = styled.li`
   }
 
   & input[type=checkbox] {
-    position: absolute;
-    left: -1rem;
+    ${bulletPosition}
     margin-top: .25rem;
     margin-left: -.125rem;
   }
