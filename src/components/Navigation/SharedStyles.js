@@ -13,18 +13,20 @@ export const H2 = styled(BasicH2)`
 export const NavImage = styled(Image)`
   width: 100%;
   margin-top: 1.5rem;
+
   @media (${MEDIA_QUERIES.ltLaptop}) {
-    display: none;
+    display: none !important;
   }
 `;
 
 export const Block = styled.div`
   width: 23rem;
   margin: 0 auto 2.5rem;
+
   @media (${MEDIA_QUERIES.ltLaptop}) {
     width: inherit;
     margin: 0 auto 1.5rem;
-    padding: 0 0.625rem 2.5rem;
+    padding: 0 1.125rem 2.5rem;
   }
 `;
 
