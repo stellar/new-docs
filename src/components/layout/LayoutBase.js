@@ -2,10 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Helmet } from "react-helmet";
 import styled, { ThemeProvider } from "styled-components";
+import { t } from "@lingui/macro";
 
 import { NAV_HEIGHT, NAV_THEMES } from "constants/styles";
 
-import { setup as setupI18n } from "helpers/translate";
+import translate, { setup as setupI18n } from "helpers/translate";
 
 import faviconIco from "assets/favicon/favicon.ico";
 import favicon16 from "assets/favicon/favicon-16x16.png";
@@ -16,6 +17,8 @@ import favicon192 from "assets/favicon/android-chrome-192x192.png";
 import favicon512 from "assets/favicon/android-chrome-512x512.png";
 import StellarLogo from "assets/images/stellar-logo.png";
 
+import { Link } from "basics/Links";
+
 import Locale from "components/Locale";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
@@ -24,7 +27,25 @@ const El = styled.div`
   overflow: hidden;
   ${({ padNav }) => padNav && `padding-top: 5rem;`}
 `;
-const ModalTargetEl = styled.div.attrs({ id: "modal" })``;
+const contentId = "content";
+const SkipToContentEl = styled(Link).attrs({
+  href: `#${contentId}`,
+  children: translate._(t`Skip to content`),
+})`
+  position: absolute;
+  left: -1000rem;
+
+  &:focus,
+  &:active {
+    position: fixed;
+    left: 1rem;
+    top: 1rem;
+    padding: 1rem;
+    z-index: 1000;
+    color: white;
+    text-shadow: 0 0 4px black;
+  }
+`;
 
 class LayoutBase extends React.Component {
   state = {
@@ -133,13 +154,14 @@ class LayoutBase extends React.Component {
             { rel: "icon", href: favicon512, type: "image/x-icon" },
           ]}
         />
+        <SkipToContentEl />
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
           <Navigation
             scrollOpacity={isNavTransparent ? this.state.scrollLimit : 0}
           />
         </ThemeProvider>
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-          <El padNav={!isNavTransparent}>
+          <El id={contentId} padNav={!isNavTransparent}>
             {leading &&
               React.cloneElement(leading, {
                 scrollLimit: this.state.scrollLimit,
@@ -158,7 +180,6 @@ class LayoutBase extends React.Component {
           </El>
         </ThemeProvider>
         <Footer />
-        <ModalTargetEl />
       </Locale>
     );
   }
