@@ -80,6 +80,7 @@ export const List = styled.ul`
   ${listBase}
 `;
 export const OrderedList = styled.ol`
+  counter-reset: ordered-list-counter;
   ${listBase}
 `;
 const lineHeight = 1.5;
@@ -111,8 +112,15 @@ export const ListItem = styled.li`
         line-height: ${lineHeight};
         font-weight: ${FONT_WEIGHT.bold};
         color: ${PALETTE.darkGray};
-        content: counter(ordered-list-counter);
+        content: counter(ordered-list-counter)".";
         ${bulletPosition}
+      }
+
+      ${OrderedList} ${OrderedList} > &:before {
+        content: counter(ordered-list-counter, lower-roman);
+      }
+      ${OrderedList} ${OrderedList} ${OrderedList} > &:before {
+        content: counter(ordered-list-counter, lower-alpha);
       }
     `}
 

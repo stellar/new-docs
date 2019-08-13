@@ -6,6 +6,7 @@ import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
 
 export const H2 = styled(BasicH2)`
+  margin-top: 1rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${({ theme }) => theme.medium};
 `;
@@ -20,11 +21,11 @@ export const NavImage = styled(Image)`
 `;
 
 export const Block = styled.div`
-  width: 23rem;
-  margin: 0 auto 2.5rem;
+  max-width: 23rem;
+  margin: 0 auto;
 
   @media (${MEDIA_QUERIES.ltLaptop}) {
-    width: inherit;
+    max-width: inherit;
     margin: 0 auto 1.5rem;
     padding: 0 1.125rem 2.5rem;
   }
@@ -32,7 +33,7 @@ export const Block = styled.div`
 
 export const NavTab = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(27rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
   margin: 0 -1rem;
   white-space: initial;
   @media (${MEDIA_QUERIES.ltLaptop}) {
