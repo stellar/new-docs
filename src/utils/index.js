@@ -48,3 +48,44 @@ export const abbreviateNumber = (number) => {
  */
 export const numberWithCommas = (number) =>
   number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+/**
+ * @desc Take a value in a range and return a number from 0 to 1 indicating where that value was located in that range
+ * @param {number} value - value that you would like to normalize
+ * @param {number} min - minimum value of the range
+ * @param {number} max - maximum value of the range
+ * @return {number} a number in between 0 to 1
+ */
+export const normalize = (value, min, max) => (value - min) / (max - min);
+
+/**
+ * @desc Linear Interpolation function - Start with a range and a normalized value and it will return the value in that range that the normalized value points to
+ * @param {number} norm - normalized value
+ * @param {number} min - minimum value of the range
+ * @param {number} max - maximum value of the range
+ * @return {number} a relevant ranged number
+ */
+export const lerp = (norm, min, max) => (max - min) * norm + min;
+
+/**
+ * @desc debounce function that limits the rate at which a function can fire
+ * @param {function} func - function that needs to be run
+ * @param {number} wait - wait period in milliseconds
+ * @param {bool} immediate - if true, trigger the function on the leading edge, instead of the trailing
+ * @return {function} - Returns a function, that, as long as it continues to be invoked, will not be triggered.
+ */
+export const debounce = (func, wait, immediate, ...args) => {
+  let timeout;
+  const debounceFn = () => {
+    const context = this;
+    const later = () => {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+  return debounceFn;
+};
