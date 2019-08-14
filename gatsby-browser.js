@@ -1,4 +1,5 @@
 import React from "react";
+import * as Sentry from "@sentry/browser";
 
 import Providers from "./src/components/Providers";
 import { PORTAL_TARGETS } from "./src/constants/domNodes";
@@ -9,6 +10,10 @@ export const wrapRootElement = ({ element }) => (
 );
 
 export const onInitialClientRender = () => {
+  Sentry.init({
+    dsn: "https://6849a482ebf54ae8939fd2d7e1fa29ad@sentry.io/1531056",
+  });
+
   Object.values(PORTAL_TARGETS).forEach((name) => {
     const portal = document.createElement("div");
     portal.id = name;

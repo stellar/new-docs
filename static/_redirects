@@ -70,3 +70,8 @@
 /unsubscribe-fail/                  /contact
 /unsubscribe-success/               /contact
 /viewer/                            https://launch.stellar.org/#/login
+/faq/                               /community/faq
+/about/directory#anchors            /community/businesses
+/about/directory#companies          /community/businesses
+/brand-policy/twitter_avatar/       /brand-policy
+/cn/blog/introducing-stellar/       /blog
