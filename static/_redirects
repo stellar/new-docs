@@ -2,3 +2,71 @@
 /developers/* https://old-6b7119b8cd8b794d77ea37b5168d4500.stellar.org/developers/:splat 200
 /laboratory/* https://old-6b7119b8cd8b794d77ea37b5168d4500.stellar.org/laboratory/:splat 200
 /account-viewer/* https://old-6b7119b8cd8b794d77ea37b5168d4500.stellar.org/account-viewer/:splat 200
+
+# Old links that we need to preserve
+
+/about/                             /foundation
+/about/contact/                     /contact
+/about/contact/request-information/ /contact
+/about/directory                    /community/businesses
+/about/governance/                  /foundation
+/about/jed-mccaleb/                 /foundation/team
+/about/mandate/                     /foundation/programs
+/about/nonprofit-status/            /community/faq
+/about/our-funders/                 /foundation
+/about/press/                       /contact
+/archives/                          /blog
+/blog/*                             /blog
+/blog/lightning-on-stellar-roadmap/ /developers/blog/lightning-on-stellar-roadmap
+/bug-bounty-program/                /community/bug-bounty-program
+/by-laws/                           /foundation
+/community-guidelines/              /community/code-of-conduct
+/community/bitcoin-lumen-program-extension-exchanges/ /foundation/programs
+/community/clusters/                /community
+/community/clusters/                /community
+/community/contributions/           /community
+/community/create-great-tutorials/  /community
+/community/map/                     /community
+/financial-inclusion-roundup-periodic-table-remittances-smart-the-effects-of-poverty/ /blog/*
+/galaxy/                            /developers
+/galaxy/getting-started/            /developers/guides/get-started/
+/glossary/                          /explainers/asset-issuance
+/how-it-works/                      /explainers/asset-issuance
+/how-it-works/powered-by-stellar/   /case-studies/
+/how-it-works/stellar-basics/       /explainers/asset-issuance
+/how-it-works/use-cases/            /case-studies/
+/invites/                           /foundation/programs
+/jobs/                              https://jobs.lever.co/stellar
+/kyc/                               /contact
+/kyc/notify                         /contact
+/kyc/notifytest                     /contact
+/learn/                             /explainers/asset-issuance
+/learn/explainers/                  /explainers/asset-issuance
+/lumens/bitcoin-lumen-program/      /foundation/programs
+/lumens/build                       /foundation/programs
+/lumens/build-6/                    /foundation/programs
+/lumens/ripple-lumen-program/       /foundation/programs
+/lumens/sponsorship/                /foundation/programs
+/lumens/stellar-partnership-grant-program/ /foundation/programs
+/lumens/tradingclients/             /community/businesses
+/lumens/wallets/wallet-listing-guidelines/ /community/wallet-guidelines
+/newsletters/*                      /newsletters
+/newsletters/april-2018-roundup/    /newsletters
+/newsletters/april-2019             /newsletters/april-2019
+/newsletters/may-roundup-2018       /newsletters
+/newsletters/stellar-monthly-roundup-july-2018/ /newsletters/july-2018
+/newsletters/stellar-monthly-roundup-june-2018/ /newsletters/june-2018
+/old-api/                           /developers
+/partnership-grant-recipients/      /foundation/programs
+/sbc7-participation-mentions/       /foundation/programs
+/start/                             /overview
+/stats/                              https://dashboard.stellar.org/
+/stellar-academic-research-program/ /foundation/programs/research-grants
+/stellar-build-challenge-6-honorable-mentions/  /foundation/programs
+/stellar-report-stellarim-bitcoin-indonesia-and-south-africa /blog/*
+/support-form/                      /contact
+/the-internet-software-consortium-isc-open-source-license/ /terms-of-service
+/trademark-brand-policy/            /brand-policy
+/unsubscribe-fail/                  /contact
+/unsubscribe-success/               /contact
+/viewer/                            https://launch.stellar.org/#/login
