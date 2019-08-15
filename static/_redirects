@@ -75,3 +75,17 @@
 /about/directory#companies          /community/businesses
 /brand-policy/twitter_avatar/       /brand-policy
 /cn/blog/introducing-stellar/       /blog
+
+# Horizon error links
+
+/horizon-errors/bad_request /developers/horizon/reference/errors/bad-request.html
+/horizon-errors/before_history /developers/horizon/reference/errors/before-history.html
+/horizon-errors/not_acceptable /developers/horizon/reference/errors/not-acceptable.html
+/horizon-errors/not_found /developers/horizon/reference/errors/not-found.html
+/horizon-errors/not_implemented /developers/horizon/reference/errors/not-implemented.html
+/horizon-errors/rate_limit_exceeded /developers/horizon/reference/errors/rate-limit-exceeded.html
+/horizon-errors/server_error /developers/horizon/reference/errors/server-error.html
+/horizon-errors/stale_history /developers/horizon/reference/errors/stale-history.html
+/horizon-errors/timeout /developers/horizon/reference/errors/timeout.html
+/horizon-errors/transaction_failed /developers/horizon/reference/errors/transaction-failed.html
+/horizon-errors/transaction_malformed /developers/horizon/reference/errors/transaction-malformed.html
