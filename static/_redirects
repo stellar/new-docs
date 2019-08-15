@@ -23,7 +23,6 @@
 /community-guidelines/              /community/code-of-conduct
 /community/bitcoin-lumen-program-extension-exchanges/ /foundation/programs
 /community/clusters/                /community
-/community/clusters/                /community
 /community/contributions/           /community
 /community/create-great-tutorials/  /community
 /community/map/                     /community
@@ -75,6 +74,16 @@
 /about/directory#companies          /community/businesses
 /brand-policy/twitter_avatar/       /brand-policy
 /cn/blog/introducing-stellar/       /blog
+/blog/author/*						/blog
+/wp-content/uploads/2018/07/stellar-compliance-sharia.pdf	/old-content/2018/07/stellar-compliance-sharia.pdf
+/how-it-works/stellar-basics/explainers/	/explainers/asset-issuance
+/stories/how-it-works/				/explainers/asset-issuance
+/blog/category/*					/blog
+/developer/							/developers
+/about/kori-higgins/				/foundation/team
+/wp-content/uploads/2016/08/Receiving-Payment-Flow-Detailed.jpg	/old-content/2016/08/Receiving-Payment-Flow-Detailed.jpg
+/wp-content/uploads/2016/08/Sending-Payment-Flow-Detailed.jpg	/old-content/2016/08/Sending-Payment-Flow-Detailed.jpg
+/wp-content/uploads/2016/06/Stellar-Ecosystem-v031.png	/old-content/2016/06/Stellar-Ecosystem-v031.png
 
 # Horizon error links
 
