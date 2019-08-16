@@ -24,7 +24,7 @@ import Navigation from "components/Navigation";
 import Footer from "components/Footer";
 
 const El = styled.div`
-  overflow: ${(props) => (props.noLayoutOverflow ? "visible" : "hidden")};
+  overflow: hidden;
   ${({ padNav }) => padNav && `padding-top: 5rem;`}
 `;
 const contentId = "content";
@@ -90,7 +90,6 @@ class LayoutBase extends React.Component {
       previewImage,
       navTheme = NAV_THEMES.default,
       isNavTransparent = false,
-      noLayoutOverflow,
     } = this.props;
 
     const siteUrl =
@@ -162,11 +161,7 @@ class LayoutBase extends React.Component {
           />
         </ThemeProvider>
         <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-          <El
-            id={contentId}
-            padNav={!isNavTransparent}
-            noLayoutOverflow={noLayoutOverflow}
-          >
+          <El id={contentId} padNav={!isNavTransparent}>
             {leading &&
               React.cloneElement(leading, {
                 scrollLimit: this.state.scrollLimit,
@@ -194,7 +189,6 @@ LayoutBase.propTypes = {
   leading: PropTypes.node,
   children: PropTypes.node.isRequired,
   trailing: PropTypes.node,
-  noLayoutOverflow: PropTypes.bool,
   metadata: PropTypes.shape({
     title: PropTypes.node.isRequired,
     description: PropTypes.node.isRequired,
