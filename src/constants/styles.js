@@ -41,6 +41,7 @@ export const THEME = {
 
 // Screen sizes are minimums. Anything between that and the next size.
 export const SCREEN_SIZES = {
+  xs_mobile: 320,
   mobile: 420,
   tablet: 769,
   laptop: 1025,
@@ -48,6 +49,8 @@ export const SCREEN_SIZES = {
 };
 
 export const MEDIA_QUERIES = {
+  ltXSMobile: `max-width: ${SCREEN_SIZES.xs_mobile}px`,
+  gtXSMobile: `min-width: ${SCREEN_SIZES.xs_mobile}px`,
   ltMobile: `max-width: ${SCREEN_SIZES.mobile}px`,
   gtMobile: `min-width: ${SCREEN_SIZES.mobile}px`,
   ltTablet: `max-width: ${SCREEN_SIZES.tablet}px`,

@@ -9,7 +9,9 @@ import ArrowIcon from "assets/icons/arrow.svg";
 import CloseIcon from "assets/icons/close.svg";
 
 const ArrowEl = styled.div`
-  display: inline-block;
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
   margin-right: ${(props) => (props.noMargin ? "0" : "0.5rem")};
   transform: translateX(0);
   transition: transform ${CSS_TRANSITION_SPEED.default} linear;
@@ -19,7 +21,8 @@ const ArrowEl = styled.div`
     stroke-width: 11px;
     width: ${(props) =>
       ({ big: "20px", medium: "15px", small: "12px" }[props.size])};
-    height: 100%;
+    height: ${(props) =>
+      ({ big: "20x", medium: "15px", small: "12px" }[props.size])};
     stroke: ${(props) => props.arrowColor};
   }
 `;
