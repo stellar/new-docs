@@ -85,6 +85,12 @@
 /wp-content/uploads/2016/08/Receiving-Payment-Flow-Detailed.jpg	/old-content/2016/08/Receiving-Payment-Flow-Detailed.jpg
 /wp-content/uploads/2016/08/Sending-Payment-Flow-Detailed.jpg	/old-content/2016/08/Sending-Payment-Flow-Detailed.jpg
 /wp-content/uploads/2016/06/Stellar-Ecosystem-v031.png	/old-content/2016/06/Stellar-Ecosystem-v031.png
+/cn/*								/
+/getting-started/hayashi-architecture-ii/	/old-content/2015/04/hayashi-architecture-ii.png
+/getting-started/hayashi/					/old-content/2015/03/hayashi.png
+/wp-content/themes/stellar/slide/?show=how-it-works	/overview
+/api/								/developers/reference/
+/stories/adventures-in-galactic-consensus-chapter-1	/developers/guides/concepts/scp.html
 
 # Horizon error links
 
