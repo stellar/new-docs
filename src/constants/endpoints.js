@@ -8,6 +8,6 @@ export const URL_ENDPOINTS = {
   ledger: {
     orbitLens:
       "https://api.stellar.expert/explorer/public/ledger/ledger-stats/24h",
-    horizon: "https://horizon.stellar.org/ledgers?order=desc&limit=2",
+    horizon: "https://horizon.stellar.org/ledgers",
   },
 };

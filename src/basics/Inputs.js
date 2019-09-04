@@ -30,8 +30,8 @@ const SelectEl = styled.select`
 const ArrowEl = styled(Arrow)`
   transform: rotate(90deg);
   position: absolute;
-  right: 1rem;
-  top: 50%;
+  right: 0.5rem;
+  bottom: 1.125rem;
   color: ${PALETTE.yellow};
 `;
 

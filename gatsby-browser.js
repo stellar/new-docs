@@ -10,9 +10,11 @@ export const wrapRootElement = ({ element }) => (
 );
 
 export const onInitialClientRender = () => {
-  Sentry.init({
-    dsn: "https://6849a482ebf54ae8939fd2d7e1fa29ad@sentry.io/1531056",
-  });
+  if (process.env.NODE_ENV === "production") {
+    Sentry.init({
+      dsn: "https://6849a482ebf54ae8939fd2d7e1fa29ad@sentry.io/1531056",
+    });
+  }
 
   Object.values(PORTAL_TARGETS).forEach((name) => {
     const portal = document.createElement("div");

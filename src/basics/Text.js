@@ -1,5 +1,10 @@
+import React from "react";
 import styled, { css } from "styled-components";
+
 import { PALETTE, MEDIA_QUERIES, FONT_WEIGHT } from "constants/styles";
+
+import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { useMatchMedia } from "helpers/useMatchMedia";
 
 const textStyles = css`
   line-height: 1.5;
@@ -43,6 +48,12 @@ export const H5 = styled.h5`
 export const H6 = styled.h6`
   ${headingBase};
 `;
+export const LinkedH1 = makeLinkedHeader(H1);
+export const LinkedH2 = makeLinkedHeader(H2);
+export const LinkedH3 = makeLinkedHeader(H3);
+export const LinkedH4 = makeLinkedHeader(H4);
+export const LinkedH5 = makeLinkedHeader(H5);
+export const LinkedH6 = makeLinkedHeader(H6);
 
 export const Quote = styled.blockquote`
   position: relative;
@@ -142,6 +153,8 @@ export const Table = styled.table`
   width: 100%;
   margin-top: 1.5rem;
   border-collapse: collapse;
+  display: block;
+  overflow: auto;
 `;
 export const TableHead = styled.thead``;
 export const TableHeadCell = styled.th`
@@ -227,7 +240,11 @@ export const HorizontalRule = styled.hr`
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border};
 `;
-export const Sup = styled.sup`
+
+export const Sup = styled(({ children, ...props }) => {
+  const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
+  return isMobile ? null : <sup {...props}>{children}</sup>;
+})`
   font-size: 0.687rem;
   color: ${PALETTE.yellow};
   font-weight: ${FONT_WEIGHT.bold};
