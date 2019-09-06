@@ -5,15 +5,7 @@ const {
 } = require("./buildHelpers/serializeSitemap");
 
 // Determine what environment we're running in and what the URL is.
-const {
-  NODE_ENV,
-  URL: NETLIFY_SITE_URL = "https://stellar.org",
-  DEPLOY_PRIME_URL: NETLIFY_DEPLOY_URL = NETLIFY_SITE_URL,
-  CONTEXT: NETLIFY_ENV = NODE_ENV,
-} = process.env;
-const isProdBuild = NODE_ENV === "production";
-const isNetlifyProduction = NETLIFY_ENV === "production";
-const siteUrl = isNetlifyProduction ? NETLIFY_SITE_URL : NETLIFY_DEPLOY_URL;
+const { IS_PROD, SITE_URL } = require("./buildHelpers/env");
 
 // Set up Contentful configuration
 const contentfulConfig = {
@@ -34,7 +26,7 @@ module.exports = {
     title: "Stellar - Develop the world's new financial system",
     description:
       "Stellar is an open platform for building financial products that connect people everywhere.",
-    siteUrl,
+    siteUrl: SITE_URL,
   },
   pathPrefix: "/",
   plugins: [
@@ -76,8 +68,8 @@ module.exports = {
       options: {
         stages: ["build-javascript", "develop"],
         options: {
-          failOnError: isProdBuild,
-          failOnWarning: isProdBuild,
+          failOnError: IS_PROD,
+          failOnWarning: IS_PROD,
         },
       },
     },
@@ -123,11 +115,19 @@ module.exports = {
         name: `MediumBlog`,
       },
     },
-    {
-      resolve: "gatsby-plugin-google-analytics",
-      options: {
-        trackingId: "UA-53373928-1",
-      },
-    },
+    // TODO: Keep an eye on Gatsby's CSP support and remove `unsafe-inline`
+    // https://github.com/bejamas/gatsby-plugin-csp/issues/11
+    // https://github.com/gatsbyjs/gatsby/issues/10890
+    // This plugin isn't working for gatsby scripts, and MDX necessitates
+    // 'unsafe-inline' at the moment.
+    // {
+    //   resolve: "gatsby-plugin-csp",
+    //   options: {
+    //     mergeDefaultDirectives: false,
+    //     mergeStyleHashes: false,
+    //     directives: {
+    //     },
+    //   },
+    // },
   ],
 };

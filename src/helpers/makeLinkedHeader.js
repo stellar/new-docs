@@ -10,6 +10,15 @@ import { Link } from "basics/Links";
 
 import LinkIcon from "assets/icons/link.svg";
 
+// Hash links navigate so that the matching element is at 0px in the window,
+// which puts the section heading behind the navbar. It accounts for padding, but
+// not margin, which means we can cancel those out to adjust the snap position
+// without moving it on the page.
+const ScrollHackEl = styled.div`
+  padding-top: 5rem;
+  margin-top: -5rem;
+`;
+
 export const makeLinkedHeader = (Component) => {
   const El = styled(Component)`
     position: relative;
@@ -37,12 +46,14 @@ export const makeLinkedHeader = (Component) => {
       props.id || slugify(Array.isArray(children) ? children.join() : children);
 
     return (
-      <El id={id} {...props}>
-        <Link href={`#${id}`}>
-          <LinkIcon width={16} height={16} />
-        </Link>
-        {props.children}
-      </El>
+      <ScrollHackEl id={id}>
+        <El {...props}>
+          <Link href={`#${id}`}>
+            <LinkIcon width={16} height={16} />
+          </Link>
+          {props.children}
+        </El>
+      </ScrollHackEl>
     );
   };
   WrappedComponent.propTypes = {
