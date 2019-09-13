@@ -30,7 +30,9 @@
   "devDependencies": {
     "@stellar/eslint-config": "/Users/carlvitullo/workspace/product-conventions/packages/eslint-config/stellar-eslint-config-v1.0.1.tgz",
     "@stellar/prettier-config": "^1.0.1",
-    "prettier": "^1.18.2"
+    "husky": "^3.0.5",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1"
   },
   "keywords": [
     "gatsby"
@@ -48,6 +50,11 @@
   },
   "bugs": {
     "url": "https://github.com/stellar/docs/issues"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "prettier": "@stellar/prettier-config"
 }
