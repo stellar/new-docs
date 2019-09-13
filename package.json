@@ -1,12 +1,13 @@
 {
-  "name": "gatsby-starter-default",
+  "name": "stellar-docs",
   "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
-  "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "description": "Documentation for the Stellar network.",
+  "version": "0.0.0",
+  "author": "Carl Vitullo <carl@stellar.org>",
   "dependencies": {
     "@mdx-js/mdx": "^1.4.5",
     "@mdx-js/react": "^1.4.5",
+    "eslint-config-airbnb": "^18.0.1",
     "gatsby": "^2.15.14",
     "gatsby-image": "^2.2.18",
     "gatsby-plugin-eslint": "^2.0.5",
@@ -27,13 +28,8 @@
     "styled-components": "^4.3.2"
   },
   "devDependencies": {
-    "@stellar/eslint-config": "^1.0.1",
+    "@stellar/eslint-config": "/Users/carlvitullo/workspace/product-conventions/packages/eslint-config/stellar-eslint-config-v1.0.1.tgz",
     "@stellar/prettier-config": "^1.0.1",
-    "eslint": "^6.3.0",
-    "eslint-config-prettier": "^6.3.0",
-    "eslint-config-react-app": "^5.0.1",
-    "eslint-loader": "^3.0.0",
-    "eslint-plugin-prettier": "^3.1.0",
     "prettier": "^1.18.2"
   },
   "keywords": [

@@ -1,12 +1,14 @@
 const path = require("path");
-const { defaultLocale, supportedLanguages } = require("./i18n");
 const { groupBy } = require("lodash");
+
+const defaultLocale = "en";
 
 exports.getFileName = (node) => {
   switch (node.internal.type) {
     case "File":
       return node.name;
     case "Mdx":
+      console.log("path", node.fileAbsolutePath);
       return node.fileAbsolutePath
         ? path.parse(node.fileAbsolutePath).name
         : null;
@@ -34,7 +36,7 @@ const sourceFolders = [
   },
 ];
 
-exports.createMdxPages = ({ actions, mdxFiles, catalogs }) => {
+exports.createMdxPages = ({ actions, mdxFiles }) => {
   const { createPage } = actions;
 
   // Munge the data so it's easier to work with. Group based on (pre-localized)
@@ -63,14 +65,15 @@ exports.createMdxPages = ({ actions, mdxFiles, catalogs }) => {
     "route",
   );
 
+  console.log(pagesByRoute);
+
   Object.entries(pagesByRoute).forEach(([route, pages]) => {
     // We need to know which languages are translated so we can provide
     // alternates URLs for SEO.
-    const translatedLocales = supportedLanguages.filter((locale) =>
-      pages.some((page) => page.fields.locale === locale),
-    );
+    const translatedLocales = pages.map((page) => page.fields.locale);
     // For each localized page loaded, tell Gatsby about it.
     pages.forEach((page) => {
+      console.log(page);
       const { locale } = page.fields;
       const path = locale === defaultLocale ? route : `/${locale}${route}`;
       const basePage = {
@@ -78,7 +81,6 @@ exports.createMdxPages = ({ actions, mdxFiles, catalogs }) => {
         context: {
           locale,
           urlPath: path,
-          catalog: catalogs[locale],
           id: page.id,
           // List alternate pages so we can include head <link>s to them
           alternateUrls: translatedLocales

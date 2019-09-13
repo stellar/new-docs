@@ -32,7 +32,6 @@ const componentMap = () => ({
   em: styled.em``,
   strong: styled.strong``,
   delete: styled.del``,
-  code: styled.code``,
   hr: styled.hr``,
   a: styled.a``,
   img: styled.img``,
@@ -42,17 +41,16 @@ const Reference = ({ data }) => {
   const { mdx } = data;
 
   return (
-    <MDXProvider components={componentMap}>
-      <ContentEl>
-        <MDXRenderer>{mdx.code.body}</MDXRenderer>
-      </ContentEl>
-    </MDXProvider>
+    <ContentEl>
+      <MDXProvider components={componentMap}>
+        <MDXRenderer>{mdx.body}</MDXRenderer>
+      </MDXProvider>
+    </ContentEl>
   );
 };
 
 Reference.propTypes = {
   data: PropTypes.object.isRequired,
-  pageContext: PropTypes.object.isRequired,
 };
 
 export default Reference;
@@ -60,9 +58,8 @@ export default Reference;
 export const pageQuery = graphql`
   query ReferenceQuery($id: String) {
     mdx(id: { eq: $id }) {
-      code {
-        body
-      }
+      id
+      body
     }
   }
 `;

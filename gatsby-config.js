@@ -1,6 +1,6 @@
-require("dotenv").config()
+require("dotenv").config();
 
-const isProd = process.env.NODE_ENV === "production"
+const isProd = process.env.NODE_ENV === "production";
 
 module.exports = {
   siteMetadata: {
@@ -29,8 +29,15 @@ module.exports = {
     {
       resolve: "gatsby-source-filesystem",
       options: {
-        name: "images",
+        name: "code",
         path: `${__dirname}/src/`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "docs",
+        path: `${__dirname}/docs/`,
       },
     },
     "gatsby-transformer-sharp",
@@ -46,4 +53,4 @@ module.exports = {
       },
     },
   ],
-}
+};
