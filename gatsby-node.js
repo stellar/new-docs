@@ -2,6 +2,7 @@ const Promise = require("bluebird");
 const path = require("path");
 const execa = require("execa");
 
+const { FEATURE_FLAGS } = require("./buildHelpers/env");
 const {
   createContentfulPages,
 } = require("./buildHelpers/createContentfulPages");
@@ -11,6 +12,7 @@ const {
 } = require("./buildHelpers/createContentfulNewsletter");
 const {
   createMdxPages,
+  queryFragment: mdxPagesFragment,
   getFileName,
   getLocale,
 } = require("./buildHelpers/createMdxPages");
@@ -18,6 +20,10 @@ const {
   createProjectDirectory,
   queryFragment: projectDirectoryQueryFragment,
 } = require("./buildHelpers/createProjectDirectory");
+const {
+  createDocsPages,
+  queryFragment: docsQueryFragment,
+} = require("./buildHelpers/createDocsPages");
 const {
   contentfulLocale,
   defaultLocale,
@@ -38,7 +44,11 @@ exports.onCreateNode = ({ node, actions }) => {
     });
   }
   if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
-    const value = path.parse(node.fileAbsolutePath.split("src/content")[1]).dir;
+    const pathSegment = node.fileAbsolutePath.split("src/content")[1] || "";
+    const value = path.parse(pathSegment).dir;
+    if (!value) {
+      return;
+    }
     createNodeField({
       node,
       name: "path",
@@ -55,18 +65,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const result = await graphql(
     `
       {
-        allMdx(filter: { fileAbsolutePath: { ne: null } }) {
-          edges {
-            node {
-              id
-              fileAbsolutePath
-              fields {
-                locale
-                path
-              }
-            }
-          }
-        }
+        ${mdxPagesFragment}
         allContentfulBlogPost {
           edges {
             node {
@@ -85,6 +84,7 @@ exports.createPages = async ({ graphql, actions }) => {
           }
         }
         ${projectDirectoryQueryFragment}
+        ${FEATURE_FLAGS.docs ? docsQueryFragment : ""}
       }
     `,
   );
@@ -93,7 +93,11 @@ exports.createPages = async ({ graphql, actions }) => {
     return Promise.reject(result.errors);
   }
 
-  const mdxFiles = result.data.allMdx.edges;
+  const docs = result.data.docs.edges;
+  createDocsPages({ actions, docs });
+  return;
+
+  const mdxFiles = result.data.mdxPages.edges;
   createMdxPages({ actions, mdxFiles, catalogs });
 
   const posts = result.data.allContentfulBlogPost.edges;

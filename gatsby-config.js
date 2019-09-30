@@ -5,7 +5,7 @@ const {
 } = require("./buildHelpers/serializeSitemap");
 
 // Determine what environment we're running in and what the URL is.
-const { IS_PROD, SITE_URL } = require("./buildHelpers/env");
+const { IS_PROD, SITE_URL, FEATURE_FLAGS } = require("./buildHelpers/env");
 
 // Set up Contentful configuration
 const contentfulConfig = {
@@ -30,6 +30,15 @@ module.exports = {
   },
   pathPrefix: "/",
   plugins: [
+    FEATURE_FLAGS.docs && {
+      resolve: "gatsby-source-git",
+      options: {
+        name: "docs",
+        remote: "https://github.com/vcarl/new-docs.git",
+        branch: "test",
+        patterns: ["**/*.mdx", "**/metadata.json"],
+      },
+    },
     {
       resolve: "gatsby-mdx",
       options: {
@@ -115,6 +124,7 @@ module.exports = {
         name: `MediumBlog`,
       },
     },
+    "gatsby-plugin-folder-metadata",
     // TODO: Keep an eye on Gatsby's CSP support and remove `unsafe-inline`
     // https://github.com/bejamas/gatsby-plugin-csp/issues/11
     // https://github.com/gatsbyjs/gatsby/issues/10890
@@ -129,5 +139,5 @@ module.exports = {
     //     },
     //   },
     // },
-  ],
+  ].filter(Boolean),
 };
