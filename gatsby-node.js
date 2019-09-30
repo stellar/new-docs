@@ -93,9 +93,10 @@ exports.createPages = async ({ graphql, actions }) => {
     return Promise.reject(result.errors);
   }
 
-  const docs = result.data.docs.edges;
-  createDocsPages({ actions, docs });
-  return;
+  if (FEATURE_FLAGS.docs) {
+    const docs = result.data.docs.edges;
+    createDocsPages({ actions, docs });
+  }
 
   const mdxFiles = result.data.mdxPages.edges;
   createMdxPages({ actions, mdxFiles, catalogs });
