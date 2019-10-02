@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled from "styled-components";
-import MDXRenderer from "gatsby-mdx/mdx-renderer";
+import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
 import components from "constants/componentMapping";
@@ -33,7 +33,7 @@ const ApiReference = ({ data, pageContext }) => {
             {referenceDocs.edges.map(({ node }) => (
               <section key={node.id}>
                 <h1>{node.frontmatter.title}</h1>
-                <MDXRenderer>{node.code.body}</MDXRenderer>
+                <MDXRenderer>{node.body}</MDXRenderer>
                 <p>
                   Each of these sections comes from a different markdown file
                 </p>
@@ -64,9 +64,7 @@ export const pageQuery = graphql`
           frontmatter {
             title
           }
-          code {
-            body
-          }
+          body
         }
       }
     }

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled from "styled-components";
-import MDXRenderer from "gatsby-mdx/mdx-renderer";
+import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
 import components from "constants/componentMapping";
@@ -30,7 +30,7 @@ const Documentation = ({ data, pageContext }) => {
         leading={<SubPageHeading pageName="Documentation" />}
         center={
           <ContentEl>
-            <MDXRenderer>{mdx.code.body}</MDXRenderer>
+            <MDXRenderer>{mdx.body}</MDXRenderer>
           </ContentEl>
         }
       />
@@ -52,9 +52,7 @@ export const pageQuery = graphql`
       ...SubpageMetadata
       id
       fileAbsolutePath
-      code {
-        body
-      }
+      body
     }
   }
 `;
