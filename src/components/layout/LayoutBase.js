@@ -145,6 +145,7 @@ class LayoutBase extends React.Component {
             },
           ]}
           link={[
+            { rel: "canonical", href: siteUrl },
             { rel: "shortcut icon", href: faviconIco, type: "image/x-icon" },
             { rel: "icon", href: favicon16, type: "image/x-icon" },
             { rel: "icon", href: favicon32, type: "image/x-icon" },
