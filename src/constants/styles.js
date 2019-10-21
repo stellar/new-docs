@@ -2,6 +2,7 @@ import tinycolor from "tinycolor2";
 
 export const PALETTE = {
   white: "#ffffff",
+  white60: "#f2f2f2",
   light: "#fbfaf7",
   lightestGrey: "#cccccc",
   notQuiteLightestGray: "#d8d8d8",
