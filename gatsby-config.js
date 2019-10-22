@@ -45,7 +45,7 @@ module.exports = {
         gatsbyRemarkPlugins: [
           "gatsby-remark-smartypants",
           {
-            resolve: `gatsby-remark-prismjs`,
+            resolve: "gatsby-remark-prismjs",
             options: {
               showLineNumbers: true,
               noInlineHighlight: true,
@@ -59,7 +59,7 @@ module.exports = {
       options: {
         plugins: [
           {
-            resolve: `gatsby-remark-prismjs`,
+            resolve: "gatsby-remark-prismjs",
             options: {
               showLineNumbers: true,
               noInlineHighlight: true,
@@ -100,16 +100,30 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: "gatsby-source-filesystem",
       options: {
-        name: `content`,
+        name: "content",
         path: `${__dirname}/src/content/`,
       },
     },
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: "gatsby-source-filesystem",
       options: {
-        name: `images`,
+        name: "case-studies",
+        path: `${__dirname}/src/case-studies/`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "explainers",
+        path: `${__dirname}/src/explainers/`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "images",
         path: `${__dirname}/src/assets/images/`,
       },
     },
@@ -118,10 +132,10 @@ module.exports = {
       options: contentfulConfig,
     },
     {
-      resolve: `gatsby-source-rss-feed`,
+      resolve: "gatsby-source-rss-feed",
       options: {
-        url: `https://medium.com/feed/stellar-community`,
-        name: `MediumBlog`,
+        url: "https://medium.com/feed/stellar-community",
+        name: "MediumBlog",
       },
     },
     "gatsby-plugin-folder-metadata",

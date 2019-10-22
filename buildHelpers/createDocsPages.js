@@ -15,6 +15,8 @@ const REFERENCE_ROOT = "src/documentation/reference";
 const isReference = (doc) => doc.relativeDirectory.includes(REFERENCE_ROOT);
 
 const createDocsPages = ({ actions, docs }) => {
+  // TODO: These pages don't support internationalization. This should be
+  // refactored so that it can use createI18nPages.
   const docTemplate = path.resolve(".", "src", "templates", "Documentation.js");
   const apiTemplate = path.resolve(".", "src", "templates", "ApiReference.js");
 

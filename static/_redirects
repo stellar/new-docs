@@ -1,3 +1,5 @@
+/en/* /:splat
+
 # Services still hosted on old infrastructure.
 /developers/learn/* https://old-6b7119b8cd8b794d77ea37b5168d4500.stellar.org/developers/guides/:splat 200
 /developers/* https://old-6b7119b8cd8b794d77ea37b5168d4500.stellar.org/developers/:splat 200

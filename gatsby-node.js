@@ -3,27 +3,39 @@ const path = require("path");
 const execa = require("execa");
 
 const { FEATURE_FLAGS } = require("./buildHelpers/env");
+const { getLocale } = require("./buildHelpers/createMdxPages");
 const {
   createContentfulPages,
+  queryFragment: blogPostsFragment,
 } = require("./buildHelpers/createContentfulPages");
-const { createContentfulBlog } = require("./buildHelpers/createContentfulBlog");
+const {
+  createContentfulBlog,
+  queryFragment: blogListFragment,
+} = require("./buildHelpers/createContentfulBlog");
 const {
   createContentfulNewsletter,
+  queryFragment: newsletterFragment,
 } = require("./buildHelpers/createContentfulNewsletter");
-const {
-  createMdxPages,
-  queryFragment: mdxPagesFragment,
-  getFileName,
-  getLocale,
-} = require("./buildHelpers/createMdxPages");
-const {
-  createProjectDirectory,
-  queryFragment: projectDirectoryQueryFragment,
-} = require("./buildHelpers/createProjectDirectory");
 const {
   createDocsPages,
   queryFragment: docsQueryFragment,
 } = require("./buildHelpers/createDocsPages");
+const {
+  createCaseStudies,
+  queryFragment: caseStudyFragment,
+} = require("./buildHelpers/buildCaseStudies");
+const {
+  createExplainers,
+  queryFragment: explainersFragment,
+} = require("./buildHelpers/buildExplainers");
+const {
+  createMiscContent,
+  queryFragment: miscContentFragment,
+} = require("./buildHelpers/buildMiscContent");
+const {
+  createProjectDirectory,
+  queryFragment: projectDirectoryQueryFragment,
+} = require("./buildHelpers/buildProjectDirectory");
 const {
   contentfulLocale,
   defaultLocale,
@@ -32,57 +44,26 @@ const {
 
 exports.onCreateNode = ({ node, actions }) => {
   const { createNodeField } = actions;
-  const filename = getFileName(node);
-  if (filename) {
-    // For any MDX files, we want to know if they have a locale associated with
-    // them. Pull it from the filename.
-    const locale = getLocale(filename);
+  if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
+    const locale = getLocale(path.parse(node.fileAbsolutePath).base);
     createNodeField({
       node,
       name: "locale",
       value: locale,
     });
   }
-  if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
-    const pathSegment = node.fileAbsolutePath.split("src/content")[1] || "";
-    const value = path.parse(pathSegment).dir;
-    if (!value) {
-      return;
-    }
-    createNodeField({
-      node,
-      name: "path",
-      value,
-    });
-  }
 };
-
-// Build an object of catalogs keyed by the locale string.
-// This happens during preBootstrap;
-let catalogs;
 
 exports.createPages = async ({ graphql, actions }) => {
   const result = await graphql(
     `
       {
-        ${mdxPagesFragment}
-        allContentfulBlogPost {
-          edges {
-            node {
-              title
-              slug
-              category
-              updatedAt
-            }
-          }
-        }
-        allContentfulNewsletter {
-          edges {
-            node {
-              slug
-            }
-          }
-        }
+        ${caseStudyFragment}
+        ${explainersFragment}
+        ${miscContentFragment}
+        ${blogPostsFragment}
+        ${blogListFragment}
+        ${newsletterFragment}
         ${projectDirectoryQueryFragment}
         ${FEATURE_FLAGS.docs ? docsQueryFragment : ""}
       }
@@ -92,32 +73,31 @@ exports.createPages = async ({ graphql, actions }) => {
     console.log(result.errors);
     return Promise.reject(result.errors);
   }
+  const { data: allQueries } = result;
+
+  createCaseStudies({ actions, allQueries });
+  createExplainers({ actions, allQueries });
+  createMiscContent({ actions, allQueries });
+
+  createContentfulPages({ actions, allQueries });
+  createContentfulBlog({ actions, allQueries });
+
+  createContentfulNewsletter({ actions, allQueries });
+
+  createProjectDirectory({ actions, allQueries });
 
   if (FEATURE_FLAGS.docs) {
     const docs = result.data.docs.edges;
     createDocsPages({ actions, docs });
   }
-
-  const mdxFiles = result.data.mdxPages.edges;
-  createMdxPages({ actions, mdxFiles, catalogs });
-
-  const posts = result.data.allContentfulBlogPost.edges;
-  createContentfulPages({ posts, actions, catalogs });
-  createContentfulBlog({ posts, actions, catalogs });
-
-  const newsletters = result.data.allContentfulNewsletter.edges;
-  createContentfulNewsletter({ newsletters, actions, catalogs });
-
-  const { totalCount: projectCount } = result.data.allContentfulProject;
-  const byCategory = result.data.allContentfulProjectCategory;
-  createProjectDirectory({ projectCount, byCategory, actions });
 };
 
 exports.onCreatePage = ({ page, actions }) => {
   const { createPage, deletePage } = actions;
-  // All of our other page generation techniques attach a `locale` field to
-  // page context, so if it's missing, we don't have translated versions yet.
-  // Make locale pages for them, and replace the original with context.
+  // All of custom page generation adds a `locale` key to context, but components
+  // sourced from `pages/` don't go through any of those mechanisms. Add
+  // international routes for those.
+  // Possible future TODO: remove pages/, load those components with i18n helper.
   if (!page.context.locale) {
     deletePage(page);
     createPage({
@@ -173,9 +153,4 @@ exports.onPreBootstrap = async () => {
   console.log("[i18n] Building Lingui catalogs…");
   await execa("yarn", ["compile-i18n"]);
   console.log("[i18n] Done!");
-
-  catalogs = supportedLanguages.reduce((accum, locale) => {
-    accum[locale] = require(`./src/locale/${locale}/messages.js`);
-    return accum;
-  }, {});
 };
