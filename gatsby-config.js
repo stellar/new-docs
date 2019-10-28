@@ -34,8 +34,8 @@ module.exports = {
       resolve: "gatsby-source-git",
       options: {
         name: "docs",
-        remote: "https://github.com/vcarl/new-docs.git",
-        branch: "test",
+        remote: "https://github.com/stellar/new-docs.git",
+        branch: "master",
         patterns: ["**/*.mdx", "**/metadata.json"],
       },
     },
