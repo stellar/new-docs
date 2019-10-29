@@ -2,4 +2,151 @@
 title: Moar JS SDK
 ---
 
-More than stuff, it also has things
+## Overview
+
+Horizon is the client-facing API server for the Stellar ecosystem. It acts as
+the interface between Stellar Core and applications that want to access the
+Stellar network. Horizon allows you to submit transactions to the network, check
+the status of accounts, and subscribe to event streams. For more details, see an
+overview of the Stellar network.
+
+You can interact directly with Horizon via cURL or a web browser. Stellar.org
+also provides a JavaScript SDK for clients to use to interact with Horizon.
+
+## Response Format
+
+In the event that an error occurs while processing a request to horizon, an
+error response will be returned to the client. This error response will contain
+information detailing why the request couldn’t complete successfully.
+
+Like HAL for successful responses, horizon uses a standard to specify how we
+communicate errors to the client. Specifically, horizon uses the Problem Details
+for HTTP APIs draft specification. The specification is short, so we recommend
+you read it. In summary, when an error occurs on the server we respond with a
+json document with the following attributes:
+
+## Errors
+
+Rather than using a fully custom way of representing the resources we expose in
+Horizon, we use HAL. HAL is a hypermedia format in JSON that remains simple
+while giving us a couple of benefits such as simpler client integration for
+several languages. See this wiki page for a list of libraries.
+
+### rate_limit_exceeded
+
+At its simplest, a HAL response is just a JSON object with a couple of reserved
+property names: \_links is used for expressing links and \_embedded is used for
+bundling other HAL objects with the response. Other than links and embedded
+objects, HAL is just JSON.
+
+### transaction_failed
+
+At its simplest, a HAL response is just a JSON object with a couple of reserved
+property names: \_links is used for expressing links and \_embedded is used for
+bundling other HAL objects with the response. Other than links and embedded
+objects, HAL is just JSON.
+
+### transaction_malformed
+
+At its simplest, a HAL response is just a JSON object with a couple of reserved
+property names: \_links is used for expressing links and \_embedded is used for
+bundling other HAL objects with the response. Other than links and embedded
+objects, HAL is just JSON.
+
+### before_history
+
+HAL is a hypermedia format, like HTML, in that it has a mechanism to express
+links between documents. Let’s look at a simple example:
+
+The above response is for the genesis ledger of the Stellar test network, and
+the links in the \_links attribute provide links to other relavant resources in
+Horizon. Notice the object beneath the transactions key. The key of each link
+specifies that links relation to the current resource, and in this case
+transactions means “Transactions that occurred in this ledger”. Logically, you
+should expect that resource to respond with a collection of transactions with
+all of the results having a ledger_sequence attribute equal to 1.
+
+### stale_history
+
+HAL is a hypermedia format, like HTML, in that it has a mechanism to express
+links between documents. Let’s look at a simple example:
+
+The above response is for the genesis ledger of the Stellar test network, and
+the links in the \_links attribute provide links to other relavant resources in
+Horizon. Notice the object beneath the transactions key. The key of each link
+specifies that links relation to the current resource, and in this case
+transactions means “Transactions that occurred in this ledger”. Logically, you
+should expect that resource to respond with a collection of transactions with
+all of the results having a ledger_sequence attribute equal to 1.
+
+### timeout
+
+The transactions link is also templated, which means that the href attribute of
+the link is actually a URI template, as specified by RFC 6570. We use URI
+templates to show you what parameters a given resource can take. You must
+evaluate the template to a valid URI before navigating to it.
+
+## Paging
+
+Certain endpoints in Horizon can be called in streaming mode using Server-Sent
+Events. This mode will keep the connection to Horizon open and Horizon will
+continue to return responses as ledgers close. All parameters for the endpoints
+that allow this mode are the same. The way a caller initiates this mode is by
+setting Accept: text/event-stream in the HTTP header when you make the request.
+You can read an example of using the streaming mode in the Follow Received
+Payments tutorial.
+
+## Rate Limiting
+
+Certain endpoints in Horizon can be called in streaming mode using Server-Sent
+Events. This mode will keep the connection to Horizon open and Horizon will
+continue to return responses as ledgers close. All parameters for the endpoints
+that allow this mode are the same. The way a caller initiates this mode is by
+setting Accept: text/event-stream in the HTTP header when you make the request.
+You can read an example of using the streaming mode in the Follow Received
+Payments tutorial.
+
+## Streaming
+
+Certain endpoints in Horizon can be called in streaming mode using Server-Sent
+Events. This mode will keep the connection to Horizon open and Horizon will
+continue to return responses as ledgers close. All parameters for the endpoints
+that allow this mode are the same. The way a caller initiates this mode is by
+setting Accept: text/event-stream in the HTTP header when you make the request.
+You can read an example of using the streaming mode in the Follow Received
+Payments tutorial.
+
+## XDR
+
+XDR, also known as External Data Representation, is used extensively in the
+Stellar Network, especially in the core protocol. The ledger, transactions,
+results, history, and even the messages passed between computers running
+stellar-core are encoded using XDR.
+
+XDR is specified in RFC 4506.
+
+## Fee Stats
+
+Certain endpoints in Horizon can be called in streaming mode using Server-Sent
+Events. This mode will keep the connection to Horizon open and Horizon will
+continue to return responses as ledgers close. All parameters for the endpoints
+that allow this mode are the same. The way a caller initiates this mode is by
+setting Accept: text/event-stream in the HTTP header when you make the request.
+You can read an example of using the streaming mode in the Follow Received
+Payments tutorial.
+
+## Metrics
+
+Since XDR is a binary format and not known as widely as JSON for example, we try
+to hide most of it from Horizon. Instead, we opt to interpret the XDR for you
+and present the values as JSON attributes. That said, we also expose the XDR to
+you so you can get access to the raw, canonical data.
+
+In general, Horizon will encode the XDR structures in base64 so that they can be
+transmitted within a json body. You should decode the base64 string into a byte
+stream, then decode the XDR into an in-memory data structure.
+
+## Trade Aggregation
+
+Data structures in XDR are specified in an interface definition file (IDL). The
+IDL files used for the Stellar Network are available on GitHub.
