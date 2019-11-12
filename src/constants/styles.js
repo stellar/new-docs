@@ -47,6 +47,7 @@ export const SCREEN_SIZES = {
   tablet: 769,
   laptop: 1025,
   desktop: 1281,
+  xl_desktop: 1441,
 };
 
 export const MEDIA_QUERIES = {
@@ -60,6 +61,8 @@ export const MEDIA_QUERIES = {
   gtLaptop: `min-width: ${SCREEN_SIZES.laptop}px`,
   ltDesktop: `max-width: ${SCREEN_SIZES.desktop}px`,
   gtDesktop: `min-width: ${SCREEN_SIZES.desktop}px`,
+  ltXlDesktop: `max-width: ${SCREEN_SIZES.xl_desktop}px`,
+  gtXlDesktop: `min-width: ${SCREEN_SIZES.xl_desktop}px`,
 
   canHover: `hover: hover`,
   noHover: `hover: none`,

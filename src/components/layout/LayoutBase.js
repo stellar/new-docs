@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Helmet } from "react-helmet";
-import styled, { ThemeProvider } from "styled-components";
+import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import { t } from "@lingui/macro";
 
-import { NAV_HEIGHT, NAV_THEMES } from "constants/styles";
+import { NAV_HEIGHT, NAV_THEMES, THEME } from "constants/styles";
 
 import translate, { setup as setupI18n } from "helpers/translate";
 
@@ -23,8 +23,15 @@ import Locale from "components/Locale";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
 
+const GlobalStyles = createGlobalStyle`
+  body {
+    background: ${({ theme }) => theme.body};
+  }
+`;
+
 const El = styled.div`
-  overflow: hidden;
+  /* overflow: hidden; */
+  position: relative;
   ${({ padNav }) => padNav && `padding-top: 5rem;`}
 `;
 const contentId = "content";
@@ -156,29 +163,32 @@ class LayoutBase extends React.Component {
           ]}
         />
         <SkipToContentEl />
-        <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
+        <ThemeProvider theme={{ ...THEME, ...navTheme }}>
           <Navigation
             scrollOpacity={isNavTransparent ? this.state.scrollLimit : 0}
           />
         </ThemeProvider>
-        <ThemeProvider theme={(theme) => ({ ...theme, ...navTheme })}>
-          <El id={contentId} padNav={!isNavTransparent}>
-            {leading &&
-              React.cloneElement(leading, {
-                scrollLimit: this.state.scrollLimit,
-                ref: (node) => {
-                  this.heading = node;
+        <ThemeProvider theme={{ ...THEME, ...navTheme }}>
+          <>
+            <GlobalStyles />
+            <El id={contentId} padNav={!isNavTransparent}>
+              {leading &&
+                React.cloneElement(leading, {
+                  scrollLimit: this.state.scrollLimit,
+                  ref: (node) => {
+                    this.heading = node;
 
-                  const { ref } = leading;
-                  if (ref) {
-                    ref.current = node;
-                  }
-                  return ref;
-                },
-              })}
-            {children}
-            {trailing}
-          </El>
+                    const { ref } = leading;
+                    if (ref) {
+                      ref.current = node;
+                    }
+                    return ref;
+                  },
+                })}
+              {children}
+              {trailing}
+            </El>
+          </>
         </ThemeProvider>
         <Footer />
       </Locale>
