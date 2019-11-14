@@ -29,6 +29,20 @@ export const PALETTE = {
   coolPink: "#97557f",
 };
 
+export const REDESIGN_PALETTE = {
+  grey: {
+    // "-4": "",
+    // "-3": "",
+    // "-2": "",
+    // "-1": "",
+    "0": "#fafafa",
+    // "1": "",
+    // "2": "",
+    // "3": "",
+    // "4": "",
+  },
+};
+
 export const THEME = {
   body: PALETTE.light,
   bodyAlt: PALETTE.lighterGrey,

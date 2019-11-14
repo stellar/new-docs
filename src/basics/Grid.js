@@ -112,18 +112,11 @@ const ColumnEl = styled.div`
 export const Column = (props) => {
   const {
     xs = COLUMNS[COL_SIZES.xs].count,
-    sm = props.xs || COLUMNS[COL_SIZES.sm].count,
-    md = props.sm || COLUMNS[COL_SIZES.md].count,
-    lg = props.md || COLUMNS[COL_SIZES.lg].count,
-    xl,
+    sm = xs || COLUMNS[COL_SIZES.sm].count,
+    md = sm || COLUMNS[COL_SIZES.md].count,
+    lg = md || COLUMNS[COL_SIZES.lg].count,
     ...rest
   } = props;
-  if (process.env.NODE_ENV !== "production" && xl) {
-    // eslint-disable-next-line
-    console.warn(
-      "[Grid] an `xl` prop was given, but this column doesn't support that size. Did you mean `RowWithXl` and `ColumnWithXl`?",
-    );
-  }
   return <ColumnEl {...rest} {...{ xs, sm, md, lg }} />;
 };
 
@@ -141,25 +134,12 @@ Column.propTypes = {
   sm: ColumnSizePropType,
   md: ColumnSizePropType,
   lg: ColumnSizePropType,
-  xl: ColumnSizePropType,
 };
 
-export const ColumnWithXl = (props) => {
-  const {
-    xs = COLUMNS[COL_SIZES.xs].count,
-    sm = props.xs || COLUMNS[COL_SIZES.sm].count,
-    md = props.sm || COLUMNS[COL_SIZES.md].count,
-    lg = props.md || COLUMNS[COL_SIZES.lg].count,
-    xl = props.lg || COLUMNS[COL_SIZES.xl].count,
-    ...rest
-  } = props;
-  return <ColumnEl {...rest} {...{ xs, sm, md, lg, xl }} />;
-};
-
-ColumnWithXl.propTypes = {
-  xs: ColumnSizePropType,
-  sm: ColumnSizePropType,
-  md: ColumnSizePropType,
-  lg: ColumnSizePropType,
-  xl: ColumnSizePropType,
+export const gridHelpers = {
+  getColStyle,
+  getSizeGrid,
+  getSizeQuery,
+  COL_SIZES,
+  COLUMNS,
 };

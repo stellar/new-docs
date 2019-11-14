@@ -18,7 +18,6 @@ import favicon512 from "assets/favicon/android-chrome-512x512.png";
 import StellarLogo from "assets/images/stellar-logo.png";
 
 import { Link } from "basics/Links";
-import { Row, Column, Container } from "basics/Grid";
 
 import Footer from "components/Footer";
 import Locale from "components/Locale";
@@ -51,19 +50,13 @@ const theme = {
   body: PALETTE.white,
 };
 
-const ContainerEl = styled(Container)`
-  font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-`;
-
 export const DocsBase = (props) => {
   const {
     metadata,
     pageContext,
     title,
     description = "",
-    left,
-    center,
-    right,
+    children,
     previewImage,
   } = props;
 
@@ -140,21 +133,7 @@ export const DocsBase = (props) => {
       </ThemeProvider>
       <ThemeProvider theme={(orig) => ({ ...orig, ...theme, ...navTheme })}>
         <SideNavProvider>
-          <StickyNavProvider>
-            <ContainerEl id={contentId}>
-              <Row>
-                <Column md={3} lg={3}>
-                  {left}
-                </Column>
-                {/*
-                  We want the right hand side to appear above content on mobile
-                */}
-                <Column md={{ hide: true }}>{right}</Column>
-                <Column md={7}>{center}</Column>
-                <Column md={2}>{right}</Column>
-              </Row>
-            </ContainerEl>
-          </StickyNavProvider>
+          <StickyNavProvider>{children}</StickyNavProvider>
         </SideNavProvider>
       </ThemeProvider>
       <Footer />
@@ -163,9 +142,7 @@ export const DocsBase = (props) => {
 };
 
 DocsBase.propTypes = {
-  left: PropTypes.node,
-  center: PropTypes.node,
-  right: PropTypes.node,
+  children: PropTypes.node,
   metadata: PropTypes.shape({
     title: PropTypes.node.isRequired,
     description: PropTypes.node.isRequired,

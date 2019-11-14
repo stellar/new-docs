@@ -6,14 +6,29 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import { Trans } from "@lingui/macro";
 
-import components from "constants/componentMapping";
-import { FONT_WEIGHT, THEME } from "constants/styles";
+import { Column, Container, Row } from "basics/Grid";
+import { FONT_WEIGHT, THEME, REDESIGN_PALETTE } from "constants/styles";
 
 import { getLayoutMetadata } from "helpers/getLayoutMetadata";
 
+import components from "constants/componentMapping";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
 import { Link } from "basics/Links";
+
+const contentId = "content";
+
+const SideNavEl = styled(Column)`
+  position: relative;
+`;
+const SideNavBackgroundEl = styled.div`
+  position: absolute;
+  background-color: ${REDESIGN_PALETTE.grey[0]};
+  left: -100rem;
+  right: 0;
+  top: -10rem;
+  bottom: -10rem;
+`;
 
 const ContentEl = styled.article`
   position: relative;
@@ -43,32 +58,45 @@ const Documentation = ({ data, pageContext }) => {
     title: value,
   }));
 
+  const left = <div>full docs table of contents eventually</div>;
+  const center = (
+    <ContentEl>
+      <MDXRenderer>{mdx.body}</MDXRenderer>
+    </ContentEl>
+  );
+  const right = (
+    <RightNavEl>
+      <OutlineTitleEl>
+        <Trans>Page Outline</Trans>
+      </OutlineTitleEl>
+      {tableOfContents.map(({ href, title }) => (
+        // TODO: have these be activated when clicked.
+        <ToCLinkEl key={href} href={href}>
+          {title}
+        </ToCLinkEl>
+      ))}
+    </RightNavEl>
+  );
+
   return (
     <MDXProvider components={components}>
       <div style={{ marginTop: "10rem" }} />
-      <DocsBase
-        metadata={getLayoutMetadata(data)}
-        pageContext={pageContext}
-        left={<div>full docs table of contents eventually</div>}
-        center={
-          <ContentEl>
-            <MDXRenderer>{mdx.body}</MDXRenderer>
-          </ContentEl>
-        }
-        right={
-          <RightNavEl>
-            <OutlineTitleEl>
-              <Trans>Page Outline</Trans>
-            </OutlineTitleEl>
-            {tableOfContents.map(({ href, title }) => (
-              // TODO: have these be activated when clicked.
-              <ToCLinkEl key={href} href={href}>
-                {title}
-              </ToCLinkEl>
-            ))}
-          </RightNavEl>
-        }
-      />
+      <DocsBase metadata={getLayoutMetadata(data)} pageContext={pageContext}>
+        <Container id={contentId}>
+          <Row>
+            <SideNavEl md={3} lg={3}>
+              {left}
+              <SideNavBackgroundEl />
+            </SideNavEl>
+            {/*
+                  We want the right hand side to appear above content on mobile
+                */}
+            <Column md={{ hide: true }}>{right}</Column>
+            <Column md={7}>{center}</Column>
+            <Column md={2}>{right}</Column>
+          </Row>
+        </Container>
+      </DocsBase>
     </MDXProvider>
   );
 };

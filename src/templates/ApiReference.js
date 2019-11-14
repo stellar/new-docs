@@ -9,17 +9,54 @@ import components from "constants/componentMapping";
 
 import { getLayoutMetadata } from "helpers/getLayoutMetadata";
 
+import { Column, Container, gridHelpers } from "basics/Grid";
+
 import { DocsBase } from "components/layout/DocsBase";
 import StickyNavContent, {
   StickyNavProvider,
 } from "components/StickyNavContent";
 import SideNav, { SideNavProvider } from "components/SideNav";
+import { REDESIGN_PALETTE } from "constants/styles";
+
+const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
 
 const { h1: H1, h2: H2, h3: H3, h4: H4 } = components;
+const contentId = "content";
 
 const ContentEl = styled.article`
   position: relative;
   margin: 0 auto;
+`;
+const ContainerEl = styled(Container)`
+  && {
+    margin: 0;
+    min-width: 80rem;
+    max-width: 140rem;
+  }
+`;
+
+const { count, size, margin } = COLUMNS[COL_SIZES.md];
+const RowEl = styled.div`
+  // Treat md as smallest size
+  display: grid;
+  grid-template-columns: repeat(${count}, ${size}rem);
+  column-gap: calc((100% - ${count * size}rem) / ${count - 1});
+  margin: 0 ${margin}rem;
+
+  ${getSizeGrid(COL_SIZES.lg)}
+  ${getSizeGrid(COL_SIZES.xl)}
+`;
+
+const SideNavEl = styled(Column)`
+  position: relative;
+`;
+const SideNavBackgroundEl = styled.div`
+  position: absolute;
+  background-color: ${REDESIGN_PALETTE.grey[0]};
+  left: -100rem;
+  right: 0;
+  top: -10rem;
+  bottom: -10rem;
 `;
 
 const componentMap = () => ({
@@ -67,23 +104,182 @@ const ApiReference = ({ data, pageContext }) => {
           <DocsBase
             metadata={getLayoutMetadata(data)}
             pageContext={pageContext}
-            left={<SideNav isScrollableSideNav navEntries={navEntries} />}
-            center={
-              <ContentEl>
-                {referenceDocs.edges.map(({ node }) => (
-                  <section key={node.id}>
-                    <h1>{node.frontmatter.title}</h1>
-                    <MDXRenderer>{node.body}</MDXRenderer>
-                    <p>
-                      Each of these sections comes from a different markdown
-                      file
-                    </p>
-                    <hr />
-                  </section>
-                ))}
-              </ContentEl>
-            }
-          />
+          >
+            <ContainerEl id={contentId}>
+              <RowEl>
+                <SideNavEl xs={3} lg={3} xl={4}>
+                  <SideNavBackgroundEl />
+                  <SideNav isScrollableSideNav navEntries={navEntries} />
+                </SideNavEl>
+                <Column xs={5} xl={9}>
+                  <ContentEl>
+                    {referenceDocs.edges.map(({ node }) => (
+                      <section key={node.id}>
+                        <h1>{node.frontmatter.title}</h1>
+                        <MDXRenderer>{node.body}</MDXRenderer>
+                        <p>
+                          Each of these sections comes from a different markdown
+                          file
+                        </p>
+                        <hr />
+                      </section>
+                    ))}
+                  </ContentEl>
+                </Column>
+                <Column xs={4} xl={9}>
+                  <div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                    <div>
+                      this is some big ol block of contentthis is some big ol
+                      block of contentthis is some big ol block of contentthis
+                      is some big ol block of contentthis is some big ol block
+                      of contentthis is some big ol block of contentthis is some
+                      big ol block of content
+                    </div>
+                  </div>
+                </Column>
+              </RowEl>
+            </ContainerEl>
+          </DocsBase>
         </SideNavProvider>
       </StickyNavProvider>
     </MDXProvider>
