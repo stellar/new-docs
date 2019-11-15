@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Helmet } from "react-helmet";
 import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import { t } from "@lingui/macro";
 
@@ -8,20 +7,13 @@ import { NAV_HEIGHT, NAV_THEMES, THEME } from "constants/styles";
 
 import translate, { setup as setupI18n } from "helpers/translate";
 
-import faviconIco from "assets/favicon/favicon.ico";
-import favicon16 from "assets/favicon/favicon-16x16.png";
-import favicon32 from "assets/favicon/favicon-32x32.png";
-import favicon96 from "assets/favicon/favicon-96x96.png";
-import favicon180 from "assets/favicon/apple-icon-180x180.png";
-import favicon192 from "assets/favicon/android-chrome-192x192.png";
-import favicon512 from "assets/favicon/android-chrome-512x512.png";
-import StellarLogo from "assets/images/stellar-logo.png";
-
 import { Link } from "basics/Links";
 
 import Locale from "components/Locale";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
+
+import { Seo } from "./Seo";
 
 const GlobalStyles = createGlobalStyle`
   body {
@@ -30,7 +22,6 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const El = styled.div`
-  /* overflow: hidden; */
   position: relative;
   ${({ padNav }) => padNav && `padding-top: 5rem;`}
 `;
@@ -87,7 +78,6 @@ class LayoutBase extends React.Component {
 
   render() {
     const {
-      metadata,
       pageContext,
       title,
       description = "",
@@ -99,68 +89,16 @@ class LayoutBase extends React.Component {
       isNavTransparent = false,
     } = this.props;
 
-    const siteUrl =
-      pageContext && pageContext.urlPath
-        ? metadata.siteUrl + pageContext.urlPath
-        : metadata.siteUrl;
-    const isContentful = pageContext && pageContext.contentfulLocale;
-    let previewImageUrl;
-
-    if (previewImage) {
-      if (isContentful) {
-        previewImageUrl = previewImage;
-      } else {
-        previewImageUrl = metadata.siteUrl + previewImage;
-      }
-    }
-
     return (
       <Locale
         language={pageContext.locale}
         alternateUrls={pageContext.alternateUrls}
       >
-        <Helmet
+        <Seo
           title={title}
-          defaultTitle={metadata.title}
-          meta={[
-            {
-              name: "description",
-              content: description || metadata.description,
-            },
-            { property: "og:title", content: title || metadata.title },
-            { property: "og:type", content: "website" },
-            {
-              property: "og:description",
-              content: description || metadata.description,
-            },
-            { property: "og:url", content: siteUrl },
-            {
-              property: "og:image",
-              content: previewImageUrl || StellarLogo,
-            },
-            {
-              name: "twitter:card",
-              content: "summary",
-            },
-            {
-              property: "twitter:site",
-              content: "@StellarOrg",
-            },
-            {
-              property: "twitter:creator",
-              content: "@StellarOrg",
-            },
-          ]}
-          link={[
-            { rel: "canonical", href: siteUrl },
-            { rel: "shortcut icon", href: faviconIco, type: "image/x-icon" },
-            { rel: "icon", href: favicon16, type: "image/x-icon" },
-            { rel: "icon", href: favicon32, type: "image/x-icon" },
-            { rel: "icon", href: favicon96, type: "image/x-icon" },
-            { rel: "apple-touch-icon", href: favicon180, type: "image/x-icon" },
-            { rel: "icon", href: favicon192, type: "image/x-icon" },
-            { rel: "icon", href: favicon512, type: "image/x-icon" },
-          ]}
+          description={description}
+          previewImage={previewImage}
+          path={pageContext.urlPath}
         />
         <SkipToContentEl />
         <ThemeProvider theme={{ ...THEME, ...navTheme }}>
@@ -200,10 +138,6 @@ LayoutBase.propTypes = {
   leading: PropTypes.node,
   children: PropTypes.node.isRequired,
   trailing: PropTypes.node,
-  metadata: PropTypes.shape({
-    title: PropTypes.node.isRequired,
-    description: PropTypes.node.isRequired,
-  }).isRequired,
   title: PropTypes.node,
   previewImage: PropTypes.string,
   description: PropTypes.node,

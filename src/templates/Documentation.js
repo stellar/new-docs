@@ -9,8 +9,6 @@ import { Trans } from "@lingui/macro";
 import { Column, Container, Row } from "basics/Grid";
 import { FONT_WEIGHT, THEME, REDESIGN_PALETTE } from "constants/styles";
 
-import { getLayoutMetadata } from "helpers/getLayoutMetadata";
-
 import components from "constants/componentMapping";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
@@ -81,7 +79,7 @@ const Documentation = ({ data, pageContext }) => {
   return (
     <MDXProvider components={components}>
       <div style={{ marginTop: "10rem" }} />
-      <DocsBase metadata={getLayoutMetadata(data)} pageContext={pageContext}>
+      <DocsBase pageContext={pageContext}>
         <Container id={contentId}>
           <Row>
             <SideNavEl md={3} lg={3}>
@@ -110,7 +108,6 @@ export default Documentation;
 
 export const pageQuery = graphql`
   query DocumentationQuery($id: String) {
-    ...LayoutMetadata
     mdx(id: { eq: $id }) {
       ...SubpageMetadata
       id

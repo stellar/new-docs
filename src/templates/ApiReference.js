@@ -7,8 +7,6 @@ import { MDXProvider } from "@mdx-js/react";
 
 import components from "constants/componentMapping";
 
-import { getLayoutMetadata } from "helpers/getLayoutMetadata";
-
 import { Column, Container, gridHelpers } from "basics/Grid";
 
 import { DocsBase } from "components/layout/DocsBase";
@@ -101,10 +99,7 @@ const ApiReference = ({ data, pageContext }) => {
       <StickyNavProvider navEntries={navEntries}>
         <SideNavProvider>
           <div style={{ marginTop: "10rem" }} />
-          <DocsBase
-            metadata={getLayoutMetadata(data)}
-            pageContext={pageContext}
-          >
+          <DocsBase pageContext={pageContext}>
             <ContainerEl id={contentId}>
               <RowEl>
                 <SideNavEl xs={3} lg={3} xl={4}>
@@ -295,7 +290,6 @@ export default ApiReference;
 
 export const pageQuery = graphql`
   query ApiReferenceQuery($ids: [String]) {
-    ...LayoutMetadata
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
         node {
