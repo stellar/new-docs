@@ -3,6 +3,12 @@ import tinycolor from "tinycolor2";
 export const PALETTE = {
   white: "#ffffff",
   white60: "#f2f2f2",
+  white80: "#fafafa",
+  black: "#000000",
+  black30: "#999999",
+  black60: "#666666",
+  black80: "#333333",
+  black90: "#292d3d",
   light: "#fbfaf7",
   lightestGrey: "#cccccc",
   notQuiteLightestGray: "#d8d8d8",
@@ -25,7 +31,7 @@ export const PALETTE = {
   lightCoolPurple: "#7b35f7",
   coolPurple: "#501e83",
   lightPurple: "#975581",
-  purple: "#7d00ff",
+  purple: "#490be3",
   coolPink: "#97557f",
 };
 
@@ -52,6 +58,11 @@ export const THEME = {
   lightGrey: PALETTE.lightGrey,
   darkGrey: PALETTE.darkGrey,
   border: PALETTE.lightestGrey,
+};
+
+export const FONT_FAMILY = {
+  base: '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+  monospace: '"IBM Plex Mono", Consolas, Menlo, monospace',
 };
 
 // Screen sizes are minimums. Anything between that and the next size.

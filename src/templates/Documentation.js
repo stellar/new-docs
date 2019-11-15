@@ -9,7 +9,7 @@ import { Trans } from "@lingui/macro";
 import { Column, Container, Row } from "basics/Grid";
 import { FONT_WEIGHT, THEME, REDESIGN_PALETTE } from "constants/styles";
 
-import components from "constants/componentMapping";
+import components from "constants/docsComponentMapping";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
 import { Link } from "basics/Links";

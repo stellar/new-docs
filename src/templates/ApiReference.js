@@ -5,16 +5,14 @@ import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
-import components from "constants/componentMapping";
-
 import { Column, Container, gridHelpers } from "basics/Grid";
-
 import { DocsBase } from "components/layout/DocsBase";
 import StickyNavContent, {
   StickyNavProvider,
 } from "components/StickyNavContent";
 import SideNav, { SideNavProvider } from "components/SideNav";
 import { REDESIGN_PALETTE } from "constants/styles";
+import components from "constants/docsComponentMapping";
 
 const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
 
