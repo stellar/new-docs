@@ -42,7 +42,7 @@ export const REDESIGN_PALETTE = {
     // "-2": "",
     // "-1": "",
     "0": "#fafafa",
-    // "1": "",
+    "1": "#f2f2f2",
     // "2": "",
     // "3": "",
     // "4": "",
@@ -153,6 +153,18 @@ export const NAV_THEMES = {
       text: PALETTE.light,
     },
     logo: PALETTE.light,
+  },
+  docs: {
+    background: PALETTE.white,
+    border: REDESIGN_PALETTE.grey[1],
+    link: tinycolor(PALETTE.light)
+      .setAlpha(0.8)
+      .toRgbString(),
+    cta: {
+      body: PALETTE.purple,
+      text: PALETTE.light,
+    },
+    logo: PALETTE.dark,
   },
 };
 

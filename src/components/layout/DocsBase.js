@@ -2,10 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ThemeProvider } from "styled-components";
 
-import { NAV_THEMES, PALETTE, THEME } from "constants/styles";
+import { NAV_THEMES, PALETTE } from "constants/styles";
 
+import { Row, Column, Container } from "basics/Grid";
+
+import { NavFrame } from "components/Navigation/SharedStyles";
+import { NavLogo } from "components/Navigation/NavLogo";
 import Footer from "components/Footer";
-import Navigation from "components/Navigation";
 import { SideNavProvider } from "components/SideNav";
 import { StickyNavProvider } from "components/StickyNavContent";
 
@@ -17,15 +20,25 @@ const theme = {
 };
 
 export const DocsBase = (props) => {
-  const { children, ...rest } = props;
+  const { children, navigation, ...rest } = props;
 
   return (
     <LayoutBase
       {...rest}
       navigation={
-        <ThemeProvider theme={{ ...THEME, ...navTheme }}>
-          <Navigation scrollOpacity={0} />
-        </ThemeProvider>
+        navigation || (
+          <ThemeProvider theme={NAV_THEMES.docs}>
+            <NavFrame>
+              <Container>
+                <Row>
+                  <Column xs={3}>
+                    <NavLogo pageName="Documentation" />
+                  </Column>
+                </Row>
+              </Container>
+            </NavFrame>
+          </ThemeProvider>
+        )
       }
     >
       <ThemeProvider theme={(orig) => ({ ...orig, ...theme, ...navTheme })}>
@@ -40,4 +53,5 @@ export const DocsBase = (props) => {
 
 DocsBase.propTypes = {
   children: PropTypes.node,
+  navigation: PropTypes.node,
 };
