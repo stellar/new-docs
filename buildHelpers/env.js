@@ -10,6 +10,13 @@ exports.IS_LIVE = IS_LIVE;
 exports.IS_PROD = NODE_ENV === "production";
 exports.SITE_URL = IS_LIVE ? URL : NETLIFY_DEPLOY_URL;
 
+const FEATURES = {
+  IS_REDESIGN: "isRedesign",
+};
+
+exports.FEATURES = FEATURES;
+
 exports.FEATURE_FLAGS = {
   docs: !IS_LIVE,
+  [FEATURES.IS_REDESIGN]: false,
 };
