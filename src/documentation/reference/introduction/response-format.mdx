@@ -14,6 +14,7 @@ If a response is a single record, the `_links` section will provide links to any
 If a response is a collection, the `_links` section will provide [pagination](./pagination.mdx) links, and the response’s list of records will be nested underneath the `_embedded` property. 
 
 <NestedTable>
+  
 - ATTRIBUTES
   - DATA TYPE
   - DESCRIPTION
@@ -23,9 +24,11 @@ If a response is a collection, the `_links` section will provide [pagination](./
 - _embedded
   - array
   - Present when querying an endpoint that responds with a collection of records.
+
 </NestedTable>
  
 <RightColumn title="Example Response" isExampleResponse>
+
  ```json
  {
   "_links": {
@@ -203,4 +206,5 @@ If a response is a collection, the `_links` section will provide [pagination](./
   }
 }
 ```
+
 </RightColumn>
