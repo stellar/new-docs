@@ -5,22 +5,23 @@ import React, { createContext } from "react";
 export const FeatureFlagsContext = createContext({});
 
 const FeatureFlags = ({ children, flags = {} }) => {
-  const params = qs.parse(window.location.search, {
-    ignoreQueryPrefix: true,
-    decoder: (x) => {
-      if (x === "true") return true;
-      if (x === "false") return false;
-      return x;
-    },
-  });
-
   const featureFlags = flags;
+  if (typeof window !== "undefined") {
+    const params = qs.parse(window.location.search, {
+      ignoreQueryPrefix: true,
+      decoder: (x) => {
+        if (x === "true") return true;
+        if (x === "false") return false;
+        return x;
+      },
+    });
 
-  Object.entries(params).forEach(([k, v]) => {
-    if (Object.hasOwnProperty.call(featureFlags, k)) {
-      featureFlags[k] = v;
-    }
-  });
+    Object.entries(params).forEach(([k, v]) => {
+      if (Object.hasOwnProperty.call(featureFlags, k)) {
+        featureFlags[k] = v;
+      }
+    });
+  }
 
   return (
     <FeatureFlagsContext.Provider value={featureFlags}>
