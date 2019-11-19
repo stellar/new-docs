@@ -22,6 +22,7 @@ const Providers = ({ children, featureFlags, preloadedCatalogs }) => (
 
 Providers.propTypes = {
   children: PropTypes.node.isRequired,
+  featureFlags: PropTypes.object,
   preloadedCatalogs: PropTypes.object,
 };
 
