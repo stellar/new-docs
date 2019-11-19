@@ -14,28 +14,25 @@ There are three arguments for customizing a page response.
 </Endpoint>
 
 <NestedTable>
-  
-- cursor
-  - optional
-  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
-- order
-  - optional
-  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
-- limit
-  - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
-  
+  - cursor - optional - A number that points to a specific location in a
+  collection of responses and is pulled from the `paging_token` value of a
+  record. - order - optional - A designation of the order in which records
+  should appear. Options include `asc`(ascending) or `desc` (descending). If
+  this argument isn’t set, it defaults to `asc`. - limit - optional - The total
+  number of records returned. The limit can range from 1 to 200 - an upper limit
+  that is hardcoded in Horizon for performance reasons. If this argument isn’t
+  designated, it defaults to 10.
 </NestedTable>
 
-<RightTable title="Example Request" isCodeSnippet>
+<MethodTable title="Example Request" isCodeSnippet>
   
 ```cURL
 curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=113725249324879872&limit=5&order=asc"
 ```
 
-</RightTable>
+</MethodTable>
 
-<RightTable title="Example Response" isExampleResponse>
+<MethodTable title="Example Response" isCodeSnippet>
 
 ```json
 {
@@ -242,4 +239,4 @@ curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=11372524932
 }
 ```
 
-</RightTable>
+</MethodTable>

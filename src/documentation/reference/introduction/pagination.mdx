@@ -3,11 +3,16 @@ title: Pagination
 order: 2
 ---
 
-To make it possible to explore the millions of records for resources like transactions and operations, Horizon paginates the data it returns for collection-based endpoints.
+To make it possible to explore the millions of records for resources like
+transactions and operations, Horizon paginates the data it returns for
+collection-based endpoints.
 
-Each individual transaction, operation, ledger, etc. is returned as a record, and a group of records is called a collection. Records are returned as an array under the `_embedded` attribute.
+Each individual transaction, operation, ledger, etc. is returned as a record,
+and a group of records is called a collection. Records are returned as an array
+under the `_embedded` attribute.
 
-To move between pages of a collection of records, use the links in the `next` and `prev` attributes nested under the top-level `_links` attribute.
+To move between pages of a collection of records, use the links in the `next`
+and `prev` attributes nested under the top-level `_links` attribute.
 
 <NestedTable>
   
@@ -35,7 +40,7 @@ To move between pages of a collection of records, use the links in the `next` an
 
 </NestedTable>
 
-<RightColumn title="Example Paginated Response" isExampleResponse>
+<MethodTable title="Example Paginated Response" isCodeSnippet>
 
 ```json
 {
@@ -241,4 +246,4 @@ To move between pages of a collection of records, use the links in the `next` an
 }
 ```
 
-</RightColumn>
+</MethodTable>
