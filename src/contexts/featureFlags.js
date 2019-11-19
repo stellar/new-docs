@@ -1,9 +1,10 @@
+import PropTypes from "prop-types";
 import qs from "qs";
 import React, { createContext } from "react";
 
 export const FeatureFlagsContext = createContext({});
 
-const FeatureFlags = ({ children, flags }) => {
+const FeatureFlags = ({ children, flags = {} }) => {
   const params = qs.parse(window.location.search, {
     ignoreQueryPrefix: true,
     decoder: (x) => {
@@ -13,7 +14,7 @@ const FeatureFlags = ({ children, flags }) => {
     },
   });
 
-  let featureFlags = flags;
+  const featureFlags = flags;
 
   Object.entries(params).forEach(([k, v]) => {
     if (Object.hasOwnProperty.call(featureFlags, k)) {
@@ -26,6 +27,11 @@ const FeatureFlags = ({ children, flags }) => {
       {children}
     </FeatureFlagsContext.Provider>
   );
+};
+
+FeatureFlags.propTypes = {
+  children: PropTypes.node.isRequired,
+  flags: PropTypes.object,
 };
 
 export default FeatureFlags;
