@@ -1,17 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled from "styled-components";
+import styled, { css, ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
 import { Column, Container, gridHelpers } from "basics/Grid";
 import { DocsBase } from "components/layout/DocsBase";
+import { NavFrame } from "components/Navigation/SharedStyles";
+import { NavLogo } from "components/Navigation/NavLogo";
 import StickyNavContent, {
   StickyNavProvider,
 } from "components/StickyNavContent";
 import SideNav, { SideNavProvider } from "components/SideNav";
-import { REDESIGN_PALETTE } from "constants/styles";
+import { REDESIGN_PALETTE, NAV_THEMES } from "constants/styles";
 import components from "constants/docsComponentMapping";
 
 const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
@@ -23,11 +25,14 @@ const ContentEl = styled.article`
   position: relative;
   margin: 0 auto;
 `;
+const containerStyles = css`
+  margin: 0;
+  min-width: 80rem;
+  max-width: 140rem;
+`;
 const ContainerEl = styled(Container)`
   && {
-    margin: 0;
-    min-width: 80rem;
-    max-width: 140rem;
+    ${containerStyles}
   }
 `;
 
@@ -97,7 +102,22 @@ const ApiReference = ({ data, pageContext }) => {
       <StickyNavProvider navEntries={navEntries}>
         <SideNavProvider>
           <div style={{ marginTop: "10rem" }} />
-          <DocsBase pageContext={pageContext}>
+          <DocsBase
+            pageContext={pageContext}
+            navigation={
+              <ThemeProvider theme={NAV_THEMES.docs}>
+                <NavFrame>
+                  <ContainerEl>
+                    <RowEl>
+                      <Column xs={3} xl={4}>
+                        <NavLogo pageName="Documentation" />
+                      </Column>
+                    </RowEl>
+                  </ContainerEl>
+                </NavFrame>
+              </ThemeProvider>
+            }
+          >
             <ContainerEl id={contentId}>
               <RowEl>
                 <SideNavEl xs={3} lg={3} xl={4}>
