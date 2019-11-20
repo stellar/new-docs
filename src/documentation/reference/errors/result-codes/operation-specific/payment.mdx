@@ -1,0 +1,51 @@
+---
+title: Payment Result Codes
+order: 20
+---
+
+These are result codes that communicate success (200) or failure (400) specific to the `Payment` operation, which often fails because the receiving account does not trust the issuer of the asset being sent.
+
+Learn more about the [`Payment` operation](../../../glossary/operations/payment.mdx).
+
+<NestedTable>
+
+- RESULT CODE
+  - STELLAR PROTOCOL CODE
+  - DESCRIPTION
+- OpSuccess
+  - PAYMENT_SUCCESS
+  - The account was created.
+- OpMalformed
+  - PAYMENT_MALFORMED
+  - The destination was invalid.
+- OpUnderfunded
+  - PAYMENT_UNDERFUNDED
+  - There were not enough funds in the source account.
+- OpLowReserve
+  - PAYMENT_LOW_RESERVE
+  - The source account did not have the necessary trustline.
+
+</NestedTable>
+
+<ExampleResponse title="Example Response for an “op_underfunded” Result Code">
+
+```json
+{
+  "type": "https://stellar.org/horizon-errors/transaction_failed",
+  "title": "Transaction Failed",
+  "status": 400,
+  "detail": "The transaction failed when submitted to the stellar network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://www.stellar.org/developers/learn/concepts/list-of-operations.html",
+  "extras": {
+    "envelope_xdr": "AAAAANPRjCD1iCti3hovsrrz6aSAjmp263grVr6+mI3SQSkcAAAAZAAPRLgAAAACAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAArki/TnIipBc7Y+Hd87mnZdtBxzm7vu6iXpwcRz6zGskAAAB0alKIAAAAAAAAAAAB0kEpHAAAAECoD+aG3RAfxFEW2b5VcARoxVc+ovimyQOQzQbLc7Y613j/x2H92aGwQzfPWjZyWBqQpoEjooAKmyAFANP74UAC",
+    "result_codes": {
+      "transaction": "tx_failed",
+      "operations": [
+        "op_underfunded"
+      ]
+    },
+    "result_xdr": "AAAAAAAAAGT/////AAAAAQAAAAAAAAAA/////gAAAAA="
+  }
+}
+```
+
+</ExampleResponse>
