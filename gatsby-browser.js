@@ -3,11 +3,11 @@ import * as Sentry from "@sentry/browser";
 
 import Providers from "./src/components/Providers";
 import { PORTAL_TARGETS } from "./src/constants/domNodes";
-import { IS_LIVE } from "./buildHelpers/env";
+import { FEATURE_FLAGS, IS_LIVE } from "./buildHelpers/env";
 
 // eslint-disable-next-line react/prop-types
 export const wrapRootElement = ({ element }) => (
-  <Providers>{element}</Providers>
+  <Providers featureFlags={FEATURE_FLAGS}>{element}</Providers>
 );
 
 export const onInitialClientRender = () => {
