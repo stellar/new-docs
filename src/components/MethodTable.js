@@ -18,20 +18,17 @@ const MethodTableEl = styled.div`
   }
 
   thead {
-    display: ${(props) =>
-      props.disableHeader ? "none" : "table-header-group"};
+    display: none;
   }
 
   td {
-    border: ${(props) => props.disableBorder && "none"};
-    padding: ${(props) => props.disableBorder && "0.5rem 0"};
+    border: none;
+    padding: 0.5rem 0;
 
     &:first-child {
-      color: ${(props) =>
-        props.primaryColor ? props.primaryColor : PALETTE.black80};
-      font-weight: ${(props) =>
-        props.disableBorder ? FONT_WEIGHT.bold : FONT_WEIGHT.medium};
-      padding-right: ${(props) => (props.disableBorder ? "1rem" : "inherit")};
+      color: ${PALETTE.purple};
+      font-weight: ${FONT_WEIGHT.bold};
+      padding-right: 1rem;
     }
   }
 `;
@@ -55,11 +52,16 @@ const ContentEl = styled.div`
  */
 
 export const MethodTable = React.forwardRef(function MethodTable(
-  { title, children, isCodeSnippet, ...props },
+  { title, children, isCodeSnippet, hasCodeFormat, ...props },
   ref,
 ) {
   return (
-    <MethodTableEl ref={ref} {...props}>
+    <MethodTableEl
+      ref={ref}
+      isCodeSnippet={isCodeSnippet}
+      hasCodeFormat={hasCodeFormat}
+      {...props}
+    >
       <TitleEl>{title}</TitleEl>
       {!isCodeSnippet && <PrismStyles />}
       <ContentEl>{children}</ContentEl>
@@ -71,4 +73,5 @@ MethodTable.propTypes = {
   title: PropTypes.node.isRequired,
   children: PropTypes.node.isRequired,
   isCodeSnippet: PropTypes.bool,
+  hasCodeFormat: PropTypes.bool,
 };
