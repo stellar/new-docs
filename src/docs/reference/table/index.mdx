@@ -8,18 +8,18 @@ Make sure to have "hasHeader" props to display "thead" when rendered
 
 <Table>
 
-| Field                   | Requirements           | Description                                                                                                                 |
-| ----------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| FEDERATION_SERVER       | uses `https://`        | The endpoint for clients to resolve stellar addresses for users on your domain via [SEP-2](sep-0002.md) Federation Protocol |
-| AUTH_SERVER             | uses `https://`        | The endpoint used for [SEP-3](sep-0003.md) Compliance Protocol                                                              |
-| TRANSFER_SERVER         | uses `https://`        | The server used for [SEP-6](sep-0006.md) Anchor/Client interoperability                                                     |
-| KYC_SERVER              | uses `https://`        | The server used for [SEP-12](sep-0012.md) Anchor/Client customer info transfer                                              |
-| WEB_AUTH_ENDPOINT       | uses `https://`        | The endpoint used for [SEP-10 Web Authentication](sep-0010.md)                                                              |
-| SIGNING_KEY             | Stellar public key     | The signing key is used for [SEP-3](sep-0003.md) Compliance Protocol                                                        |
-| HORIZON_URL             | url                    | Location of public-facing Horizon instance (if you offer one)                                                               |
-| ACCOUNTS                | list of `G...` strings | A list of Stellar accounts that are controlled by this domain                                                               |
-| VERSION                 | string                 | The version of SEP-1 your `stellar.toml` adheres to. This helps parsers know which fields to expect.                        |
-| URI_REQUEST_SIGNING_KEY | Stellar public key     | The signing key is used for [SEP-7](sep-0007.md) delegated signing                                                          |
+| Field | Requirements | Description |
+| --- | --- | --- |
+| FEDERATION_SERVER | uses `https://` | The endpoint for clients to resolve stellar addresses for users on your domain via [SEP-2](sep-0002.md) Federation Protocol |
+| AUTH_SERVER | uses `https://` | The endpoint used for [SEP-3](sep-0003.md) Compliance Protocol |
+| TRANSFER_SERVER | uses `https://` | The server used for [SEP-6](sep-0006.md) Anchor/Client interoperability |
+| KYC_SERVER | uses `https://` | The server used for [SEP-12](sep-0012.md) Anchor/Client customer info transfer |
+| WEB_AUTH_ENDPOINT | uses `https://` | The endpoint used for [SEP-10 Web Authentication](sep-0010.md) |
+| SIGNING_KEY | Stellar public key | The signing key is used for [SEP-3](sep-0003.md) Compliance Protocol |
+| HORIZON_URL | url | Location of public-facing Horizon instance (if you offer one) |
+| ACCOUNTS | list of `G...` strings | A list of Stellar accounts that are controlled by this domain |
+| VERSION | string | The version of SEP-1 your `stellar.toml` adheres to. This helps parsers know which fields to expect. |
+| URI_REQUEST_SIGNING_KEY | Stellar public key | The signing key is used for [SEP-7](sep-0007.md) delegated signing |
 
 </Table>
 
@@ -28,13 +28,13 @@ Make sure to have "hasHeader" props to display "thead" when rendered
 <MethodTable title="Error Categories">
   <Table disableHeader disableBorder customColor={PALETTE.purple}>
 
-| Error Categories         | Error Categories Description                                          |
-| ------------------------ | --------------------------------------------------------------------- |
-| HTTP Status Codes        | Generic HTTP result codes that indicate success or failure.           |
-| Horizon-Specific Codes   | Result codes specific to the Horizon server’s setup.                  |
-| Transaction Codes        | Result codes indicating the failure reasons at the transaction level. |
-| Operation Codes          | Result codes indicating the failure reasons at the operation level.   |
-| Operation-Specific Codes | Result codes specific to each operation type.                         |
+| Error Categories | Error Categories Description |
+| --- | --- |
+| HTTP Status Codes | Generic HTTP result codes that indicate success or failure. |
+| Horizon-Specific Codes | Result codes specific to the Horizon server’s setup. |
+| Transaction Codes | Result codes indicating the failure reasons at the transaction level. |
+| Operation Codes | Result codes indicating the failure reasons at the operation level. |
+| Operation-Specific Codes | Result codes specific to each operation type. |
 
   </Table>
 </MethodTable>

@@ -3,8 +3,7 @@ title: Error Response
 order: 10
 ---
 
-When any error occurs, Horizon responds with a JSON document with the below
-attributes.
+When any error occurs, Horizon responds with a JSON document with the below attributes.
 
 <NestedTable>
 
@@ -16,36 +15,28 @@ attributes.
   - The type of Status Code returned.
 - title
   - string
-  - A short title describing the Status Code, which can be used to look up more
-    information about a error.
+  - A short title describing the Status Code, which can be used to look up more information about a error.
 - status
   - number
-  - A short title describing the Status Code, which can be used to look up more
-    information about a error.
+  - A short title describing the Status Code, which can be used to look up more information about a error.
 - detail
   - string
-  - A short title describing the Status Code, which can be used to look up more
-    information about a error.
+  - A short title describing the Status Code, which can be used to look up more information about a error.
 - extras
   - array
-  - If the Status Code is `Transaction Failed`, this extras field displays the
-    Result Code returned by Stellar Core describing why the transaction failed.
+  - If the Status Code is `Transaction Failed`, this extras field displays the Result Code returned by Stellar Core describing why the transaction failed.
     - envelope_xdr
       - string
-      - A base64-encoded representation of the TransactionEnvelope XDR whose
-        failure triggered this response.
+      - A base64-encoded representation of the TransactionEnvelope XDR whose failure triggered this response.
     - result_xdr
       - string
-      - A base64-encoded representation of the TransactionResult XDR returned by
-        stellar-core when submitting this transaction.
+      - A base64-encoded representation of the TransactionResult XDR returned by stellar-core when submitting this transaction.
     - result_codes.transaction
       - string
-      - The transaction Result Code returned by Stellar Core, which can be used
-        to look up more information about an error in the docs.
+      - The transaction Result Code returned by Stellar Core, which can be used to look up more information about an error in the docs.
     - result_codes.operations
       - array
-      - The transaction Result Code returned by Stellar Core, which can be used
-        to look up more information about an error in the docs.
+      - The transaction Result Code returned by Stellar Core, which can be used to look up more information about an error in the docs.
 
 </NestedTable>
 

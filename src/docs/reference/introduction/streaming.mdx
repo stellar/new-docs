@@ -3,19 +3,11 @@ title: Streaming
 order: 4
 ---
 
-Horizon provides a streaming mechanism for receiving events in near real time.
-Instead of repeatedly sending requests to Horizon for batch updates, a
-connection is established between a client and Horizon with updates to an
-endpoint response streaming as new ledgers close and updates occur.
+Horizon provides a streaming mechanism for receiving events in near real time. Instead of repeatedly sending requests to Horizon for batch updates, a connection is established between a client and Horizon with updates to an endpoint response streaming as new ledgers close and updates occur.
 
-This reduces requests that return no data and allows near instantaneous updates
-client-side.
+This reduces requests that return no data and allows near instantaneous updates client-side.
 
-All attributes for the endpoints that allow streaming are the same as regular
-responses. A caller can initiate streaming by setting ‘Accept:
-text/event-stream’ in the HTTP header when making the request. Study an example
-of using streaming in the
-[Follow Received Payments tutorial](../../tutorials/follow-received-payments.mdx).
+All attributes for the endpoints that allow streaming are the same as regular responses. A caller can initiate streaming by setting ‘Accept: text/event-stream’ in the HTTP header when making the request. Study an example of using streaming in the [Follow Received Payments tutorial](../../tutorials/follow-received-payments.mdx).
 
 <MethodTable title="Endpoints with Streaming">
 

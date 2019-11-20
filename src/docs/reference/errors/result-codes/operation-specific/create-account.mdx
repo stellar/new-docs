@@ -3,12 +3,9 @@ title: Create Account Result Codes
 order: 10
 ---
 
-These are result codes that communicate success (200) or failure (400) specific
-to the `Create Account` operation, which often fails because the new account
-does not meet the minimum reserve.
+These are result codes that communicate success (200) or failure (400) specific to the `Create Account` operation, which often fails because the new account does not meet the minimum reserve.
 
-Learn more about the
-[`Create Account` operation](../../../glossary/operations/create-account.mdx).
+Learn more about the [`Create Account` operation](../../../glossary/operations/create-account.mdx).
 
 <NestedTable>
 
@@ -20,8 +17,7 @@ Learn more about the
   - The inner object result is valid and the operation was a success.
 - OpMalformed
   - CREATE_ACCOUNT_MALFORMED
-  - There are too few valid signatures, or the transaction was submitted to the
-    wrong network.
+  - There are too few valid signatures, or the transaction was submitted to the wrong network.
 - OpUnderfunded
   - CREATE_ACCOUNT_UNDERFUNDED
   - The source account was not found.
