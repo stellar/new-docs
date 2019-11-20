@@ -72,7 +72,7 @@ export const lerp = (norm, min, max) => (max - min) * norm + min;
  * @param {function} func - function that needs to be run
  * @param {number} wait - wait period in milliseconds
  * @param {bool} immediate - if true, trigger the function on the leading edge, instead of the trailing
- * @return {function} - Returns a function, that, as long as it continues to be invoked, will not be triggered.
+ * @return {function} - Returns a function, that, as long as it continues to be invoked, will not be triggered
  */
 export const debounce = (func, wait, immediate, ...args) => {
   let timeout;
@@ -89,3 +89,11 @@ export const debounce = (func, wait, immediate, ...args) => {
   };
   return debounceFn;
 };
+
+/**
+ * @desc Checks if value is an empty object
+ * @param {Object} obj - object that is getting checked to see if it doesn't have its own enumerable string keyed properties
+ * @return {bool} - Returns true if the object has no own enumerable string keyed properties (or empty)
+ */
+export const isEmpty = (obj) =>
+  Object.values(obj) && Object.values(obj).length === 0;

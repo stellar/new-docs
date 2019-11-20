@@ -5,6 +5,7 @@ import styled, { css, ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
+import { isEmpty } from "utils";
 import { Column, Container, gridHelpers } from "basics/Grid";
 import { DocsBase } from "components/layout/DocsBase";
 import { NavFrame } from "components/Navigation/SharedStyles";
@@ -93,7 +94,10 @@ const ApiReference = ({ data, pageContext }) => {
   const navEntries =
     referenceDocs.edges &&
     referenceDocs.edges.reduce(
-      (arr, edge) => arr.concat(edge.node.tableOfContents.items),
+      (arr, edge) =>
+        !isEmpty(edge.node.tableOfContents)
+          ? arr.concat(edge.node.tableOfContents.items)
+          : arr,
       [],
     );
 
