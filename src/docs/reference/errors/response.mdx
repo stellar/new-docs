@@ -3,6 +3,9 @@ title: Error Response
 order: 10
 ---
 
+import { MethodTable } from "components/MethodTable";
+import { NestedTable } from "components/NestedTable";
+
 When any error occurs, Horizon responds with a JSON document with the below attributes.
 
 <NestedTable>
@@ -40,7 +43,7 @@ When any error occurs, Horizon responds with a JSON document with the below attr
 
 </NestedTable>
 
-<ExampleResponse>
+<MethodTable>
 
 ```json
 {
@@ -59,4 +62,4 @@ When any error occurs, Horizon responds with a JSON document with the below attr
 }
 ```
 
-</ExampleResponse>
+</MethodTable>

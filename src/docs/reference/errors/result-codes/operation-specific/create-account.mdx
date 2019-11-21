@@ -3,6 +3,9 @@ title: Create Account Result Codes
 order: 10
 ---
 
+import { MethodTable } from "components/MethodTable";
+import { NestedTable } from "components/NestedTable";
+
 These are result codes that communicate success (200) or failure (400) specific to the `Create Account` operation, which often fails because the new account does not meet the minimum reserve.
 
 Learn more about the [`Create Account` operation](../../../glossary/operations/create-account.mdx).
@@ -27,7 +30,7 @@ Learn more about the [`Create Account` operation](../../../glossary/operations/c
 
 </NestedTable>
 
-<ExampleResponse title="Example Response for an “op_low_reserve” Result Code">
+<MethodTable title="Example Response for an “op_low_reserve” Result Code">
 
 ```json
 {
@@ -46,4 +49,4 @@ Learn more about the [`Create Account` operation](../../../glossary/operations/c
 }
 ```
 
-</ExampleResponse>
+</MethodTable>

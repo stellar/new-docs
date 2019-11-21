@@ -3,6 +3,9 @@ title: Horizon-Specific Status Codes
 order: 20
 ---
 
+import { MethodTable } from "components/MethodTable";
+import { NestedTable } from "components/NestedTable";
+
 These responses are specific to how a Horizon server is set up and how transactions should be formed.
 
 <NestedTable>
@@ -28,7 +31,7 @@ These responses are specific to how a Horizon server is set up and how transacti
 
 </NestedTable>
 
-<ExampleResponse title="Example Response for a 'Transaction Malformed' Status Code">
+<MethodTable title="Example Response for a 'Transaction Malformed' Status Code">
 
 ```json
 {
@@ -42,4 +45,4 @@ These responses are specific to how a Horizon server is set up and how transacti
 }
 ```
 
-</ExampleResponse>
+</MethodTable>

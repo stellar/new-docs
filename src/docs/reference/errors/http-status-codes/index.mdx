@@ -3,6 +3,8 @@ title: HTTP Status Codes
 order: 0
 ---
 
+import { MethodTable } from "components/MethodTable";
+
 Some errors only occur at the Horizon level and are not thrown in Stellar Core. These are usually issues with how the transaction was formed or a conflict between the transaction’s composition and how the Horizon server is setup.
 
 Stellar uses conventional HTTP response codes to indicate the success or failure of an API request. In general:
@@ -13,11 +15,11 @@ Stellar uses conventional HTTP response codes to indicate the success or failure
 
 There are two types of Status Codes: [Standard Status Codes](./standard.mdx) and [Horizon-Specific Status Codes](./horizon-specific.mdx).
 
-<NavTable title="HTTP Status Code Types">
+<MethodTable title="HTTP Status Code Types">
 
 |  |  |
 | --- | --- |
 | [Standard Status Codes](./standard.mdx) | Generic HTTP responses. |
 | [Horizon-Specific Status Codes](./horizon-specific.mdx) | Errors that are unique to Horizon. |
 
-</NavTable>
+</MethodTable>
