@@ -1,0 +1,193 @@
+---
+title: How to issue an asset
+order: 20
+---
+
+## High-level view of the steps
+There is no dedicated operation to create an asset on Stellar.  Instead, assets are created with a payment operation: an issuing account makes a payment using the asset it’s issuing, and that payment actually creates the asset on the network.
+
+It’s a pretty simple process that requires four operations: one to create an issuing account, one to create a distribution account, one to establish a trustline, and one to make a payment. 
+
+The code to create those operations and submit them as transactions is below.  Here, we’ll walk through each step so that the process makes sense.  You can breeze through to get a general understanding, or you can use the [Stellar laboratory](https://www.stellar.org/laboratory/), which is an interface that allows you to create and submit transactions, to actually follow along and issue a token right here right now.
+
+One caveat: if you are creating a token on the public network, there is one additional prerequisite.  You need a funded account to provide the XLM necessary to create the issuing and distribution accounts.
+
+### Create the issuing and distribution accounts
+The issuing account is the origin of the asset, and will be forever linked to the asset’s identity. The distribution account is the first recipient of the asset.  In the final step of this process, you’ll create the asset by sending a payment from the issuing account to the distribution account.
+
+There are two steps to account creation:
+1. Generate a keypair
+1. Fund the account using a `create_account` operation
+
+You can generate a keypair for free, but an account doesn’t exist on the Stellar ledger until it is funded with XLM to cover the minimum balance. 
+
+If you’re issuing an asset on the testnet, you can fund your accounts by getting free test XLM from Friendbot.  If you’re issuing an asset in production, you will need to use an existing account to send enough live XLM to cover the minimum balance, transaction fees, and, in the case of the distribution account, a trustline.  If you’re not sure where to acquire XLM, consult our [Lumen Buying Guide](https://www.stellar.org/lumens/exchanges#cryptocurrency-exchanges).
+
+Rule of thumb for production: don’t skirt too close to the minimum network balance.  If you do, you may not have enough XLM to do what you need to do.  Since the network minimum balance and transaction fees are low, it doesn’t require much to get started.  5 XLM should be sufficient. 100 XLM is even better.   
+
+### Create a trustline from the distribution account to the issuing account
+Stellar requires accounts to explicitly opt-in to holding an asset by creating a trustline, and in this step the distribution account submits a `change_trust` operation to do just that. 
+
+The distribution account specifies the issuer’s public key and the asset code in the `change_trust` operation, and since it’s the first time the asset code appears on the ledger, that means the _distribution_ account actually names the asset, not the issuing account. 
+
+Currently, there are two supported formats for asset codes.
+
+* **Alphanumeric 4-character maximum**: Any characters from the set [a-z][A-Z][0-9] are allowed. The code can be shorter than 4 characters, but the trailing characters must all be empty.
+* **Alphanumeric 12-character maximum**: Any characters from the set [a-z][A-Z][0-9] are allowed. The code can be any number of characters from 5 to 12, but the trailing characters must all be empty.
+
+Any asset code works provided it falls into one of those two buckets. That said, if you’re issuing a currency, you should use the appropriate [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) code, and if you’re issuing a stock or bond, the appropriate [ISIN number](https://en.wikipedia.org/wiki/International_Securities_Identification_Number).  Doing so makes it easier for Stellar interfaces to properly display and sort your token in their listings, and allows potential token holders to understand, at a glance, what your token represents.
+  
+### Make a payment from the issuing account to the distribution account
+This is the step where the magic happens.  The issuing account makes a payment to the distribution account using the newly named asset, and tokens exist where before there were none.  Presto!  
+
+As long as the issuing account remains unlocked, it can continue to create new tokens by making payments to the distribution account, or to any other account with the requisite trustline.  If you want to change that and put a hard limit on the number of tokens an issuing account can issue, check out our instructions on how to lock an account.
+
+If you’re planning to do, really, anything with your asset, your next step is to complete a stellar.toml file to provide wallets, exchanges, market listing services, and potential token holders with the information they need to understand what it represents. 
+
+Once you’ve done that, you can also create a sell offer to get your asset onto the Stellar decentralized exchange, and put some effort into market making to create liquidity for it.     
+
+## Sample Code
+<code-example name="Issuing an Asset">
+
+```js
+var StellarSdk = require('stellar-sdk');
+var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+// Keys for accounts to issue and receive the new asset
+var issuingKeys = StellarSdk.Keypair
+  .fromSecret('SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4');
+var receivingKeys = StellarSdk.Keypair
+  .fromSecret('SDSAVCRE5JRAI7UFAVLE5IMIZRD6N6WOJUWKY4GFN34LOBEEUS4W2T2D');
+
+// Create an object to represent the new asset
+var astroDollar = new StellarSdk.Asset('AstroDollar', issuingKeys.publicKey());
+
+// First, the receiving account must trust the asset
+server.loadAccount(receivingKeys.publicKey())
+  .then(function(receiver) {
+    var transaction = new StellarSdk.TransactionBuilder(receiver, {
+      fee: 100,
+      networkPassphrase: StellarSdk.Networks.TESTNET
+    })
+      // The `changeTrust` operation creates (or alters) a trustline
+      // The `limit` parameter below is optional
+      .addOperation(StellarSdk.Operation.changeTrust({
+        asset: astroDollar,
+        limit: '1000'
+      }))
+      // setTimeout is required for a transaction
+      .setTimeout(100)
+      .build();
+    transaction.sign(receivingKeys);
+    return server.submitTransaction(transaction);
+  })
+  .then(console.log)
+
+  // Second, the issuing account actually sends a payment using the asset
+  .then(function() {
+    return server.loadAccount(issuingKeys.publicKey())
+  })
+  .then(function(issuer) {
+    var transaction = new StellarSdk.TransactionBuilder(issuer, {
+      fee: 100,
+      networkPassphrase: StellarSdk.Networks.TESTNET
+    })
+      .addOperation(StellarSdk.Operation.payment({
+        destination: receivingKeys.publicKey(),
+        asset: astroDollar,
+        amount: '10'
+      }))
+      // setTimeout is required for a transaction
+      .setTimeout(100)
+      .build();
+    transaction.sign(issuingKeys);
+    return server.submitTransaction(transaction);
+  })
+  .then(console.log)
+  .catch(function(error) {
+    console.error('Error!', error);
+  });
+```
+
+```java
+Network.useTestNetwork();
+Server server = new Server("https://horizon-testnet.stellar.org");
+
+// Keys for accounts to issue and receive the new asset
+KeyPair issuingKeys = KeyPair
+  .fromSecretSeed("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
+KeyPair receivingKeys = KeyPair
+  .fromSecretSeed("SDSAVCRE5JRAI7UFAVLE5IMIZRD6N6WOJUWKY4GFN34LOBEEUS4W2T2D");
+
+// Create an object to represent the new asset
+Asset astroDollar = Asset.createNonNativeAsset("AstroDollar", issuingKeys);
+
+// First, the receiving account must trust the asset
+AccountResponse receiving = server.accounts().account(receivingKeys);
+Transaction allowAstroDollars = new Transaction.Builder(receiving)
+  .addOperation(
+    // The `ChangeTrust` operation creates (or alters) a trustline
+    // The second parameter limits the amount the account can hold
+    new ChangeTrustOperation.Builder(astroDollar, "1000").build())
+  .build();
+allowAstroDollars.sign(receivingKeys);
+server.submitTransaction(allowAstroDollars);
+
+// Second, the issuing account actually sends a payment using the asset
+AccountResponse issuing = server.accounts().account(issuingKeys);
+Transaction sendAstroDollars = new Transaction.Builder(issuing)
+  .addOperation(
+    new PaymentOperation.Builder(receivingKeys, astroDollar, "10").build())
+  .build();
+sendAstroDollars.sign(issuingKeys);
+server.submitTransaction(sendAstroDollars);
+```
+
+```go
+issuerSeed := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
+recipientSeed := "SDSAVCRE5JRAI7UFAVLE5IMIZRD6N6WOJUWKY4GFN34LOBEEUS4W2T2D"
+
+// Keys for accounts to issue and receive the new asset
+issuer, err := keypair.Parse(issuerSeed)
+if err != nil { log.Fatal(err) }
+recipient, err := keypair.Parse(recipientSeed)
+if err != nil { log.Fatal(err) }
+
+// Create an object to represent the new asset
+astroDollar := build.CreditAsset("AstroDollar", issuer.Address())
+
+// First, the receiving account must trust the asset
+trustTx, err := build.Transaction(
+    build.SourceAccount{recipient.Address()},
+    build.AutoSequence{SequenceProvider: horizon.DefaultTestNetClient},
+    build.TestNetwork,
+    build.Trust(astroDollar.Code, astroDollar.Issuer, build.Limit("100.25")),
+)
+if err != nil { log.Fatal(err) }
+trustTxe, err := trustTx.Sign(recipientSeed)
+if err != nil { log.Fatal(err) }
+trustTxeB64, err := trustTxe.Base64()
+if err != nil { log.Fatal(err) }
+_, err = horizon.DefaultTestNetClient.SubmitTransaction(trustTxeB64)
+if err != nil { log.Fatal(err) }
+
+// Second, the issuing account actually sends a payment using the asset
+paymentTx, err := build.Transaction(
+    build.SourceAccount{issuer.Address()},
+    build.TestNetwork,
+    build.AutoSequence{SequenceProvider: horizon.DefaultTestNetClient},
+    build.Payment(
+        build.Destination{AddressOrSeed: recipient.Address()},
+        build.CreditAmount{"AstroDollar", issuer.Address(), "10"},
+    ),
+)
+if err != nil { log.Fatal(err) }
+paymentTxe, err := paymentTx.Sign(issuerSeed)
+if err != nil {	log.Fatal(err) }
+paymentTxeB64, err := paymentTxe.Base64()
+if err != nil { log.Fatal(err) }
+_, err = horizon.DefaultTestNetClient.SubmitTransaction(paymentTxeB64)
+if err != nil { log.Fatal(err) }
+```
+
+</code-example>
