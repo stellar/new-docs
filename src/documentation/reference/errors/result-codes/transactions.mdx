@@ -3,7 +3,12 @@ title: Transaction Result Codes
 order: 10
 ---
 
-These are Result Codes that communicate success (200) or failure (400) at the transaction level: bad sequence numbers, insufficient balances, insufficient fees, etc.
+import { MethodTable } from "components/MethodTable";
+import { NestedTable } from "components/NestedTable";
+
+These are Result Codes that communicate success (200) or failure (400) at the
+transaction level: bad sequence numbers, insufficient balances, insufficient
+fees, etc.
 
 <NestedTable>
 
@@ -25,7 +30,7 @@ These are Result Codes that communicate success (200) or failure (400) at the tr
 
 </NestedTable>
 
-<ExampleResponse title="Example Response for a 'tx_bad_seq' Result Code">
+<MethodTable title="Example Response for a 'tx_bad_seq' Result Code">
 
 ```json
 {
@@ -43,4 +48,4 @@ These are Result Codes that communicate success (200) or failure (400) at the tr
 }
 ```
 
-</ExampleResponse>
+</MethodTable>
