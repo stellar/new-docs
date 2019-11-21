@@ -55,6 +55,5 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
-  },
-  "prettier": "@stellar/prettier-config"
+  }
 }
