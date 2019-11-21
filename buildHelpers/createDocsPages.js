@@ -1,17 +1,16 @@
 const path = require("path");
 const { defaultLocale } = require("./i18n");
+const { normalizeRoute } = require("./routes");
 
-const buildPathFromMetadata = (metadata) => {
-  const pathSegments = [];
-  let currentMetadata = metadata;
-  while (currentMetadata) {
-    pathSegments.push(currentMetadata.data.url);
-    currentMetadata = currentMetadata.parent;
-  }
-  return pathSegments.reverse().join("/");
+const pathRegex = /^src(.*)\..*$/;
+const buildPathFromFile = ({ relativePath }) => {
+  // Strip `index` so that `index.mdx` files come through with just their
+  // relative path.
+  const match = pathRegex.exec(relativePath.replace("index", ""));
+  return normalizeRoute(match[1]);
 };
 
-const REFERENCE_ROOT = "src/documentation/reference";
+const REFERENCE_ROOT = "src/docs/reference";
 const isReference = (doc) => doc.relativeDirectory.includes(REFERENCE_ROOT);
 
 const createDocsPages = ({ actions, docs }) => {
@@ -27,7 +26,7 @@ const createDocsPages = ({ actions, docs }) => {
 
   documentation.forEach((doc) => {
     actions.createPage({
-      path: buildPathFromMetadata(doc.fields.metadata),
+      path: buildPathFromFile(doc),
       component: docTemplate,
       context: {
         id: doc.childMdx.id,
@@ -47,36 +46,6 @@ const createDocsPages = ({ actions, docs }) => {
   });
 };
 
-// GraphQL doesn't support recursive queries!! womp womp. If we end up with more
-// deeply nested folders in the docs, we'll need to update this (which sucks)
-const metadataFragment = `
-data {
-  url
-  order
-  title
-}
-parent {
-  data {
-    url
-    order
-    title
-  }
-  parent {
-    data {
-      url
-      order
-      title
-    }
-    parent {
-      data {
-        url
-        order
-        title
-      }
-    }
-  }
-}`;
-
 const queryFragment = `
   docs: allFile(filter: {
     sourceInstanceName: { eq: "docs" },
@@ -91,7 +60,10 @@ const queryFragment = `
         relativeDirectory
         fields {
           metadata {
-            ${metadataFragment}
+            data {
+              order
+              title
+            }
           }
         }
       }

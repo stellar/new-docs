@@ -174,9 +174,7 @@ export const NestedTable = React.forwardRef(function NestedTable(
 ) {
   return (
     <NestedTableEl ref={ref} {...props}>
-      {React.Children.map(children, (child) => (
-        <ListItem items={child.props.children} />
-      ))}
+      {children}
     </NestedTableEl>
   );
 });
