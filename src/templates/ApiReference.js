@@ -4,6 +4,7 @@ import { graphql } from "gatsby";
 import styled, { css, ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
+import path from "path";
 
 import { isEmpty } from "utils";
 import { Column, Container, gridHelpers } from "basics/Grid";
@@ -61,8 +62,26 @@ const SideNavBackgroundEl = styled.div`
   bottom: -10rem;
 `;
 
+const StyledLink = components.a;
+
+// eslint-disable-next-line react/prop-types
+const DocsLink = ({ href, ...props }) => {
+  // TODO: This is definitely super broken. Links to non-reference docs will need
+  // to have relative path preserved, but links within the API reference will
+  // need to be squashed relative to `/docs/api`. Not clear what the best
+  // solution is at time of commit.
+  let url = href.split(".mdx")[0].replace("index", "");
+
+  if (url.startsWith(".")) {
+    // Force all directories to be flat
+    url = path.resolve("/docs/api", url.replace("..", "."));
+  }
+  return <StyledLink href={url} {...props} />;
+};
+
 const componentMap = () => ({
   ...components,
+  a: DocsLink,
   // eslint-disable-next-line react/prop-types
   h1: ({ children }) => (
     <StickyNavContent title={children}>

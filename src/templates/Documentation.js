@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import { Trans } from "@lingui/macro";
+import path from "path";
+import { Location } from "@reach/router";
 
 import { Column, Container, Row } from "basics/Grid";
 import { FONT_WEIGHT, THEME, REDESIGN_PALETTE } from "constants/styles";
@@ -49,6 +51,25 @@ const OutlineTitleEl = styled.div`
   margin-bottom: 1rem;
 `;
 
+const StyledLink = components.a;
+const componentMapping = {
+  ...components,
+  // eslint-disable-next-line react/prop-types
+  a: React.forwardRef(function DocsLink({ href, ...props }, ref) {
+    return (
+      <Location>
+        {({ location }) => {
+          let url = href.split(".mdx")[0].replace("index", "");
+          if (url.startsWith(".")) {
+            url = path.resolve(location.pathname, url);
+          }
+          return <StyledLink ref={ref} href={url} {...props} />;
+        }}
+      </Location>
+    );
+  }),
+};
+
 const Documentation = ({ data, pageContext }) => {
   const { mdx } = data;
   const tableOfContents = mdx.headings.map(({ value }) => ({
@@ -77,7 +98,7 @@ const Documentation = ({ data, pageContext }) => {
   );
 
   return (
-    <MDXProvider components={components}>
+    <MDXProvider components={componentMapping}>
       <div style={{ marginTop: "10rem" }} />
       <DocsBase pageContext={pageContext}>
         <Container id={contentId}>
