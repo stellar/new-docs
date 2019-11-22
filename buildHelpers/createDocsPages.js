@@ -10,7 +10,7 @@ const buildPathFromFile = ({ relativePath }) => {
   return normalizeRoute(match[1]);
 };
 
-const REFERENCE_ROOT = "src/docs/reference";
+const REFERENCE_ROOT = "src/api";
 const isReference = (doc) => doc.relativeDirectory.includes(REFERENCE_ROOT);
 
 const createDocsPages = ({ actions, docs }) => {
