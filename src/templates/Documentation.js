@@ -108,12 +108,11 @@ const componentMapping = {
   }),
 };
 
-const relPath = (longPath) => {
-  return longPath
+const relPath = (longPath) =>
+  longPath
     .split("/")
     .pop()
     .replace(".mdx", "");
-};
 
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   if (topicIndex + 1 === topicArr.length) {
@@ -126,8 +125,8 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   return relPath(childArr[childIndex + 1].relativePath);
 };
 
-const buildTableOfContents = (data) => {
-  return data.map((topic, topicIndex, topicArr) => {
+const buildTableOfContents = (data) =>
+  data.map((topic, topicIndex, topicArr) => {
     const topicPath = topic.fieldValue.replace("src/docs", "");
     const title = topic.nodes[0].fields.metadata.data.title;
     const articles = topic.nodes.map((node, childIndex, childArr) => ({
@@ -144,7 +143,6 @@ const buildTableOfContents = (data) => {
       articles,
     };
   });
-};
 
 const Documentation = ({ data, pageContext }) => {
   const { mdx, allFile } = data;

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
@@ -20,6 +21,11 @@ const Articles = ({ isCollapsed, articles = [] }) => {
       ))}
     </ArticleList>
   );
+};
+
+Articles.propTypes = {
+  isCollapsed: PropTypes.bool,
+  articles: PropTypes.array,
 };
 
 export default Articles;
