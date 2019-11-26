@@ -103,9 +103,11 @@ ColumnLabelEl.propTypes = {
 
 const ListItem = ({ items }) =>
   items.map(({ props }, i) => {
-    const nestedItems = React.Children.toArray(
-      props.children[1].props.children,
+    const getObjectChild = props.children.filter(
+      (item) => typeof item === "object",
     );
+    const nestedItems =
+      getObjectChild && React.Children.toArray(getObjectChild);
 
     /* Data Type Value comes from the first level nested list. 
     But visually it is separate from the nested list which is why we are using splice method to extract it here */
