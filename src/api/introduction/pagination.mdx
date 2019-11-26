@@ -3,7 +3,7 @@ title: Pagination
 order: 2
 ---
 
-import { MethodTable } from "components/MethodTable";
+import { ExampleResponse } from "components/ExampleResponse";
 import { NestedTable } from "components/NestedTable";
 
 To make it possible to explore the millions of records for resources like transactions and operations, Horizon paginates the data it returns for collection-based endpoints.
@@ -17,28 +17,28 @@ To move between pages of a collection of records, use the links in the `next` an
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
-- _links
+- \_links
   - array
   - Provides links for navigating to other pages.
-    - _links.self
+    - \_links.self
       - array
       - An `href` key with a link to the response itself as the value.
-    - _links.next
+    - \_links.next
       - array
       - An `href` key with a link to the next page for this endpoint as the value.
-    - _links.prev
+    - \_links.prev
       - array
       - An `href` key with a link to the next page for this endpoint as the value.
-- _embedded
+- \_embedded
   - array
   - An `href` key with a link to the next page for this endpoint as the value.
-    - _embedded.records
+    - \_embedded.records
       - array
       - Returns an array of records.
 
 </NestedTable>
 
-<MethodTable title="Example Paginated Response" isCodeSnippet>
+<ExampleResponse title="Example Paginated Response">
 
 ```json
 {
@@ -244,4 +244,4 @@ To move between pages of a collection of records, use the links in the `next` an
 }
 ```
 
-</MethodTable>
+</ExampleResponse>

@@ -3,7 +3,7 @@ title: Result Codes
 order: 20
 ---
 
-import { MethodTable } from "components/MethodTable";
+import { NavTable } from "components/NavTable";
 
 Result Codes describe why a transaction or operation failed in Stellar Core and are communicated in the “extras” field of a Horizon response when the “Transaction Failed” Status Code is returned.
 
@@ -11,7 +11,7 @@ In the “extras” field, the errors returned are referred to as “Result Code
 
 There are three types of Result Codes: [Transaction Result Codes](./transaction-result-codes.mdx), [Operation Result Codes](./operation-result-codes.mdx), and [Operation-Specific Result Codes](/operation-specific-result-codes/index.mdx).
 
-<MethodTable title="Result Code Types">
+<NavTable title="Result Code Types">
 
 |  |  |
 | --- | --- |
@@ -19,4 +19,4 @@ There are three types of Result Codes: [Transaction Result Codes](./transaction-
 | [Operation Result Codes](./operation-result-codes.mdx) | Generic errors about operation failures. |
 | [Operation-Specific Result Codes](/operation-specific-result-codes/index.mdx) | Errors specific to each operation type. |
 
-</MethodTable>
+</NavTable>
