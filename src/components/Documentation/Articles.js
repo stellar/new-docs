@@ -2,18 +2,18 @@ import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
+const ArticleList = styled.ul`
+  height: ${({ isCollapsed }) => (isCollapsed ? "auto" : "0")};
+  overflow: hidden;
+
+  li {
+    list-style-type: none;
+  }
+`;
+
 const Articles = ({ isCollapsed, articles = [] }) => {
-  const ArticleList = styled.ul`
-    height: ${isCollapsed ? "auto" : "0"};
-    overflow: hidden;
-
-    li {
-      list-style-type: none;
-    }
-  `;
-
   return (
-    <ArticleList>
+    <ArticleList isCollapsed={isCollapsed}>
       {articles.map((article) => (
         <li>
           <a href={article.url}>{article.title}</a>
