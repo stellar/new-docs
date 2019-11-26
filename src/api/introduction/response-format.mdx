@@ -3,7 +3,7 @@ title: Response Format
 order: 1
 ---
 
-import { MethodTable } from "components/MethodTable";
+import { ExampleResponse } from "components/ExampleResponse";
 import { NestedTable } from "components/NestedTable";
 
 Horizon delivers responses as JSON objects formatted according to [HAL](https://en.wikipedia.org/wiki/Hypertext_Application_Language). The HAL format makes Horizon more explorable, paginates responses, and connects parent and child resources. Consuming this format is simple using one of the many [open source libraries available](https://github.com/mikekelly/hal_specification/wiki/Libraries) for most major programming languages.
@@ -22,16 +22,16 @@ If a response is a collection, the `_links` section will provide [pagination](./
 - ATTRIBUTES
   - DATA TYPE
   - DESCRIPTION
-- _links
+- \_links
   - array
   - Provides links for navigating to other pages or to parents and children.
-- _embedded
+- \_embedded
   - array
   - Present when querying an endpoint that responds with a collection of records.
 
 </NestedTable>
  
-<MethodTable title="Example Response" isCodeSnippet>
+<ExampleResponse title="Example Response">
 
 ```json
 {
@@ -211,4 +211,4 @@ If a response is a collection, the `_links` section will provide [pagination](./
 }
 ```
 
-</MethodTable>
+</ExampleResponse>

@@ -3,7 +3,7 @@ title: Payment Result Codes
 order: 20
 ---
 
-import { MethodTable } from "components/MethodTable";
+import { ExampleResponse } from "components/ExampleResponse";
 import { NestedTable } from "components/NestedTable";
 
 These are result codes that communicate success (200) or failure (400) specific to the `Payment` operation, which often fails because the receiving account does not trust the issuer of the asset being sent.
@@ -30,7 +30,7 @@ Learn more about the [`Payment` operation](../../../glossary/operations/payment.
 
 </NestedTable>
 
-<MethodTable title="Example Response for an “op_underfunded” Result Code">
+<ExampleResponse title="Example Response for an “op_underfunded” Result Code">
 
 ```json
 {
@@ -49,4 +49,4 @@ Learn more about the [`Payment` operation](../../../glossary/operations/payment.
 }
 ```
 
-</MethodTable>
+</ExampleResponse>

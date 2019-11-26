@@ -3,7 +3,7 @@ title: Page Arguments
 order: 3
 ---
 
-import { MethodTable } from "components/MethodTable";
+import { ExampleResponse } from "components/ExampleResponse";
 import { NestedTable } from "components/NestedTable";
 
 <NestedTable>
@@ -20,15 +20,15 @@ import { NestedTable } from "components/NestedTable";
 
 </NestedTable>
 
-<MethodTable title="Example Request" isCodeSnippet>
+<ExampleResponse title="Example Request">
   
 ```cURL
 curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=113725249324879872&limit=5&order=asc"
 ```
 
-</MethodTable>
+</ExampleResponse>
 
-<MethodTable title="Example Response" isCodeSnippet>
+<ExampleResponse title="Example Response">
 
 ```json
 {
@@ -235,4 +235,4 @@ curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=11372524932
 }
 ```
 
-</MethodTable>
+</ExampleResponse>
