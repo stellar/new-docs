@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 import { Expansion } from "components/Expansion";
+import { Text } from "basics/Text";
 
 const NestedTableEl = styled.div`
   display: flex;
@@ -13,8 +14,8 @@ const NestedTableEl = styled.div`
 
   ul {
     padding: 0;
+    list-style: none;
 
-    & > li {
       &:first-child {
         text-transform: uppercase;
       }
@@ -43,7 +44,6 @@ const NestedTableEl = styled.div`
     }
   }
 `;
-
 const ListEl = styled.ul`
   display: flex;
 
@@ -63,7 +63,6 @@ const ColumnEl = styled.div`
   border-bottom: ${(props) =>
     props.hasBorder ? `1px solid ${PALETTE.white60}` : "none"};
 `;
-
 const LabelEl = styled(ColumnEl)`
   padding: 0;
   font-family: ${FONT_FAMILY.monospace};
@@ -78,7 +77,7 @@ const LabelEl = styled(ColumnEl)`
   }
 `;
 
-export const ColumnContentEl = ({ children, hasBorder, ...props }) => (
+const ColumnContentEl = ({ children, hasBorder, ...props }) => (
   <ColumnEl hasBorder {...props}>
     {children}
   </ColumnEl>
@@ -89,7 +88,7 @@ ColumnContentEl.propTypes = {
   hasBorder: PropTypes.bool,
 };
 
-export const ColumnLabelEl = ({ children, ...props }) => (
+const ColumnLabelEl = ({ children, ...props }) => (
   <LabelEl {...props}>{children}</LabelEl>
 );
 
@@ -102,67 +101,74 @@ ColumnLabelEl.propTypes = {
  * [Design Mockup](https://zpl.io/V1DGqJ5)
  */
 
-const ExpandedListItems = ({ items }) =>
-  items.map(({ props }) => (
-    <ListEl>
-      <ColumnContentEl>
-        <ColumnLabelEl>
-          <strong>{props.children}</strong>
-        </ColumnLabelEl>
-      </ColumnContentEl>
-    </ListEl>
-  ));
-
-ExpandedListItems.propTypes = {
-  items: PropTypes.array.isRequired,
-};
-
 const ListItem = ({ items }) =>
-  items.map(({ props }) => (
-    <ListEl>
-      <ColumnContentEl>
-        <ColumnLabelEl>
-          <strong>{props.children[0]}</strong>
-          <span>{props.children[1].props.children[0].props.children}</span>
-        </ColumnLabelEl>
-      </ColumnContentEl>
-      <ColumnContentEl>
-        {props.children[1].props.children[1].props.children && (
-          <NestedItems
-            items={React.Children.toArray(
-              props.children[1].props.children[1].props.children,
-            )}
-          />
-        )}
-      </ColumnContentEl>
-    </ListEl>
-  ));
+  items.map(({ props }, i) => {
+    const nestedItems = React.Children.toArray(
+      props.children[1].props.children,
+    );
+
+    /* Data Type Value comes from the first level nested list. 
+    But visually it is separate from the nested list which is why we are using splice method to extract it here */
+    const dataTypeItem = nestedItems.splice(0, 1);
+
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <ListEl key={i}>
+        <ColumnContentEl>
+          <ColumnLabelEl>
+            <strong>{props.children[0]}</strong>
+            <span>{dataTypeItem}</span>
+          </ColumnLabelEl>
+        </ColumnContentEl>
+        <ColumnContentEl>
+          {nestedItems.length > 0 && (
+            <NestedItems items={React.Children.toArray(nestedItems)} />
+          )}
+        </ColumnContentEl>
+      </ListEl>
+    );
+  });
 
 ListItem.propTypes = {
   items: PropTypes.array.isRequired,
 };
 
-const NestedItems = ({ items }) => {
-  const nestedItems =
-    items[1] &&
-    items[1].props.children &&
-    React.Children.toArray(items[1].props.children);
-
-  return (
-    <ColumnContentEl>
-      {items[0]}
-      {nestedItems && (
-        <Expansion
-          title="Hide child attributes"
-          hasBorder
-          style={{ marginTop: "1rem" }}
-        >
-          <ExpandedListItems items={nestedItems} />
-        </Expansion>
-      )}
-    </ColumnContentEl>
+const NestedItems = ({ items }) =>
+  items.map(({ props }) =>
+    React.Children.map(props.children, (child, i) => {
+      /* It need to check the type of its child.props.children in order to pass only the ones that are object/array in order to go through its nested children */
+      if (child.props && typeof child.props.children === "object") {
+        return (
+          // eslint-disable-next-line react/no-array-index-key
+          <ColumnContentEl key={i}>
+            <Expansion
+              title="Hide child attributes"
+              hasBorder
+              style={{ marginTop: "1rem" }}
+            >
+              {React.Children.toArray(child.props.children).map(
+                (grandChildren) =>
+                  React.Children.toArray(grandChildren.props.children).map(
+                    (nestedEl) =>
+                      typeof nestedEl === "string" ? (
+                        <Text>{nestedEl}</Text>
+                      ) : (
+                        <NestedItems
+                          items={React.Children.toArray(
+                            nestedEl.props.children,
+                          )}
+                        />
+                      ),
+                  ),
+              )}
+            </Expansion>
+          </ColumnContentEl>
+        );
+      }
+      // eslint-disable-next-line react/no-array-index-key
+      return <Text key={i}>{child}</Text>;
+    }),
   );
-};
 
 NestedItems.propTypes = {
   items: PropTypes.array.isRequired,
@@ -174,7 +180,13 @@ export const NestedTable = React.forwardRef(function NestedTable(
 ) {
   return (
     <NestedTableEl ref={ref} {...props}>
-      {children}
+      {React.Children.map(children, (child) =>
+        child.props ? (
+          <ListItem items={React.Children.toArray(child.props.children)} />
+        ) : (
+          child
+        ),
+      )}
     </NestedTableEl>
   );
 });

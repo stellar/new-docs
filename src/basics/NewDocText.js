@@ -2,7 +2,6 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import { PALETTE, MEDIA_QUERIES, FONT_WEIGHT } from "constants/styles";
-
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
@@ -173,7 +172,9 @@ export const TableHeadCell = styled.th`
   line-height: 3;
   vertical-align: middle;
 `;
-export const TableBody = styled.tbody``;
+export const TableBody = styled.tbody`
+  font-size: 0.875rem;
+`;
 export const TableRow = styled.tr`
   &:nth-child(even) {
     background-color: ${PALETTE.white80};
@@ -194,13 +195,10 @@ export const Code = styled.code`
 export const Preformatted = styled.pre`
   &&& {
     position: relative;
-    background-color: ${PALETTE.lighterGrey};
+    background: transparent;
     padding: 1.25rem 0;
-    padding-left: 2.2rem;
     font-size: 0.8rem;
     line-height: 1.7em;
-    border: 1px solid ${({ theme }) => theme.border};
-    border-radius: 0.5rem;
     color: ${PALETTE.darkGrey};
   }
 
