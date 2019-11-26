@@ -2,20 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
-import { PrismStyles } from "basics/prism";
+import { PALETTE, FONT_WEIGHT } from "constants/styles";
 
 const MethodTableEl = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 1.5rem;
-  background: ${(props) =>
-    props.isCodeSnippet ? PALETTE.black90 : PALETTE.white80};
-
-  table {
-    font-family: ${(props) =>
-      props.hasCodeFormat ? FONT_FAMILY.monospace : FONT_FAMILY.base};
-  }
+  background: ${PALETTE.white80};
+  border-radius: 4px;
 
   thead {
     display: none;
@@ -40,7 +34,7 @@ const TitleEl = styled.div`
   padding-bottom: 1rem;
   border-bottom: 1px solid ${PALETTE.white60};
   font-size: 0.875rem;
-  font-weight: ${FONT_WEIGHT.medium};
+  font-weight: ${FONT_WEIGHT.bold};
 `;
 const ContentEl = styled.div`
   padding: 1rem 0;
@@ -52,18 +46,12 @@ const ContentEl = styled.div`
  */
 
 export const MethodTable = React.forwardRef(function MethodTable(
-  { title, children, isCodeSnippet, hasCodeFormat, ...props },
+  { title, children, ...props },
   ref,
 ) {
   return (
-    <MethodTableEl
-      ref={ref}
-      isCodeSnippet={isCodeSnippet}
-      hasCodeFormat={hasCodeFormat}
-      {...props}
-    >
+    <MethodTableEl ref={ref} {...props}>
       <TitleEl>{title}</TitleEl>
-      {!isCodeSnippet && <PrismStyles />}
       <ContentEl>{children}</ContentEl>
     </MethodTableEl>
   );
@@ -72,6 +60,4 @@ export const MethodTable = React.forwardRef(function MethodTable(
 MethodTable.propTypes = {
   title: PropTypes.node.isRequired,
   children: PropTypes.node.isRequired,
-  isCodeSnippet: PropTypes.bool,
-  hasCodeFormat: PropTypes.bool,
 };

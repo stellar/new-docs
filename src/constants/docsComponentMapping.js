@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { MEDIA_QUERIES } from "constants/styles";
+import { MEDIA_QUERIES, PALETTE } from "constants/styles";
 
 import { BasicImage } from "basics/Images";
 import { Link } from "basics/Links";
@@ -93,9 +93,7 @@ const components = {
   delete: TextComponents.Strike,
   hr: TextComponents.HorizontalRule,
   a: styled(Link)`
-    color: ${({ theme }) =>
-      theme.cta.body === theme.body ? theme.cta.text : theme.cta.body};
-    text-decoration: underline;
+    color: ${PALETTE.purple};
   `,
   img: styled(BasicImage)`
     display: block;
