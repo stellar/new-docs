@@ -11,17 +11,15 @@ const ArticleList = styled.ul`
   }
 `;
 
-const Articles = ({ isCollapsed, articles = [] }) => {
-  return (
-    <ArticleList isCollapsed={isCollapsed}>
-      {articles.map((article) => (
-        <li>
-          <a href={article.url}>{article.title}</a>
-        </li>
-      ))}
-    </ArticleList>
-  );
-};
+const Articles = ({ isCollapsed, articles = [] }) => (
+  <ArticleList isCollapsed={isCollapsed}>
+    {articles.map((article) => (
+      <li>
+        <a href={article.url}>{article.title}</a>
+      </li>
+    ))}
+  </ArticleList>
+);
 
 Articles.propTypes = {
   isCollapsed: PropTypes.bool,
