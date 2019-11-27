@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
+import { Link } from "basics/Links";
+
 const ArticleList = styled.ul`
   height: ${({ isCollapsed }) => (isCollapsed ? "auto" : "0")};
   overflow: hidden;
@@ -13,9 +15,9 @@ const ArticleList = styled.ul`
 
 const Articles = ({ isCollapsed, articles = [] }) => (
   <ArticleList isCollapsed={isCollapsed}>
-    {articles.map((article) => (
+    {Object.values(articles).map((article) => (
       <li>
-        <a href={article.url}>{article.title}</a>
+        <Link href={article.url}>{article.title}</Link>
       </li>
     ))}
   </ArticleList>
