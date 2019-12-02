@@ -113,7 +113,7 @@ const relPath = (longPath) => longPath.replace("src/", "").replace(".mdx", "");
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   // End of list
   if (topicIndex + 1 === topicArr.length) {
-    return null;
+    return { title: "", url: "" };
   }
 
   // Go to next topic
