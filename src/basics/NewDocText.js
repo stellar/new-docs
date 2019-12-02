@@ -194,11 +194,11 @@ export const Code = styled.code`
 `;
 export const Preformatted = styled.pre`
   &&& {
+    font-family: ${PALETTE.monospace};
     position: relative;
     background: transparent;
-    padding: 1.25rem 0;
     font-size: 0.8rem;
-    line-height: 1.7em;
+    line-height: 1.7;
     color: ${PALETTE.darkGrey};
   }
 
@@ -213,15 +213,18 @@ export const Preformatted = styled.pre`
     line-height: inherit;
   }
   && .line-numbers-rows {
+    font-family: ${PALETTE.normal};
+    text-align: right;
+    line-height: 1.8;
+    color: #8d8f99;
+    opacity: 0.72;
     bottom: 0;
     border: none;
     border-top-left-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
     margin: -1px;
-    padding: 1.25rem 0;
-    padding-left: 0.8rem;
+    padding-left: 1.5rem;
     text-shadow: none;
-    line-height: inherit;
 
     // This is gross but gotta override
     & > span::before {

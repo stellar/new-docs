@@ -106,8 +106,10 @@ const ListItem = ({ items }) =>
     const getObjectChild = props.children.filter(
       (item) => typeof item === "object",
     );
+
     const nestedItems =
-      getObjectChild && React.Children.toArray(getObjectChild);
+      getObjectChild &&
+      React.Children.toArray(getObjectChild[0].props.children);
 
     /* Data Type Value comes from the first level nested list. 
     But visually it is separate from the nested list which is why we are using splice method to extract it here */
