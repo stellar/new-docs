@@ -18,7 +18,7 @@ https://prismjs.com/download.html#themes=prism&languages=clike+javascript */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  text-shadow: 0 1px white;
+  color: ${(props) => (props.isCodeSnippet ? PALETTE.white : PALETTE.darkGrey)};
   font-family: ${FONT_FAMILY.monospace};
   font-size: 1em;
   text-align: left;
@@ -61,7 +61,6 @@ code[class*="language-"] ::selection {
 
 /* Code blocks */
 pre[class*="language-"] {
-  padding: 1em;
   margin: 0.5em 0;
 }
 
@@ -76,7 +75,7 @@ pre[class*="language-"] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: slategray;
+  color: ${(props) => (props.isCodeSnippet ? "#8fa4af" : "slategray")};
 }
 
 .token.punctuation {
@@ -109,7 +108,7 @@ pre[class*="language-"] {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: ${PALETTE.lightGreen};
+  color: ${(props) => (props.isCodeSnippet ? "#d5ff99" : "#abcc7d")};
 }
 
 .token.operator,
@@ -117,18 +116,18 @@ pre[class*="language-"] {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: ${PALETTE.teal};
+  color: #7ffffe;
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  color: ${PALETTE.purple};
+  color: #a9b7ff;
 }
 
 .token.function,
 .token.class-name {
-  color: ${PALETTE.orange};
+  color: #ffdd96;
 }
 
 .token.regex,
@@ -154,16 +153,15 @@ pre[class*="language-"] {
  */
 
 .gatsby-highlight {  
-  /* background-color: white; */
   border-radius: 0.3em;
 }
 
 .line-numbers-rows {
+  display: ${(props) => (props.isCodeSnippet ? "block" : "none")};
   background: ${PALETTE.black90};
-display: ${(props) => (props.hasNoLineNumber ? "none" : "block")};
 }
 .line-numbers {
-padding: ${(props) => (props.hasNoLineNumber ? "none" : "block")};
+  padding: ${(props) => (props.isCodeSnippet ? "block" : "none")};
 }
 
 `;

@@ -21,6 +21,6 @@ export const ExampleResponse = ({ children, title = "Example" }) => (
 );
 
 ExampleResponse.propTypes = {
-  title: PropTypes.node.isRequired,
+  title: PropTypes.node,
   children: PropTypes.node.isRequired,
 };
