@@ -57,6 +57,12 @@ const Topics = styled.ul`
   }
 `;
 
+const TopicExpander = styled.button`
+  &:focus {
+    outline: 0;
+  }
+`;
+
 const containerStyles = css`
   margin: 0;
   min-width: 80rem;
@@ -108,7 +114,17 @@ const componentMapping = {
   }),
 };
 
-const relPath = (longPath) => longPath.replace("src/", "").replace(".mdx", "");
+const relPath = (longPath) => {
+  const shortPath = longPath.replace("src/", "").replace(".mdx", "");
+
+  const shortPathArr = shortPath.split("/");
+
+  if (shortPathArr.splice(-1)[0] === "index") {
+    return shortPathArr.join("/");
+  }
+
+  return shortPath;
+};
 
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   // End of list
@@ -168,7 +184,7 @@ const buildDocsContents = (data) => {
 
 const Documentation = ({ data, pageContext, location }) => {
   const { allFile } = data;
-  const { relativeDirectory, relativePath } = pageContext;
+  const { relativeDirectory, relativePath, rootDir } = pageContext;
 
   const docsContents =
     (location.state && location.state.compiledDocsContents) ||
@@ -197,12 +213,22 @@ const Documentation = ({ data, pageContext, location }) => {
     <Topics>
       {Object.values(docsContents).map((content) => {
         const isCollapsed = topicState[content.topicPath];
+        if (content.topicPath === rootDir) {
+          return (
+            <li>
+              <Link href="/docs/">Introduction</Link>
+            </li>
+          );
+        }
 
         return (
           <li>
-            <button type="button" onClick={() => topicToggleHandler(content)}>
+            <TopicExpander
+              type="button"
+              onClick={() => topicToggleHandler(content)}
+            >
               {content.title}
-            </button>
+            </TopicExpander>
             <Articles isCollapsed={isCollapsed} articles={content.articles} />
           </li>
         );
@@ -213,7 +239,7 @@ const Documentation = ({ data, pageContext, location }) => {
     <ContentEl>
       <MDXRenderer>{article.body}</MDXRenderer>
       <span>
-        Up Next:
+        Up Next:{" "}
         <Link
           href={article.nextUp.url}
           state={{ compiledDocsContents: docsContents }}

@@ -11,6 +11,7 @@ const buildPathFromFile = ({ relativePath }) => {
 };
 
 const REFERENCE_ROOT = "src/api";
+const DOCS_ROOT = "src/docs";
 const isReference = (doc) => doc.relativeDirectory.includes(REFERENCE_ROOT);
 
 const createDocsPages = ({ actions, docs }) => {
@@ -26,12 +27,14 @@ const createDocsPages = ({ actions, docs }) => {
 
   documentation.forEach((doc) => {
     actions.createPage({
-      path: buildPathFromFile(doc),
+      path:
+        doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc),
       component: docTemplate,
       context: {
         locale: defaultLocale,
         relativeDirectory: doc.relativeDirectory,
         relativePath: doc.relativePath,
+        rootDir: DOCS_ROOT,
         // None of these have translations set up. If we translate them in
         // the future, we'll have to revisit this.
       },
