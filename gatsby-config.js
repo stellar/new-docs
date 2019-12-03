@@ -30,7 +30,7 @@ module.exports = {
   },
   pathPrefix: "/",
   plugins: [
-    FEATURE_FLAGS.docs && {
+    {
       resolve: "gatsby-source-git",
       options: {
         name: "docs",
