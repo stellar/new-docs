@@ -4,19 +4,27 @@ import { graphql } from "gatsby";
 import styled, { css, ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
-import path from "path";
+import pathLib from "path";
+
+import {
+  REDESIGN_PALETTE,
+  NAV_THEMES,
+  CSS_TRANSITION_SPEED,
+  FONT_WEIGHT,
+} from "constants/styles";
+import components from "constants/docsComponentMapping";
 
 import { isEmpty } from "utils";
+import { smoothScrollTo } from "helpers/dom";
+import { slugify } from "helpers/slugify";
+
+import { BasicButton } from "basics/Buttons";
 import { Column, Container, gridHelpers } from "basics/Grid";
+
 import { DocsBase } from "components/layout/DocsBase";
 import { NavFrame } from "components/Navigation/SharedStyles";
 import { NavLogo } from "components/Navigation/NavLogo";
-import StickyNavContent, {
-  StickyNavProvider,
-} from "components/StickyNavContent";
-import SideNav, { SideNavProvider } from "components/SideNav";
-import { REDESIGN_PALETTE, NAV_THEMES } from "constants/styles";
-import components from "constants/docsComponentMapping";
+import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 
 const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
 
@@ -24,7 +32,6 @@ const { h1: H1, h2: H2, h3: H3, h4: H4 } = components;
 const contentId = "content";
 
 const ContentEl = styled.article`
-  position: relative;
   margin: 0 auto;
 `;
 const containerStyles = css`
@@ -74,7 +81,7 @@ const DocsLink = ({ href, ...props }) => {
 
   if (url.startsWith(".")) {
     // Force all directories to be flat
-    url = path.resolve("/docs/api", url.replace("..", "."));
+    url = pathLib.resolve("/docs/api", url.replace("..", "."));
   }
   return <StyledLink href={url} {...props} />;
 };
@@ -84,29 +91,75 @@ const componentMap = () => ({
   a: DocsLink,
   // eslint-disable-next-line react/prop-types
   h1: ({ children }) => (
-    <StickyNavContent title={children}>
+    <TrackedContent id={slugify(children)}>
       <H1 style={{ display: "none" }}>{children}</H1>
-    </StickyNavContent>
+    </TrackedContent>
   ),
   // eslint-disable-next-line react/prop-types
   h2: ({ children }) => (
-    <StickyNavContent title={children}>
+    <TrackedContent id={slugify(children)}>
       <H2>{children}</H2>
-    </StickyNavContent>
+    </TrackedContent>
   ),
   // eslint-disable-next-line react/prop-types
   h3: ({ children }) => (
-    <StickyNavContent title={children}>
+    <TrackedContent id={slugify(children)}>
       <H3>{children}</H3>
-    </StickyNavContent>
+    </TrackedContent>
   ),
   // eslint-disable-next-line react/prop-types
   h4: ({ children }) => (
-    <StickyNavContent title={children}>
+    <TrackedContent id={slugify(children)}>
       <H4>{children}</H4>
-    </StickyNavContent>
+    </TrackedContent>
   ),
 });
+
+const ReferenceSection = React.memo(({ frontmatter, body }) => (
+  <section>
+    <h1>{frontmatter.title}</h1>
+    <MDXRenderer>{body}</MDXRenderer>
+    <hr />
+  </section>
+));
+ReferenceSection.propTypes = {
+  body: PropTypes.string.isRequired,
+  frontmatter: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+  }),
+};
+
+const NavItemEl = styled(BasicButton)`
+  text-align: left;
+  white-space: nowrap;
+  font-size: 1rem;
+  color: #333;
+  padding: 0.375rem 0;
+  padding-left: ${(props) => props.depth}rem;
+  line-height: 1.25;
+  transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
+  font-weight: ${({ isActive }) =>
+    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+
+  &:hover {
+    color: #999;
+  }
+`;
+
+// This is a function, not a component
+// eslint-disable-next-line react/prop-types
+const renderItem = ({ depth, id, isActive, title }) => (
+  <NavItemEl
+    depth={depth}
+    isActive={isActive}
+    onClick={(e) => {
+      e.preventDefault();
+      smoothScrollTo(document.getElementById(id));
+    }}
+  >
+    {title}
+  </NavItemEl>
+);
 
 const ApiReference = ({ data, pageContext }) => {
   const { referenceDocs } = data;
@@ -122,202 +175,46 @@ const ApiReference = ({ data, pageContext }) => {
 
   return (
     <MDXProvider components={componentMap()}>
-      <StickyNavProvider navEntries={navEntries}>
-        <SideNavProvider>
-          <div style={{ marginTop: "10rem" }} />
-          <DocsBase
-            pageContext={pageContext}
-            navigation={
-              <ThemeProvider theme={NAV_THEMES.docs}>
-                <NavFrame>
-                  <ContainerEl>
-                    <RowEl>
-                      <Column xs={3} xl={4}>
-                        <NavLogo pageName="Documentation" />
-                      </Column>
-                    </RowEl>
-                  </ContainerEl>
-                </NavFrame>
-              </ThemeProvider>
-            }
-          >
-            <ContainerEl id={contentId}>
-              <RowEl>
-                <SideNavEl xs={3} lg={3} xl={4}>
-                  <SideNavBackgroundEl />
-                  <SideNav isScrollableSideNav navEntries={navEntries} />
-                </SideNavEl>
-                <Column xs={5} xl={9}>
-                  <ContentEl>
-                    {referenceDocs.edges.map(({ node }) => (
-                      <section key={node.id}>
-                        <h1>{node.frontmatter.title}</h1>
-                        <MDXRenderer>{node.body}</MDXRenderer>
-                        <p>
-                          Each of these sections comes from a different markdown
-                          file
-                        </p>
-                        <hr />
-                      </section>
-                    ))}
-                  </ContentEl>
-                </Column>
-                <Column xs={4} xl={9}>
-                  <div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                    <div>
-                      this is some big ol block of contentthis is some big ol
-                      block of contentthis is some big ol block of contentthis
-                      is some big ol block of contentthis is some big ol block
-                      of contentthis is some big ol block of contentthis is some
-                      big ol block of content
-                    </div>
-                  </div>
-                </Column>
-              </RowEl>
-            </ContainerEl>
-          </DocsBase>
-        </SideNavProvider>
-      </StickyNavProvider>
+      <DocsBase
+        pageContext={pageContext}
+        navigation={
+          <ThemeProvider theme={NAV_THEMES.docs}>
+            <NavFrame>
+              <ContainerEl>
+                <RowEl>
+                  <Column xs={3} xl={4}>
+                    <NavLogo pageName="Documentation" />
+                  </Column>
+                </RowEl>
+              </ContainerEl>
+            </NavFrame>
+          </ThemeProvider>
+        }
+      >
+        <ContainerEl id={contentId}>
+          <div style={{ paddingTop: "10rem" }} />
+          <RowEl>
+            <SideNavEl xs={3} lg={3} xl={4}>
+              <SideNavBackgroundEl />
+              <SideNav>
+                <SideNavBody items={navEntries} renderItem={renderItem} />
+              </SideNav>
+            </SideNavEl>
+            <Column xs={5} xl={9}>
+              <ContentEl>
+                {referenceDocs.edges.map(({ node }) => (
+                  <ReferenceSection
+                    key={node.id}
+                    frontmatter={node.frontmatter}
+                    body={node.body}
+                  />
+                ))}
+              </ContentEl>
+            </Column>
+            <Column xs={4} xl={9} />
+          </RowEl>
+        </ContainerEl>
+      </DocsBase>
     </MDXProvider>
   );
 };

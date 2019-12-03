@@ -39,6 +39,7 @@ const createDocsPages = ({ actions, docs }) => {
   });
   actions.createPage({
     path: "docs/api",
+    matchPath: "docs/api/*",
     component: apiTemplate,
     context: {
       ids: apiReference.map(({ childMdx }) => childMdx.id),
