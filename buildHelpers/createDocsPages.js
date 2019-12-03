@@ -29,8 +29,9 @@ const createDocsPages = ({ actions, docs }) => {
       path: buildPathFromFile(doc),
       component: docTemplate,
       context: {
-        id: doc.childMdx.id,
         locale: defaultLocale,
+        relativeDirectory: doc.relativeDirectory,
+        relativePath: doc.relativePath,
         // None of these have translations set up. If we translate them in
         // the future, we'll have to revisit this.
       },

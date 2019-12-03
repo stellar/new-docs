@@ -108,64 +108,94 @@ const componentMapping = {
   }),
 };
 
-const relPath = (longPath) =>
-  longPath
-    .split("/")
-    .pop()
-    .replace(".mdx", "");
+const relPath = (longPath) => longPath.replace("src/", "").replace(".mdx", "");
 
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
+  // End of list
   if (topicIndex + 1 === topicArr.length) {
-    return null;
-  }
-  if (childIndex === childArr.length - 1) {
-    return `/${relPath(topicArr[topicIndex + 1].fieldValue)}`;
+    return { title: "", url: "" };
   }
 
-  return relPath(childArr[childIndex + 1].relativePath);
+  // Go to next topic
+  if (childIndex === childArr.length - 1) {
+    const nextTopic = topicArr[topicIndex + 1];
+    return {
+      title: nextTopic.nodes[0].fields.metadata.data.title,
+      url: `${relPath(nextTopic.nodes[0].relativePath)}`,
+    };
+  }
+
+  // Go to next article in topic
+  const nextChild = childArr[childIndex + 1];
+  return {
+    title: nextChild.childMdx.frontmatter.title,
+    url: relPath(nextChild.relativePath),
+  };
 };
 
-const buildTableOfContents = (data) =>
-  data.map((topic, topicIndex, topicArr) => {
-    const topicPath = topic.fieldValue.replace("src/docs", "");
-    const title = topic.nodes[0].fields.metadata.data.title;
-    const articles = topic.nodes.map((node, childIndex, childArr) => ({
-      title: node.childMdx.frontmatter.title,
-      url: node.relativePath
-        .replace(`${topic.fieldValue}/`, "")
-        .replace(".mdx", ""),
-      next: nextUp(topicArr, topicIndex, childArr, childIndex),
-    }));
+const buildDocsContents = (data) => {
+  const contents = {};
+  const sortedDocs = [...data].sort(
+    (a, b) =>
+      a.nodes[0].fields.metadata.data.order -
+      b.nodes[0].fields.metadata.data.order,
+  );
 
-    return {
+  sortedDocs.forEach((topic, topicIndex, topicArr) => {
+    const topicPath = topic.fieldValue;
+    const title = topic.nodes[0].fields.metadata.data.title;
+    const articles = {};
+
+    topic.nodes.forEach((node, childIndex, childArr) => {
+      const childMdx = node.childMdx;
+      articles[node.relativePath] = {
+        body: childMdx.body,
+        headings: childMdx.headings,
+        title: childMdx.frontmatter.title,
+        url: relPath(node.relativePath),
+        nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
+      };
+    });
+    contents[topic.fieldValue] = {
       topicPath,
       title,
       articles,
     };
   });
 
-const Documentation = ({ data, pageContext }) => {
-  const { mdx, allFile } = data;
-  const pageOutline = mdx.headings.map(({ value }) => ({
+  return contents;
+};
+
+const Documentation = ({ data, pageContext, location }) => {
+  const { allFile } = data;
+  const { relativeDirectory, relativePath } = pageContext;
+
+  const docsContents =
+    (location.state && location.state.compiledDocsContents) ||
+    buildDocsContents(allFile.group);
+
+  const initialTopicsState = {};
+  Object.values(docsContents).forEach((content) => {
+    initialTopicsState[content.topicPath] =
+      content.topicPath === relativeDirectory;
+  });
+  const [topicState, setTopicState] = useState(initialTopicsState);
+  const topicToggleHandler = (content) => {
+    const topicPath = content.topicPath;
+    setTopicState({
+      ...topicState,
+      [topicPath]: !topicState[topicPath],
+    });
+  };
+  const article = docsContents[relativeDirectory].articles[relativePath];
+
+  const pageOutline = article.headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
     title: value,
   }));
-
-  const tableOfContents = buildTableOfContents(allFile.group);
-  const topics = {};
-  tableOfContents.forEach((content) => {
-    topics[content.topicPath] = false;
-  });
-  const [topicState, setTopicState] = useState(topics);
-  const topicToggleHandler = (content) => {
-    setTopicState({
-      ...topicState,
-      [content.topicPath]: !topicState[content.topicPath],
-    });
-  };
   const left = (
     <Topics>
-      {tableOfContents.map((content) => {
+      {Object.values(docsContents).map((content) => {
         const isCollapsed = topicState[content.topicPath];
 
         return (
@@ -181,7 +211,16 @@ const Documentation = ({ data, pageContext }) => {
   );
   const center = (
     <ContentEl>
-      <MDXRenderer>{mdx.body}</MDXRenderer>
+      <MDXRenderer>{article.body}</MDXRenderer>
+      <span>
+        Up Next:
+        <Link
+          href={article.nextUp.url}
+          state={{ compiledDocsContents: docsContents }}
+        >
+          {article.nextUp.title}
+        </Link>
+      </span>
     </ContentEl>
   );
   const right = (
@@ -224,21 +263,13 @@ const Documentation = ({ data, pageContext }) => {
 Documentation.propTypes = {
   data: PropTypes.object.isRequired,
   pageContext: PropTypes.object.isRequired,
+  location: PropTypes.object,
 };
 
 export default Documentation;
 
 export const pageQuery = graphql`
-  query DocumentationQuery($id: String) {
-    mdx(id: { eq: $id }) {
-      ...SubpageMetadata
-      id
-      fileAbsolutePath
-      body
-      headings(depth: h2) {
-        value
-      }
-    }
+  query DocumentationQuery {
     allFile(
       filter: {
         sourceInstanceName: { eq: "docs" }
@@ -249,10 +280,15 @@ export const pageQuery = graphql`
     ) {
       group(field: relativeDirectory) {
         fieldValue
-        totalCount
         nodes {
+          id
           relativePath
           childMdx {
+            body
+            id
+            headings(depth: h2) {
+              value
+            }
             frontmatter {
               title
               order
