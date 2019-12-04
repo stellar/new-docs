@@ -27,10 +27,10 @@ const createDocsPages = ({ actions, docs }) => {
   const documentation = allDocs.filter((doc) => !isReference(doc));
 
   documentation.forEach((doc) => {
-    const path = buildPathFromFile(doc);
+    const path =
+      doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc);
     actions.createPage({
-      path:
-        doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc),
+      path,
       component: docTemplate,
       context: {
         urlPath: path,
