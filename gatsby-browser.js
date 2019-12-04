@@ -3,15 +3,15 @@ import * as Sentry from "@sentry/browser";
 
 import Providers from "./src/components/Providers";
 import { PORTAL_TARGETS } from "./src/constants/domNodes";
-import { FEATURE_FLAGS, IS_LIVE } from "./buildHelpers/env";
+import { IS_PRODUCTION } from "./buildHelpers/env";
 
 // eslint-disable-next-line react/prop-types
 export const wrapRootElement = ({ element }) => (
-  <Providers featureFlags={FEATURE_FLAGS}>{element}</Providers>
+  <Providers>{element}</Providers>
 );
 
 export const onInitialClientRender = () => {
-  if (IS_LIVE) {
+  if (IS_PRODUCTION) {
     // Set up Sentry
     Sentry.init({
       dsn: "https://efc31f19f9c54082b8d993bfb62eee57@sentry.io/1531056",
