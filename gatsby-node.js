@@ -2,7 +2,7 @@ const Promise = require("bluebird");
 const path = require("path");
 const execa = require("execa");
 
-const { FEATURE_FLAGS } = require("./buildHelpers/env");
+const { FEATURE_FLAGS, FEATURES } = require("./buildHelpers/env");
 const { getLocale } = require("./buildHelpers/createMdxPages");
 const {
   createContentfulPages,
@@ -65,7 +65,7 @@ exports.createPages = async ({ graphql, actions }) => {
         ${blogListFragment}
         ${newsletterFragment}
         ${projectDirectoryQueryFragment}
-        ${FEATURE_FLAGS.docs ? docsQueryFragment : ""}
+        ${FEATURE_FLAGS[FEATURES.docs] ? docsQueryFragment : ""}
       }
     `,
   );
@@ -86,7 +86,7 @@ exports.createPages = async ({ graphql, actions }) => {
 
   createProjectDirectory({ actions, allQueries });
 
-  if (FEATURE_FLAGS.docs) {
+  if (FEATURE_FLAGS[FEATURES.docs]) {
     const docs = result.data.docs.edges;
     createDocsPages({ actions, docs });
   }
