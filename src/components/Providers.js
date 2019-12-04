@@ -9,9 +9,9 @@ import { PreloadedCatalogContext } from "helpers/translate";
 import GlobalStyles from "basics/GlobalStyles";
 import FeatureFlags from "contexts/featureFlags";
 
-const Providers = ({ children, featureFlags, preloadedCatalogs }) => (
+const Providers = ({ children, preloadedCatalogs }) => (
   <ThemeProvider theme={THEME}>
-    <FeatureFlags flags={featureFlags}>
+    <FeatureFlags>
       <PreloadedCatalogContext.Provider value={preloadedCatalogs}>
         <GlobalStyles />
         {children}
@@ -22,7 +22,6 @@ const Providers = ({ children, featureFlags, preloadedCatalogs }) => (
 
 Providers.propTypes = {
   children: PropTypes.node.isRequired,
-  featureFlags: PropTypes.object,
   preloadedCatalogs: PropTypes.object,
 };
 

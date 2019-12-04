@@ -27,11 +27,13 @@ const createDocsPages = ({ actions, docs }) => {
   const documentation = allDocs.filter((doc) => !isReference(doc));
 
   documentation.forEach((doc) => {
+    const path = buildPathFromFile(doc);
     actions.createPage({
       path:
         doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc),
       component: docTemplate,
       context: {
+        urlPath: path,
         locale: defaultLocale,
         relativeDirectory: doc.relativeDirectory,
         relativePath: doc.relativePath,
@@ -46,6 +48,7 @@ const createDocsPages = ({ actions, docs }) => {
     matchPath: "docs/api/*",
     component: apiTemplate,
     context: {
+      urlPath: "docs/api",
       ids: apiReference.map(({ childMdx }) => childMdx.id),
       locale: defaultLocale,
     },

@@ -10,6 +10,7 @@ import {
   REDESIGN_PALETTE,
   NAV_THEMES,
   CSS_TRANSITION_SPEED,
+  MEDIA_QUERIES,
   FONT_WEIGHT,
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
@@ -57,6 +58,17 @@ const RowEl = styled.div`
   ${getSizeGrid(COL_SIZES.xl)}
 `;
 
+const NestedRowEl = styled.div`
+  display: grid;
+  grid-template-columns: repeat(9, 4rem);
+  column-gap: calc((100% - ${9 * 4}rem) / ${9 - 1});
+
+  @media (${MEDIA_QUERIES.gtXlDesktop}) {
+    grid-template-columns: repeat(18, 4rem);
+    column-gap: calc((100% - ${18 * 4}rem) / ${18 - 1});
+  }
+`;
+
 const SideNavEl = styled(Column)`
   position: relative;
 `;
@@ -86,9 +98,36 @@ const DocsLink = ({ href, ...props }) => {
   return <StyledLink href={url} {...props} />;
 };
 
+const RIGHT_COLUMN_COMPONENTS_NAME = {
+  CodeExample: "CodeExample",
+  EndpointsTable: "EndpointsTable",
+  ExampleResponse: "ExampleResponse",
+  NavTable: "NavTable",
+};
+
 const componentMap = () => ({
   ...components,
   a: DocsLink,
+  // eslint-disable-next-line react/prop-types
+  wrapper: ({ children, ...props }) => {
+    const rightColumnContent = React.Children.toArray(children).filter(
+      (child) => RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
+    );
+    const MiddleColumnContent = React.Children.toArray(children).filter(
+      (child) => !RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
+    );
+
+    return (
+      <NestedRowEl>
+        <Column xs={5} xl={9}>
+          <ContentEl {...props}>{MiddleColumnContent}</ContentEl>
+        </Column>
+        <Column xs={4} xl={9}>
+          {rightColumnContent}
+        </Column>
+      </NestedRowEl>
+    );
+  },
   // eslint-disable-next-line react/prop-types
   h1: ({ children }) => (
     <TrackedContent id={slugify(children)}>
@@ -200,16 +239,14 @@ const ApiReference = ({ data, pageContext }) => {
                 <SideNavBody items={navEntries} renderItem={renderItem} />
               </SideNav>
             </SideNavEl>
-            <Column xs={5} xl={9}>
-              <ContentEl>
-                {referenceDocs.edges.map(({ node }) => (
-                  <ReferenceSection
-                    key={node.id}
-                    frontmatter={node.frontmatter}
-                    body={node.body}
-                  />
-                ))}
-              </ContentEl>
+            <Column xs={9} xl={18}>
+              {referenceDocs.edges.map(({ node }) => (
+                <ReferenceSection
+                  key={node.id}
+                  frontmatter={node.frontmatter}
+                  body={node.body}
+                />
+              ))}
             </Column>
             <Column xs={4} xl={9} />
           </RowEl>

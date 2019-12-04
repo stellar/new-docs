@@ -5,7 +5,7 @@ const {
 } = require("./buildHelpers/serializeSitemap");
 
 // Determine what environment we're running in and what the URL is.
-const { IS_PROD, SITE_URL, FEATURE_FLAGS } = require("./buildHelpers/env");
+const { IS_BUILD, SITE_URL } = require("./buildHelpers/env");
 
 // Set up Contentful configuration
 const contentfulConfig = {
@@ -77,8 +77,8 @@ module.exports = {
       options: {
         stages: ["build-javascript", "develop"],
         options: {
-          failOnError: IS_PROD,
-          failOnWarning: IS_PROD,
+          failOnError: IS_BUILD,
+          failOnWarning: IS_BUILD,
         },
       },
     },
