@@ -12,6 +12,7 @@ import {
   CSS_TRANSITION_SPEED,
   MEDIA_QUERIES,
   FONT_WEIGHT,
+  PALETTE,
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
 
@@ -44,6 +45,13 @@ const ContainerEl = styled(Container)`
   && {
     ${containerStyles}
   }
+`;
+const GreenTableCell = styled.td`
+  color: ${PALETTE.lightGreen};
+`;
+
+const OrangeTableCell = styled.td`
+  color: ${PALETTE.lightOrage};
 `;
 
 const { count, size, margin } = COLUMNS[COL_SIZES.md];
@@ -152,6 +160,16 @@ const componentMap = () => ({
       <H4>{children}</H4>
     </TrackedContent>
   ),
+  // eslint-disable-next-line react/prop-types
+  td: ({ children }) => {
+    if (children === "GET") {
+      return <GreenTableCell>{children}</GreenTableCell>;
+    }
+    if (children === "POST") {
+      return <OrangeTableCell>{children}</OrangeTableCell>;
+    }
+    return <td>{children}</td>;
+  },
 });
 
 const ReferenceSection = React.memo(({ frontmatter, body }) => (
