@@ -20,7 +20,6 @@ const createDocsPages = ({ actions, docs }) => {
   documentation.forEach((doc) => {
     const docPath =
       doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc);
-    console.log(doc);
     actions.createPage({
       path: docPath,
       component: docTemplate,
