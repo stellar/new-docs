@@ -21,6 +21,7 @@ import Articles from "components/Documentation/Articles";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
 import { Link } from "basics/Links";
+import { buildPathFromFile } from "utils";
 
 const contentId = "content";
 
@@ -114,18 +115,6 @@ const componentMapping = {
   }),
 };
 
-const relPath = (longPath) => {
-  const shortPath = longPath.replace("src/", "").replace(".mdx", "");
-
-  const shortPathArr = shortPath.split("/");
-
-  if (shortPathArr.splice(-1)[0] === "index") {
-    return shortPathArr.join("/");
-  }
-
-  return shortPath;
-};
-
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   // End of list
   if (topicIndex + 1 === topicArr.length) {
@@ -137,7 +126,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
     const nextTopic = topicArr[topicIndex + 1];
     return {
       title: nextTopic.nodes[0].fields.metadata.data.title,
-      url: `${relPath(nextTopic.nodes[0].relativePath)}`,
+      url: `${buildPathFromFile(nextTopic.nodes[0])}`,
     };
   }
 
@@ -145,7 +134,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   const nextChild = childArr[childIndex + 1];
   return {
     title: nextChild.childMdx.frontmatter.title,
-    url: relPath(nextChild.relativePath),
+    url: buildPathFromFile(nextChild),
   };
 };
 
@@ -168,7 +157,7 @@ const buildDocsContents = (data) => {
         body: childMdx.body,
         headings: childMdx.headings,
         title: childMdx.frontmatter.title,
-        url: relPath(node.relativePath),
+        url: buildPathFromFile(node),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
@@ -216,7 +205,7 @@ const Documentation = ({ data, pageContext, location }) => {
         if (content.topicPath === rootDir) {
           return (
             <li>
-              <Link href="/docs/">Introduction</Link>
+              <Link href="/docs/">{content.title}</Link>
             </li>
           );
         }

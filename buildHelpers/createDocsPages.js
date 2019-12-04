@@ -2,8 +2,9 @@ const path = require("path");
 const { defaultLocale } = require("./i18n");
 const { normalizeRoute } = require("./routes");
 
-const pathRegex = /^src(.*)\..*$/;
 const buildPathFromFile = ({ relativePath }) => {
+  const pathRegex = /^src(.*)\..*$/;
+
   // Strip `index` so that `index.mdx` files come through with just their
   // relative path.
   const match = pathRegex.exec(relativePath.replace("index", ""));
@@ -78,3 +79,4 @@ const queryFragment = `
 
 exports.createDocsPages = createDocsPages;
 exports.queryFragment = queryFragment;
+exports.buildPathFromFile = buildPathFromFile;
