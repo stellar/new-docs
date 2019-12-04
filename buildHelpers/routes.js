@@ -17,16 +17,25 @@ const normalizeRoute = (route) => {
   return path.normalize(outputRoute);
 };
 
-const buildRoute = (locale, ...args) => {
-  return normalizeRoute(
+const buildRoute = (locale, ...args) =>
+  normalizeRoute(
     path.posix.join(
       locale === defaultLocale ? "" : locale,
       ...args.filter(Boolean).map(String),
     ),
   );
+
+const buildPathFromFile = ({ relativePath }) => {
+  const pathRegex = /^src(.*)\..*$/;
+
+  // Strip `index` so that `index.mdx` files come through with just their
+  // relative path.
+  const match = pathRegex.exec(relativePath.replace("index", ""));
+  return normalizeRoute(match[1]);
 };
 
 module.exports = {
   normalizeRoute,
   buildRoute,
+  buildPathFromFile,
 };

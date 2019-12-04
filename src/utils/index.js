@@ -1,4 +1,4 @@
-import { buildPathFromFile } from "../../buildHelpers/createDocsPages";
+import { buildPathFromFile } from "../../buildHelpers/routes";
 
 /**
  * @desc calculates the column width in percentage (%)

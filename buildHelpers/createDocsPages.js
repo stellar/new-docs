@@ -1,15 +1,6 @@
 const path = require("path");
 const { defaultLocale } = require("./i18n");
-const { normalizeRoute } = require("./routes");
-
-const buildPathFromFile = ({ relativePath }) => {
-  const pathRegex = /^src(.*)\..*$/;
-
-  // Strip `index` so that `index.mdx` files come through with just their
-  // relative path.
-  const match = pathRegex.exec(relativePath.replace("index", ""));
-  return normalizeRoute(match[1]);
-};
+const { buildPathFromFile } = require("./routes");
 
 const REFERENCE_ROOT = "src/api";
 const DOCS_ROOT = "src/docs";
@@ -27,13 +18,14 @@ const createDocsPages = ({ actions, docs }) => {
   const documentation = allDocs.filter((doc) => !isReference(doc));
 
   documentation.forEach((doc) => {
-    const path =
+    const docPath =
       doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc);
+    console.log(doc);
     actions.createPage({
-      path,
+      path: docPath,
       component: docTemplate,
       context: {
-        urlPath: path,
+        urlPath: docPath,
         locale: defaultLocale,
         relativeDirectory: doc.relativeDirectory,
         relativePath: doc.relativePath,
