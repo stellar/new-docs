@@ -3,7 +3,6 @@ const path = require("path");
 const { defaultLocale } = require("./i18n");
 
 const normalizeRoute = (route) => {
-  console.log(path.posix);
   let outputRoute = route;
   if (!outputRoute.startsWith("/")) {
     outputRoute = `/${outputRoute}`;
