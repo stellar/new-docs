@@ -33,6 +33,7 @@ export const PALETTE = {
   purple: "#490be3",
   coolPink: "#97557f",
   lightGreen: "#abcc7d",
+  lightOrage: "#e5c687",
 };
 
 export const REDESIGN_PALETTE = {

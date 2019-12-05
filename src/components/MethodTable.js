@@ -20,7 +20,6 @@ const MethodTableEl = styled.div`
     padding: 0.5rem 0;
 
     &:first-child {
-      color: ${PALETTE.purple};
       font-weight: ${FONT_WEIGHT.bold};
       padding-right: 1rem;
     }
@@ -37,7 +36,9 @@ const TitleEl = styled.div`
   font-weight: ${FONT_WEIGHT.bold};
 `;
 const ContentEl = styled.div`
-  padding: 1rem 0;
+  padding: 0;
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
 `;
 
 /**

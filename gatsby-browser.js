@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/browser";
 
 import Providers from "./src/components/Providers";
 import { PORTAL_TARGETS } from "./src/constants/domNodes";
-import { IS_PRODUCTION } from "./buildHelpers/env";
+import { IS_BUILD } from "./buildHelpers/env";
 
 // eslint-disable-next-line react/prop-types
 export const wrapRootElement = ({ element }) => (
@@ -11,7 +11,7 @@ export const wrapRootElement = ({ element }) => (
 );
 
 export const onInitialClientRender = () => {
-  if (IS_PRODUCTION) {
+  if (IS_BUILD) {
     // Set up Sentry
     Sentry.init({
       dsn: "https://efc31f19f9c54082b8d993bfb62eee57@sentry.io/1531056",

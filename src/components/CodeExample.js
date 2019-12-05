@@ -63,7 +63,6 @@ const CodeExampleEl = styled.div`
   flex-direction: column;
   padding: 0 1.5rem;
   background: ${PALETTE.white80};
-  /* border-radius: 4px; */
 
   div {
     background: #292d3e;
