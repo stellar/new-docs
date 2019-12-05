@@ -1,3 +1,5 @@
+import { buildPathFromFile } from "../../buildHelpers/routes";
+
 /**
  * @desc calculates the column width in percentage (%)
  * @param {number} col - { # of columns we want / a total # of columns }
@@ -114,3 +116,5 @@ export const getCookie = (name) => {
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
 };
+
+export { buildPathFromFile };

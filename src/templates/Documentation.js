@@ -21,6 +21,7 @@ import Articles from "components/Documentation/Articles";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
 import { Link } from "basics/Links";
+import { buildPathFromFile } from "utils";
 
 const contentId = "content";
 
@@ -54,6 +55,12 @@ const Topics = styled.ul`
     background: none;
     border: 0;
     cursor: pointer;
+  }
+`;
+
+const TopicExpander = styled.button`
+  &:focus {
+    outline: 0;
   }
 `;
 
@@ -108,8 +115,6 @@ const componentMapping = {
   }),
 };
 
-const relPath = (longPath) => longPath.replace("src/", "").replace(".mdx", "");
-
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   // End of list
   if (topicIndex + 1 === topicArr.length) {
@@ -121,7 +126,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
     const nextTopic = topicArr[topicIndex + 1];
     return {
       title: nextTopic.nodes[0].fields.metadata.data.title,
-      url: `${relPath(nextTopic.nodes[0].relativePath)}`,
+      url: `${buildPathFromFile(nextTopic.nodes[0])}`,
     };
   }
 
@@ -129,7 +134,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   const nextChild = childArr[childIndex + 1];
   return {
     title: nextChild.childMdx.frontmatter.title,
-    url: relPath(nextChild.relativePath),
+    url: buildPathFromFile(nextChild),
   };
 };
 
@@ -152,7 +157,7 @@ const buildDocsContents = (data) => {
         body: childMdx.body,
         headings: childMdx.headings,
         title: childMdx.frontmatter.title,
-        url: relPath(node.relativePath),
+        url: buildPathFromFile(node),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
@@ -168,7 +173,7 @@ const buildDocsContents = (data) => {
 
 const Documentation = ({ data, pageContext, location }) => {
   const { allFile } = data;
-  const { relativeDirectory, relativePath } = pageContext;
+  const { relativeDirectory, relativePath, rootDir } = pageContext;
 
   const docsContents =
     (location.state && location.state.compiledDocsContents) ||
@@ -197,12 +202,22 @@ const Documentation = ({ data, pageContext, location }) => {
     <Topics>
       {Object.values(docsContents).map((content) => {
         const isCollapsed = topicState[content.topicPath];
+        if (content.topicPath === rootDir) {
+          return (
+            <li>
+              <Link href="/docs/">{content.title}</Link>
+            </li>
+          );
+        }
 
         return (
           <li>
-            <button type="button" onClick={() => topicToggleHandler(content)}>
+            <TopicExpander
+              type="button"
+              onClick={() => topicToggleHandler(content)}
+            >
               {content.title}
-            </button>
+            </TopicExpander>
             <Articles isCollapsed={isCollapsed} articles={content.articles} />
           </li>
         );
@@ -213,7 +228,7 @@ const Documentation = ({ data, pageContext, location }) => {
     <ContentEl>
       <MDXRenderer>{article.body}</MDXRenderer>
       <span>
-        Up Next:
+        Up Next:{" "}
         <Link
           href={article.nextUp.url}
           state={{ compiledDocsContents: docsContents }}

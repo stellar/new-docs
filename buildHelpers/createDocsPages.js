@@ -1,16 +1,9 @@
 const path = require("path");
 const { defaultLocale } = require("./i18n");
-const { normalizeRoute } = require("./routes");
-
-const pathRegex = /^src(.*)\..*$/;
-const buildPathFromFile = ({ relativePath }) => {
-  // Strip `index` so that `index.mdx` files come through with just their
-  // relative path.
-  const match = pathRegex.exec(relativePath.replace("index", ""));
-  return normalizeRoute(match[1]);
-};
+const { buildPathFromFile } = require("./routes");
 
 const REFERENCE_ROOT = "src/api";
+const DOCS_ROOT = "src/docs";
 const isReference = (doc) => doc.relativeDirectory.includes(REFERENCE_ROOT);
 
 const createDocsPages = ({ actions, docs }) => {
@@ -25,15 +18,17 @@ const createDocsPages = ({ actions, docs }) => {
   const documentation = allDocs.filter((doc) => !isReference(doc));
 
   documentation.forEach((doc) => {
-    const path = buildPathFromFile(doc);
+    const docPath =
+      doc.relativeDirectory === DOCS_ROOT ? "/docs/" : buildPathFromFile(doc);
     actions.createPage({
-      path,
+      path: docPath,
       component: docTemplate,
       context: {
-        urlPath: path,
+        urlPath: docPath,
         locale: defaultLocale,
         relativeDirectory: doc.relativeDirectory,
         relativePath: doc.relativePath,
+        rootDir: DOCS_ROOT,
         // None of these have translations set up. If we translate them in
         // the future, we'll have to revisit this.
       },
@@ -78,3 +73,4 @@ const queryFragment = `
 
 exports.createDocsPages = createDocsPages;
 exports.queryFragment = queryFragment;
+exports.buildPathFromFile = buildPathFromFile;
