@@ -234,13 +234,11 @@ const Documentation = ({ data, pageContext, location }) => {
         const { articles, topicPath, title } = content;
         const isCollapsed = topicState[topicPath];
         if (topicPath === rootDir) {
-          return Object.values(articles).map((rootArticle) => {
-            return (
-              <li>
-                <RootEl href="/docs/">{rootArticle.title}</RootEl>
-              </li>
-            );
-          });
+          return Object.values(articles).map((rootArticle) => (
+            <li>
+              <RootEl href="/docs/">{rootArticle.title}</RootEl>
+            </li>
+          ));
         }
 
         return (
