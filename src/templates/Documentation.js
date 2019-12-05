@@ -15,9 +15,10 @@ import {
   THEME,
   REDESIGN_PALETTE,
 } from "constants/styles";
-
 import components from "constants/docsComponentMapping";
 import Articles from "components/Documentation/Articles";
+import Chevron from "assets/icons/chevron.svg";
+import Clock from "assets/icons/clock.svg";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
 import { Link } from "basics/Links";
@@ -62,6 +63,11 @@ const TopicExpander = styled.button`
   &:focus {
     outline: 0;
   }
+  padding: 0;
+  svg {
+    margin-left: 0.5em;
+    transform: rotate(${(props) => (props.isCollapsed ? "90deg" : "0deg")});
+  }
 `;
 
 const containerStyles = css`
@@ -94,6 +100,23 @@ const OutlineTitleEl = styled.div`
   text-transform: uppercase;
   font-weight: ${FONT_WEIGHT.bold};
   margin-bottom: 1rem;
+`;
+
+const RootEl = styled.a`
+  text-decoration: none;
+`;
+
+const NextUpEl = styled.div`
+  background-color: ${REDESIGN_PALETTE.grey[0]};
+  padding: 1em;
+`;
+
+const ModifiedEl = styled.div`
+  color: ${THEME.lightGrey};
+
+  svg {
+    margin-right: 0.5em;
+  }
 `;
 
 const StyledLink = components.a;
@@ -147,23 +170,29 @@ const buildDocsContents = (data) => {
   );
 
   sortedDocs.forEach((topic, topicIndex, topicArr) => {
-    const topicPath = topic.fieldValue;
-    const title = topic.nodes[0].fields.metadata.data.title;
+    const { fieldValue: topicPath } = topic;
+    const topicTitle = topic.nodes[0].fields.metadata.data.title;
     const articles = {};
 
     topic.nodes.forEach((node, childIndex, childArr) => {
-      const childMdx = node.childMdx;
-      articles[node.relativePath] = {
-        body: childMdx.body,
-        headings: childMdx.headings,
-        title: childMdx.frontmatter.title,
+      const { childMdx, modifiedTime, relativePath } = node;
+      const {
+        body,
+        headings,
+        frontmatter: { title: articleTitle },
+      } = childMdx;
+      articles[relativePath] = {
+        body,
+        headings,
+        modifiedTime,
+        title: articleTitle,
         url: buildPathFromFile(node),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
-    contents[topic.fieldValue] = {
+    contents[topicPath] = {
       topicPath,
-      title,
+      title: topicTitle,
       articles,
     };
   });
@@ -193,6 +222,7 @@ const Documentation = ({ data, pageContext, location }) => {
     });
   };
   const article = docsContents[relativeDirectory].articles[relativePath];
+  const { body, modifiedTime, nextUp: articleNextUp } = article;
 
   const pageOutline = article.headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
@@ -201,24 +231,29 @@ const Documentation = ({ data, pageContext, location }) => {
   const left = (
     <Topics>
       {Object.values(docsContents).map((content) => {
-        const isCollapsed = topicState[content.topicPath];
-        if (content.topicPath === rootDir) {
-          return (
-            <li>
-              <Link href="/docs/">{content.title}</Link>
-            </li>
-          );
+        const { articles, topicPath, title } = content;
+        const isCollapsed = topicState[topicPath];
+        if (topicPath === rootDir) {
+          return Object.values(articles).map((rootArticle) => {
+            return (
+              <li>
+                <RootEl href="/docs/">{rootArticle.title}</RootEl>
+              </li>
+            );
+          });
         }
 
         return (
           <li>
             <TopicExpander
+              isCollapsed={isCollapsed}
               type="button"
               onClick={() => topicToggleHandler(content)}
             >
-              {content.title}
+              {title}
+              <Chevron />
             </TopicExpander>
-            <Articles isCollapsed={isCollapsed} articles={content.articles} />
+            <Articles isCollapsed={isCollapsed} articles={articles} />
           </li>
         );
       })}
@@ -226,16 +261,20 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const center = (
     <ContentEl>
-      <MDXRenderer>{article.body}</MDXRenderer>
-      <span>
-        Up Next:{" "}
+      <MDXRenderer>{body}</MDXRenderer>
+      <ModifiedEl>
+        <Clock />
+        Last updated {modifiedTime}
+      </ModifiedEl>
+      <NextUpEl>
+        Next Up:{" "}
         <Link
-          href={article.nextUp.url}
+          href={articleNextUp.url}
           state={{ compiledDocsContents: docsContents }}
         >
-          {article.nextUp.title}
+          {articleNextUp.title}
         </Link>
-      </span>
+      </NextUpEl>
     </ContentEl>
   );
   const right = (
@@ -296,11 +335,10 @@ export const pageQuery = graphql`
       group(field: relativeDirectory) {
         fieldValue
         nodes {
-          id
+          modifiedTime(formatString: "MMM. DD, YYYY")
           relativePath
           childMdx {
             body
-            id
             headings(depth: h2) {
               value
             }
