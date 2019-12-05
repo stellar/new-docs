@@ -1,12 +1,10 @@
-const {
-  NODE_ENV,
-  IS_BETA: BETA_FLAG = "false",
-  URL = "https://stellar.org",
-  DEPLOY_PRIME_URL: NETLIFY_DEPLOY_URL = URL,
-  CONTEXT: NETLIFY_ENV = "development",
-} = process.env;
+const NODE_ENV = process.env.NODE_ENV;
+const BETA_FLAG = process.env.IS_BETA || "false";
+const URL = process.env.URL || "https://stellar.org";
+const NETLIFY_DEPLOY_URL = process.env.DEPLOY_PRIME_URL || URL;
+const NETLIFY_ENV = process.env.CONTEXT || "development";
 
-const IS_PRODUCTION = NETLIFY_ENV === "production";
+const IS_PRODUCTION = true || NETLIFY_ENV === "production";
 const IS_BETA = BETA_FLAG === "true";
 
 const FEATURES = {
