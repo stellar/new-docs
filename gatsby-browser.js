@@ -40,6 +40,7 @@ export const onInitialClientRender = () => {
     );
     if (typeof ga === "function") {
       ga("create", "UA-53373928-1", "auto", {});
+      ga("send", "pageview");
     }
     /* eslint-enable */
   }

@@ -4,7 +4,7 @@ const URL = process.env.URL || "https://stellar.org";
 const NETLIFY_DEPLOY_URL = process.env.DEPLOY_PRIME_URL || URL;
 const NETLIFY_ENV = process.env.CONTEXT || "development";
 
-const IS_PRODUCTION = true || NETLIFY_ENV === "production";
+const IS_PRODUCTION = NETLIFY_ENV === "production";
 const IS_BETA = BETA_FLAG === "true";
 
 const FEATURES = {
