@@ -13,19 +13,23 @@ const ArticleList = styled.ul`
   }
 `;
 
-const Articles = ({ isCollapsed, articles = [] }) => (
+const Articles = ({ isCollapsed, articles = {} }) => (
   <ArticleList isCollapsed={isCollapsed}>
-    {Object.values(articles).map((article) => (
-      <li>
-        <Link href={article.url}>{article.title}</Link>
-      </li>
-    ))}
+    {Object.values(articles).map((article) => {
+      const { id, title, url } = article;
+
+      return (
+        <li key={id}>
+          <Link href={url}>{title}</Link>
+        </li>
+      );
+    })}
   </ArticleList>
 );
 
 Articles.propTypes = {
   isCollapsed: PropTypes.bool,
-  articles: PropTypes.array,
+  articles: PropTypes.object,
 };
 
 export default Articles;

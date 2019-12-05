@@ -171,6 +171,7 @@ const buildDocsContents = (data) => {
 
   sortedDocs.forEach((topic, topicIndex, topicArr) => {
     const { fieldValue: topicPath } = topic;
+    const topicId = topic.nodes[0].id;
     const topicTitle = topic.nodes[0].fields.metadata.data.title;
     const articles = {};
 
@@ -180,8 +181,10 @@ const buildDocsContents = (data) => {
         body,
         headings,
         frontmatter: { title: articleTitle },
+        id: articleId,
       } = childMdx;
       articles[relativePath] = {
+        id: articleId,
         body,
         headings,
         modifiedTime,
@@ -191,6 +194,7 @@ const buildDocsContents = (data) => {
       };
     });
     contents[topicPath] = {
+      id: topicId,
       topicPath,
       title: topicTitle,
       articles,
@@ -231,18 +235,18 @@ const Documentation = ({ data, pageContext, location }) => {
   const left = (
     <Topics>
       {Object.values(docsContents).map((content) => {
-        const { articles, topicPath, title } = content;
+        const { articles, id, topicPath, title } = content;
         const isCollapsed = topicState[topicPath];
         if (topicPath === rootDir) {
           return Object.values(articles).map((rootArticle) => (
-            <li>
+            <li key={id}>
               <RootEl href="/docs/">{rootArticle.title}</RootEl>
             </li>
           ));
         }
 
         return (
-          <li>
+          <li key={id}>
             <TopicExpander
               isCollapsed={isCollapsed}
               type="button"
@@ -333,6 +337,7 @@ export const pageQuery = graphql`
       group(field: relativeDirectory) {
         fieldValue
         nodes {
+          id
           modifiedTime(formatString: "MMM. DD, YYYY")
           relativePath
           childMdx {
@@ -340,6 +345,7 @@ export const pageQuery = graphql`
             headings(depth: h2) {
               value
             }
+            id
             frontmatter {
               title
               order
