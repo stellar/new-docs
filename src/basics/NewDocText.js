@@ -214,7 +214,7 @@ export const Preformatted = styled.pre`
     display: inline-block;
     max-width: 100%;
     padding: 0;
-    padding-left: 1rem;
+    word-break: break-all;
     border: none;
     background-color: transparent;
     overflow: auto;

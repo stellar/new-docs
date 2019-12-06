@@ -7,9 +7,11 @@ import { PALETTE, FONT_WEIGHT } from "constants/styles";
 const MethodTableEl = styled.div`
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   padding: 0 1.5rem;
   background: ${PALETTE.white80};
   border-radius: 4px;
+  max-height: 56.25rem;
 
   thead {
     display: none;
@@ -36,6 +38,7 @@ const TitleEl = styled.div`
   font-weight: ${FONT_WEIGHT.bold};
 `;
 const ContentEl = styled.div`
+  overflow-y: auto;
   padding: 0;
   padding-top: 1rem;
   padding-bottom: 1.5rem;

@@ -8,7 +8,7 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
-import { PrismStyles } from "basics/NewDocPrism";
+import { DocPrismStyles } from "basics/NewDocPrism";
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 import { getCookie } from "utils";
@@ -55,14 +55,13 @@ const MethodContentEl = styled.div`
 `;
 
 const ContentEl = styled.div`
-  padding: 1rem 0;
+  padding: 1rem;
 `;
 
 const CodeExampleEl = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 1.5rem;
-  background: ${PALETTE.white80};
+  margin-bottom: 2rem;
 
   div {
     background: #292d3e;
@@ -163,7 +162,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
         </OptionsContainer>
       </TitleEl>
       <ContentEl>
-        <PrismStyles isCodeSnippet />
+        <DocPrismStyles isCodeSnippet />
         {selectedSnippet}
       </ContentEl>
     </MethodContentEl>
@@ -171,7 +170,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
 };
 
 CodeSnippet.propTypes = {
-  codeSnippets: PropTypes.array.isRequired,
+  codeSnippets: PropTypes.object.isRequired,
   title: PropTypes.node.isRequired,
   href: PropTypes.string,
 };

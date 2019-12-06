@@ -63,6 +63,15 @@ module.exports = {
             options: {
               showLineNumbers: true,
               noInlineHighlight: true,
+              languageExtensions: [
+                {
+                  language: "curl",
+                  extend: "javascript",
+                  definition: {
+                    curl_types: /(curl)/,
+                  },
+                },
+              ],
             },
           },
         ],
