@@ -21,15 +21,15 @@ The single ledger endpoint provides information on a specific ledger.
 <NestedTable>
 
 - ARGUMENT
-  - DATA TYPE
+  - REQUIRED
   - DESCRIPTION
 - sequence
-  - number
+  - required
   - The sequence number of a specific ledger.
 
 </NestedTable>
 
-<CodeExample>
+<CodeExample title="Example Request">
 
 ```curl
 curl "https://horizon-testnet.stellar.org/ledgers/69859"
@@ -52,7 +52,7 @@ server.ledgers()
 
 </CodeExample>
 
-<ExampleResponse>
+<ExampleResponse title="Example Response">
 
 ```json
   "_links": {
