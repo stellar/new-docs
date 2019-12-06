@@ -260,6 +260,8 @@ const Documentation = ({ data, pageContext, location }) => {
           </li>
         );
       })}
+      <hr />
+      <StyledLink href="/docs/api">API Reference</StyledLink>
     </Topics>
   );
   const center = (
