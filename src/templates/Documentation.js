@@ -26,7 +26,7 @@ import { buildPathFromFile } from "utils";
 
 const contentId = "content";
 
-const El = styled.div`
+const StickyEl = styled.div`
   width: 100%;
   height: calc(100vh - 121px);
   top: 121px;
@@ -86,7 +86,7 @@ const ContentEl = styled.article`
   position: relative;
   margin: 0 auto;
 `;
-const RightNavEl = styled.div`
+const RightNavEl = styled(StickyEl)`
   font-size: 0.875rem;
   line-height: 1rem;
 `;
@@ -304,7 +304,7 @@ const Documentation = ({ data, pageContext, location }) => {
           <Row>
             <SideNavEl md={3} lg={3}>
               <SideNavBackgroundEl />
-              <El>{left}</El>
+              <StickyEl>{left}</StickyEl>
             </SideNavEl>
             {/*
                   We want the right hand side to appear above content on mobile
