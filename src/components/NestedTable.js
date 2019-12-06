@@ -4,7 +4,8 @@ import PropTypes from "prop-types";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 import { Expansion } from "components/Expansion";
-import { Text } from "basics/Text";
+import PlusIcon from "assets/icons/icon-plus.svg";
+import MinusIcon from "assets/icons/icon-minus.svg";
 
 const NestedTableEl = styled.div`
   display: flex;
@@ -12,12 +13,18 @@ const NestedTableEl = styled.div`
   background: ${(props) =>
     props.isCodeSnippet ? PALETTE.black90 : PALETTE.white};
 
+  strong {
+    font-weight: ${FONT_WEIGHT.bold};
+  }
+
   ul {
     padding: 0;
     list-style: none;
+    padding: 1.5rem 0;
 
       &:first-child {
         text-transform: uppercase;
+        padding: 1rem 0;
       }
       &:before {
         display: none;
@@ -28,12 +35,10 @@ const NestedTableEl = styled.div`
       margin: 0;
 
       & > div {
-        display: flex;
+        display: block;
 
         & > p {
           &:first-child {
-            font-weight: ${FONT_WEIGHT.bold};
-
             span {
               font-weight: ${FONT_WEIGHT.normal};
             }
@@ -46,36 +51,65 @@ const NestedTableEl = styled.div`
 `;
 const ListEl = styled.ul`
   display: flex;
+  flex-direction: column;
 
   p {
     margin: 0%;
   }
 `;
 const ColumnEl = styled.div`
-  line-height: 1;
+  color: ${PALETTE.black60};
+  line-height: 1.57;
+  font-size: 0.875rem;
   min-width: 10rem;
   padding: 0;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding-top: 5px;
+  padding-bottom: 5px;
   display: flex;
   flex-direction: column;
   font-family: ${FONT_FAMILY.base};
-  border-bottom: ${(props) =>
-    props.hasBorder ? `1px solid ${PALETTE.white60}` : "none"};
 `;
 const LabelEl = styled(ColumnEl)`
   padding: 0;
   font-family: ${FONT_FAMILY.monospace};
 
-  strong {
-    font-weight: 500;
-    color: ${PALETTE.black80};
-  }
-
   span {
     color: ${PALETTE.lightGrey};
   }
 `;
+const DataTypeTextEl = styled.span`
+  display: block;
+  font-family: ${FONT_FAMILY.monospace};
+  margin-bottom: 0.5rem;
+  color: ${PALETTE.lightGrey};
+`;
+const RowContentEl = styled(ColumnEl)`
+  flex-direction: row;
+  font-family: ${FONT_FAMILY.monospace};
+
+  strong {
+    font-weight: ${FONT_WEIGHT.bold};
+    color: ${PALETTE.black80};
+  }
+
+  li {
+    margin: 0 0.75rem;
+    color: ${PALETTE.lightGrey};
+  }
+`;
+const MonoText = styled.span`
+  font-family: ${FONT_FAMILY.monospace};
+`;
+
+const DATA_TYPES = {
+  string: "string",
+  number: "number",
+  array: "array",
+  bool: "bool",
+  object: "object",
+  null: "null",
+  undefined: "undefined",
+};
 
 const ColumnContentEl = ({ children, hasBorder, ...props }) => (
   <ColumnEl hasBorder {...props}>
@@ -119,10 +153,10 @@ const ListItem = ({ items }) =>
       // eslint-disable-next-line react/no-array-index-key
       <ListEl key={i}>
         <ColumnContentEl>
-          <ColumnLabelEl>
+          <RowContentEl>
             <strong>{props.children[0]}</strong>
-            <span>{dataTypeItem}</span>
-          </ColumnLabelEl>
+            {dataTypeItem}
+          </RowContentEl>
         </ColumnContentEl>
         <ColumnContentEl>
           {nestedItems.length > 0 && (
@@ -140,14 +174,19 @@ ListItem.propTypes = {
 const NestedItems = ({ items }) =>
   items.map(({ props }) =>
     React.Children.map(props.children, (child, i) => {
+      const dataTypeText = DATA_TYPES[child];
+
       /* It need to check the type of its child.props.children in order to pass only the ones that are object/array in order to go through its nested children */
       if (child.props && typeof child.props.children === "object") {
         return (
           // eslint-disable-next-line react/no-array-index-key
           <ColumnContentEl key={i}>
             <Expansion
-              title="Hide child attributes"
+              title="Show child attributes"
+              expandedModeTitle="Hide child attributes"
               hasBorder
+              collapseIcon={<MinusIcon />}
+              expandIcon={<PlusIcon />}
               style={{ marginTop: "1rem" }}
             >
               {React.Children.toArray(child.props.children).map(
@@ -155,13 +194,17 @@ const NestedItems = ({ items }) =>
                   React.Children.toArray(grandChildren.props.children).map(
                     (nestedEl) =>
                       typeof nestedEl === "string" ? (
-                        <Text>{nestedEl}</Text>
+                        <MonoText>
+                          <strong>{nestedEl}</strong>
+                        </MonoText>
                       ) : (
-                        <NestedItems
-                          items={React.Children.toArray(
-                            nestedEl.props.children,
-                          )}
-                        />
+                        <div style={{ marginBottom: "1rem" }}>
+                          <NestedItems
+                            items={React.Children.toArray(
+                              nestedEl.props.children,
+                            )}
+                          />
+                        </div>
                       ),
                   ),
               )}
@@ -169,8 +212,10 @@ const NestedItems = ({ items }) =>
           </ColumnContentEl>
         );
       }
-      // eslint-disable-next-line react/no-array-index-key
-      return <Text key={i}>{child}</Text>;
+      if (dataTypeText) {
+        return <DataTypeTextEl>{dataTypeText}</DataTypeTextEl>;
+      }
+      return <>{child}</>;
     }),
   );
 
@@ -184,9 +229,13 @@ export const NestedTable = React.forwardRef(function NestedTable(
 ) {
   return (
     <NestedTableEl ref={ref} {...props}>
-      {React.Children.map(children, (child) =>
+      {React.Children.map(children, (child, i) =>
         child.props ? (
-          <ListItem items={React.Children.toArray(child.props.children)} />
+          <ListItem
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+            items={React.Children.toArray(child.props.children)}
+          />
         ) : (
           child
         ),

@@ -1,12 +1,18 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
-import { PALETTE, MEDIA_QUERIES, FONT_WEIGHT } from "constants/styles";
+import {
+  PALETTE,
+  MEDIA_QUERIES,
+  FONT_FAMILY,
+  FONT_WEIGHT,
+} from "constants/styles";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
 const textStyles = css`
   line-height: 1.5;
+  font-size: 0.875rem;
   color: ${({ theme }) => theme.text};
 `;
 
@@ -187,9 +193,11 @@ export const TableCell = styled.td`
   border: solid 1px ${PALETTE.white60};
 `;
 export const Code = styled.code`
+  color: ${PALETTE.purple};
+  font-family: ${FONT_FAMILY.monospace};
   border-radius: 3px;
-  border: solid 0.5px ${({ theme }) => theme.medium};
-  background-color: ${PALETTE.lighterYellow};
+  border: solid 0.5px ${PALETTE.white60};
+  background-color: ${PALETTE.white80};
   padding: 0.125rem 0.25rem;
 `;
 export const Preformatted = styled.pre`
