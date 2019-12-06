@@ -67,6 +67,7 @@ const TopicExpander = styled.button`
   svg {
     margin-left: 0.5em;
     transform: rotate(${(props) => (props.isCollapsed ? "90deg" : "0deg")});
+    transition: transform 0.25s ease-out;
   }
 `;
 

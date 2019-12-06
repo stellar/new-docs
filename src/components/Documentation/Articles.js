@@ -5,8 +5,10 @@ import styled from "styled-components";
 import { Link } from "basics/Links";
 
 const ArticleList = styled.ul`
-  height: ${({ isCollapsed }) => (isCollapsed ? "auto" : "0")};
+  max-height: ${({ isCollapsed }) => (isCollapsed ? "1000px" : "0")};
   overflow: hidden;
+  transition: ${({ isCollapsed }) =>
+    isCollapsed ? "max-height 1s ease-in" : "max-height .25s ease-out"};
 
   li {
     list-style-type: none;
