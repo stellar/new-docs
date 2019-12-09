@@ -21,6 +21,7 @@ import { smoothScrollTo } from "helpers/dom";
 import { slugify } from "helpers/slugify";
 
 import { BasicButton } from "basics/Buttons";
+import { Code } from "basics/NewDocText";
 import { Column, Container, gridHelpers } from "basics/Grid";
 
 import { DocsBase } from "components/layout/DocsBase";
@@ -49,9 +50,13 @@ const ContainerEl = styled(Container)`
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
 `;
-
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
+`;
+
+const InlineCode = styled(Code)`
+  font-size: 0.875rem;
+  font-weight: ${FONT_WEIGHT.bold};
 `;
 
 const { count, size, margin } = COLUMNS[COL_SIZES.md];
@@ -170,6 +175,8 @@ const componentMap = () => ({
     }
     return <td>{children}</td>;
   },
+  // eslint-disable-next-line react/prop-types
+  inlineCode: ({ children }) => <InlineCode>{children}</InlineCode>,
 });
 
 const ReferenceSection = React.memo(({ frontmatter, body }) => (

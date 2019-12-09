@@ -7,7 +7,7 @@ import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 // All markdown content has syntax highlighting markup created, but not all
 // pages load the css required to actually style the lines appropriately.
 // This component has to be rendered to add color to syntax.
-export const PrismStyles = createGlobalStyle`
+export const DocPrismStyles = createGlobalStyle`
 /* PrismJS 1.16.0
 https://prismjs.com/download.html#themes=prism&languages=clike+javascript */
 /**
@@ -36,20 +36,10 @@ pre[class*="language-"] {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
-}
 
-pre[class*="language-"]::-moz-selection,
-pre[class*="language-"] ::-moz-selection,
-code[class*="language-"]::-moz-selection,
-code[class*="language-"] ::-moz-selection {
-  text-shadow: none;
-}
-
-pre[class*="language-"]::selection,
-pre[class*="language-"] ::selection,
-code[class*="language-"]::selection,
-code[class*="language-"] ::selection {
-  text-shadow: none;
+  &.line-numbers {
+    padding: 0;
+  }
 }
 
 @media print {
@@ -108,7 +98,7 @@ pre[class*="language-"] {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: ${(props) => (props.isCodeSnippet ? "#d5ff99" : "#abcc7d")};
+  color: ${(props) => (props.hasNoLineNumber ? "#d5ff99" : "#abcc7d")};
 }
 
 .token.operator,
@@ -116,7 +106,7 @@ pre[class*="language-"] {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #7ffffe;
+  color: ${PALETTE.black60};
 }
 
 .token.atrule,
@@ -155,13 +145,10 @@ pre[class*="language-"] {
 .gatsby-highlight {  
   border-radius: 0.3em;
 }
-
 .line-numbers-rows {
   display: ${(props) => (props.isCodeSnippet ? "block" : "none")};
-  background: ${PALETTE.black90};
 }
 .line-numbers {
   padding: ${(props) => (props.isCodeSnippet ? "block" : "none")};
 }
-
 `;

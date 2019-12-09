@@ -31,17 +31,12 @@ const ExpansionIconEl = styled.div`
   width: auto;
   align-items: center;
   justify-content: space-between;
-
-  img {
-    height: 15px;
-    width: 15px;
-  }
 `;
 
 const ExpandedSectionEl = styled.div`
   display: block;
   overflow: hidden;
-  padding: 0 1rem;
+  padding: ${(props) => (props.isExpanded ? "1rem" : "0 1rem")};
   height: ${(props) => (props.isExpanded ? "auto" : 0)};
 `;
 
@@ -72,11 +67,18 @@ ExpandedSection.propTypes = {
 };
 
 export const Expansion = React.forwardRef(function Expansion(
-  { title, hasBorder = false, expandIcon, children, ...props },
+  {
+    title,
+    expandedModeTitle,
+    hasBorder = false,
+    expandIcon,
+    collapseIcon,
+    children,
+    ...props
+  },
   ref,
 ) {
   const [isExpanded, setExpanded] = React.useState(false);
-
   const onHandleClick = () => {
     setExpanded(!isExpanded);
   };
@@ -89,8 +91,10 @@ export const Expansion = React.forwardRef(function Expansion(
       {...props}
     >
       <ExpansionHeaderEl onClick={onHandleClick}>
-        {title}
-        <ExpansionIconEl>{expandIcon}</ExpansionIconEl>
+        {isExpanded ? expandedModeTitle : title}
+        <ExpansionIconEl>
+          {isExpanded ? collapseIcon : expandIcon}
+        </ExpansionIconEl>
       </ExpansionHeaderEl>
       <ExpandedSection isExpanded={isExpanded}>{children}</ExpandedSection>
     </ExpansionEl>
@@ -98,20 +102,10 @@ export const Expansion = React.forwardRef(function Expansion(
 });
 
 Expansion.propTypes = {
-  /**
-   * Title of the Expansion that will be visible
-   */
   title: PropTypes.node.isRequired,
-  /**
-   * If true, default border styling applies
-   */
+  expandedModeTitle: PropTypes.node.isRequired,
   hasBorder: PropTypes.bool,
-  /**
-   * Icon to indicate to open or close the expansion
-   */
   expandIcon: PropTypes.node.isRequired,
-  /**
-   * The content of the expansion component.
-   */
+  collapseIcon: PropTypes.node.isRequired,
   children: PropTypes.node.isRequired,
 };
