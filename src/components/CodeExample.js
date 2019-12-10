@@ -170,7 +170,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
 };
 
 CodeSnippet.propTypes = {
-  codeSnippets: PropTypes.object.isRequired,
+  codeSnippets: PropTypes.node.isRequired,
   title: PropTypes.node.isRequired,
   href: PropTypes.string,
 };
