@@ -2,17 +2,23 @@ import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
-import { Link } from "basics/Links";
-
 const ArticleList = styled.ul`
   max-height: ${({ isCollapsed }) => (isCollapsed ? "1000px" : "0")};
   overflow: hidden;
+  padding: 0;
   transition: ${({ isCollapsed }) =>
     isCollapsed ? "max-height 1s ease-in" : "max-height .25s ease-out"};
 
   li {
     list-style-type: none;
+    padding: 0.375rem 0;
   }
+`;
+
+const ArticleLink = styled.a`
+  color: #666;
+  font-size: 0.875rem;
+  text-decoration: none;
 `;
 
 const Articles = ({ isCollapsed, articles = {} }) => (
@@ -22,7 +28,7 @@ const Articles = ({ isCollapsed, articles = {} }) => (
 
       return (
         <li key={id}>
-          <Link href={url}>{title}</Link>
+          <ArticleLink href={url}>{title}</ArticleLink>
         </li>
       );
     })}

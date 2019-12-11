@@ -12,6 +12,7 @@ import { Column, Container, Row } from "basics/Grid";
 import {
   DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
+  PALETTE,
   THEME,
   REDESIGN_PALETTE,
 } from "constants/styles";
@@ -23,8 +24,12 @@ import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
 import { Link } from "basics/Links";
 import { buildPathFromFile } from "utils";
+import { smoothScrollTo } from "helpers/dom";
+import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { BasicButton } from "basics/Buttons";
 
 const contentId = "content";
+const { h2: H2 } = components;
 
 const StickyEl = styled.div`
   width: 100%;
@@ -56,10 +61,12 @@ const Topics = styled.ul`
     background: none;
     border: 0;
     cursor: pointer;
+    padding: 0.375rem 0;
   }
 `;
 
 const TopicExpander = styled.button`
+  color: #333;
   &:focus {
     outline: 0;
   }
@@ -90,12 +97,15 @@ const RightNavEl = styled(StickyEl)`
   font-size: 0.875rem;
   line-height: 1rem;
 `;
-const ToCLinkEl = styled(Link)`
+const NavItemEl = styled(BasicButton)`
   display: block;
   margin-bottom: 0.75rem;
   line-height: 1.5rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${(props) => (props.isActive ? THEME.text : THEME.lightGrey)};
+  &:focus {
+    outline: 0;
+  }
 `;
 const OutlineTitleEl = styled.div`
   text-transform: uppercase;
@@ -104,6 +114,8 @@ const OutlineTitleEl = styled.div`
 `;
 
 const RootEl = styled.a`
+  color: #333;
+  line-height: 1.75rem;
   text-decoration: none;
 `;
 
@@ -119,6 +131,22 @@ const ModifiedEl = styled.div`
     margin-right: 0.5em;
   }
 `;
+const ApiLink = styled.li`
+  border-top: 1px solid ${PALETTE.white60};
+  padding: 0.375rem 0;
+`;
+
+const PageOutlineItem = ({ id, isActive, title }) => (
+  <NavItemEl
+    isActive={isActive}
+    onClick={(e) => {
+      e.preventDefault();
+      smoothScrollTo(document.getElementById(id));
+    }}
+  >
+    {title}
+  </NavItemEl>
+);
 
 const StyledLink = components.a;
 const componentMapping = {
@@ -137,6 +165,12 @@ const componentMapping = {
       </Location>
     );
   }),
+  // eslint-disable-next-line react/prop-types
+  h2: ({ children }) => (
+    <TrackedContent id={slugify(children)}>
+      <H2>{children}</H2>
+    </TrackedContent>
+  ),
 };
 
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
@@ -260,8 +294,9 @@ const Documentation = ({ data, pageContext, location }) => {
           </li>
         );
       })}
-      <hr />
-      <StyledLink href="/docs/api">API Reference</StyledLink>
+      <ApiLink>
+        <StyledLink href="/docs/api">API Reference</StyledLink>
+      </ApiLink>
     </Topics>
   );
   const center = (
@@ -287,12 +322,9 @@ const Documentation = ({ data, pageContext, location }) => {
       <OutlineTitleEl>
         <Trans>Page Outline</Trans>
       </OutlineTitleEl>
-      {pageOutline.map(({ href, title }) => (
-        // TODO: have these be activated when clicked.
-        <ToCLinkEl key={href} href={href}>
-          {title}
-        </ToCLinkEl>
-      ))}
+      <SideNav>
+        <SideNavBody items={pageOutline} renderItem={PageOutlineItem} />
+      </SideNav>
     </RightNavEl>
   );
 
@@ -323,6 +355,12 @@ Documentation.propTypes = {
   data: PropTypes.object.isRequired,
   pageContext: PropTypes.object.isRequired,
   location: PropTypes.object,
+};
+
+PageOutlineItem.propTypes = {
+  id: PropTypes.string,
+  isActive: PropTypes.bool,
+  title: PropTypes.string.isRequired,
 };
 
 export default Documentation;

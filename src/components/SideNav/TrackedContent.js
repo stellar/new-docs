@@ -2,13 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { NavProgressContext } from "components/OldSideNav";
+import { SideNavProgressContext } from "components/SideNav/Provider";
 
 const El = styled.div``;
 
 export const TrackedContent = ({ children }) => {
   const { trackElement, stopTrackingElement } = React.useContext(
-    NavProgressContext,
+    SideNavProgressContext,
   );
   const ref = React.useRef();
   const childRef = React.useRef();

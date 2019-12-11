@@ -2,7 +2,7 @@ import React from "react";
 
 import { slugify } from "helpers/slugify";
 
-import { NavProgressContext } from "components/OldSideNav";
+import { SideNavProgressContext } from "components/SideNav/Provider";
 
 const flatten = (ary) =>
   ary.reduce(
@@ -13,7 +13,7 @@ const isNodeActive = (ref, id) =>
   ref && document.getElementById(id) === ref.current;
 
 export const useSidebar = ({ childOptions, id }) => {
-  const { activeNode } = React.useContext(NavProgressContext);
+  const { activeNode } = React.useContext(SideNavProgressContext);
 
   const flattenedItems = flatten(childOptions);
 
