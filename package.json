@@ -59,6 +59,7 @@
     "hast-to-hyperscript": "^7.0.0",
     "intersection-observer": "^0.7.0",
     "lodash": "^4.17.11",
+    "memoize-one": "^5.1.1",
     "prismjs": "^1.16.0",
     "prop-types": "^15.7.2",
     "qs": "6.9.1",
