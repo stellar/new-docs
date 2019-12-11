@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 import { MethodTable } from "components/MethodTable";
-import { Endpoint } from "components/Endpoint";
 
 const EndpointsTableEl = styled.div`
   max-height: 56.25rem;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
@@ -145,7 +145,7 @@ const ListItem = ({ items }) =>
       getObjectChild &&
       React.Children.toArray(getObjectChild[0].props.children);
 
-    /* Data Type Value comes from the first level nested list. 
+    /* Data Type Value comes from the first level nested list.
     But visually it is separate from the nested list which is why we are using splice method to extract it here */
     const dataTypeItem = nestedItems.splice(0, 1);
 
@@ -172,52 +172,63 @@ ListItem.propTypes = {
 };
 
 const NestedItems = ({ items }) =>
-  items.map(({ props }) =>
-    React.Children.map(props.children, (child, i) => {
-      const dataTypeText = DATA_TYPES[child];
+  items.map(({ props }, index) => (
+    // eslint-disable-next-line react/no-array-index-key
+    <Fragment key={index}>
+      {React.Children.map(props.children, (child, i) => {
+        const dataTypeText = DATA_TYPES[child];
 
-      /* It need to check the type of its child.props.children in order to pass only the ones that are object/array in order to go through its nested children */
-      if (child.props && typeof child.props.children === "object") {
-        return (
-          // eslint-disable-next-line react/no-array-index-key
-          <ColumnContentEl key={i}>
-            <Expansion
-              title="Show child attributes"
-              expandedModeTitle="Hide child attributes"
-              hasBorder
-              collapseIcon={<MinusIcon />}
-              expandIcon={<PlusIcon />}
-              style={{ marginTop: "1rem" }}
-            >
-              {React.Children.toArray(child.props.children).map(
-                (grandChildren) =>
-                  React.Children.toArray(grandChildren.props.children).map(
-                    (nestedEl) =>
-                      typeof nestedEl === "string" ? (
-                        <MonoText>
-                          <strong>{nestedEl}</strong>
-                        </MonoText>
-                      ) : (
-                        <div style={{ marginBottom: "1rem" }}>
-                          <NestedItems
-                            items={React.Children.toArray(
-                              nestedEl.props.children,
-                            )}
-                          />
-                        </div>
-                      ),
+        /* It need to check the type of its child.props.children in order to pass only the ones that are object/array in order to go through its nested children */
+        if (child.props && typeof child.props.children === "object") {
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <ColumnContentEl key={i}>
+              <Expansion
+                title="Show child attributes"
+                expandedModeTitle="Hide child attributes"
+                hasBorder
+                collapseIcon={<MinusIcon />}
+                expandIcon={<PlusIcon />}
+                style={{ marginTop: "1rem" }}
+              >
+                {React.Children.toArray(child.props.children).map(
+                  (grandChildren, j) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <Fragment key={j}>
+                      {React.Children.toArray(grandChildren.props.children).map(
+                        (nestedEl, k) =>
+                          typeof nestedEl === "string" ? (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <MonoText key={k}>
+                              <strong>{nestedEl}</strong>
+                            </MonoText>
+                          ) : (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <div style={{ marginBottom: "1rem" }} key={k}>
+                              <NestedItems
+                                items={React.Children.toArray(
+                                  nestedEl.props.children,
+                                )}
+                              />
+                            </div>
+                          ),
+                      )}
+                    </Fragment>
                   ),
-              )}
-            </Expansion>
-          </ColumnContentEl>
-        );
-      }
-      if (dataTypeText) {
-        return <DataTypeTextEl>{dataTypeText}</DataTypeTextEl>;
-      }
-      return <>{child}</>;
-    }),
-  );
+                )}
+              </Expansion>
+            </ColumnContentEl>
+          );
+        }
+        if (dataTypeText) {
+          // eslint-disable-next-line react/no-array-index-key
+          return <DataTypeTextEl key={i}>{dataTypeText}</DataTypeTextEl>;
+        }
+        // eslint-disable-next-line react/no-array-index-key
+        return <Fragment key={i}>{child}</Fragment>;
+      })}
+    </Fragment>
+  ));
 
 NestedItems.propTypes = {
   items: PropTypes.array.isRequired,
