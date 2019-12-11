@@ -5,27 +5,33 @@ import styled from "styled-components";
 import { Link } from "basics/Links";
 
 const ArticleList = styled.ul`
-  height: ${({ isCollapsed }) => (isCollapsed ? "auto" : "0")};
+  max-height: ${({ isCollapsed }) => (isCollapsed ? "1000px" : "0")};
   overflow: hidden;
+  transition: ${({ isCollapsed }) =>
+    isCollapsed ? "max-height 1s ease-in" : "max-height .25s ease-out"};
 
   li {
     list-style-type: none;
   }
 `;
 
-const Articles = ({ isCollapsed, articles = [] }) => (
+const Articles = ({ isCollapsed, articles = {} }) => (
   <ArticleList isCollapsed={isCollapsed}>
-    {Object.values(articles).map((article) => (
-      <li>
-        <Link href={article.url}>{article.title}</Link>
-      </li>
-    ))}
+    {Object.values(articles).map((article) => {
+      const { id, title, url } = article;
+
+      return (
+        <li key={id}>
+          <Link href={url}>{title}</Link>
+        </li>
+      );
+    })}
   </ArticleList>
 );
 
 Articles.propTypes = {
   isCollapsed: PropTypes.bool,
-  articles: PropTypes.array,
+  articles: PropTypes.object,
 };
 
 export default Articles;
