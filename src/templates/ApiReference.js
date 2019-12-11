@@ -1,10 +1,10 @@
 import React from "react";
+import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled, { css, ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
-import pathLib from "path";
 
 import {
   REDESIGN_PALETTE,
@@ -28,6 +28,10 @@ import { DocsBase } from "components/layout/DocsBase";
 import { NavFrame } from "components/Navigation/SharedStyles";
 import { NavLogo } from "components/Navigation/NavLogo";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { ScrollRouter } from "components/ApiRefRouting/ScrollRouter";
+import { Route } from "components/ApiRefRouting/Route";
+
+import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
 
 const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
 
@@ -93,9 +97,38 @@ const SideNavBackgroundEl = styled.div`
   top: -10rem;
   bottom: -10rem;
 `;
+const NavItemEl = styled(BasicButton)`
+  text-align: left;
+  white-space: nowrap;
+  font-size: 1rem;
+  color: #333;
+  padding: 0.375rem 0;
+  padding-left: ${(props) => props.depth}rem;
+  line-height: 1.25;
+  transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
+  font-weight: ${({ isActive }) =>
+    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+
+  &:hover {
+    color: #999;
+  }
+`;
+// This is a function, not a component
+// eslint-disable-next-line react/prop-types
+const renderItem = ({ depth, id, isActive, title }) => (
+  <NavItemEl
+    depth={depth}
+    isActive={isActive}
+    onClick={(e) => {
+      e.preventDefault();
+      smoothScrollTo(document.getElementById(id));
+    }}
+  >
+    {title}
+  </NavItemEl>
+);
 
 const StyledLink = components.a;
-
 // eslint-disable-next-line react/prop-types
 const DocsLink = ({ href, ...props }) => {
   // TODO: This is definitely super broken. Links to non-reference docs will need
@@ -118,29 +151,39 @@ const RIGHT_COLUMN_COMPONENTS_NAME = {
   NavTable: "NavTable",
 };
 
-const componentMap = () => ({
+// eslint-disable-next-line react/prop-types
+const Wrapper = ({ children, ...props }) => {
+  const rightColumnContent = React.useMemo(
+    () =>
+      React.Children.toArray(children).filter(
+        (child) => RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
+      ),
+    [children],
+  );
+  const MiddleColumnContent = React.useMemo(
+    () =>
+      React.Children.toArray(children).filter(
+        (child) => !RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
+      ),
+    [children],
+  );
+
+  return (
+    <NestedRowEl>
+      <Column xs={5} xl={9}>
+        <ContentEl {...props}>{MiddleColumnContent}</ContentEl>
+      </Column>
+      <Column xs={4} xl={9}>
+        {rightColumnContent}
+      </Column>
+    </NestedRowEl>
+  );
+};
+
+const componentMap = {
   ...components,
   a: DocsLink,
-  // eslint-disable-next-line react/prop-types
-  wrapper: ({ children, ...props }) => {
-    const rightColumnContent = React.Children.toArray(children).filter(
-      (child) => RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
-    );
-    const MiddleColumnContent = React.Children.toArray(children).filter(
-      (child) => !RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
-    );
-
-    return (
-      <NestedRowEl>
-        <Column xs={5} xl={9}>
-          <ContentEl {...props}>{MiddleColumnContent}</ContentEl>
-        </Column>
-        <Column xs={4} xl={9}>
-          {rightColumnContent}
-        </Column>
-      </NestedRowEl>
-    );
-  },
+  wrapper: Wrapper,
   // eslint-disable-next-line react/prop-types
   h1: ({ children }) => (
     <TrackedContent id={slugify(children)}>
@@ -177,109 +220,78 @@ const componentMap = () => ({
   },
   // eslint-disable-next-line react/prop-types
   inlineCode: ({ children }) => <InlineCode>{children}</InlineCode>,
-});
-
-const ReferenceSection = React.memo(({ frontmatter, body }) => (
-  <section>
-    <h1>{frontmatter.title}</h1>
-    <MDXRenderer>{body}</MDXRenderer>
-    <hr />
-  </section>
-));
-ReferenceSection.propTypes = {
-  body: PropTypes.string.isRequired,
-  frontmatter: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-  }),
 };
 
-const NavItemEl = styled(BasicButton)`
-  text-align: left;
-  white-space: nowrap;
-  font-size: 1rem;
-  color: #333;
-  padding: 0.375rem 0;
-  padding-left: ${(props) => props.depth}rem;
-  line-height: 1.25;
-  transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${({ isActive }) =>
-    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
-
-  &:hover {
-    color: #999;
-  }
-`;
-
-// This is a function, not a component
-// eslint-disable-next-line react/prop-types
-const renderItem = ({ depth, id, isActive, title }) => (
-  <NavItemEl
-    depth={depth}
-    isActive={isActive}
-    onClick={(e) => {
-      e.preventDefault();
-      smoothScrollTo(document.getElementById(id));
-    }}
-  >
-    {title}
-  </NavItemEl>
-);
-
-const ApiReference = ({ data, pageContext }) => {
+// eslint-disable-next-line react/no-multi-comp
+const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const { referenceDocs } = data;
-  const navEntries =
-    referenceDocs.edges &&
-    referenceDocs.edges.reduce(
-      (arr, edge) =>
-        !isEmpty(edge.node.tableOfContents)
-          ? arr.concat(edge.node.tableOfContents.items)
-          : arr,
-      [],
-    );
+  const navEntries = React.useMemo(
+    () =>
+      referenceDocs.edges &&
+      referenceDocs.edges.reduce(
+        (arr, edge) =>
+          !isEmpty(edge.node.tableOfContents)
+            ? arr.concat(edge.node.tableOfContents.items)
+            : arr,
+        [],
+      ),
+    [referenceDocs],
+  );
 
   return (
-    <MDXProvider components={componentMap()}>
-      <DocsBase
-        pageContext={pageContext}
-        navigation={
-          <ThemeProvider theme={NAV_THEMES.docs}>
-            <NavFrame>
-              <ContainerEl>
-                <RowEl>
-                  <Column xs={3} xl={4}>
-                    <NavLogo pageName="Documentation" />
-                  </Column>
-                </RowEl>
-              </ContainerEl>
-            </NavFrame>
-          </ThemeProvider>
-        }
-      >
-        <ContainerEl id={contentId}>
-          <div style={{ paddingTop: "10rem" }} />
-          <RowEl>
-            <SideNavEl xs={3} lg={3} xl={4}>
-              <SideNavBackgroundEl />
-              <SideNav>
-                <SideNavBody items={navEntries} renderItem={renderItem} />
-              </SideNav>
-            </SideNavEl>
-            <Column xs={9} xl={18}>
-              {referenceDocs.edges.map(({ node }) => (
-                <ReferenceSection
-                  key={node.id}
-                  frontmatter={node.frontmatter}
-                  body={node.body}
-                />
-              ))}
-            </Column>
-            <Column xs={4} xl={9} />
-          </RowEl>
-        </ContainerEl>
-      </DocsBase>
-    </MDXProvider>
+    <ScrollRouter>
+      <MDXProvider components={componentMap}>
+        <DocsBase
+          pageContext={pageContext}
+          navigation={
+            <ThemeProvider theme={NAV_THEMES.docs}>
+              <NavFrame>
+                <ContainerEl>
+                  <RowEl>
+                    <Column xs={3} xl={4}>
+                      <NavLogo pageName="Documentation" />
+                    </Column>
+                  </RowEl>
+                </ContainerEl>
+              </NavFrame>
+            </ThemeProvider>
+          }
+        >
+          <ContainerEl id={contentId}>
+            <div style={{ paddingTop: "10rem" }} />
+            <RowEl>
+              <SideNavEl xs={3} lg={3} xl={4}>
+                <SideNavBackgroundEl />
+                <SideNav>
+                  <SideNavBody items={navEntries} renderItem={renderItem} />
+                </SideNav>
+              </SideNavEl>
+              <Column xs={9} xl={18}>
+                {referenceDocs.edges.map(({ node: doc }) => (
+                  <Route
+                    path={normalizeRoute(
+                      `developers/${buildPathFromFile(
+                        doc.parent.relativePath,
+                      )}`,
+                    )}
+                    key={doc.id}
+                  >
+                    <section>
+                      <h1>{doc.frontmatter.title}</h1>
+                      <MDXRenderer>{doc.body}</MDXRenderer>
+                      <hr />
+                    </section>
+                  </Route>
+                ))}
+              </Column>
+              <Column xs={4} xl={9} />
+            </RowEl>
+          </ContainerEl>
+        </DocsBase>
+      </MDXProvider>
+    </ScrollRouter>
   );
-};
+});
 
 ApiReference.propTypes = {
   data: PropTypes.object.isRequired,
@@ -299,6 +311,11 @@ export const pageQuery = graphql`
           }
           body
           tableOfContents
+          parent {
+            ... on File {
+              relativePath
+            }
+          }
         }
       }
     }

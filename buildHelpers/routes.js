@@ -25,17 +25,22 @@ const buildRoute = (locale, ...args) =>
     ),
   );
 
-const buildPathFromFile = ({ relativePath }) => {
+const REFERENCE_ROOT = "src/api";
+const DOCS_ROOT = "src/docs";
+
+const buildPathFromFile = (filePath) => {
   const pathRegex = /^src(.*)\..*$/;
 
   // Strip `index` so that `index.mdx` files come through with just their
   // relative path.
-  const match = pathRegex.exec(relativePath.replace("index", ""));
+  const match = pathRegex.exec(filePath.replace("index", ""));
   return normalizeRoute(match[1]);
 };
 
 module.exports = {
   normalizeRoute,
   buildRoute,
+  REFERENCE_ROOT,
+  DOCS_ROOT,
   buildPathFromFile,
 };

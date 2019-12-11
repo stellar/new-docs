@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { NavProgressContext } from "components/OldSideNav";
+import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
   const aY = a.current.getBoundingClientRect().y;
@@ -34,21 +35,8 @@ export const Provider = ({ children }) => {
       // from the top. If scrolling down, watching about the midpoint.
       const isScrollingDown = window.scrollY > lastScrollPosition;
       lastScrollPosition = window.scrollY;
-      const topEdge = window.innerHeight * 0.125;
-      const bottomEdge = window.innerHeight * 0.25 + topEdge;
 
-      const newActiveNode = (isScrollingDown
-        ? trackedElements
-        : backwardsElements
-      ).find((x) => {
-        if (!x.current) {
-          return false;
-        }
-        const { bottom } = x.current.getBoundingClientRect();
-        return isScrollingDown
-          ? bottom > topEdge && bottom < window.innerHeight
-          : bottom < bottomEdge && bottom > 0;
-      });
+      const newActiveNode = findActiveNode(trackedElements, isScrollingDown);
       if (newActiveNode && newActiveNode !== activeNode) {
         setActiveNode(newActiveNode);
       }

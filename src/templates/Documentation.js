@@ -150,7 +150,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
     const nextTopic = topicArr[topicIndex + 1];
     return {
       title: nextTopic.nodes[0].fields.metadata.data.title,
-      url: `${buildPathFromFile(nextTopic.nodes[0])}`,
+      url: `${buildPathFromFile(nextTopic.nodes[0].relativePath)}`,
     };
   }
 
@@ -158,7 +158,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   const nextChild = childArr[childIndex + 1];
   return {
     title: nextChild.childMdx.frontmatter.title,
-    url: buildPathFromFile(nextChild),
+    url: buildPathFromFile(nextChild.relativePath),
   };
 };
 
@@ -190,7 +190,7 @@ const buildDocsContents = (data) => {
         headings,
         modifiedTime,
         title: articleTitle,
-        url: buildPathFromFile(node),
+        url: buildPathFromFile(node.relativePath),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
