@@ -232,7 +232,7 @@ export const Bold = styled.strong`
 export const Muted = styled(Text).attrs(() => ({ as: "span" }))`
   color: ${({ theme }) => theme.medium};
 `;
-export const Strike = styled(Text)`
+export const Strike = styled(Text).attrs(() => ({ as: "del" }))`
   text-decoration: line-through;
 `;
 export const HorizontalRule = styled.hr`
