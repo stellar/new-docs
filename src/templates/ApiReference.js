@@ -19,6 +19,7 @@ import components from "constants/docsComponentMapping";
 import { isEmpty } from "utils";
 import { smoothScrollTo } from "helpers/dom";
 import { slugify } from "helpers/slugify";
+import { sortReference, normalizeMdx } from "helpers/sortReference";
 
 import { BasicButton } from "basics/Buttons";
 import { Code } from "basics/NewDocText";
@@ -224,14 +225,16 @@ const componentMap = {
 
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
-  const { referenceDocs } = data;
+  const referenceDocs = sortReference(
+    data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
+  );
+
   const navEntries = React.useMemo(
     () =>
-      referenceDocs.edges &&
-      referenceDocs.edges.reduce(
-        (arr, edge) =>
-          !isEmpty(edge.node.tableOfContents)
-            ? arr.concat(edge.node.tableOfContents.items)
+      referenceDocs.reduce(
+        (arr, doc) =>
+          !isEmpty(doc.tableOfContents)
+            ? arr.concat(doc.tableOfContents.items)
             : arr,
         [],
       ),
@@ -267,7 +270,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 </SideNav>
               </SideNavEl>
               <Column xs={9} xl={18}>
-                {referenceDocs.edges.map(({ node: doc }) => (
+                {referenceDocs.map((doc) => (
                   <Route
                     path={normalizeRoute(
                       `developers/${buildPathFromFile(
@@ -277,7 +280,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                     key={doc.id}
                   >
                     <section>
-                      <h1>{doc.frontmatter.title}</h1>
+                      <h1>{doc.title}</h1>
                       <MDXRenderer>{doc.body}</MDXRenderer>
                       <hr />
                     </section>
@@ -308,12 +311,21 @@ export const pageQuery = graphql`
           id
           frontmatter {
             title
+            order
           }
           body
           tableOfContents
           parent {
             ... on File {
               relativePath
+              relativeDirectory
+              fields {
+                metadata {
+                  data {
+                    order
+                  }
+                }
+              }
             }
           }
         }
