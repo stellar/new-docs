@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
+import { Link } from "basics/Links";
 
 const ArticleList = styled.ul`
   max-height: ${({ isCollapsed }) => (isCollapsed ? "1000px" : "0")};
@@ -15,7 +16,7 @@ const ArticleList = styled.ul`
   }
 `;
 
-const ArticleLink = styled.a`
+const ArticleLink = styled(Link)`
   color: #666;
   font-size: 0.875rem;
   text-decoration: none;
