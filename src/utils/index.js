@@ -117,4 +117,24 @@ export const getCookie = (name) => {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 };
 
+/**
+ * @desc convert JSX to String
+ * @param {object} codeSnippet - React Component that needs to be converted to String
+ * @return {string} - Returns a value of the JSX in String
+ */
+export const extractStringChildren = (codeSnippet, finalString = "") => {
+  if (typeof codeSnippet === "string") {
+    finalString += codeSnippet;
+  } else {
+    if (typeof codeSnippet.props.children === "string") {
+      finalString += codeSnippet.props.children;
+    } else {
+      codeSnippet.props.children.map((nestedCodeSnippet) => {
+        finalString += extractStringChildren(nestedCodeSnippet);
+      });
+    }
+  }
+  return finalString;
+};
+
 export { buildPathFromFile };

@@ -11,7 +11,7 @@ import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 import { DocPrismStyles } from "basics/NewDocPrism";
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
-import { getCookie } from "utils";
+import { getCookie, extractStringChildren } from "utils";
 
 const CODE_LANGS = {
   curl: "cURL",
@@ -51,7 +51,6 @@ const OptionsContainer = styled.div`
 const MethodContentEl = styled.div`
   position: relative;
   border-radius: 4px;
-  overflow: hidden;
 `;
 
 const ContentEl = styled.div`
@@ -99,6 +98,30 @@ const TitleEl = styled.div`
   font-weight: ${FONT_WEIGHT.bold};
 `;
 
+const CopiedMessageText = styled.span`
+  position: absolute;
+  display: block;
+  color: ${PALETTE.white};
+  background: ${PALETTE.purple};
+  right: -1.5rem;
+  top: -1.75rem;
+  padding: 0.25rem;
+`;
+
+const mdxJsxToString = (jsx) => {
+  const { props } = jsx;
+  const { children } = props;
+  let str;
+
+  if (children.props.children.length > 0) {
+    str = children.props.children[0].props.children.map((codeSnippet) =>
+      extractStringChildren(codeSnippet),
+    );
+  }
+
+  return str.join("");
+};
+
 const CodeSnippet = ({ codeSnippets, title, href }) => {
   const SelectRef = React.createRef(null);
   const availableLangs = React.Children.map(
@@ -106,9 +129,13 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     (eachLang) => eachLang.props["data-language"],
   );
   const [activeLang, setActiveLang] = React.useState("");
-  const selectedSnippet = React.Children.toArray(codeSnippets).filter(
-    (snippet) => snippet.props["data-language"] === activeLang,
-  );
+  const [isCopied, setCopy] = React.useState(false);
+  const codeSnippetsArr = React.Children.toArray(codeSnippets);
+  const selectedSnippet =
+    codeSnippetsArr.find(
+      (snippet) => snippet.props["data-language"] === activeLang,
+    ) || codeSnippetsArr[0];
+  const SelectedSnippetStr = mdxJsxToString(selectedSnippet);
 
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
@@ -144,12 +171,12 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
               </option>
             ))}
           </LangSelect>
-
+          {isCopied && <CopiedMessageText>Copied</CopiedMessageText>}
           <CopyToClipboard
-            text={
-              selectedSnippet.length > 0 && selectedSnippet[0].props.children
-            }
-            onCopy={() => true}
+            text={SelectedSnippetStr && SelectedSnippetStr}
+            onCopy={() => {
+              setCopy((x) => !x);
+            }}
           >
             <CopyIcon />
           </CopyToClipboard>
