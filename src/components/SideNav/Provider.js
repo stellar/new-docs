@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { NavProgressContext } from "components/OldSideNav";
 import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
@@ -10,6 +9,8 @@ const sortByPosition = (a, b) => {
   return aY - bY;
 };
 let lastScrollPosition = 0;
+
+export const SideNavProgressContext = React.createContext({});
 
 export const Provider = ({ children }) => {
   const [activeNode, setActiveNode] = React.useState();
@@ -71,9 +72,9 @@ export const Provider = ({ children }) => {
   );
 
   return (
-    <NavProgressContext.Provider value={contextValue}>
+    <SideNavProgressContext.Provider value={contextValue}>
       {children}
-    </NavProgressContext.Provider>
+    </SideNavProgressContext.Provider>
   );
 };
 
