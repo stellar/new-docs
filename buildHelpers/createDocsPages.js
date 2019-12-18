@@ -35,6 +35,7 @@ const createDocsPages = ({ actions, docs }) => {
       context: {
         urlPath: docPath,
         locale: defaultLocale,
+        name: doc.name,
         relativeDirectory: doc.relativeDirectory,
         relativePath: doc.relativePath,
         rootDir: DOCS_ROOT,
@@ -66,6 +67,7 @@ const queryFragment = `
         childMdx {
           id
         }
+        name
         relativePath
         relativeDirectory
         fields {

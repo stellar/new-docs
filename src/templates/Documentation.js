@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled, { css } from "styled-components";
@@ -18,7 +18,6 @@ import {
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
 import Articles from "components/Documentation/Articles";
-import Chevron from "assets/icons/chevron.svg";
 import Clock from "assets/icons/clock.svg";
 import { DocsBase } from "components/layout/DocsBase";
 import { slugify } from "helpers/slugify";
@@ -62,19 +61,6 @@ const Topics = styled.ul`
     border: 0;
     cursor: pointer;
     padding: 0.375rem 0;
-  }
-`;
-
-const TopicExpander = styled.button`
-  color: #333;
-  &:focus {
-    outline: 0;
-  }
-  padding: 0;
-  svg {
-    margin-left: 0.5em;
-    transform: rotate(${(props) => (props.isCollapsed ? "90deg" : "0deg")});
-    transition: transform 0.25s ease-out;
   }
 `;
 
@@ -173,6 +159,12 @@ const componentMapping = {
   ),
 };
 
+const buildUrlFromPath = (relPath) =>
+  `/developers${buildPathFromFile(relPath)}`;
+
+const buildRelPath = (relativeDirectory, rootDir) =>
+  relativeDirectory.replace(rootDir, "") || "/";
+
 const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   // End of list
   if (topicIndex + 1 === topicArr.length) {
@@ -184,7 +176,7 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
     const nextTopic = topicArr[topicIndex + 1];
     return {
       title: nextTopic.nodes[0].fields.metadata.data.title,
-      url: `${buildPathFromFile(nextTopic.nodes[0].relativePath)}`,
+      url: `${buildUrlFromPath(nextTopic.nodes[0].relativePath)}`,
     };
   }
 
@@ -192,11 +184,55 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   const nextChild = childArr[childIndex + 1];
   return {
     title: nextChild.childMdx.frontmatter.title,
-    url: buildPathFromFile(nextChild.relativePath),
+    url: buildUrlFromPath(nextChild.relativePath),
   };
 };
 
-const buildDocsContents = (data) => {
+const findChild = (pagePath, docsContents, isNested = false) => {
+  if (!pagePath) return docsContents.articles;
+  const levels = pagePath.split("/");
+  return findChild(
+    levels[2] ? `/${levels[2]}` : null,
+    isNested
+      ? docsContents.articles[`/${levels[1]}`]
+      : docsContents[`/${levels[1]}`],
+    true,
+  );
+};
+
+const insertChild = (pagePath, contents, articles, payload) => {
+  const currentNode = contents;
+
+  const enterDir = (remainingPath, newNode, isNested) => {
+    if (!remainingPath) {
+      Object.assign(newNode, payload);
+      Object.assign(newNode.articles, articles);
+      return contents;
+    }
+    const levels = remainingPath.split("/");
+
+    if (!levels[1]) {
+      Object.assign(newNode, { "/": { articles: {} } });
+    } else if (!newNode || !newNode[`/${levels[1]}`]) {
+      if (isNested) {
+        Object.assign(newNode.articles, {
+          [`/${levels[1]}`]: { articles: {} },
+        });
+      } else {
+        Object.assign(newNode, { [`/${levels[1]}`]: { articles: {} } });
+      }
+    }
+    return enterDir(
+      levels[2] ? `/${levels[2]}` : null,
+      isNested ? newNode.articles[`/${levels[1]}`] : newNode[`/${levels[1]}`],
+      true,
+    );
+  };
+
+  enterDir(pagePath, currentNode, false);
+};
+
+const buildDocsContents = (data, rootDir) => {
   const contents = {};
   const sortedDocs = [...data].sort(
     (a, b) =>
@@ -206,34 +242,35 @@ const buildDocsContents = (data) => {
 
   sortedDocs.forEach((topic, topicIndex, topicArr) => {
     const { fieldValue: topicPath } = topic;
+    const relPath = buildRelPath(topicPath, rootDir);
     const topicId = topic.nodes[0].id;
     const topicTitle = topic.nodes[0].fields.metadata.data.title;
     const articles = {};
 
     topic.nodes.forEach((node, childIndex, childArr) => {
-      const { childMdx, modifiedTime, relativePath } = node;
+      const { childMdx, modifiedTime, name, relativePath } = node;
       const {
         body,
         headings,
         frontmatter: { title: articleTitle },
         id: articleId,
       } = childMdx;
-      articles[relativePath] = {
+      articles[name] = {
         id: articleId,
         body,
         headings,
         modifiedTime,
         title: articleTitle,
-        url: buildPathFromFile(node.relativePath),
+        url: buildUrlFromPath(relativePath),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
-    contents[topicPath] = {
+    const payload = {
       id: topicId,
-      topicPath,
+      topicPath: relPath,
       title: topicTitle,
-      articles,
     };
+    insertChild(relPath, contents, articles, payload);
   });
 
   return contents;
@@ -241,26 +278,19 @@ const buildDocsContents = (data) => {
 
 const Documentation = ({ data, pageContext, location }) => {
   const { allFile } = data;
-  const { relativeDirectory, relativePath, rootDir } = pageContext;
+  const { relativeDirectory, name, rootDir } = pageContext;
 
   const docsContents =
     (location.state && location.state.compiledDocsContents) ||
-    buildDocsContents(allFile.group);
+    buildDocsContents(allFile.group, rootDir);
+
+  const pagePath = buildRelPath(relativeDirectory, rootDir);
 
   const initialTopicsState = {};
   Object.values(docsContents).forEach((content) => {
-    initialTopicsState[content.topicPath] =
-      content.topicPath === relativeDirectory;
+    initialTopicsState[content.topicPath] = content.topicPath === pagePath;
   });
-  const [topicState, setTopicState] = useState(initialTopicsState);
-  const topicToggleHandler = (content) => {
-    const topicPath = content.topicPath;
-    setTopicState({
-      ...topicState,
-      [topicPath]: !topicState[topicPath],
-    });
-  };
-  const article = docsContents[relativeDirectory].articles[relativePath];
+  const article = findChild(pagePath, docsContents)[name];
   const { body, modifiedTime, nextUp: articleNextUp } = article;
 
   const pageOutline = article.headings.map(({ value }) => ({
@@ -271,7 +301,6 @@ const Documentation = ({ data, pageContext, location }) => {
     <Topics>
       {Object.values(docsContents).map((content) => {
         const { articles, id, topicPath, title } = content;
-        const isCollapsed = topicState[topicPath];
         if (topicPath === rootDir) {
           return Object.values(articles).map((rootArticle) => (
             <li key={id}>
@@ -279,19 +308,13 @@ const Documentation = ({ data, pageContext, location }) => {
             </li>
           ));
         }
-
         return (
-          <li key={id}>
-            <TopicExpander
-              isCollapsed={isCollapsed}
-              type="button"
-              onClick={() => topicToggleHandler(content)}
-            >
-              {title}
-              <Chevron />
-            </TopicExpander>
-            <Articles isCollapsed={isCollapsed} articles={articles} />
-          </li>
+          <Articles
+            id={id}
+            articles={articles}
+            title={title}
+            topicPath={topicPath}
+          />
         );
       })}
       <ApiLink>
@@ -380,6 +403,7 @@ export const pageQuery = graphql`
         nodes {
           id
           modifiedTime(formatString: "MMM. DD, YYYY")
+          name
           relativePath
           childMdx {
             body
