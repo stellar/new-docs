@@ -188,10 +188,28 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   };
 };
 
-const findChild = (pagePath, docsContents, isNested = false) => {
+/**
+ * findArticle revursively travels down file paths to find child articles
+ * @param {string} pagePath / delimited string representing filepath.
+ * @param {object} docsContents Passed object to traverse.
+ * @returns {object} An object with the format of
+ *  {
+ *    [articleName]: {
+ *      body,
+ *      headings,
+ *      id,
+ *      modifiedTime,
+ *      nextUp,
+ *      title,
+ *      url
+ *    }
+ *  }
+ */
+
+const findArticle = (pagePath, docsContents, isNested = false) => {
   if (!pagePath) return docsContents.articles;
   const levels = pagePath.split("/");
-  return findChild(
+  return findArticle(
     levels[2] ? `/${levels[2]}` : null,
     isNested
       ? docsContents.articles[`/${levels[1]}`]
@@ -200,12 +218,31 @@ const findChild = (pagePath, docsContents, isNested = false) => {
   );
 };
 
-const insertChild = (pagePath, contents, articles, payload) => {
+/**
+ * insertPageData inserts page data and articles into corresponding keys of object
+ * @param {string} pagePath / delimited string representing filepath.
+ * @param {object} contents Passed object that will update object in caller.
+ * @param {object} articles Object containing all articles scoped to path.
+ * @param {object} rootPageData Title, TopicPath, and Id associated with each path.
+ * @returns {object} An object with the format of
+ *  {
+ *    [folderName]: {
+ *      articles: {
+ *        { mdxNode }
+ *        { nestedArticles}
+ *      },
+ *      id,
+ *      topicPath,
+ *      title
+ *    }
+ *  }
+ */
+const insertPageData = (pagePath, contents, articles, rootPageData) => {
   const currentNode = contents;
 
   const enterDir = (remainingPath, newNode, isNested) => {
     if (!remainingPath) {
-      Object.assign(newNode, payload);
+      Object.assign(newNode, rootPageData);
       Object.assign(newNode.articles, articles);
       return contents;
     }
@@ -232,6 +269,23 @@ const insertChild = (pagePath, contents, articles, payload) => {
   enterDir(pagePath, currentNode, false);
 };
 
+/**
+ * buildDocsContents creates an object from the data pulled from graphQL
+ * @param {object} data Raw data from GraphQL query.
+ * @param {string} rootDir The root dir, as defined in CreateDocsPage.
+ * @returns {object} An object with the format of
+ *  {
+ *    [folderName]: {
+ *      articles: {
+ *        { mdxNode }
+ *        { nestedArticles}
+ *      },
+ *      id,
+ *      topicPath,
+ *      title
+ *    }
+ *  }
+ */
 const buildDocsContents = (data, rootDir) => {
   const contents = {};
   const sortedDocs = [...data].sort(
@@ -265,12 +319,12 @@ const buildDocsContents = (data, rootDir) => {
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
-    const payload = {
+    const rootPageData = {
       id: topicId,
       topicPath: relPath,
       title: topicTitle,
     };
-    insertChild(relPath, contents, articles, payload);
+    insertPageData(relPath, contents, articles, rootPageData);
   });
 
   return contents;
@@ -290,7 +344,14 @@ const Documentation = ({ data, pageContext, location }) => {
   Object.values(docsContents).forEach((content) => {
     initialTopicsState[content.topicPath] = content.topicPath === pagePath;
   });
-  const article = findChild(pagePath, docsContents)[name];
+  const [topicState, setTopicState] = React.useState(initialTopicsState);
+  const topicToggleHandler = (topicPath) => {
+    setTopicState({
+      ...topicState,
+      [topicPath]: !topicState[topicPath],
+    });
+  };
+  const article = findArticle(pagePath, docsContents)[name];
   const { body, modifiedTime, nextUp: articleNextUp } = article;
 
   const pageOutline = article.headings.map(({ value }) => ({
@@ -310,10 +371,13 @@ const Documentation = ({ data, pageContext, location }) => {
         }
         return (
           <Articles
-            id={id}
             articles={articles}
+            key={id}
+            initialTopicsState={initialTopicsState}
             title={title}
+            topicToggleHandler={topicToggleHandler}
             topicPath={topicPath}
+            topicState={topicState}
           />
         );
       })}

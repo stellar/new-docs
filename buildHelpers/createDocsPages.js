@@ -37,7 +37,6 @@ const createDocsPages = ({ actions, docs }) => {
         locale: defaultLocale,
         name: doc.name,
         relativeDirectory: doc.relativeDirectory,
-        relativePath: doc.relativePath,
         rootDir: DOCS_ROOT,
         // None of these have translations set up. If we translate them in
         // the future, we'll have to revisit this.

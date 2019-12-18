@@ -45,44 +45,55 @@ const Article = ({ article = {} }) => {
   );
 };
 
-const Articles = ({ articles, id, title, topicPath }) => {
-  const initialTopicsState = {};
-
-  const [topicState, setTopicState] = React.useState(initialTopicsState);
+const Articles = ({
+  articles,
+  id,
+  title,
+  topicPath,
+  topicToggleHandler,
+  topicState,
+}) => {
   const isCollapsed = topicState[topicPath];
-  const topicToggleHandler = () => {
-    setTopicState({
-      ...topicState,
-      [topicPath]: !topicState[topicPath],
-    });
-  };
+
   return (
     <li key={id}>
       <TopicExpander
         isCollapsed={isCollapsed}
         type="button"
-        onClick={() => topicToggleHandler()}
+        onClick={() => topicToggleHandler(topicPath)}
       >
         {title}
         <Chevron />
       </TopicExpander>
 
-      {Object.values(articles).map((article) => {
-        return article.articles ? (
-          <ArticleList isCollapsed={isCollapsed}>
+      {Object.values(articles).map((article) =>
+        article.articles ? (
+          <ArticleList
+            key={`ArticleList${id}${article.id}`}
+            isCollapsed={isCollapsed}
+          >
             <Articles
               articles={article.articles}
-              id={article.id}
+              key={article.id}
               title={article.title}
               topicPath={article.topicPath}
+              topicState={topicState}
+              topicToggleHandler={topicToggleHandler}
             />
           </ArticleList>
         ) : (
-          <ArticleList isCollapsed={isCollapsed}>
-            <Article isCollapsed={isCollapsed} article={article} />
+          <ArticleList
+            key={`ArticleList${id}${article.id}`}
+            isCollapsed={isCollapsed}
+          >
+            <Article
+              key={`Article${article.id}`}
+              isCollapsed={isCollapsed}
+              article={article}
+            />
           </ArticleList>
-        );
-      })}
+        ),
+      )}
     </li>
   );
 };
@@ -91,7 +102,9 @@ Articles.propTypes = {
   id: PropTypes.string,
   articles: PropTypes.object,
   title: PropTypes.string,
+  topicToggleHandler: PropTypes.func,
   topicPath: PropTypes.string,
+  topicState: PropTypes.object,
 };
 
 Article.propTypes = {
