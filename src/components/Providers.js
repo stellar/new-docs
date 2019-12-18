@@ -6,14 +6,15 @@ import { THEME } from "constants/styles";
 
 import { PreloadedCatalogContext } from "helpers/translate";
 
-import GlobalStyles from "basics/GlobalStyles";
 import FeatureFlags from "contexts/featureFlags";
+import en from "locale/en/messages";
 
-const Providers = ({ children, preloadedCatalogs }) => (
+const preloadedCatalogs = { en };
+
+const Providers = ({ children }) => (
   <ThemeProvider theme={THEME}>
     <FeatureFlags>
       <PreloadedCatalogContext.Provider value={preloadedCatalogs}>
-        <GlobalStyles />
         {children}
       </PreloadedCatalogContext.Provider>
     </FeatureFlags>
@@ -22,7 +23,6 @@ const Providers = ({ children, preloadedCatalogs }) => (
 
 Providers.propTypes = {
   children: PropTypes.node.isRequired,
-  preloadedCatalogs: PropTypes.object,
 };
 
 export default Providers;

@@ -1,7 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import Helmet from "react-helmet";
 import { t } from "@lingui/macro";
+
+import { FONTS } from "constants/fonts";
 
 import translate, { setup as setupI18n } from "helpers/translate";
 
@@ -9,6 +12,7 @@ import { Link } from "basics/Links";
 
 import Locale from "components/Locale";
 
+import { GlobalStyles } from "basics/GlobalStyles";
 import { Seo } from "./Seo";
 
 const contentId = "content";
@@ -49,6 +53,14 @@ const LayoutBase = ({
       language={pageContext.locale}
       alternateUrls={pageContext.alternateUrls}
     >
+      <Helmet
+        link={FONTS.filter((font) => font.preload).flatMap((font) => ({
+          rel: "preload",
+          href: font.src[0].url,
+          as: "font",
+        }))}
+      />
+      <GlobalStyles />
       <Seo
         title={title}
         description={description}
