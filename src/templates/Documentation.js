@@ -55,13 +55,6 @@ const SideNavBackgroundEl = styled.div`
 const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
-
-  button {
-    background: none;
-    border: 0;
-    cursor: pointer;
-    padding: 0.375rem 0;
-  }
 `;
 
 const containerStyles = css`
@@ -189,6 +182,41 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
 };
 
 /**
+ * findInitialOpenTopics builds an object of booleans signifying which nav items should be in an open state on page load.
+ * @param {object} data Raw data from graphQL query.
+ * @param {string} pagePath Path of the current page.
+ * @param {string} rootDir The root dir, as defined in CreateDocsPage.js.
+ * @returns {object} An object with the format of
+ *  {
+ *    [path]: boolean
+ *  }
+ */
+
+const findInitialOpenTopics = (data, pagePath, rootDir) => {
+  const initialTopicsState = {};
+  const findPath = (relPath, pgPath) => {
+    initialTopicsState[relPath] = relPath === pgPath;
+
+    const pathSegments = relPath.split("/");
+
+    // if path is nested, open the parent dir as well
+    if (pathSegments.length > 2) {
+      const pagePathSegments = pgPath.split("/");
+      findPath(
+        pathSegments.slice(0, pathSegments.length - 1).join("/"),
+        pagePathSegments.slice(0, pagePathSegments.length - 1).join("/"),
+      );
+    }
+  };
+  data.forEach((file) => {
+    const relPath = buildRelPath(file.fieldValue, rootDir);
+    findPath(relPath, pagePath);
+  });
+
+  return initialTopicsState;
+};
+
+/**
  * findArticle revursively travels down file paths to find child articles
  * @param {string} pagePath / delimited string representing filepath.
  * @param {object} docsContents Passed object to traverse.
@@ -272,7 +300,7 @@ const insertPageData = (pagePath, contents, articles, rootPageData) => {
 /**
  * buildDocsContents creates an object from the data pulled from graphQL
  * @param {object} data Raw data from GraphQL query.
- * @param {string} rootDir The root dir, as defined in CreateDocsPage.
+ * @param {string} rootDir The root dir, as defined in CreateDocsPage.js.
  * @returns {object} An object with the format of
  *  {
  *    [folderName]: {
@@ -340,10 +368,11 @@ const Documentation = ({ data, pageContext, location }) => {
 
   const pagePath = buildRelPath(relativeDirectory, rootDir);
 
-  const initialTopicsState = {};
-  Object.values(docsContents).forEach((content) => {
-    initialTopicsState[content.topicPath] = content.topicPath === pagePath;
-  });
+  const initialTopicsState = findInitialOpenTopics(
+    allFile.group,
+    pagePath,
+    rootDir,
+  );
   const [topicState, setTopicState] = React.useState(initialTopicsState);
   const topicToggleHandler = (topicPath) => {
     setTopicState({
