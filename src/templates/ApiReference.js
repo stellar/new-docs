@@ -18,7 +18,6 @@ import components from "constants/docsComponentMapping";
 
 import { isEmpty } from "utils";
 import { smoothScrollTo } from "helpers/dom";
-import { slugify } from "helpers/slugify";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 
 import { BasicButton } from "basics/Buttons";
@@ -187,25 +186,25 @@ const componentMap = {
   wrapper: Wrapper,
   // eslint-disable-next-line react/prop-types
   h1: ({ children }) => (
-    <TrackedContent id={slugify(children)}>
+    <TrackedContent>
       <H1 style={{ display: "none" }}>{children}</H1>
     </TrackedContent>
   ),
   // eslint-disable-next-line react/prop-types
   h2: ({ children }) => (
-    <TrackedContent id={slugify(children)}>
+    <TrackedContent>
       <H2>{children}</H2>
     </TrackedContent>
   ),
   // eslint-disable-next-line react/prop-types
   h3: ({ children }) => (
-    <TrackedContent id={slugify(children)}>
+    <TrackedContent>
       <H3>{children}</H3>
     </TrackedContent>
   ),
   // eslint-disable-next-line react/prop-types
   h4: ({ children }) => (
-    <TrackedContent id={slugify(children)}>
+    <TrackedContent>
       <H4>{children}</H4>
     </TrackedContent>
   ),
