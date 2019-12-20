@@ -2,15 +2,27 @@ import Chevron from "assets/icons/chevron.svg";
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
+import { BasicButton } from "basics/Buttons";
 import { FONT_WEIGHT } from "constants/styles";
 import { Link } from "basics/Links";
 
+const topLevelNavItem = `
+color: #666;
+cursor: pointer;
+font-size: 0.875rem;
+font-weight: ${FONT_WEIGHT.light};
+text-decoration: none;
+&:focus {
+  outline: 0;
+}
+`;
+
 const ArticleLink = styled(Link)`
-  color: #666;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: ${FONT_WEIGHT.light};
-  text-decoration: none;
+  ${topLevelNavItem}
+`;
+
+const ArticleButton = styled(BasicButton)`
+  ${topLevelNavItem}
 `;
 
 const TopicExpander = styled.button`
@@ -60,15 +72,14 @@ const Articles = ({
   topicToggleHandler,
   topicState,
 }) => {
-  console.log(topicPath);
   const isCollapsed = topicState[topicPath];
 
   return (
     <li key={id}>
       {isNested ? (
-        <ArticleLink onClick={() => topicToggleHandler(topicPath)}>
+        <ArticleButton onClick={() => topicToggleHandler(topicPath)}>
           {title}
-        </ArticleLink>
+        </ArticleButton>
       ) : (
         <TopicExpander
           isCollapsed={isCollapsed}
