@@ -342,7 +342,7 @@ const buildDocsContents = (data, rootDir) => {
         body,
         headings,
         modifiedTime,
-        title: articleTitle,
+        title: articleTitle || "{`title` Not Found}",
         url: buildUrlFromPath(relativePath),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };

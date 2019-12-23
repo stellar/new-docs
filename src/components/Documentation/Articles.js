@@ -58,7 +58,7 @@ const Article = ({ article = {} }) => {
   const { id, title, url } = article;
   return (
     <li key={id}>
-      <ArticleLink href={url}>{title || "Untitled"}</ArticleLink>
+      <ArticleLink href={url}>{title}</ArticleLink>
     </li>
   );
 };
