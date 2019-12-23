@@ -391,10 +391,10 @@ const Documentation = ({ data, pageContext, location }) => {
     <Topics>
       {Object.values(docsContents).map((content) => {
         const { articles, id, topicPath, title } = content;
-        if (topicPath === rootDir) {
+        if (topicPath === buildRelPath(rootDir, rootDir)) {
           return Object.values(articles).map((rootArticle) => (
             <li key={id}>
-              <RootEl href="/docs/">{rootArticle.title}</RootEl>
+              <RootEl href="/developers/docs">{rootArticle.title}</RootEl>
             </li>
           ));
         }
@@ -411,7 +411,7 @@ const Documentation = ({ data, pageContext, location }) => {
         );
       })}
       <ApiLink>
-        <StyledLink href="/docs/api">API Reference</StyledLink>
+        <StyledLink href="/docs">API Reference</StyledLink>
       </ApiLink>
     </Topics>
   );
