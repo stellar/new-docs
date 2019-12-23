@@ -21,7 +21,7 @@ const ArticleLink = styled(Link)`
   ${topLevelNavItem}
 `;
 
-const ArticleButton = styled(BasicButton)`
+const NestedArticleTopicExpander = styled(BasicButton)`
   ${topLevelNavItem}
 `;
 
@@ -77,9 +77,11 @@ const Articles = ({
   return (
     <li key={id}>
       {isNested ? (
-        <ArticleButton onClick={() => topicToggleHandler(topicPath)}>
+        <NestedArticleTopicExpander
+          onClick={() => topicToggleHandler(topicPath)}
+        >
           {title}
-        </ArticleButton>
+        </NestedArticleTopicExpander>
       ) : (
         <TopicExpander
           isCollapsed={isCollapsed}
