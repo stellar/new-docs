@@ -373,13 +373,6 @@ const Documentation = ({ data, pageContext, location }) => {
     pagePath,
     rootDir,
   );
-  const [topicState, setTopicState] = React.useState(initialTopicsState);
-  const topicToggleHandler = (topicPath) => {
-    setTopicState({
-      ...topicState,
-      [topicPath]: !topicState[topicPath],
-    });
-  };
   const article = findArticle(pagePath, docsContents)[name];
   const { body, modifiedTime, nextUp: articleNextUp } = article;
 
@@ -404,9 +397,7 @@ const Documentation = ({ data, pageContext, location }) => {
             key={id}
             initialTopicsState={initialTopicsState}
             title={title}
-            topicToggleHandler={topicToggleHandler}
             topicPath={topicPath}
-            topicState={topicState}
           />
         );
       })}

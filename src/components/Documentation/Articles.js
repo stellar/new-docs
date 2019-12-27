@@ -66,20 +66,24 @@ const Article = ({ article = {} }) => {
 const Articles = ({
   articles,
   id,
+  initialTopicsState,
   isNested,
   title,
   topicPath,
-  topicToggleHandler,
-  topicState,
 }) => {
+  const [topicState, setTopicState] = React.useState(initialTopicsState);
   const isCollapsed = topicState[topicPath];
+  const topicToggleHandler = () => {
+    setTopicState({
+      ...topicState,
+      [topicPath]: !topicState[topicPath],
+    });
+  };
 
   return (
     <li key={id}>
       {isNested ? (
-        <NestedArticleTopicExpander
-          onClick={() => topicToggleHandler(topicPath)}
-        >
+        <NestedArticleTopicExpander onClick={() => topicToggleHandler()}>
           {title}
         </NestedArticleTopicExpander>
       ) : (
@@ -102,6 +106,7 @@ const Articles = ({
           >
             <Articles
               articles={article.articles}
+              initialTopicsState={initialTopicsState}
               isNested
               key={article.id}
               title={article.title}
@@ -129,12 +134,11 @@ const Articles = ({
 
 Articles.propTypes = {
   id: PropTypes.string,
+  initialTopicsState: PropTypes.object,
   isNested: PropTypes.bool,
   articles: PropTypes.object,
   title: PropTypes.string,
-  topicToggleHandler: PropTypes.func,
   topicPath: PropTypes.string,
-  topicState: PropTypes.object,
 };
 
 Article.propTypes = {
