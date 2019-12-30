@@ -3,9 +3,18 @@ title: Page Arguments
 order: 3
 ---
 
+import { Endpoint } from "components/Endpoint";
 import { ExampleResponse } from "components/ExampleResponse";
 import { NestedTable } from "components/NestedTable";
 import { CodeExample } from "components/CodeExample";
+
+<Endpoint>
+
+|     |                                                                  |
+| --- | ---------------------------------------------------------------- |
+| GET | /{endpoint}?cursor={paging_token}&order={asc,desc}&limit={1-200} |
+
+</Endpoint>
 
 <NestedTable>
 
