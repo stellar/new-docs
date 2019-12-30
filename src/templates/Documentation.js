@@ -402,7 +402,7 @@ const Documentation = ({ data, pageContext, location }) => {
         );
       })}
       <ApiLink>
-        <StyledLink href="/docs">API Reference</StyledLink>
+        <StyledLink href="/developers/api">API Reference</StyledLink>
       </ApiLink>
     </Topics>
   );
