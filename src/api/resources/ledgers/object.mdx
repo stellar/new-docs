@@ -18,16 +18,16 @@ When Horizon returns information about a ledger, it uses the following format:
   - A unique identifier for this ledger.
 - paging_token
   - number
-  - A cursor value for use in [pagination](../../introduction/pagination.mdx).
+  - A cursor value for use in [pagination](../../introduction/pagination/index.mdx).
 - hash
   - string
-  - A hex-encoded SHA-256 hash of this ledger’s [XDR](../../../docs/glossary/XDR.mdx)-encoded form.
+  - A hex-encoded SHA-256 hash of this ledger’s [XDR](../../../docs/glossary/xdr.mdx)-encoded form.
 - prev_hash
   - string
   - The hash of the ledger immediately preceding this ledger.
 - sequence
   - number
-  - The sequence number of this ledger, and the parameter used in Horizon calls that require a ledger number. 
+  - The sequence number of this ledger, and the parameter used in Horizon calls that require a ledger number.
 - successful_transaction_count
   - number
   - The number of successful transactions in this ledger.
@@ -61,7 +61,6 @@ When Horizon returns information about a ledger, it uses the following format:
 - header_xdr
   - string
   - A base64 encoded string of the raw `LedgerHeader` xdr struct for this ledger.
-
 
 </NestedTable>
 

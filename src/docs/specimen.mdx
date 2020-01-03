@@ -46,16 +46,16 @@ I'm going to start pulling examples from docs at this point to illustrate some o
 
 | Field | Requirements | Description |
 | --- | --- | --- |
-| FEDERATION_SERVER | uses `https://` | The endpoint for clients to resolve stellar addresses for users on your domain via [SEP-2](sep-0002.md) Federation Protocol |
-| AUTH_SERVER | uses `https://` | The endpoint used for [SEP-3](sep-0003.md) Compliance Protocol |
-| TRANSFER_SERVER | uses `https://` | The server used for [SEP-6](sep-0006.md) Anchor/Client interoperability |
-| KYC_SERVER | uses `https://` | The server used for [SEP-12](sep-0012.md) Anchor/Client customer info transfer |
-| WEB_AUTH_ENDPOINT | uses `https://` | The endpoint used for [SEP-10 Web Authentication](sep-0010.md) |
-| SIGNING_KEY | Stellar public key | The signing key is used for [SEP-3](sep-0003.md) Compliance Protocol |
+| FEDERATION_SERVER | uses `https://` | The endpoint for clients to resolve stellar addresses for users on your domain via [SEP-2](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0002.md) Federation Protocol |
+| AUTH_SERVER | uses `https://` | The endpoint used for [SEP-3](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0003.md) Compliance Protocol |
+| TRANSFER_SERVER | uses `https://` | The server used for [SEP-6](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0006.md) Anchor/Client interoperability |
+| KYC_SERVER | uses `https://` | The server used for [SEP-12](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0012.md) Anchor/Client customer info transfer |
+| WEB_AUTH_ENDPOINT | uses `https://` | The endpoint used for [SEP-10 Web Authentication](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0010.md) |
+| SIGNING_KEY | Stellar public key | The signing key is used for [SEP-3](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0003.md) Compliance Protocol |
 | HORIZON_URL | url | Location of public-facing Horizon instance (if you offer one) |
 | ACCOUNTS | list of `G...` strings | A list of Stellar accounts that are controlled by this domain |
 | VERSION | string | The version of SEP-1 your `stellar.toml` adheres to. This helps parsers know which fields to expect. |
-| URI_REQUEST_SIGNING_KEY | Stellar public key | The signing key is used for [SEP-7](sep-0007.md) delegated signing |
+| URI_REQUEST_SIGNING_KEY | Stellar public key | The signing key is used for [SEP-7](https://github.com/stellar/stellar-protocol/tree/master/ecosystem/sep-0007.md) delegated signing |
 
 Now we'll add a big chunk of text because, like I said, these docs tend to be fairly text heavy.
 
@@ -63,9 +63,9 @@ To issue a new type of asset, all you need to do is choose a code. It can be any
 
 However, other people can’t receive your asset until they’ve chosen to trust it. Because a Stellar asset is really a credit, you should trust that the issuer can redeem that credit if necessary later on. You might not want to trust your neighbor to issue banana assets if they don’t even have a banana plant, for example.
 
-An account can create a _trustline,_ or a declaration that it trusts a particular asset, using the [change trust operation](concepts/list-of-operations.md#change-trust). A trustline can also be limited to a particular amount. If your banana-growing neighbor only has a few plants, you might not want to trust them for more than about 200 bananas.
+An account can create a _trustline,_ or a declaration that it trusts a particular asset, using the [change trust operation](../api/resources/operations/object/change-trust.mdx). A trustline can also be limited to a particular amount. If your banana-growing neighbor only has a few plants, you might not want to trust them for more than about 200 bananas.
 
-Once you’ve chosen an asset code and someone else has created a trustline for your asset, you’re free to start making payment operations to them using your asset. If someone you want to pay doesn’t trust your asset, you might also be able to use the [distributed exchange](concepts/exchange.md).
+Once you’ve chosen an asset code and someone else has created a trustline for your asset, you’re free to start making payment operations to them using your asset. If someone you want to pay doesn’t trust your asset, you might also be able to use the [distributed exchange](#TODO).
 
 ### More on that: a short code example
 
@@ -256,19 +256,19 @@ image="https://pbs.twimg.com/profile_images/666921221410439168/iriHah4f.jpg"
 
 Again, there's going to be some text for looks. This time, we'll also try out an ordered list.
 
-Accounts have [several flags](concepts/accounts.md#flags) related to issuing assets.
+Accounts have [several flags](#TODO) related to issuing assets.
 
-If you’d like to control who can be paid with your asset, or if your asset has some special purpose requiring sign-off from you, use the [`AUTHORIZATION REQUIRED` flag](concepts/assets.md#controlling-asset-holders), which requires that the issuing account also approves a trustline before the receiving account is allowed to be paid with the asset.
+If you’d like to control who can be paid with your asset, or if your asset has some special purpose requiring sign-off from you, use the [`AUTHORIZATION REQUIRED` flag](#TODO), which requires that the issuing account also approves a trustline before the receiving account is allowed to be paid with the asset.
 
-[`AUTHORIZATION REVOCABLE` flag](concepts/assets.md#controlling-asset-holders) allows you to freeze assets you issued in case of theft or other special circumstances. This can be useful for national currencies, but is not always applicable to other kinds of assets.
+[`AUTHORIZATION REVOCABLE` flag](#TODO) allows you to freeze assets you issued in case of theft or other special circumstances. This can be useful for national currencies, but is not always applicable to other kinds of assets.
 
 For most cases, you should avoid setting `AUTHORIZATION REVOCABLE` on your asset. In the past, some issuers have used the `AUTHORIZATION REVOCABLE` flag in order to impose lock-up periods. However, this is a problematic mechanism because it does not provide the user any guarantees with regard to when or if the assets will be unlocked.
 
-More importantly though, _it requires a lot of effort to undo once it has been set_. This is because if `AUTHORIZATION REVOCABLE` or `AUTHORIZATION REQUIRED` is disabled on an asset, it has no effect on existing user accounts. In order to be able to send your asset to existing accounts after these flags have been turned off, you will still need to run the [`Allow Trust`](concepts/list-of-operations.md#allow-trust) operation for each existing user account. This requires creating a transaction with the following operations for _every_ existing user account:
+More importantly though, _it requires a lot of effort to undo once it has been set_. This is because if `AUTHORIZATION REVOCABLE` or `AUTHORIZATION REQUIRED` is disabled on an asset, it has no effect on existing user accounts. In order to be able to send your asset to existing accounts after these flags have been turned off, you will still need to run the [`Allow Trust`](../api/resources/operations/object/allow-trust.mdx) operation for each existing user account. This requires creating a transaction with the following operations for _every_ existing user account:
 
-1. [`Set Options`](concepts/list-of-operations.md#set-options) to set the flags on the issuing account to `0x1` to enable `AUTHORIZATION REQUIRED`. This is necessary because you cannot run the [`Allow Trust`](concepts/list-of-operations.md#allow-trust) operation without `AUTHORIZATION REQUIRED` being set on your issuing account.
-1. [`Allow Trust`](concepts/list-of-operations.md#allow-trust) on the existing user's account in order to authorize it. **Note:** You can actually place as many as `MAX OPERATIONS PER TRANSACTION - 2` (currently the [maximum is 100](concepts/transactions.md#list-of-operations)) `Allow Trust` operations for different accounts to minimize the number of transactions submitted to the network.
-1. [`Set Options`](concepts/list-of-operations.md#set-options) to set the flags on the issuing account to `0x0` to disable `AUTHORIZATION REQUIRED`.
+1. [`Set Options`](../api/resources/operations/object/set-options.mdx) to set the flags on the issuing account to `0x1` to enable `AUTHORIZATION REQUIRED`. This is necessary because you cannot run the [`Allow Trust`](../api/resources/operations/object/allow-trust.mdx) operation without `AUTHORIZATION REQUIRED` being set on your issuing account.
+1. [`Allow Trust`](../api/resources/operations/object/allow-trust.mdx) on the existing user's account in order to authorize it. **Note:** You can actually place as many as `MAX OPERATIONS PER TRANSACTION - 2` (currently the [maximum is 100](concepts/transactions.md#list-of-operations)) `Allow Trust` operations for different accounts to minimize the number of transactions submitted to the network.
+1. [`Set Options`](../api/resources/operations/object/set-options.mdx) to set the flags on the issuing account to `0x0` to disable `AUTHORIZATION REQUIRED`.
    1. If I had more points to make about `Set Options`, I'd start listing those here.
    1. But the truth is, we've already covered it pretty well above.
       1. Do we need to cover second-level nesting here?
@@ -282,7 +282,7 @@ More importantly though, _it requires a lot of effort to undo once it has been s
 
 When a user would like to redeem their asset off of the Stellar Network (such as receiving cold, hard cash for an asset representing a physical currency), the process takes places in two steps:
 
-1. On the Stellar Network, the holder of the asset (i.e. the account with the trustline for the asset) sends funds back to the issuing account via a [Payment operation](./concepts/list-of-operations.md#payment).
+1. On the Stellar Network, the holder of the asset (i.e. the account with the trustline for the asset) sends funds back to the issuing account via a [Payment operation](../api/resources/operations/object/payment.mdx).
 1. Outside of the network, the Asset issuer provides liquidity, such as handing over cash at a cashier or ATM.
 
 It's of note that when tokens are sent back to the issuing (original source) account, they are removed from the global supply of tokens. As an asset issuer you may not want this behavior, and you can instead establish a distribution account which establishes the first trustline with the issuing account. This has the benefit of also setting an initial monetary supply for your asset, and doesn't cause your asset's monetary supply to grow or shrink each time that payments are sent from or to the issuing account, respectively.
