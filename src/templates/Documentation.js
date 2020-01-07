@@ -135,6 +135,7 @@ const componentMapping = {
     return (
       <Location>
         {({ location }) => {
+          // eslint-disable-next-line react/prop-types
           let url = href.split(".mdx")[0].replace("index", "");
           if (url.startsWith(".")) {
             url = path.resolve(location.pathname, url);

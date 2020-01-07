@@ -9,7 +9,7 @@ export const FeatureFlagsContext = createContext({});
 const FeatureFlags = ({ children }) => {
   const contextValue = React.useMemo(() => {
     if (typeof window !== "undefined") {
-      const featureFlags = Object.assign({}, FEATURE_FLAGS);
+      const featureFlags = { ...FEATURE_FLAGS };
       const params = qs.parse(window.location.search, {
         ignoreQueryPrefix: true,
         decoder: (x) => {

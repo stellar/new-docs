@@ -135,6 +135,7 @@ const DocsLink = ({ href, ...props }) => {
   // to have relative path preserved, but links within the API reference will
   // need to be squashed relative to `/docs/api`. Not clear what the best
   // solution is at time of commit.
+  // eslint-disable-next-line react/prop-types
   let url = href.split(".mdx")[0].replace("index", "");
 
   if (url.startsWith(".")) {

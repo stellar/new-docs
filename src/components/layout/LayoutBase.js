@@ -82,6 +82,8 @@ LayoutBase.propTypes = {
   description: PropTypes.node,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
+    urlPath: PropTypes.string.isRequired,
+    alternateUrls: PropTypes.array.isRequired,
   }).isRequired,
 };
 
