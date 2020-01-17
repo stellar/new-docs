@@ -305,7 +305,29 @@ But I don't have an image uploaded yet, so this needs work.
 
 We're using Mermaid for diagrams, and I think they'll be pretty useful moving forward, especially as we try to describe how various SEP flows work. I'm not sure what we need to do to enable Mermaid, and what I'm attempting isn't rendering correctly in my gist.
 
-That said, here's an attempt to create one of those diagrams using Mermaid: sequenceDiagram participant Wallet participant Anchor participant Anchor webapp participant Stellar note left of Wallet: Initiate Deposit Wallet->>Anchor: [SEP-6] GET /info Anchor-->>Wallet: Authentication required! Wallet-->>Anchor: [SEP-10] GET /auth_challenge Wallet-->>Anchor: [SEP-10] POST auth_challenge Anchor-->>Wallet: [SEP-10] auth JWT Wallet->>Anchor webapp: [SEP-6] Open URL + Callback + JWT note right of Anchor: Interactive deposit<br/> -----------------------<br/> Choose amount <br/> Collect KYC info <br/> Deposit method Anchor webapp->>Wallet: Callback (how + URL) note left of Wallet: Show deposit info Wallet->>Anchor: Deposit (off-chain) note left of Anchor: Deposit confirmed Anchor->>Stellar: POST /transaction [Horizon] Stellar->>Anchor: Transaction result [Horizon] Stellar->>Wallet: Transaction result
+That said, here's an attempt to create one of those diagrams using Mermaid: 
+
+```mermaid
+sequenceDiagram
+      participant W as Wallet
+      participant A as Anchor
+      participant S as Stellar
+      W->>A: [SEP6] /withdraw/params
+      A->>W: [SEP6] 403 - /kyc(...)
+      W->>A: [SEP10] GET /web_auth
+      A->>W: [SEP10] Challenge
+      W->>A: [SEP10] POST /web_auth
+      A->>W: [SEP10] JWT
+      W->>A: [SEP12] PUT /customer
+      Note over A: KYC Checks
+      A->>W: [SEP12] 200
+      W->>A: [SEP6] /withdraw/params
+      A->>W: [SEP6] 200
+      W->>S: [SEP10] POST /transaction
+      S->>W: [SEP10] 200
+      S->>A: [SEP10] TX120, memo
+      Note over A: Deposit
+```
 
 There will be a newsletter signup at the bottom, I think. Putting it here so we can take a look.
 
