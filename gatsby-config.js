@@ -45,10 +45,27 @@ module.exports = {
         gatsbyRemarkPlugins: [
           "gatsby-remark-smartypants",
           {
-            resolve: "gatsby-remark-prismjs",
+            resolve: "gatsby-remark-mermaid",
+            options: {
+              theme: "neutral",
+              fontFamily:
+                '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+            },
+          },
+          {
+            resolve: `gatsby-remark-prismjs`,
             options: {
               showLineNumbers: true,
               noInlineHighlight: true,
+              languageExtensions: [
+                {
+                  language: "curl",
+                  extend: "javascript",
+                  definition: {
+                    curl_types: /(curl)/,
+                  },
+                },
+              ],
             },
           },
         ],
@@ -59,7 +76,15 @@ module.exports = {
       options: {
         plugins: [
           {
-            resolve: "gatsby-remark-prismjs",
+            resolve: "gatsby-remark-mermaid",
+            options: {
+              theme: "neutral",
+              fontFamily:
+                '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+            },
+          },
+          {
+            resolve: `gatsby-remark-prismjs`,
             options: {
               showLineNumbers: true,
               noInlineHighlight: true,

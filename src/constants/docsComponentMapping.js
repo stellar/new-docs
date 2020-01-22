@@ -6,6 +6,7 @@ import { MEDIA_QUERIES, PALETTE } from "constants/styles";
 
 import { BasicImage } from "basics/Images";
 import { Link } from "basics/Links";
+import { Mermaid } from "basics/Mermaid";
 import * as TextComponents from "basics/NewDocText";
 
 const ListItem = (props) => {
@@ -18,8 +19,20 @@ ListItem.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+const Div = styled.div``;
+
 const components = {
-  div: styled.div``,
+  // eslint-disable-next-line react/prop-types
+  div: ({ children, className, ...props }) => {
+    if (className === "mermaid") {
+      return <Mermaid>{children}</Mermaid>;
+    }
+    return (
+      <Div {...props} className={className}>
+        {children}
+      </Div>
+    );
+  },
   span: styled.span``,
   p: styled(TextComponents.Text)`
     line-height: 1.5;
