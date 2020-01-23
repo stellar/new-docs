@@ -8,7 +8,6 @@ import { Trans } from "@lingui/macro";
 import path from "path";
 import { Location } from "@reach/router";
 
-import { Column, Container, Row } from "basics/Grid";
 import {
   DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
@@ -17,15 +16,21 @@ import {
   REDESIGN_PALETTE,
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
-import Articles from "components/Documentation/Articles";
-import Clock from "assets/icons/clock.svg";
-import { DocsBase } from "components/layout/DocsBase";
+
 import { slugify } from "helpers/slugify";
-import { Link } from "basics/Links";
-import { buildPathFromFile } from "utils";
 import { smoothScrollTo } from "helpers/dom";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { buildPathFromFile } from "utils";
+
 import { BasicButton } from "basics/Buttons";
+import { Column, Container, Row } from "basics/Grid";
+import { Link } from "basics/Links";
+
+import Articles from "components/Documentation/Articles";
+import { DocsBase } from "components/layout/DocsBase";
+import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+
+import Clock from "assets/icons/clock.svg";
+import { Footer } from "components/Documentation/Footer";
 
 const contentId = "content";
 const { h2: H2 } = components;
@@ -49,7 +54,7 @@ const SideNavBackgroundEl = styled.div`
   left: -100rem;
   right: 0;
   top: -10rem;
-  bottom: -10rem;
+  bottom: 0rem;
 `;
 
 const Topics = styled.ul`
@@ -192,7 +197,6 @@ const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
  *    [path]: boolean
  *  }
  */
-
 const findInitialOpenTopics = (data, pagePath, rootDir) => {
   const initialTopicsState = {};
   const findPath = (relPath, pgPath) => {
@@ -438,7 +442,6 @@ const Documentation = ({ data, pageContext, location }) => {
 
   return (
     <MDXProvider components={componentMapping}>
-      <div style={{ marginTop: "10rem" }} />
       <DocsBase pageContext={pageContext}>
         <ContainerEl id={contentId}>
           <Row>
@@ -447,10 +450,13 @@ const Documentation = ({ data, pageContext, location }) => {
               <StickyEl>{left}</StickyEl>
             </SideNavEl>
             {/*
-                  We want the right hand side to appear above content on mobile
-                */}
+              We want the right hand side to appear above content on mobile
+            */}
             <Column md={{ hide: true }}>{right}</Column>
-            <Column md={7}>{center}</Column>
+            <Column md={7}>
+              {center}
+              <Footer />
+            </Column>
             <Column md={2}>{right}</Column>
           </Row>
         </ContainerEl>

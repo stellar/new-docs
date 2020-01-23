@@ -2,7 +2,7 @@ import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { css, ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
@@ -24,6 +24,7 @@ import { BasicButton } from "basics/Buttons";
 import { Code } from "basics/NewDocText";
 import { Column, Container, gridHelpers } from "basics/Grid";
 
+import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
 import { NavFrame } from "components/Navigation/SharedStyles";
 import { NavLogo } from "components/Navigation/NavLogo";
@@ -41,14 +42,12 @@ const contentId = "content";
 const ContentEl = styled.article`
   margin: 0 auto;
 `;
-const containerStyles = css`
-  margin: 0;
-  min-width: 80rem;
-  max-width: 140rem;
-`;
 const ContainerEl = styled(Container)`
   && {
-    ${containerStyles}
+    margin: 0;
+    min-width: 80rem;
+    max-width: 140rem;
+    overflow-y: hidden;
   }
 `;
 const GreenTableCell = styled.td`
@@ -95,7 +94,7 @@ const SideNavBackgroundEl = styled.div`
   left: -100rem;
   right: 0;
   top: -10rem;
-  bottom: -10rem;
+  bottom: 0rem;
 `;
 const NavItemEl = styled(BasicButton)`
   text-align: left;
@@ -261,7 +260,6 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           }
         >
           <ContainerEl id={contentId}>
-            <div style={{ paddingTop: "10rem" }} />
             <RowEl>
               <SideNavEl xs={3} lg={3} xl={4}>
                 <SideNavBackgroundEl />
@@ -286,6 +284,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                     </section>
                   </Route>
                 ))}
+                <Footer />
               </Column>
               <Column xs={4} xl={9} />
             </RowEl>

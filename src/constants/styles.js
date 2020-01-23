@@ -31,6 +31,7 @@ export const PALETTE = {
   coolPurple: "#501e83",
   lightPurple: "#975581",
   purple: "#490be3",
+  purpleBlue: "#3e1bdb",
   coolPink: "#97557f",
   lightGreen: "#abcc7d",
   lightOrage: "#e5c687",

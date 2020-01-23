@@ -8,7 +8,6 @@ import { Row, Column, Container } from "basics/Grid";
 
 import { NavFrame } from "components/Navigation/SharedStyles";
 import { NavLogo } from "components/Navigation/NavLogo";
-import Footer from "components/Footer";
 import { Provider as SideNavProvider } from "components/SideNav";
 
 import LayoutBase from "./LayoutBase";
@@ -43,7 +42,6 @@ export const DocsBase = (props) => {
       <ThemeProvider theme={(orig) => ({ ...orig, ...theme, ...navTheme })}>
         <SideNavProvider>{children}</SideNavProvider>
       </ThemeProvider>
-      <Footer />
     </LayoutBase>
   );
 };
