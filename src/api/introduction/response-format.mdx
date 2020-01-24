@@ -15,17 +15,17 @@ HAL is just JSON with two reserved attribute names:
 
 If a response is a single record, the `_links` section will provide links to any parent or child records, and there will be no `_embedded` property.
 
-If a response is a collection, the `_links` section will provide [pagination](./pagination.mdx) links, and the response’s list of records will be nested underneath the `_embedded` property.
+If a response is a collection, the `_links` section will provide [pagination](./pagination/index.mdx) links, and the response’s list of records will be nested underneath the `_embedded` property.
 
 <NestedTable>
 
 - ATTRIBUTES
   - DATA TYPE
   - DESCRIPTION
-- _links
+- \_links
   - array
   - Provides links for navigating to other pages or to parents and children.
-- _embedded
+- \_embedded
   - array
   - Present when querying an endpoint that responds with a collection of records.
 
