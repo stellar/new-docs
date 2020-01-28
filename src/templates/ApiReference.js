@@ -21,16 +21,20 @@ import { smoothScrollTo } from "helpers/dom";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 
 import { BasicButton } from "basics/Buttons";
-import { Code } from "basics/NewDocText";
+import { Code, HorizontalRule } from "basics/NewDocText";
 import { Column, Container, gridHelpers } from "basics/Grid";
+import { LinkedH1 } from "basics/Text";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
 import { NavFrame } from "components/Navigation/SharedStyles";
 import { NavLogo } from "components/Navigation/NavLogo";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
-import { ScrollRouter } from "components/ApiRefRouting/ScrollRouter";
-import { Route } from "components/ApiRefRouting/Route";
+import {
+  ScrollRouter,
+  Context as ScrollRouterContext,
+} from "components/ApiRefRouting/ScrollRouter";
+import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
 
 import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
 
@@ -130,18 +134,29 @@ const renderItem = ({ depth, id, isActive, title }) => (
 const StyledLink = components.a;
 // eslint-disable-next-line react/prop-types
 const DocsLink = ({ href, ...props }) => {
-  // TODO: This is definitely super broken. Links to non-reference docs will need
-  // to have relative path preserved, but links within the API reference will
-  // need to be squashed relative to `/docs/api`. Not clear what the best
-  // solution is at time of commit.
-  // eslint-disable-next-line react/prop-types
-  let url = href.split(".mdx")[0].replace("index", "");
+  const originalPath = React.useContext(SectionPathContext);
+  const { onLinkClick } = React.useContext(ScrollRouterContext);
+  let url = href;
 
+  // Resolve relative links
   if (url.startsWith(".")) {
-    // Force all directories to be flat
-    url = pathLib.resolve("/docs/api", url.replace("..", "."));
+    url = normalizeRoute(
+      `/developers${buildPathFromFile(
+        pathLib.resolve(pathLib.dirname(originalPath), url),
+      )}`,
+    );
   }
-  return <StyledLink href={url} {...props} />;
+  return (
+    <StyledLink
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onLinkClick(url);
+      }}
+      href={url}
+      {...props}
+    />
+  );
 };
 
 const RIGHT_COLUMN_COMPONENTS_NAME = {
@@ -222,6 +237,24 @@ const componentMap = {
   inlineCode: ({ children }) => <InlineCode>{children}</InlineCode>,
 };
 
+const ReferenceSection = React.memo(({ body, relativePath, title }) => {
+  const path = normalizeRoute(`developers/${buildPathFromFile(relativePath)}`);
+  return (
+    <Route originalFilePath={relativePath} path={path}>
+      <section>
+        <LinkedH1 id={path}>{title}</LinkedH1>
+        <MDXRenderer>{body}</MDXRenderer>
+        <HorizontalRule />
+      </section>
+    </Route>
+  );
+});
+ReferenceSection.propTypes = {
+  body: PropTypes.node.isRequired,
+  relativePath: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+};
+
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const referenceDocs = sortReference(
@@ -268,21 +301,13 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 </SideNav>
               </SideNavEl>
               <Column xs={9} xl={18}>
-                {referenceDocs.map((doc) => (
-                  <Route
-                    path={normalizeRoute(
-                      `developers/${buildPathFromFile(
-                        doc.parent.relativePath,
-                      )}`,
-                    )}
-                    key={doc.id}
-                  >
-                    <section>
-                      <h1>{doc.title}</h1>
-                      <MDXRenderer>{doc.body}</MDXRenderer>
-                      <hr />
-                    </section>
-                  </Route>
+                {referenceDocs.map(({ body, id, parent, title }) => (
+                  <ReferenceSection
+                    relativePath={parent.relativePath}
+                    key={id}
+                    title={title}
+                    body={body}
+                  />
                 ))}
                 <Footer />
               </Column>

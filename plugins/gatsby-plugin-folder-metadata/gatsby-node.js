@@ -23,7 +23,6 @@ const fillChildMetadata = (path, metadata) => {
   Object.entries(metadataLookup).forEach(([maybeChild, data]) => {
     if (isParentFolder(maybeChild, path) && !data.parent) {
       data.parent = metadata;
-      console.log({ data });
     }
   });
 };

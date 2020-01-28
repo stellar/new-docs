@@ -12,7 +12,6 @@ import { Link } from "basics/Links";
 
 import Locale from "components/Locale";
 
-import { GlobalStyles } from "basics/GlobalStyles";
 import { Seo } from "./Seo";
 
 const contentId = "content";
@@ -60,7 +59,6 @@ const LayoutBase = ({
           as: "font",
         }))}
       />
-      <GlobalStyles />
       <Seo
         title={title}
         description={description}
@@ -83,7 +81,7 @@ LayoutBase.propTypes = {
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
     urlPath: PropTypes.string.isRequired,
-    alternateUrls: PropTypes.array.isRequired,
+    alternateUrls: PropTypes.array,
   }).isRequired,
 };
 

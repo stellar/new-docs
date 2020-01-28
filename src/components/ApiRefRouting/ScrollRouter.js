@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { findActiveNode } from "helpers/dom";
 
-export const TrackedElementsContext = React.createContext();
+export const Context = React.createContext();
 
 const sortByPosition = (a, b) => {
   const aY = a.current.getBoundingClientRect().y;
@@ -13,12 +13,25 @@ const sortByPosition = (a, b) => {
 let lastScrollPosition = 0;
 
 const routeMap = new Map();
+const elementMap = new Map();
+
+const scrollTo = (position) => {
+  // Our navbar is 90px tall
+  window.scrollTo(0, position - 90);
+};
 
 export const ScrollRouter = ({ children }) => {
   const initialLoadCheck = React.useRef(false);
   const activeNodeRef = React.useRef();
   const trackedElementsRef = React.useRef([]);
 
+  // Navigation
+  const onLinkClick = React.useCallback(function onLinkClick(route) {
+    window.history.pushState(null, null, route);
+    scrollTo(elementMap.get(route).current.offsetTop);
+  }, []);
+
+  // Scroll listener
   React.useEffect(() => {
     const handler = () => {
       // If we haven't scrolled at least 20 pixels, just bail.
@@ -36,9 +49,7 @@ export const ScrollRouter = ({ children }) => {
       // before, update the route.
       if (newActiveNode && newActiveNode !== activeNodeRef.current) {
         activeNodeRef.current = newActiveNode;
-        window.history.replaceState({}, "", routeMap.get(newActiveNode), {
-          replace: true,
-        });
+        window.history.replaceState(null, null, routeMap.get(newActiveNode));
       }
     };
     window.addEventListener("scroll", handler);
@@ -48,19 +59,23 @@ export const ScrollRouter = ({ children }) => {
     };
   }, []);
 
+  // Tracked sections
   const trackElement = React.useCallback((ref, route) => {
     routeMap.set(ref, route);
+    elementMap.set(route, ref);
     trackedElementsRef.current.push(ref);
     trackedElementsRef.current.sort(sortByPosition);
     // We want to scroll to the element associated with the route _once_.
     if (!initialLoadCheck.current && window.location.pathname === route) {
       initialLoadCheck.current = true;
       // Our navbar is 90px tall
-      window.scrollTo(0, ref.current.offsetTop - 90);
+      scrollTo(ref.current.offsetTop);
     }
   }, []);
   const stopTrackingElement = React.useCallback((ref) => {
+    const route = routeMap.get(ref);
     routeMap.delete(ref);
+    elementMap.delete(route);
     trackedElementsRef.current = trackedElementsRef.current.filter(
       (x) => x !== ref,
     );
@@ -70,15 +85,12 @@ export const ScrollRouter = ({ children }) => {
     () => ({
       stopTrackingElement,
       trackElement,
+      onLinkClick,
     }),
-    [stopTrackingElement, trackElement],
+    [stopTrackingElement, trackElement, onLinkClick],
   );
 
-  return (
-    <TrackedElementsContext.Provider value={contextValue}>
-      {children}
-    </TrackedElementsContext.Provider>
-  );
+  return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 };
 
 ScrollRouter.propTypes = {

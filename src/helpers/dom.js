@@ -22,8 +22,8 @@ const reverse = memoize((arr) => arr.slice().reverse());
 /**
  * findActiveNode expects a list of react refs and whether we're scrolling down
  * or not, and returns which node is most likely to be in focus.
- * @param {array} possibleNodes A list of react refs
- * @param {bool} isScrollingDown Whether the user is scroll down
+ * @param {array} possibleNodes A list of react refs, sorted by vertical position
+ * @param {bool} isScrollingDown Whether the user is scrolling down
  * @return {ref} The node most likely to be active
  */
 export const findActiveNode = (possibleNodes, isScrollingDown) => {

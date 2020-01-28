@@ -29,7 +29,7 @@ const REFERENCE_ROOT = "src/api";
 const DOCS_ROOT = "src/docs";
 
 const buildPathFromFile = (filePath) => {
-  const pathRegex = /^src(.*)\..*$/;
+  const pathRegex = /src(.*)\..*$/;
 
   // Strip `index` so that `index.mdx` files come through with just their
   // relative path.

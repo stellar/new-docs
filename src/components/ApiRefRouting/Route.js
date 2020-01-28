@@ -2,13 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { TrackedElementsContext } from "components/ApiRefRouting/ScrollRouter";
+import { Context as ScrollRouterContext } from "components/ApiRefRouting/ScrollRouter";
 
 const El = styled.div``;
 
-export const Route = ({ children, path }) => {
+export const SectionPathContext = React.createContext("");
+
+export const Route = ({ children, originalFilePath, path }) => {
   const { trackElement, stopTrackingElement } = React.useContext(
-    TrackedElementsContext,
+    ScrollRouterContext,
   );
   const ref = React.useRef();
   const childRef = React.useRef();
@@ -18,12 +20,17 @@ export const Route = ({ children, path }) => {
     return () => {
       stopTrackingElement(childRef);
     };
-  }, [children, trackElement, stopTrackingElement, path]);
+  }, [trackElement, stopTrackingElement, path]);
 
-  return <El ref={ref}>{React.Children.only(children)}</El>;
+  return (
+    <SectionPathContext.Provider value={originalFilePath}>
+      <El ref={ref}>{React.Children.only(children)}</El>
+    </SectionPathContext.Provider>
+  );
 };
 
 Route.propTypes = {
   children: PropTypes.node.isRequired,
   path: PropTypes.string.isRequired,
+  originalFilePath: PropTypes.string.isRequired,
 };

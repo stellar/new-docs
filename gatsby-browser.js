@@ -1,13 +1,17 @@
 import React from "react";
 import * as Sentry from "@sentry/browser";
 
-import Providers from "./src/components/Providers";
-import { PORTAL_TARGETS } from "./src/constants/domNodes";
+import { PORTAL_TARGETS } from "constants/domNodes";
+import { GlobalStyles } from "basics/GlobalStyles";
+import Providers from "components/Providers";
 import { IS_BUILD } from "./buildHelpers/env";
 
 // eslint-disable-next-line react/prop-types
 export const wrapRootElement = ({ element }) => (
-  <Providers>{element}</Providers>
+  <Providers>
+    <GlobalStyles />
+    {element}
+  </Providers>
 );
 
 export const onInitialClientRender = () => {
@@ -50,6 +54,16 @@ export const onInitialClientRender = () => {
     portal.id = name;
     document.body.appendChild(portal);
   });
+};
+
+const isApiReference = (routerProps) =>
+  /\/developers\/api/.test(routerProps.location.pathname);
+
+export const shouldUpdateScroll = ({ routerProps }) => {
+  if (isApiReference(routerProps)) {
+    return routerProps.location.pathname;
+  }
+  return true;
 };
 
 export const onClientEntry = async () => {
