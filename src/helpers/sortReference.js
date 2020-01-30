@@ -1,6 +1,7 @@
 export const normalizeMdx = (node) => {
   const { id, frontmatter, body, parent } = node;
   const metadata = (parent.fields && parent.fields.metadata.data) || {};
+  const parentRelativeDirSplit = parent.relativeDirectory.split("/");
   return {
     ...node,
     id,
@@ -8,10 +9,8 @@ export const normalizeMdx = (node) => {
     title: frontmatter.title,
     body,
     // paths always start with `src/[docs|api]` which isn't useful. Strip it.
-    directory: parent.relativeDirectory
-      .split("/")
-      .slice(2)
-      .join("/"),
+    directory: parentRelativeDirSplit.slice(2).join("/"),
+    currentDirectory: parentRelativeDirSplit[parentRelativeDirSplit.length - 1],
     folder: {
       order: metadata.order,
       title: metadata.title,

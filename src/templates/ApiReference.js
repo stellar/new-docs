@@ -16,9 +16,9 @@ import {
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
 
-import { isEmpty } from "utils";
 import { smoothScrollTo } from "helpers/dom";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { groupBy } from "helpers/groupBy";
 
 import { BasicButton } from "basics/Buttons";
 import { Code, HorizontalRule } from "basics/NewDocText";
@@ -35,7 +35,10 @@ import {
   Context as ScrollRouterContext,
 } from "components/ApiRefRouting/ScrollRouter";
 import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
+import { Expansion } from "components/Expansion";
 
+import PlusIcon from "assets/icons/icon-plus.svg";
+import MinusIcon from "assets/icons/icon-minus.svg";
 import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
 
 const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
@@ -51,7 +54,6 @@ const ContainerEl = styled(Container)`
     margin: 0;
     min-width: 80rem;
     max-width: 140rem;
-    overflow-y: hidden;
   }
 `;
 const GreenTableCell = styled.td`
@@ -65,7 +67,7 @@ const InlineCode = styled(Code)`
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
 `;
-
+const TrackedEl = styled.div``;
 const { count, size, margin } = COLUMNS[COL_SIZES.md];
 const RowEl = styled.div`
   // Treat md as smallest size
@@ -88,7 +90,9 @@ const NestedRowEl = styled.div`
     column-gap: calc((100% - ${18 * 4}rem) / ${18 - 1});
   }
 `;
-
+const ExpansionContainerEl = styled.div`
+  margin-top: 1rem;
+`;
 const SideNavEl = styled(Column)`
   position: relative;
 `;
@@ -101,12 +105,13 @@ const SideNavBackgroundEl = styled.div`
   bottom: 0rem;
 `;
 const NavItemEl = styled(BasicButton)`
+  display: block;
   text-align: left;
   white-space: nowrap;
-  font-size: 1rem;
-  color: #333;
+  font-size: ${(props) => (props.depth === 0 ? "1rem" : "0.875rem")};
+  color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
   padding: 0.375rem 0;
-  padding-left: ${(props) => props.depth}rem;
+  padding-left: ${(props) => props.depth - 1}rem;
   line-height: 1.25;
   transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
   font-weight: ${({ isActive }) =>
@@ -199,30 +204,10 @@ const componentMap = {
   ...components,
   a: DocsLink,
   wrapper: Wrapper,
-  // eslint-disable-next-line react/prop-types
-  h1: ({ children }) => (
-    <TrackedContent>
-      <H1 style={{ display: "none" }}>{children}</H1>
-    </TrackedContent>
-  ),
-  // eslint-disable-next-line react/prop-types
-  h2: ({ children }) => (
-    <TrackedContent>
-      <H2>{children}</H2>
-    </TrackedContent>
-  ),
-  // eslint-disable-next-line react/prop-types
-  h3: ({ children }) => (
-    <TrackedContent>
-      <H3>{children}</H3>
-    </TrackedContent>
-  ),
-  // eslint-disable-next-line react/prop-types
-  h4: ({ children }) => (
-    <TrackedContent>
-      <H4>{children}</H4>
-    </TrackedContent>
-  ),
+  h1: H1,
+  h2: H2,
+  h3: H3,
+  h4: H4,
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
     if (children === "GET") {
@@ -237,19 +222,26 @@ const componentMap = {
   inlineCode: ({ children }) => <InlineCode>{children}</InlineCode>,
 };
 
-const ReferenceSection = React.memo(({ body, relativePath, title }) => {
+const ReferenceSection = React.memo(({ id, body, relativePath, title }) => {
   const path = normalizeRoute(`developers/${buildPathFromFile(relativePath)}`);
+
   return (
     <Route originalFilePath={relativePath} path={path}>
       <section>
-        <LinkedH1 id={path}>{title}</LinkedH1>
+        <TrackedContent>
+          <TrackedEl id={id}>
+            <LinkedH1 id={path}>{title}</LinkedH1>
+          </TrackedEl>
+        </TrackedContent>
         <MDXRenderer>{body}</MDXRenderer>
         <HorizontalRule />
       </section>
     </Route>
   );
 });
+
 ReferenceSection.propTypes = {
+  id: PropTypes.string.isRequired,
   body: PropTypes.node.isRequired,
   relativePath: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
@@ -261,16 +253,46 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
 
-  const navEntries = React.useMemo(
-    () =>
-      referenceDocs.reduce(
-        (arr, doc) =>
-          !isEmpty(doc.tableOfContents)
-            ? arr.concat(doc.tableOfContents.items)
-            : arr,
-        [],
-      ),
-    [referenceDocs],
+  const groupByParentCategory = groupBy(referenceDocs, "directory");
+
+  const createNestedItems = (totalCategories, currentCategoryItems) => ({
+    id: currentCategoryItems[0].id,
+    title: currentCategoryItems[0].folder.title,
+    directory: currentCategoryItems[0].directory,
+    previousParent: totalCategories[totalCategories.length - 2],
+    currentDirectory: currentCategoryItems[0].currentDirectory,
+    items: currentCategoryItems,
+  });
+
+  const groupBySubCategory = Object.keys(groupByParentCategory).reduce(
+    (acc, category) => {
+      const splitCategories = category.split("/");
+      const numberOfCategories = splitCategories.length;
+
+      if (!acc[splitCategories[0]]) {
+        acc[splitCategories[0]] = groupBy(referenceDocs, "directory")[category];
+      }
+
+      if (numberOfCategories > 1) {
+        const currentCategoryItems = groupByParentCategory[category];
+
+        const nestedItemsObj = createNestedItems(
+          splitCategories,
+          currentCategoryItems,
+        );
+
+        if (splitCategories[0] !== nestedItemsObj.previousParent) {
+          const newItems = acc[splitCategories[0]].find(
+            (el) => el.currentDirectory === nestedItemsObj.previousParent,
+          );
+          newItems.items.push(nestedItemsObj);
+        } else {
+          acc[splitCategories[0]].push(nestedItemsObj);
+        }
+      }
+      return acc;
+    },
+    {},
   );
 
   return (
@@ -297,7 +319,23 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               <SideNavEl xs={3} lg={3} xl={4}>
                 <SideNavBackgroundEl />
                 <SideNav>
-                  <SideNavBody items={navEntries} renderItem={renderItem} />
+                  {Object.entries(groupBySubCategory).map((nav, i) => (
+                    <ExpansionContainerEl
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={i}
+                    >
+                      <Expansion
+                        title={nav[0]}
+                        expandedModeTitle={nav[0]}
+                        hasBorder
+                        collapseIcon={<MinusIcon />}
+                        expandIcon={<PlusIcon />}
+                        isDefaultExpanded={true}
+                      >
+                        <SideNavBody items={nav[1]} renderItem={renderItem} />
+                      </Expansion>
+                    </ExpansionContainerEl>
+                  ))}
                 </SideNav>
               </SideNavEl>
               <Column xs={9} xl={18}>
@@ -305,6 +343,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   <ReferenceSection
                     relativePath={parent.relativePath}
                     key={id}
+                    id={id}
                     title={title}
                     body={body}
                   />
@@ -338,7 +377,6 @@ export const pageQuery = graphql`
             order
           }
           body
-          tableOfContents
           parent {
             ... on File {
               relativePath
@@ -347,6 +385,7 @@ export const pageQuery = graphql`
                 metadata {
                   data {
                     order
+                    title
                   }
                 }
               }

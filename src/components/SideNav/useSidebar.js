@@ -1,7 +1,4 @@
 import React from "react";
-
-import { slugify } from "helpers/slugify";
-
 import { SideNavProgressContext } from "components/SideNav/Provider";
 
 const flatten = (ary) =>
@@ -14,13 +11,13 @@ const isNodeActive = (ref, id) =>
 
 export const useSidebar = ({ childOptions, id }) => {
   const { activeNode } = React.useContext(SideNavProgressContext);
-
   const flattenedItems = flatten(childOptions);
 
   const isChildActive = !!flattenedItems.some((item) =>
-    isNodeActive(activeNode, slugify(item.title)),
+    isNodeActive(activeNode, item.id),
   );
   const isActive = !!isNodeActive(activeNode, id);
+
   return React.useMemo(
     () => ({
       activeNode,

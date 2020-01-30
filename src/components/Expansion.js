@@ -74,11 +74,12 @@ export const Expansion = React.forwardRef(function Expansion(
     expandIcon,
     collapseIcon,
     children,
+    isDefaultExpanded = false,
     ...props
   },
   ref,
 ) {
-  const [isExpanded, setExpanded] = React.useState(false);
+  const [isExpanded, setExpanded] = React.useState(isDefaultExpanded);
   const onHandleClick = () => {
     setExpanded(!isExpanded);
   };
@@ -105,6 +106,7 @@ Expansion.propTypes = {
   title: PropTypes.node.isRequired,
   expandedModeTitle: PropTypes.node.isRequired,
   hasBorder: PropTypes.bool,
+  isDefaultExpanded: PropTypes.bool,
   expandIcon: PropTypes.node.isRequired,
   collapseIcon: PropTypes.node.isRequired,
   children: PropTypes.node.isRequired,

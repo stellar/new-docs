@@ -16,7 +16,7 @@ export const H2 = styled(BasicH2)`
 `;
 
 export const NavFrame = styled.header`
-  position: fixed;
+  position: sticky;
   padding: 1.25rem 0;
   top: 0;
   width: 100%;

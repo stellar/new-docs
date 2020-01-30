@@ -472,8 +472,8 @@ Documentation.propTypes = {
 };
 
 PageOutlineItem.propTypes = {
-  id: PropTypes.string,
   isActive: PropTypes.bool,
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
 };
 
