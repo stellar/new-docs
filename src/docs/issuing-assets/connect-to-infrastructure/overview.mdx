@@ -1,0 +1,41 @@
+---
+title: Overview
+order: 10
+---
+
+One of the main use cases for Stellar is the tokenization of fiat currency to optimize processes like cross-border payments, and this section of the docs details the technical and operational steps necessary to set up a service that does that.  
+
+It doesn’t cover the basic steps for issuing an asset on the network—you can find those [here](link)—rather, it explains how developers can *connect* the Stellar Network to their country's banking system and regulatory processes such as [KYC](https://en.wikipedia.org/wiki/Know_your_customer) and [AML](https://en.wikipedia.org/wiki/Money_laundering#Anti-money_laundering) by setting up specific endpoints and an issuer-hosted webapp.  It will walk through the flow, features, and protocol specifications for integrating with wallets and other clients, and offer examples and tools to make the process easier to implement and test.  
+
+There are three stages in the process, each of which we will go over in detail:
+1. [Setting up a test server](link)
+1. [Setting up a production server](link)
+1. [Launch](link)
+
+While the language in this section is focused on issuers of fiat-backed tokens, you can also follow the steps outlined here to issue tokens backed by other assets, including crypto-assets like BTC and ETH.
+## The basic customer flow
+Issuers of fiat-backed tokens, sometimes referred to as *fiat anchors* or *stablecoin issuers*, are the on/off ramps of the Stellar network.  They accept deposits of fiat currencies (such USD, CNY, and BRL) via existing rails (such as bank deposits or cash-in points), and issue equivalent digital stablecoins representing those deposits on the Stellar network.  On the flipside, they allow holders to redeem those tokens for the real-world assets they represent.  To read more about the kinds of things you can do with digital fiat currency, check out [this explainer](link).  
+
+The complete customer flow from deposit to withdrawal goes something like this:
+
+1. Customer goes through KYC
+1. Deposits real fiat currency (e.g. sends a bank transfer)
+1. Receives the digital asset on the Stellar network from the issuer
+1. Uses the digital asset on the Stellar network (for remittance, payments, trading, store of value, etc)
+1. Redeems the digital asset by returning it to the issuer on the Stellar network
+1. Receives real fiat currency in return (e.g. receives a bank transfer) 
+## Interoperability and Stellar Ecosystem Proposals
+Since customers generally use wallets to hold their Stellar tokens, and since there are a lot of wallets to choose from, a crucial step in enabling that customer flow and making a fiat-backed token widely accessible is to set up infrastructure that enables wallets to offer in-app deposits and withdrawals, and to follow best practices when doing to allow any wallet to easily find and interact with it.
+
+Those best practices are specified in Stellar Ecosystem Proposals (SEPs), which are publicly created, open-source documents that live in a [Github repository](link).  They define how different institutions (such as asset issuers, wallets, exchanges, and service providers) should interact and interoperate. 
+
+There are many use cases covered by the existing SEPs—including regulated assets ([SEP-8](link)) and federated user identification ([SEP-2](link))—and new SEPs are proposed and discussed on Github all the time.  We encourage you to participate in those discussions and help build new standards that will make the financial services easier and more accessible.
+
+This guide will mainly focus on the **Interactive Anchor/Wallet Asset Transfer Server** SEP (aka [SEP-24](link)), since it defines the specs for deposit and withdrawal implementations. SEP-24 is focused on *interactive user flows*, meaning flows where users interact with an Anchor-hosted interface rendered inside a wallet. There is also a non-interactive approach to deposits and withdrawals in which the anchor and wallet communicate through APIs (defined in SEP-26 Non-interactive Anchor/Wallet Asset Transfer), but it’s not common to fiat-backed asset issuers, and is out of the scope of this particular section of the docs.
+
+To enable an interactive flow, issuers of fiat-backed tokens implement two SEPs in addition to SEP-24: [SEP-01](link), which links meta-information to an asset, and [SEP-10](link), which creates authenticated user session. The basic steps from an issuer’s point of view are:
+
+1. Issue a token on the Stellar network, which you can do by following [this guide](link).
+1. Link a stellar.toml filed published on their home domain to that asset by following [this guide](link).
+1. Create a series of public endpoints that wallets can interact with, covered [below](link).
+1. Create a webapp that allows users to initiate deposits and complete withdrawals, covered [below](link).
