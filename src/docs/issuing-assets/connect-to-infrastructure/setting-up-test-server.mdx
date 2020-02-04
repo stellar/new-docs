@@ -75,14 +75,14 @@ You can find the complete parameters for the `/info` endpoint in the [Interactiv
 ## Implementing Authentication
 To provide a simpler experience for wallet users, issuers can authenticate individuals with their Stellar accounts instead of requiring usernames and passwords.  The method for doing that is specified in the Stellar Web Authentication SEP (aka [SEP-10](link)).
 
-Stellar Web Authentication is a protocol for verifying that a user controls a Stellar private key for a given account, and for creating a persistent session for that user.  It relies on a variation of mutual challenge-response, and uses Stellar transactions to encode challenges and responses: an asset issuer provides a ‘challenge’ transaction; the client signs it on behalf of the user and returns it to the issuer; the issuer checks that the signature is valid, and if it is, issues a JWT.
+Stellar Web Authentication is a protocol for verifying that a user controls a Stellar private key for a given account, and for creating a persistent session for that user.  It relies on a variation of mutual challenge-response, and uses Stellar transactions to encode challenges and responses: an asset issuer provides a 'challenge' transaction; the client signs it on behalf of the user and returns it to the issuer; the issuer checks that the signature is valid, and if it is, issues a JWT.
 
 The JWT then acts as a re-usable key for a client to perform an action on behalf of a user. It can contain an arbitrary amount of information, and is signed by the provider—in this case the asset issuer— to ensure validity.  You can read the full spec [here](link).
 
 ### Requesting a Challenge
-To start the authentication flow, the client requests a challenge, which is a Stellar transaction with the sequence number set to 0.  A transaction with a sequence number of 0 is, by definition, invalid, so it can’t actually be submitted to the network.  The issuer can, however, verify that the transaction is signed correctly (which is what happens in the next step).
+To start the authentication flow, the client requests a challenge, which is a Stellar transaction with the sequence number set to 0.  A transaction with a sequence number of 0 is, by definition, invalid, so it can't actually be submitted to the network.  The issuer can, however, verify that the transaction is signed correctly (which is what happens in the next step).
 
-The only information needed to request a challenge is the client’s public key, passed as the `account` parameter. Here's an example:
+The only information needed to request a challenge is the client's public key, passed as the `account` parameter. Here's an example:
 `GET <AUTH_ENDPOINT>?account=GXXXXXX`
 
 ### Exchanging the Signed Challenge
@@ -96,14 +96,14 @@ Here are the fields included in the JWT:
 * The `exp` key contains the expiration of the JWT.  Some JWTs should be short-lived if the claims inside of it are expected to change, or if the JWT is used in less secure environments
 * Other keys can contain any type of claim or data the Anchor wishes.	
 
-Since the `sub` field contains the address of the authenticated user, it’s kind of like a username. The JWT authenticates said user.
+Since the `sub` field contains the address of the authenticated user, it's kind of like a username. The JWT authenticates said user.
 
 Since some tokens are used in less secure environments, such as as query parameters in URLs, you may want to create a short-lived or one-time use token to prevent a JWT from falling into the wrong hands.
 
 ## Implementing a Deposit Flow
 Once you have implemented an `/info` endpoint and set up for user authentication, your next step is to set up a deposit flow.  The deposit flow is the on-ramp to the Stellar Network.  In it, a user transfers funds via local rails to a stablecoin issuer in return for a digital version of those funds on the Stellar Network. This section will go through all the steps necessary to implement a working deposit functionality.  
 
-Deposit flows involve a back-and-forth between an issuer’s server and a wallet’s client that starts with the wallet polling the `/info` endpoint and setting up an authenticated user session as  described in the previous sections.  The general sequence of deposit events looks like this:
+Deposit flows involve a back-and-forth between an issuer's server and a wallet's client that starts with the wallet polling the `/info` endpoint and setting up an authenticated user session as  described in the previous sections.  The general sequence of deposit events looks like this:
 
 sequenceDiagram
     participant Wallet
