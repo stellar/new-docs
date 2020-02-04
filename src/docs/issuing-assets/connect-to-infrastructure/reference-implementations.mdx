@@ -3,10 +3,10 @@ title: Reference Implementations
 order: 20
 ---
 
-These docs walk through the steps necessary to set up and launch both a test server and a production server to handle deposits and withdrawals, but before you get any deeper, it’s worth noting: you don’t have to start from scratch.  SDF offers some tools that make it easy to implement those servers, and test them from the client side.   
+These docs walk through the steps necessary to set up and launch both a test server and a production server to handle deposits and withdrawals, but before you get any deeper, it's worth noting: you don't have to start from scratch.  SDF offers some tools that make it easy to implement those servers, and test them from the client side.   
 
 ## Anchor Server Reference Implementation
-To help with server setup, SDF created [Polaris](link), an extendable django reusable-app that comes with fully-implemented endpoints, templates, and database models. It’s built in Python using the community-supported [Stellar Python SDK](link), and is compliant with the Stellar Ecosystem Protocols mentioned in the previous section.
+To help with server setup, SDF created [Polaris](link), an extendable django reusable-app that comes with fully-implemented endpoints, templates, and database models. It's built in Python using the community-supported [Stellar Python SDK](link), and is compliant with the Stellar Ecosystem Protocols mentioned in the previous section.
  
 In the Polaris repo, you can also find a [Reference Implementation Project](link), a WIP example of an anchor server.
  
@@ -25,4 +25,4 @@ The public [Deployed Demo Client](link) allows you to run those tests without ne
 
 With the demo client, you can test your deposit and withdraw flows, and get information about the transactions that are created during those processes. To start testing the deploys, simply update the settings of the Demo Client (click the gear button on the bottom right) to include your project's information.
 
-If you just want to see what the flows look like from a client’s point of view, there's also a public [Demo Client Integrated with a Deployed Reference Server](link) that gives a clear step-by-step visual example of how the functionalities work along with insightful information about the requests, protocols, and possible validation messages.  You can run that demo *right now* and to get a sense of how the anchor/wallet interaction works.   
+If you just want to see what the flows look like from a client's point of view, there's also a public [Demo Client Integrated with a Deployed Reference Server](link) that gives a clear step-by-step visual example of how the functionalities work along with insightful information about the requests, protocols, and possible validation messages.  You can run that demo *right now* and to get a sense of how the anchor/wallet interaction works.   
