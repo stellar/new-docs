@@ -5,7 +5,7 @@ order: 10
 
 One of the main use cases for Stellar is the tokenization of fiat currency to optimize processes like cross-border payments, and this section of the docs details the technical and operational steps necessary to set up a service that does that.  
 
-It doesn’t cover the basic steps for issuing an asset on the network—you can find those [here](link)—rather, it explains how developers can *connect* the Stellar Network to their country's banking system and regulatory processes such as [KYC](https://en.wikipedia.org/wiki/Know_your_customer) and [AML](https://en.wikipedia.org/wiki/Money_laundering#Anti-money_laundering) by setting up specific endpoints and an issuer-hosted webapp.  It will walk through the flow, features, and protocol specifications for integrating with wallets and other clients, and offer examples and tools to make the process easier to implement and test.  
+It doesn't cover the basic steps for issuing an asset on the network—you can find those [here](link)—rather, it explains how developers can *connect* the Stellar Network to their country's banking system and regulatory processes such as [KYC](https://en.wikipedia.org/wiki/Know_your_customer) and [AML](https://en.wikipedia.org/wiki/Money_laundering#Anti-money_laundering) by setting up specific endpoints and an issuer-hosted webapp.  It will walk through the flow, features, and protocol specifications for integrating with wallets and other clients, and offer examples and tools to make the process easier to implement and test.  
 
 There are three stages in the process, each of which we will go over in detail:
 1. [Setting up a test server](link)
@@ -31,9 +31,9 @@ Those best practices are specified in Stellar Ecosystem Proposals (SEPs), which 
 
 There are many use cases covered by the existing SEPs—including regulated assets ([SEP-8](link)) and federated user identification ([SEP-2](link))—and new SEPs are proposed and discussed on Github all the time.  We encourage you to participate in those discussions and help build new standards that will make the financial services easier and more accessible.
 
-This guide will mainly focus on the **Interactive Anchor/Wallet Asset Transfer Server** SEP (aka [SEP-24](link)), since it defines the specs for deposit and withdrawal implementations. SEP-24 is focused on *interactive user flows*, meaning flows where users interact with an Anchor-hosted interface rendered inside a wallet. There is also a non-interactive approach to deposits and withdrawals in which the anchor and wallet communicate through APIs (defined in SEP-26 Non-interactive Anchor/Wallet Asset Transfer), but it’s not common to fiat-backed asset issuers, and is out of the scope of this particular section of the docs.
+This guide will mainly focus on the **Interactive Anchor/Wallet Asset Transfer Server** SEP (aka [SEP-24](link)), since it defines the specs for deposit and withdrawal implementations. SEP-24 is focused on *interactive user flows*, meaning flows where users interact with an Anchor-hosted interface rendered inside a wallet. There is also a non-interactive approach to deposits and withdrawals in which the anchor and wallet communicate through APIs (defined in SEP-26 Non-interactive Anchor/Wallet Asset Transfer), but it's not common to fiat-backed asset issuers, and is out of the scope of this particular section of the docs.
 
-To enable an interactive flow, issuers of fiat-backed tokens implement two SEPs in addition to SEP-24: [SEP-01](link), which links meta-information to an asset, and [SEP-10](link), which creates authenticated user session. The basic steps from an issuer’s point of view are:
+To enable an interactive flow, issuers of fiat-backed tokens implement two SEPs in addition to SEP-24: [SEP-01](link), which links meta-information to an asset, and [SEP-10](link), which creates authenticated user session. The basic steps from an issuer's point of view are:
 
 1. Issue a token on the Stellar network, which you can do by following [this guide](link).
 1. Link a stellar.toml filed published on their home domain to that asset by following [this guide](link).
