@@ -19,19 +19,19 @@ Most issuers of fiat-backed assets need to collect  [KYC](link) (Know Your Custo
 
 How you handle KYC is up to you: there are many services that provide KYC solutions through APIs and iFrames, and that validate the input data and sync with governmental databases to verify requirements. Each jurisdiction has specific KYC requirements, and they differ from jurisdiction to jurisdiction, so it's best to find a country-specific KYC provider that meets your needs.
 
-Some countries require different KYC fields depending on the amount to be deposited or withdrawn. If that’s the case in your jurisdiction and you need to adapt your KYC forms based on the deposit or withdrawal amount, simply add an amount field before the KYC form, and make sure that the KYC fields are updated based on that value.
+Some countries require different KYC fields depending on the amount to be deposited or withdrawn. If that's the case in your jurisdiction and you need to adapt your KYC forms based on the deposit or withdrawal amount, simply add an amount field before the KYC form, and make sure that the KYC fields are updated based on that value.
 
 KYC information should be linked to the session created through [Stellar Web Authentication](link) and, consequently, to the user, so you only need to ask the user for it once. After the first KYC flow is complete, a user shouldn't have to input the information again.
 
 Make sure the errors and validation messages are clear and include instructions for what to do next to ensure a good user experience and increase the KYC conversion rate. You should also localize messages based on the user's language and location.
 
 ## Connecting to Real Banking Rails
-Issuers of fiat-backed tokens on Stellar are expected to manage a full reserve.  That means there’s a 1:1 relationship between Stellar-network tokens and money in the bank.  Since each fiat token on Stellar is backed by, and can be redeemed for, an underlying, real-world asset, issuers of fiat-backed tokens need to connect to real banking rails to validate user deposits (through bank transfers, credit card payments, etc.) and to complete user withdrawals (generally through bank transfers).
+Issuers of fiat-backed tokens on Stellar are expected to manage a full reserve.  That means there's a 1:1 relationship between Stellar-network tokens and money in the bank.  Since each fiat token on Stellar is backed by, and can be redeemed for, an underlying, real-world asset, issuers of fiat-backed tokens need to connect to real banking rails to validate user deposits (through bank transfers, credit card payments, etc.) and to complete user withdrawals (generally through bank transfers).
 
 In order to fetch (and identify) a user transfer, issuers usually take one of two approaches:
 
-* API Polling: this option consists of fetching the bank’s API, through a cron job, to check for the updated status of the list of transfers received by (and sent from) the issuer’s bank account. Once the system confirms a new transaction and identifies that it relates to a specific deposit, it can send the digital funds to that user's account
-* Webhook: not all banking rails support this option, but it's the leanest in terms of back-end logic. In this approach, the bank proactively hits an issuer’s endpoint once it receives a new transfer, updating that information on the issuer’s database. The issuer can then can match that transaction to an existing in-process deposit, and validate that user can receive their digital funds
+* API Polling: this option consists of fetching the bank's API, through a cron job, to check for the updated status of the list of transfers received by (and sent from) the issuer's bank account. Once the system confirms a new transaction and identifies that it relates to a specific deposit, it can send the digital funds to that user's account
+* Webhook: not all banking rails support this option, but it's the leanest in terms of back-end logic. In this approach, the bank proactively hits an issuer's endpoint once it receives a new transfer, updating that information on the issuer's database. The issuer can then can match that transaction to an existing in-process deposit, and validate that user can receive their digital funds
 
 There are many ways to identify that a specific bank transfer relates to a specific deposit (and, consequently, to a user). Some banks (and countries) have transfer infrastructure that allows the creation of a single bank account per transfer; others require users to add an identification parameter to their transfers.  Some banks provide the user ID number in the transaction information so issuers can match that with the information provided in the KYC form.
 
@@ -48,7 +48,7 @@ Once your application is fully functional, it's a good idea to test different sc
 
 ### KYC Tests
 * Check that KYC appears with a new wallet SK
-* Check that KYC (and email, if it’s being used to identify users) is not appearing when using a previous wallet SK
+* Check that KYC (and email, if it's being used to identify users) is not appearing when using a previous wallet SK
 * Check that KYC doesn't accept incorrectly formatted inputs, and that the error messages are comprehensible
 * Check that you can use the same KYC information (email, phone number, username, etc) multiple times
 * Check that you can go through KYC multiple times with the same Stellar SK.
