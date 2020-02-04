@@ -140,11 +140,22 @@ exports.onCreatePage = ({ page, actions }) => {
 };
 
 // Enable absolute imports from `src/`
-exports.onCreateWebpackConfig = ({ actions }) => {
+exports.onCreateWebpackConfig = ({ actions, plugins }) => {
   actions.setWebpackConfig({
     resolve: {
       modules: ["node_modules", "src"],
     },
+    plugins: [
+      plugins.define({
+        "process.env": {
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+          IS_BETA: JSON.stringify(process.env.IS_BETA),
+          CONTEXT: JSON.stringify(process.env.CONTEXT),
+          URL: JSON.stringify(process.env.URL),
+          DEPLOY_PRIME_URL: JSON.stringify(process.env.DEPLOY_PRIME_URL),
+        },
+      }),
+    ],
   });
 };
 

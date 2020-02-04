@@ -81,8 +81,11 @@ const flattenAndSort = (node) =>
     .sort(compareNestedEntries)
     .flatMap((entry) => {
       const nestedNode = entry[1];
-      return [...nestedNode.sections, ...flattenAndSort(nestedNode.nested)].map(
-        (innerNode) => (innerNode.sections ? innerNode.sections : innerNode),
+      return [
+        ...nestedNode.sections,
+        ...flattenAndSort(nestedNode.nested),
+      ].map((innerNode) =>
+        innerNode.sections ? innerNode.sections : innerNode,
       );
     });
 

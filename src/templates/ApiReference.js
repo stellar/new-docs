@@ -5,12 +5,11 @@ import { graphql } from "gatsby";
 import styled, { ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
+import Helmet from "react-helmet";
 
 import {
-  REDESIGN_PALETTE,
   NAV_THEMES,
   CSS_TRANSITION_SPEED,
-  MEDIA_QUERIES,
   FONT_WEIGHT,
   PALETTE,
 } from "constants/styles";
@@ -18,11 +17,11 @@ import components from "constants/docsComponentMapping";
 
 import { smoothScrollTo } from "helpers/dom";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
-import { groupBy } from "helpers/groupBy";
+import { groupByCategory } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
-import { Code, HorizontalRule } from "basics/NewDocText";
-import { Column, Container, gridHelpers } from "basics/Grid";
+import { HorizontalRule } from "basics/NewDocText";
+import { Column } from "basics/Grid";
 import { LinkedH1 } from "basics/Text";
 
 import { Footer } from "components/Documentation/Footer";
@@ -35,27 +34,20 @@ import {
   Context as ScrollRouterContext,
 } from "components/ApiRefRouting/ScrollRouter";
 import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
+import {
+  ApiReferenceRow,
+  ApiReferenceWrapper,
+  Container,
+  NestedRow,
+  SideNavColumn,
+  SideNavBackground,
+} from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
 import PlusIcon from "assets/icons/icon-plus.svg";
 import MinusIcon from "assets/icons/icon-minus.svg";
 import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
 
-const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
-
-const { h1: H1, h2: H2, h3: H3, h4: H4 } = components;
-const contentId = "content";
-
-const ContentEl = styled.article`
-  margin: 0 auto;
-`;
-const ContainerEl = styled(Container)`
-  && {
-    margin: 0;
-    min-width: 80rem;
-    max-width: 140rem;
-  }
-`;
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
 `;
@@ -63,46 +55,10 @@ const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
 
-const InlineCode = styled(Code)`
-  font-size: 0.875rem;
-  font-weight: ${FONT_WEIGHT.bold};
-`;
 const TrackedEl = styled.div``;
-const { count, size, margin } = COLUMNS[COL_SIZES.md];
-const RowEl = styled.div`
-  // Treat md as smallest size
-  display: grid;
-  grid-template-columns: repeat(${count}, ${size}rem);
-  column-gap: calc((100% - ${count * size}rem) / ${count - 1});
-  margin: 0 ${margin}rem;
 
-  ${getSizeGrid(COL_SIZES.lg)}
-  ${getSizeGrid(COL_SIZES.xl)}
-`;
-
-const NestedRowEl = styled.div`
-  display: grid;
-  grid-template-columns: repeat(9, 4rem);
-  column-gap: calc((100% - ${9 * 4}rem) / ${9 - 1});
-
-  @media (${MEDIA_QUERIES.gtXlDesktop}) {
-    grid-template-columns: repeat(18, 4rem);
-    column-gap: calc((100% - ${18 * 4}rem) / ${18 - 1});
-  }
-`;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
-`;
-const SideNavEl = styled(Column)`
-  position: relative;
-`;
-const SideNavBackgroundEl = styled.div`
-  position: absolute;
-  background-color: ${REDESIGN_PALETTE.grey[0]};
-  left: -100rem;
-  right: 0;
-  top: -10rem;
-  bottom: 0rem;
 `;
 const NavItemEl = styled(BasicButton)`
   display: block;
@@ -164,50 +120,10 @@ const DocsLink = ({ href, ...props }) => {
   );
 };
 
-const RIGHT_COLUMN_COMPONENTS_NAME = {
-  CodeExample: "CodeExample",
-  EndpointsTable: "EndpointsTable",
-  ExampleResponse: "ExampleResponse",
-  NavTable: "NavTable",
-};
-
-// eslint-disable-next-line react/prop-types
-const Wrapper = ({ children, ...props }) => {
-  const rightColumnContent = React.useMemo(
-    () =>
-      React.Children.toArray(children).filter(
-        (child) => RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
-      ),
-    [children],
-  );
-  const MiddleColumnContent = React.useMemo(
-    () =>
-      React.Children.toArray(children).filter(
-        (child) => !RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
-      ),
-    [children],
-  );
-
-  return (
-    <NestedRowEl>
-      <Column xs={5} xl={9}>
-        <ContentEl {...props}>{MiddleColumnContent}</ContentEl>
-      </Column>
-      <Column xs={4} xl={9}>
-        {rightColumnContent}
-      </Column>
-    </NestedRowEl>
-  );
-};
-
 const componentMap = {
   ...components,
   a: DocsLink,
-  wrapper: Wrapper,
-  h1: H1,
-  h2: H2,
-  h3: H3,
-  h4: H4,
+  wrapper: ApiReferenceWrapper,
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
     if (children === "GET") {
@@ -218,8 +134,6 @@ const componentMap = {
     }
     return <td>{children}</td>;
   },
-  // eslint-disable-next-line react/prop-types
-  inlineCode: ({ children }) => <InlineCode>{children}</InlineCode>,
 };
 
 const ReferenceSection = React.memo(({ id, body, relativePath, title }) => {
@@ -233,7 +147,10 @@ const ReferenceSection = React.memo(({ id, body, relativePath, title }) => {
             <LinkedH1 id={path}>{title}</LinkedH1>
           </TrackedEl>
         </TrackedContent>
-        <MDXRenderer>{body}</MDXRenderer>
+
+        <NestedRow>
+          <MDXRenderer>{body}</MDXRenderer>
+        </NestedRow>
         <HorizontalRule />
       </section>
     </Route>
@@ -252,74 +169,39 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
-
-  const groupByParentCategory = groupBy(referenceDocs, "directory");
-
-  const createNestedItems = (totalCategories, currentCategoryItems) => ({
-    id: currentCategoryItems[0].id,
-    title: currentCategoryItems[0].folder.title,
-    directory: currentCategoryItems[0].directory,
-    previousParent: totalCategories[totalCategories.length - 2],
-    currentDirectory: currentCategoryItems[0].currentDirectory,
-    items: currentCategoryItems,
-  });
-
-  const groupBySubCategory = Object.keys(groupByParentCategory).reduce(
-    (acc, category) => {
-      const splitCategories = category.split("/");
-      const numberOfCategories = splitCategories.length;
-
-      if (!acc[splitCategories[0]]) {
-        acc[splitCategories[0]] = groupBy(referenceDocs, "directory")[category];
-      }
-
-      if (numberOfCategories > 1) {
-        const currentCategoryItems = groupByParentCategory[category];
-
-        const nestedItemsObj = createNestedItems(
-          splitCategories,
-          currentCategoryItems,
-        );
-
-        if (splitCategories[0] !== nestedItemsObj.previousParent) {
-          const newItems = acc[splitCategories[0]].find(
-            (el) => el.currentDirectory === nestedItemsObj.previousParent,
-          );
-          newItems.items.push(nestedItemsObj);
-        } else {
-          acc[splitCategories[0]].push(nestedItemsObj);
-        }
-      }
-      return acc;
-    },
-    {},
-  );
-
+  const docsBySubCategory = groupByCategory(referenceDocs);
   return (
     <ScrollRouter>
+      <Helmet>
+        {/* SEO optimization. For js-less visitors (i.e. some crawlers), redirect
+        to the same URL but with only the relevant content. */}
+        <noscript>
+          {`<meta http-equiv="refresh" content="0;url=?javascript=false" />`}
+        </noscript>
+      </Helmet>
       <MDXProvider components={componentMap}>
         <DocsBase
           pageContext={pageContext}
           navigation={
             <ThemeProvider theme={NAV_THEMES.docs}>
               <NavFrame>
-                <ContainerEl>
-                  <RowEl>
+                <Container>
+                  <ApiReferenceRow>
                     <Column xs={3} xl={4}>
                       <NavLogo pageName="Documentation" />
                     </Column>
-                  </RowEl>
-                </ContainerEl>
+                  </ApiReferenceRow>
+                </Container>
               </NavFrame>
             </ThemeProvider>
           }
         >
-          <ContainerEl id={contentId}>
-            <RowEl>
-              <SideNavEl xs={3} lg={3} xl={4}>
-                <SideNavBackgroundEl />
+          <Container>
+            <ApiReferenceRow>
+              <SideNavColumn xs={3} lg={3} xl={4}>
+                <SideNavBackground />
                 <SideNav>
-                  {Object.entries(groupBySubCategory).map((nav, i) => (
+                  {Object.entries(docsBySubCategory).map((nav, i) => (
                     <ExpansionContainerEl
                       // eslint-disable-next-line react/no-array-index-key
                       key={i}
@@ -337,7 +219,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                     </ExpansionContainerEl>
                   ))}
                 </SideNav>
-              </SideNavEl>
+              </SideNavColumn>
               <Column xs={9} xl={18}>
                 {referenceDocs.map(({ body, id, parent, title }) => (
                   <ReferenceSection
@@ -351,8 +233,8 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 <Footer />
               </Column>
               <Column xs={4} xl={9} />
-            </RowEl>
-          </ContainerEl>
+            </ApiReferenceRow>
+          </Container>
         </DocsBase>
       </MDXProvider>
     </ScrollRouter>
@@ -371,26 +253,7 @@ export const pageQuery = graphql`
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
         node {
-          id
-          frontmatter {
-            title
-            order
-          }
-          body
-          parent {
-            ... on File {
-              relativePath
-              relativeDirectory
-              fields {
-                metadata {
-                  data {
-                    order
-                    title
-                  }
-                }
-              }
-            }
-          }
+          ...ApiReferencePage
         }
       }
     }

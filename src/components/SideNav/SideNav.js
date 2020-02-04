@@ -86,7 +86,7 @@ const NestedNav = ({ id = "", title, items = [], renderItem, depth }) => {
 
   return (
     <>
-      {renderItem({ depth, uniqueId, isActive, title })}
+      {renderItem({ depth, id: uniqueId, isActive, title })}
       {isOpen && items && (
         <>
           {items.map((el, index) => (

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import { Trans } from "@lingui/macro";
@@ -19,21 +19,31 @@ import components from "constants/docsComponentMapping";
 
 import { slugify } from "helpers/slugify";
 import { smoothScrollTo } from "helpers/dom";
-import { buildPathFromFile } from "utils";
+import {
+  buildRelPath,
+  findInitialOpenTopics,
+  findArticle,
+  buildDocsContents,
+} from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
-import { Column, Container, Row } from "basics/Grid";
-import { Link } from "basics/Links";
+import { Column, Row } from "basics/Grid";
 
 import Articles from "components/Documentation/Articles";
 import { DocsBase } from "components/layout/DocsBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import {
+  Container,
+  Content,
+  SideNavColumn,
+  SideNavBackground,
+} from "components/Documentation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import { Footer } from "components/Documentation/Footer";
 
 const contentId = "content";
-const { h2: H2 } = components;
+const { h2: H2, a: StyledLink } = components;
 
 const StickyEl = styled.div`
   width: 100%;
@@ -44,39 +54,11 @@ const StickyEl = styled.div`
   z-index: 3;
 `;
 
-const SideNavEl = styled(Column)`
-  background-color: ${REDESIGN_PALETTE.grey[0]};
-  position: relative;
-`;
-const SideNavBackgroundEl = styled.div`
-  position: absolute;
-  background-color: ${REDESIGN_PALETTE.grey[0]};
-  left: -100rem;
-  right: 0;
-  top: -10rem;
-  bottom: 0rem;
-`;
-
 const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
 `;
 
-const containerStyles = css`
-  margin: 0;
-  min-width: 80rem;
-  max-width: 140rem;
-`;
-const ContainerEl = styled(Container)`
-  && {
-    ${containerStyles}
-  }
-`;
-
-const ContentEl = styled.article`
-  position: relative;
-  margin: 0 auto;
-`;
 const RightNavEl = styled(StickyEl)`
   font-size: 0.875rem;
   line-height: 1rem;
@@ -97,7 +79,7 @@ const OutlineTitleEl = styled.div`
   margin-bottom: 1rem;
 `;
 
-const RootEl = styled.a`
+const RootEl = styled(StyledLink)`
   color: #333;
   line-height: 1.75rem;
   text-decoration: none;
@@ -132,7 +114,6 @@ const PageOutlineItem = ({ id, isActive, title }) => (
   </NavItemEl>
 );
 
-const StyledLink = components.a;
 const componentMapping = {
   ...components,
   // eslint-disable-next-line react/prop-types
@@ -152,215 +133,10 @@ const componentMapping = {
   }),
   // eslint-disable-next-line react/prop-types
   h2: ({ children }) => (
-    <TrackedContent id={slugify(children)}>
+    <TrackedContent>
       <H2>{children}</H2>
     </TrackedContent>
   ),
-};
-
-const buildUrlFromPath = (relPath) =>
-  `/developers${buildPathFromFile(relPath)}`;
-
-const buildRelPath = (relativeDirectory, rootDir) =>
-  relativeDirectory.replace(rootDir, "") || "/";
-
-const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
-  // End of list
-  if (topicIndex + 1 === topicArr.length) {
-    return { title: "", url: "" };
-  }
-
-  // Go to next topic
-  if (childIndex === childArr.length - 1) {
-    const nextTopic = topicArr[topicIndex + 1];
-    return {
-      title: nextTopic.nodes[0].fields.metadata.data.title,
-      url: `${buildUrlFromPath(nextTopic.nodes[0].relativePath)}`,
-    };
-  }
-
-  // Go to next article in topic
-  const nextChild = childArr[childIndex + 1];
-  return {
-    title: nextChild.childMdx.frontmatter.title,
-    url: buildUrlFromPath(nextChild.relativePath),
-  };
-};
-
-/**
- * findInitialOpenTopics builds an object of booleans signifying which nav items should be in an open state on page load.
- * @param {object} data Raw data from graphQL query.
- * @param {string} pagePath Path of the current page.
- * @param {string} rootDir The root dir, as defined in CreateDocsPage.js.
- * @returns {object} An object with the format of
- *  {
- *    [path]: boolean
- *  }
- */
-const findInitialOpenTopics = (data, pagePath, rootDir) => {
-  const initialTopicsState = {};
-  const findPath = (relPath, pgPath) => {
-    initialTopicsState[relPath] = relPath === pgPath;
-
-    const pathSegments = relPath.split("/");
-
-    // if path is nested, open the parent dir as well
-    if (pathSegments.length > 2) {
-      const pagePathSegments = pgPath.split("/");
-      findPath(
-        pathSegments.slice(0, pathSegments.length - 1).join("/"),
-        pagePathSegments.slice(0, pagePathSegments.length - 1).join("/"),
-      );
-    }
-  };
-  data.forEach((file) => {
-    const relPath = buildRelPath(file.fieldValue, rootDir);
-    findPath(relPath, pagePath);
-  });
-
-  return initialTopicsState;
-};
-
-/**
- * findArticle revursively travels down file paths to find child articles
- * @param {string} pagePath / delimited string representing filepath.
- * @param {object} docsContents Passed object to traverse.
- * @returns {object} An object with the format of
- *  {
- *    [articleName]: {
- *      body,
- *      headings,
- *      id,
- *      modifiedTime,
- *      nextUp,
- *      title,
- *      url
- *    }
- *  }
- */
-
-const findArticle = (pagePath, docsContents, isNested = false) => {
-  if (!pagePath) return docsContents.articles;
-  const levels = pagePath.split("/");
-  return findArticle(
-    levels[2] ? `/${levels[2]}` : null,
-    isNested
-      ? docsContents.articles[`/${levels[1]}`]
-      : docsContents[`/${levels[1]}`],
-    true,
-  );
-};
-
-/**
- * insertPageData inserts page data and articles into corresponding keys of object
- * @param {string} pagePath / delimited string representing filepath.
- * @param {object} contents Passed object that will update object in caller.
- * @param {object} articles Object containing all articles scoped to path.
- * @param {object} rootPageData Title, TopicPath, and Id associated with each path.
- * @returns {object} An object with the format of
- *  {
- *    [folderName]: {
- *      articles: {
- *        { mdxNode }
- *        { nestedArticles}
- *      },
- *      id,
- *      topicPath,
- *      title
- *    }
- *  }
- */
-const insertPageData = (pagePath, contents, articles, rootPageData) => {
-  const currentNode = contents;
-
-  const enterDir = (remainingPath, newNode, isNested) => {
-    if (!remainingPath) {
-      Object.assign(newNode, rootPageData);
-      Object.assign(newNode.articles, articles);
-      return contents;
-    }
-    const levels = remainingPath.split("/");
-
-    if (!levels[1]) {
-      Object.assign(newNode, { "/": { articles: {} } });
-    } else if (!newNode || !newNode[`/${levels[1]}`]) {
-      if (isNested) {
-        Object.assign(newNode.articles, {
-          [`/${levels[1]}`]: { articles: {} },
-        });
-      } else {
-        Object.assign(newNode, { [`/${levels[1]}`]: { articles: {} } });
-      }
-    }
-    return enterDir(
-      levels[2] ? `/${levels[2]}` : null,
-      isNested ? newNode.articles[`/${levels[1]}`] : newNode[`/${levels[1]}`],
-      true,
-    );
-  };
-
-  enterDir(pagePath, currentNode, false);
-};
-
-/**
- * buildDocsContents creates an object from the data pulled from graphQL
- * @param {object} data Raw data from GraphQL query.
- * @param {string} rootDir The root dir, as defined in CreateDocsPage.js.
- * @returns {object} An object with the format of
- *  {
- *    [folderName]: {
- *      articles: {
- *        { mdxNode }
- *        { nestedArticles}
- *      },
- *      id,
- *      topicPath,
- *      title
- *    }
- *  }
- */
-const buildDocsContents = (data, rootDir) => {
-  const contents = {};
-  const sortedDocs = [...data].sort(
-    (a, b) =>
-      a.nodes[0].fields.metadata.data.order -
-      b.nodes[0].fields.metadata.data.order,
-  );
-
-  sortedDocs.forEach((topic, topicIndex, topicArr) => {
-    const { fieldValue: topicPath } = topic;
-    const relPath = buildRelPath(topicPath, rootDir);
-    const topicId = topic.nodes[0].id;
-    const topicTitle = topic.nodes[0].fields.metadata.data.title;
-    const articles = {};
-
-    topic.nodes.forEach((node, childIndex, childArr) => {
-      const { childMdx, modifiedTime, name, relativePath } = node;
-      const {
-        body,
-        headings,
-        frontmatter: { title: articleTitle },
-        id: articleId,
-      } = childMdx;
-      articles[name] = {
-        id: articleId,
-        body,
-        headings,
-        modifiedTime,
-        title: articleTitle || "{`title` Not Found}",
-        url: buildUrlFromPath(relativePath),
-        nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
-      };
-    });
-    const rootPageData = {
-      id: topicId,
-      topicPath: relPath,
-      title: topicTitle,
-    };
-    insertPageData(relPath, contents, articles, rootPageData);
-  });
-
-  return contents;
 };
 
 const Documentation = ({ data, pageContext, location }) => {
@@ -412,7 +188,7 @@ const Documentation = ({ data, pageContext, location }) => {
     </Topics>
   );
   const center = (
-    <ContentEl>
+    <Content>
       <MDXRenderer>{body}</MDXRenderer>
       <ModifiedEl>
         <Clock />
@@ -420,14 +196,14 @@ const Documentation = ({ data, pageContext, location }) => {
       </ModifiedEl>
       <NextUpEl>
         Next Up:{" "}
-        <Link
+        <StyledLink
           href={articleNextUp.url}
           state={{ compiledDocsContents: docsContents }}
         >
           {articleNextUp.title}
-        </Link>
+        </StyledLink>
       </NextUpEl>
-    </ContentEl>
+    </Content>
   );
   const right = (
     <RightNavEl>
@@ -443,12 +219,12 @@ const Documentation = ({ data, pageContext, location }) => {
   return (
     <MDXProvider components={componentMapping}>
       <DocsBase pageContext={pageContext}>
-        <ContainerEl id={contentId}>
+        <Container id={contentId}>
           <Row>
-            <SideNavEl md={3} lg={3}>
-              <SideNavBackgroundEl />
+            <SideNavColumn md={3} lg={3}>
+              <SideNavBackground />
               <StickyEl>{left}</StickyEl>
-            </SideNavEl>
+            </SideNavColumn>
             {/*
               We want the right hand side to appear above content on mobile
             */}
@@ -459,7 +235,7 @@ const Documentation = ({ data, pageContext, location }) => {
             </Column>
             <Column md={2}>{right}</Column>
           </Row>
-        </ContainerEl>
+        </Container>
       </DocsBase>
     </MDXProvider>
   );

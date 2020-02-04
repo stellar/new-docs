@@ -1,11 +1,15 @@
 const NODE_ENV = process.env.NODE_ENV;
 const BETA_FLAG = process.env.IS_BETA || "false";
-const URL = process.env.URL || "https://stellar.org";
-const NETLIFY_DEPLOY_URL = process.env.DEPLOY_PRIME_URL || URL;
 const NETLIFY_ENV = process.env.CONTEXT || "development";
 
+const IS_LOCAL = !process.env.CONTEXT;
 const IS_BETA = BETA_FLAG === "true";
 const IS_PRODUCTION = !IS_BETA && NETLIFY_ENV === "production";
+
+const URL = IS_LOCAL
+  ? "http://localhost:8000"
+  : process.env.URL || "https://stellar.org";
+const NETLIFY_DEPLOY_URL = process.env.DEPLOY_PRIME_URL || URL;
 
 const FEATURES = {
   redesign: "isRedesign",
@@ -17,6 +21,7 @@ const FEATURE_FLAGS = {
   [FEATURES.docs]: !IS_PRODUCTION,
 };
 
+exports.IS_LOCAL = IS_LOCAL;
 exports.IS_PRODUCTION = IS_PRODUCTION;
 exports.IS_BETA = IS_BETA;
 exports.IS_BUILD = NODE_ENV === "production";

@@ -63,7 +63,13 @@ const serializeLocale = (locale) => {
 
     return pagesWithAlternates.map(({ main, alternates }) => {
       return {
-        url: site.siteMetadata.siteUrl + main.originalPath,
+        // Strip no-js url segments, which fixes 2 bugs:
+        // * API Reference sections don't have full pages, so they don't show up
+        // in the sitemap
+        // * We don't want to direct people to the no-js/ versions of the docs,
+        // so highlighting them in the sitemap isn't what we want.
+        url:
+          site.siteMetadata.siteUrl + main.originalPath.replace("no-js/", ""),
         lastmodISO: main.context.lastModified,
         links: alternates.map((a) => ({
           lang: a.locale,

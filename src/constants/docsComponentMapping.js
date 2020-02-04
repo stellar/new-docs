@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { MEDIA_QUERIES, PALETTE } from "constants/styles";
+import { FONT_WEIGHT, MEDIA_QUERIES, PALETTE } from "constants/styles";
 
 import { BasicImage } from "basics/Images";
 import { Link } from "basics/Links";
@@ -101,6 +101,10 @@ const components = {
   td: TextComponents.TableCell,
   pre: TextComponents.Preformatted,
   code: TextComponents.Code,
+  inlineCode: styled(TextComponents.Code)`
+    font-size: 0.875rem;
+    font-weight: ${FONT_WEIGHT.bold};
+  `,
   em: TextComponents.Italic,
   strong: TextComponents.Bold,
   delete: TextComponents.Strike,

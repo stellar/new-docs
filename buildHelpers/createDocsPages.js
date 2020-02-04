@@ -15,6 +15,12 @@ const createDocsPages = ({ actions, docs }) => {
   // refactored so that it can use createI18nPages.
   const docTemplate = path.resolve(".", "src", "templates", "Documentation.js");
   const apiTemplate = path.resolve(".", "src", "templates", "ApiReference.js");
+  const apiSeoTemplate = path.resolve(
+    ".",
+    "src",
+    "templates",
+    "SingleApiReference.js",
+  );
 
   const allDocs = docs.map(({ node }) => node);
 
@@ -44,15 +50,36 @@ const createDocsPages = ({ actions, docs }) => {
     });
   });
   const apiRefRoute = buildRoute(defaultLocale, "developers", "api");
+  const apiRefDocIds = apiReference.map(({ childMdx }) => childMdx.id);
   actions.createPage({
     path: apiRefRoute,
     matchPath: normalizeRoute(`${apiRefRoute}/*`),
     component: apiTemplate,
     context: {
       urlPath: apiRefRoute,
-      ids: apiReference.map(({ childMdx }) => childMdx.id),
+      ids: apiRefDocIds,
       locale: defaultLocale,
     },
+  });
+  apiReference.forEach((ref) => {
+    const refPath = buildRoute(
+      defaultLocale,
+      "no-js",
+      "developers",
+      ref.relativeDirectory === DOCS_ROOT
+        ? "/docs/"
+        : buildPathFromFile(ref.relativePath),
+    );
+    actions.createPage({
+      path: refPath,
+      component: apiSeoTemplate,
+      context: {
+        urlPath: refPath,
+        docId: ref.childMdx.id,
+        ids: apiRefDocIds,
+        locale: defaultLocale,
+      },
+    });
   });
 };
 
