@@ -43,10 +43,12 @@ export const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
 
   // Go to next topic
   if (childIndex === childArr.length - 1) {
-    const nextTopic = topicArr[topicIndex + 1];
+    const nextTopic = topicArr[topicIndex + 1].nodes[0];
     return {
-      title: nextTopic.nodes[0].fields.metadata.data.title,
-      url: `${buildUrlFromPath(nextTopic.nodes[0].relativePath)}`,
+      title: nextTopic.fields
+        ? nextTopic.fields.metadata.data.title
+        : "MISSING METADATA.JSON",
+      url: `${buildUrlFromPath(nextTopic.relativePath)}`,
     };
   }
 
@@ -192,17 +194,23 @@ const insertPageData = (pagePath, contents, articles, rootPageData) => {
  */
 export const buildDocsContents = (data, rootDir) => {
   const contents = {};
-  const sortedDocs = [...data].sort(
-    (a, b) =>
-      a.nodes[0].fields.metadata.data.order -
-      b.nodes[0].fields.metadata.data.order,
-  );
+  const sortedDocs = [...data].sort((a, b) => {
+    const aFields = a.nodes[0].fields;
+    const bFields = b.nodes[0].fields;
+    return (
+      (aFields ? aFields.metadata.data.order : Infinity) -
+      (bFields ? bFields.metadata.data.order : Infinity)
+    );
+  });
 
   sortedDocs.forEach((topic, topicIndex, topicArr) => {
     const { fieldValue: topicPath } = topic;
+    const firstTopic = topic.nodes[0];
     const relPath = buildRelPath(topicPath, rootDir);
-    const topicId = topic.nodes[0].id;
-    const topicTitle = topic.nodes[0].fields.metadata.data.title;
+    const topicId = firstTopic.id;
+    const topicTitle = firstTopic.fields
+      ? firstTopic.fields.metadata.data.title
+      : "MISSING METADATA.JSON";
     const articles = {};
 
     topic.nodes.forEach((node, childIndex, childArr) => {
@@ -234,13 +242,30 @@ export const buildDocsContents = (data, rootDir) => {
   return contents;
 };
 
+// The `groupByCategory` function is used to build up the categories for the API
+// Reference sidebar. We want these to share the same behavior as the rest of the
+// page links, so we need to pass through the path somehow.
+// This is a little hacky, but the rest of the sidebars assume they won't affect
+// the route.
+const useHrefAsId = (item) => {
+  if (!item.parent) {
+    return item;
+  }
+  return {
+    ...item,
+    id: `/developers${buildPathFromFile(item.parent.relativePath)}`,
+  };
+};
+
 const createNestedItems = (totalCategories, currentCategoryItems) => ({
-  id: currentCategoryItems[0].id,
+  id: `/developers${buildPathFromFile(
+    currentCategoryItems[0].parent.relativePath,
+  )}`,
   title: currentCategoryItems[0].folder.title,
   directory: currentCategoryItems[0].directory,
   previousParent: totalCategories[totalCategories.length - 2],
   currentDirectory: currentCategoryItems[0].currentDirectory,
-  items: currentCategoryItems,
+  items: currentCategoryItems.map(useHrefAsId),
 });
 
 export const groupByCategory = (referenceDocs) => {
@@ -249,9 +274,10 @@ export const groupByCategory = (referenceDocs) => {
   return Object.keys(groupByParentCategory).reduce((acc, category) => {
     const splitCategories = category.split("/");
     const numberOfCategories = splitCategories.length;
+    const categoryName = splitCategories[0];
 
-    if (!acc[splitCategories[0]]) {
-      acc[splitCategories[0]] = groupByParentCategory[category];
+    if (!acc[categoryName]) {
+      acc[categoryName] = groupByParentCategory[category].map(useHrefAsId);
     }
 
     if (numberOfCategories > 1) {
@@ -262,13 +288,13 @@ export const groupByCategory = (referenceDocs) => {
         currentCategoryItems,
       );
 
-      if (splitCategories[0] !== nestedItemsObj.previousParent) {
-        const newItems = acc[splitCategories[0]].find(
+      if (categoryName !== nestedItemsObj.previousParent) {
+        const newItems = acc[categoryName].find(
           (el) => el.currentDirectory === nestedItemsObj.previousParent,
         );
         newItems.items.push(nestedItemsObj);
       } else {
-        acc[splitCategories[0]].push(nestedItemsObj);
+        acc[categoryName].push(nestedItemsObj);
       }
     }
     return acc;

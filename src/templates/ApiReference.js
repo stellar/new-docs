@@ -15,11 +15,9 @@ import {
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
 
-import { smoothScrollTo } from "helpers/dom";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 
-import { BasicButton } from "basics/Buttons";
 import { HorizontalRule } from "basics/NewDocText";
 import { Column } from "basics/Grid";
 import { LinkedH1 } from "basics/Text";
@@ -60,7 +58,7 @@ const TrackedEl = styled.div``;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
 `;
-const NavItemEl = styled(BasicButton)`
+const NavItemEl = styled.div`
   display: block;
   text-align: left;
   white-space: nowrap;
@@ -77,20 +75,6 @@ const NavItemEl = styled(BasicButton)`
     color: #999;
   }
 `;
-// This is a function, not a component
-// eslint-disable-next-line react/prop-types
-const renderItem = ({ depth, id, isActive, title }) => (
-  <NavItemEl
-    depth={depth}
-    isActive={isActive}
-    onClick={(e) => {
-      e.preventDefault();
-      smoothScrollTo(document.getElementById(id));
-    }}
-  >
-    {title}
-  </NavItemEl>
-);
 
 const StyledLink = components.a;
 // eslint-disable-next-line react/prop-types
@@ -119,6 +103,18 @@ const DocsLink = ({ href, ...props }) => {
     />
   );
 };
+const NavLinkEl = styled(DocsLink)`
+  color: inherit;
+  font-weight: unset;
+`;
+
+// This is a function, not a component
+// eslint-disable-next-line react/prop-types
+const renderItem = ({ depth, id, isActive, title }) => (
+  <NavItemEl depth={depth} isActive={isActive}>
+    <NavLinkEl href={id}>{title}</NavLinkEl>
+  </NavItemEl>
+);
 
 const componentMap = {
   ...components,

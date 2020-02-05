@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { findActiveNode } from "helpers/dom";
+import { smoothScrollTo, findActiveNode } from "helpers/dom";
 
 export const Context = React.createContext();
 
@@ -15,11 +15,6 @@ let lastScrollPosition = 0;
 const routeMap = new Map();
 const elementMap = new Map();
 
-const scrollTo = (position) => {
-  // Our navbar is 90px tall
-  window.scrollTo(0, position - 90);
-};
-
 export const ScrollRouter = ({ children }) => {
   const initialLoadCheck = React.useRef(false);
   const activeNodeRef = React.useRef();
@@ -28,7 +23,7 @@ export const ScrollRouter = ({ children }) => {
   // Navigation
   const onLinkClick = React.useCallback(function onLinkClick(route) {
     window.history.pushState(null, null, route);
-    scrollTo(elementMap.get(route).current.offsetTop);
+    smoothScrollTo(elementMap.get(route).current);
   }, []);
 
   // Scroll listener
@@ -69,7 +64,7 @@ export const ScrollRouter = ({ children }) => {
     if (!initialLoadCheck.current && window.location.pathname === route) {
       initialLoadCheck.current = true;
       // Our navbar is 90px tall
-      scrollTo(ref.current.offsetTop);
+      smoothScrollTo(ref.current);
     }
   }, []);
   const stopTrackingElement = React.useCallback((ref) => {

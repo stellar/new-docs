@@ -15,7 +15,6 @@ import {
 } from "constants/styles";
 import components from "constants/docsComponentMapping";
 
-import { smoothScrollTo } from "helpers/dom";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 
@@ -69,20 +68,6 @@ const NavItemEl = styled(BasicButton)`
     color: #999;
   }
 `;
-// This is a function, not a component
-// eslint-disable-next-line react/prop-types
-const renderItem = ({ depth, id, isActive, title }) => (
-  <NavItemEl
-    depth={depth}
-    isActive={isActive}
-    onClick={(e) => {
-      e.preventDefault();
-      smoothScrollTo(document.getElementById(id));
-    }}
-  >
-    {title}
-  </NavItemEl>
-);
 
 const StyledLink = components.a;
 // eslint-disable-next-line react/prop-types
@@ -100,6 +85,18 @@ const DocsLink = ({ href, ...props }) => (
       return <StyledLink href={url} {...props} />;
     }}
   </Location>
+);
+const NavLinkEl = styled(DocsLink)`
+  color: inherit;
+  font-weight: unset;
+`;
+
+// This is a function, not a component
+// eslint-disable-next-line react/prop-types
+const renderItem = ({ depth, id, isActive, title }) => (
+  <NavItemEl depth={depth} isActive={isActive}>
+    <NavLinkEl href={`/no-js/${id}`}>{title}</NavLinkEl>
+  </NavItemEl>
 );
 
 const componentMap = {
