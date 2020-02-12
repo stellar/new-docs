@@ -167,7 +167,7 @@ const Documentation = ({ data, pageContext, location }) => {
         if (topicPath === buildRelPath(rootDir, rootDir)) {
           return Object.values(articles).map((rootArticle) => (
             <li key={id}>
-              <RootEl href="/developers/docs">{rootArticle.title}</RootEl>
+              <RootEl href="/docs">{rootArticle.title}</RootEl>
             </li>
           ));
         }
@@ -182,7 +182,7 @@ const Documentation = ({ data, pageContext, location }) => {
         );
       })}
       <ApiLink>
-        <StyledLink href="/developers/api">API Reference</StyledLink>
+        <StyledLink href="/api">API Reference</StyledLink>
       </ApiLink>
     </Topics>
   );
@@ -258,7 +258,7 @@ export const pageQuery = graphql`
       filter: {
         sourceInstanceName: { eq: "docs" }
         extension: { eq: "mdx" }
-        relativePath: { regex: "/src/docs/" }
+        relativePath: { regex: "/docs/" }
       }
       sort: { fields: [childMdx___frontmatter___order] }
     ) {

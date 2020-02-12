@@ -18,15 +18,6 @@ module.exports = {
   pathPrefix: "/",
   plugins: [
     {
-      resolve: "gatsby-source-git",
-      options: {
-        name: "docs",
-        remote: "https://github.com/stellar/new-docs.git",
-        branch: "master",
-        patterns: ["**/*.mdx", "**/metadata.json"],
-      },
-    },
-    {
       resolve: "gatsby-plugin-mdx",
       options: {
         gatsbyRemarkPlugins: [
@@ -125,6 +116,13 @@ module.exports = {
       options: {
         name: "images",
         path: `${__dirname}/src/assets/images/`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "docs",
+        path: `${__dirname}/content/`,
       },
     },
     "gatsby-plugin-folder-metadata",

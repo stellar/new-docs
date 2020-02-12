@@ -29,9 +29,6 @@ export const query = graphql`
   }
 `;
 
-export const buildUrlFromPath = (relPath) =>
-  `/developers${buildPathFromFile(relPath)}`;
-
 export const buildRelPath = (relativeDirectory, rootDir) =>
   relativeDirectory.replace(rootDir, "") || "/";
 
@@ -48,7 +45,7 @@ export const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
       title: nextTopic.fields
         ? nextTopic.fields.metadata.data.title
         : "MISSING METADATA.JSON",
-      url: `${buildUrlFromPath(nextTopic.relativePath)}`,
+      url: `${buildPathFromFile(nextTopic.relativePath)}`,
     };
   }
 
@@ -56,7 +53,7 @@ export const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
   const nextChild = childArr[childIndex + 1];
   return {
     title: nextChild.childMdx.frontmatter.title,
-    url: buildUrlFromPath(nextChild.relativePath),
+    url: buildPathFromFile(nextChild.relativePath),
   };
 };
 
@@ -227,7 +224,7 @@ export const buildDocsContents = (data, rootDir) => {
         headings,
         modifiedTime,
         title: articleTitle || "{`title` Not Found}",
-        url: buildUrlFromPath(relativePath),
+        url: buildPathFromFile(relativePath),
         nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
@@ -253,14 +250,12 @@ const useHrefAsId = (item) => {
   }
   return {
     ...item,
-    id: `/developers${buildPathFromFile(item.parent.relativePath)}`,
+    id: buildPathFromFile(item.parent.relativePath),
   };
 };
 
 const createNestedItems = (totalCategories, currentCategoryItems) => ({
-  id: `/developers${buildPathFromFile(
-    currentCategoryItems[0].parent.relativePath,
-  )}`,
+  id: buildPathFromFile(currentCategoryItems[0].parent.relativePath),
   title: currentCategoryItems[0].folder.title,
   directory: currentCategoryItems[0].directory,
   previousParent: totalCategories[totalCategories.length - 2],

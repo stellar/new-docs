@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const path = require("path");
 
 const { defaultLocale, supportedLanguages } = require("./buildHelpers/i18n");

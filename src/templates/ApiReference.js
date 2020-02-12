@@ -44,7 +44,7 @@ import { Expansion } from "components/Expansion";
 
 import PlusIcon from "assets/icons/icon-plus.svg";
 import MinusIcon from "assets/icons/icon-minus.svg";
-import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
+import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const NAV_BAR_HEIGHT = 89;
 const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
@@ -89,10 +89,8 @@ const DocsLink = ({ href, ...props }) => {
 
   // Resolve relative links
   if (url.startsWith(".")) {
-    url = normalizeRoute(
-      `/developers${buildPathFromFile(
-        pathLib.resolve(pathLib.dirname(originalPath), url),
-      )}`,
+    url = buildPathFromFile(
+      pathLib.resolve(pathLib.dirname(originalPath), url),
     );
   }
   return (
@@ -200,7 +198,7 @@ const componentMap = {
 };
 
 const ReferenceSection = React.memo(({ body, relativePath, title }) => {
-  const path = normalizeRoute(`developers/${buildPathFromFile(relativePath)}`);
+  const path = buildPathFromFile(relativePath);
 
   return (
     <Route originalFilePath={relativePath} path={path}>

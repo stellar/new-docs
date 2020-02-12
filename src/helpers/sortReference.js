@@ -8,8 +8,8 @@ export const normalizeMdx = (node) => {
     order: frontmatter.order,
     title: frontmatter.title,
     body,
-    // paths always start with `src/[docs|api]` which isn't useful. Strip it.
-    directory: parentRelativeDirSplit.slice(2).join("/"),
+    // paths always start with `docs` or `api` which isn't useful. Strip it.
+    directory: parentRelativeDirSplit.slice(1).join("/"),
     currentDirectory: parentRelativeDirSplit[parentRelativeDirSplit.length - 1],
     folder: {
       order: metadata.order,

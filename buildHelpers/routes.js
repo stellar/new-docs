@@ -25,11 +25,11 @@ const buildRoute = (locale, ...args) =>
     ),
   );
 
-const REFERENCE_ROOT = "src/api";
-const DOCS_ROOT = "src/docs";
+const REFERENCE_ROOT = "api";
+const DOCS_ROOT = "docs";
 
 const buildPathFromFile = (filePath) => {
-  const pathRegex = /src(.*)\..*$/;
+  const pathRegex = /(.*)\..*$/;
 
   // Strip `index` so that `index.mdx` files come through with just their
   // relative path.
