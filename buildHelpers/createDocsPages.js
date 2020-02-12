@@ -30,10 +30,7 @@ const createDocsPages = ({ actions, docs }) => {
   documentation.forEach((doc) => {
     const docPath = buildRoute(
       defaultLocale,
-      "developers",
-      doc.relativeDirectory === DOCS_ROOT
-        ? "/docs/"
-        : buildPathFromFile(doc.relativePath),
+      buildPathFromFile(doc.relativePath),
     );
     actions.createPage({
       path: docPath,
@@ -49,7 +46,7 @@ const createDocsPages = ({ actions, docs }) => {
       },
     });
   });
-  const apiRefRoute = buildRoute(defaultLocale, "developers", "api");
+  const apiRefRoute = buildRoute(defaultLocale, "api");
   const apiRefDocIds = apiReference.map(({ childMdx }) => childMdx.id);
   actions.createPage({
     path: apiRefRoute,
@@ -65,7 +62,6 @@ const createDocsPages = ({ actions, docs }) => {
     const refPath = buildRoute(
       defaultLocale,
       "no-js",
-      "developers",
       ref.relativeDirectory === DOCS_ROOT
         ? "/docs/"
         : buildPathFromFile(ref.relativePath),

@@ -40,7 +40,7 @@ import {
 
 import PlusIcon from "assets/icons/icon-plus.svg";
 import MinusIcon from "assets/icons/icon-minus.svg";
-import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
+import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -123,9 +123,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const docsBySubCategory = groupByCategory(referenceDocs);
 
   const { parent, frontmatter, body } = data.doc;
-  const path = normalizeRoute(
-    `developers/${buildPathFromFile(parent.relativePath)}`,
-  );
+  const path = buildPathFromFile(parent.relativePath);
 
   return (
     <MDXProvider components={componentMap}>

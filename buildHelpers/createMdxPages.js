@@ -56,8 +56,6 @@ exports.createMdxPages = ({ actions, mdxFiles }) => {
         return {
           ...node,
           component: source.component,
-          // `src/content` is hard coded, the rest of the file path is used as
-          // the route.
           route: node.fields.path,
         };
       })

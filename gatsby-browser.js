@@ -57,7 +57,7 @@ export const onInitialClientRender = () => {
 };
 
 const isApiReference = (routerProps) =>
-  /\/developers\/api/.test(routerProps.location.pathname);
+  /\/api/.test(routerProps.location.pathname);
 
 export const shouldUpdateScroll = ({ routerProps }) => {
   if (isApiReference(routerProps)) {
