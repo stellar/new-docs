@@ -7,19 +7,6 @@ const {
 // Determine what environment we're running in and what the URL is.
 const { IS_BUILD, SITE_URL } = require("./buildHelpers/env");
 
-// Set up Contentful configuration
-const contentfulConfig = {
-  spaceId: process.env.CONTENTFUL_SPACE_ID,
-  accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN,
-  host: process.env.CONTENTFUL_HOST || "cdn.contentful.com",
-  downloadLocal: true,
-};
-if (!contentfulConfig.spaceId || !contentfulConfig.accessToken) {
-  throw new Error(
-    "CONTENTFUL_SPACE_ID and CONTENTFUL_DELIVERY_TOKEN need to be provided in .env.",
-  );
-}
-
 // Gatsby config
 module.exports = {
   siteMetadata: {
@@ -136,40 +123,8 @@ module.exports = {
     {
       resolve: "gatsby-source-filesystem",
       options: {
-        name: "content",
-        path: `${__dirname}/src/content/`,
-      },
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        name: "case-studies",
-        path: `${__dirname}/src/case-studies/`,
-      },
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        name: "explainers",
-        path: `${__dirname}/src/explainers/`,
-      },
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
         name: "images",
         path: `${__dirname}/src/assets/images/`,
-      },
-    },
-    {
-      resolve: "gatsby-source-contentful",
-      options: contentfulConfig,
-    },
-    {
-      resolve: "gatsby-source-rss-feed",
-      options: {
-        url: "https://medium.com/feed/stellar-community",
-        name: "MediumBlog",
       },
     },
     "gatsby-plugin-folder-metadata",

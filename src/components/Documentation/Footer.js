@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Trans } from "@lingui/macro";
 
 import { PALETTE, FONT_WEIGHT } from "constants/styles";
 
@@ -40,29 +39,19 @@ const FooterItemEl = styled.div`
 export const Footer = () => (
   <El>
     <ContainerEl>
-      <SubscribeHeadingEl>
-        <Trans>Subscribe to developer updates</Trans>
-      </SubscribeHeadingEl>
+      <SubscribeHeadingEl>Subscribe to developer updates</SubscribeHeadingEl>
       <Subscribe customBtnColor={PALETTE.darkCoolBlue} />
     </ContainerEl>
     <ContainerEl>
-      <LittleHeadingEl>
-        <Trans>Dev Resources</Trans>
-      </LittleHeadingEl>
+      <LittleHeadingEl>Dev Resources</LittleHeadingEl>
       <FooterItemEl>
-        <Link href="https://keybase.io/team/stellar.public">
-          <Trans>Keybase</Trans>
-        </Link>
+        <Link href="https://keybase.io/team/stellar.public">Keybase</Link>
       </FooterItemEl>
       <FooterItemEl>
-        <Link href="https://stellar.stackexchange.com/">
-          <Trans>Stack Exchange</Trans>
-        </Link>
+        <Link href="https://stellar.stackexchange.com/">Stack Exchange</Link>
       </FooterItemEl>
       <FooterItemEl>
-        <Link href="https://galactictalk.org/">
-          <Trans>GalacticTalk</Trans>
-        </Link>
+        <Link href="https://galactictalk.org/">GalacticTalk</Link>
       </FooterItemEl>
     </ContainerEl>
   </El>

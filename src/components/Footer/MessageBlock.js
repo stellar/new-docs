@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Trans } from "@lingui/macro";
 import styled from "styled-components";
 
 import { PALETTE } from "constants/styles";
@@ -29,14 +28,14 @@ const RegexErrorMessage = ({ errorMessage }) => {
 
     return (
       <>
-        <Trans>{firstMessage} </Trans>
+        {firstMessage}{" "}
         <LinkEl newTab href={CONVERT_URL_TO_VALID}>
-          <Trans>Click here to update your profile.</Trans>
+          Click here to update your profile.
         </LinkEl>
       </>
     );
   }
-  return <Trans>{errorMessage}</Trans>;
+  return { errorMessage };
 };
 
 RegexErrorMessage.propTypes = {
@@ -56,9 +55,7 @@ const MessageBlock = (props) => {
     <ResponseStatusEl isError>{ERROR_MESSAGE}</ResponseStatusEl>
   ) : (
     <ResponseStatusEl>
-      <Trans>
-        Confirmation email has been sent to <strong>{email}</strong>
-      </Trans>
+      Confirmation email has been sent to <strong>{email}</strong>
     </ResponseStatusEl>
   );
 };

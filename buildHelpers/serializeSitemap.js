@@ -70,11 +70,9 @@ const serializeLocale = (locale) => {
         // so highlighting them in the sitemap isn't what we want.
         url:
           site.siteMetadata.siteUrl + main.originalPath.replace("no-js/", ""),
-        lastmodISO: main.context.lastModified,
         links: alternates.map((a) => ({
           lang: a.locale,
           url: site.siteMetadata.siteUrl + a.originalPath,
-          lastmodISO: a.context.lastModified,
         })),
       };
     });
@@ -92,9 +90,6 @@ const query = `
     edges {
       node {
         path
-        context {
-          lastModified
-        }
       }
     }
   }

@@ -5,10 +5,7 @@ import styled, { css } from "styled-components";
 import url from "url";
 import { Location } from "@reach/router";
 
-import { defaultLocale } from "constants/i18n";
 import { FONT_WEIGHT } from "constants/styles";
-
-import { LocaleContext } from "components/Locale";
 
 const basicLinkStyles = css`
   text-decoration: none;
@@ -22,8 +19,7 @@ export const ExternalLink = styled.a`
   ${basicLinkStyles};
 `;
 
-export const Link = ({ href, newTab, skipLocale, ...props }) => {
-  const locale = React.useContext(LocaleContext);
+export const Link = ({ href, newTab, ...props }) => {
   const finalProps = {
     ...props,
     ...(newTab && { rel: "noreferrer", target: "_blank" }),
@@ -44,11 +40,7 @@ export const Link = ({ href, newTab, skipLocale, ...props }) => {
         if (host || href[0] === "#") {
           return <ExternalLink href={href} {...finalProps} />;
         }
-        const hrefWithLocale =
-          locale === defaultLocale ? href : `/${locale}${href}`;
-        return (
-          <BasicLink to={skipLocale ? href : hrefWithLocale} {...finalProps} />
-        );
+        return <BasicLink to={href} {...finalProps} />;
       }}
     </Location>
   );
@@ -58,5 +50,4 @@ Link.propTypes = {
   href: PropTypes.string.isRequired,
   children: PropTypes.node,
   newTab: PropTypes.bool,
-  skipLocale: PropTypes.bool,
 };

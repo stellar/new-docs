@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import "whatwg-fetch";
 import fetchJsonp from "fetch-jsonp";
-import { Trans, t } from "@lingui/macro";
 import styled from "styled-components";
 
 import { PALETTE, FONT_WEIGHT, CSS_TRANSITION_SPEED } from "constants/styles";
 import { URL_ENDPOINTS } from "constants/endpoints";
 import { Text } from "basics/Text";
-
-import translate from "helpers/translate";
 
 import { CloseX } from "basics/Icons";
 import MessageBlock from "components/Footer/MessageBlock";
@@ -27,7 +24,7 @@ const SubmitButtonEl = styled(BasicButton).attrs((props) => ({
   type: "submit",
   name: "subscribe",
   id: "mc-embedded-subscribe",
-  "aria-label": translate._(t`Subscribe`),
+  "aria-label": `Subscribe`,
   disabled: props.formStatus === "error",
 }))`
   background-color: ${PALETTE.purpleBlue};
@@ -154,9 +151,7 @@ export const Subscribe = () => {
         <div id="mc_embed_signup_scroll">
           <InputContainer>
             <InputLabel>
-              <Text>
-                <Trans>Subscribe</Trans>
-              </Text>
+              <Text>Subscribe</Text>
               <EmailInput
                 value={email}
                 onChange={handleInput}
@@ -179,7 +174,7 @@ export const Subscribe = () => {
               {response.status === "error" ? (
                 <CloseX color={PALETTE.white} />
               ) : (
-                <Trans>Submit</Trans>
+                "Submit"
               )}
             </SubmitButtonEl>
           </InputContainer>

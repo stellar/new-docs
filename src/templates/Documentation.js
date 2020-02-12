@@ -4,7 +4,6 @@ import { graphql } from "gatsby";
 import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
-import { Trans } from "@lingui/macro";
 import path from "path";
 import { Location } from "@reach/router";
 
@@ -207,9 +206,7 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const right = (
     <RightNavEl>
-      <OutlineTitleEl>
-        <Trans>Page Outline</Trans>
-      </OutlineTitleEl>
+      <OutlineTitleEl>Page Outline</OutlineTitleEl>
       <SideNav>
         <SideNavBody items={pageOutline} renderItem={PageOutlineItem} />
       </SideNav>
