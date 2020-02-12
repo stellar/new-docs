@@ -258,7 +258,7 @@ export const pageQuery = graphql`
       filter: {
         sourceInstanceName: { eq: "docs" }
         extension: { eq: "mdx" }
-        relativePath: { regex: "/src/docs/" }
+        relativePath: { regex: "/docs/" }
       }
       sort: { fields: [childMdx___frontmatter___order] }
     ) {

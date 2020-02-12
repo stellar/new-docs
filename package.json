@@ -57,7 +57,6 @@
     "gatsby-remark-prismjs": "^3.3.27",
     "gatsby-remark-smartypants": "^2.1.19",
     "gatsby-source-filesystem": "^2.1.42",
-    "gatsby-source-git": "^1.0.2",
     "gatsby-transformer-remark": "^2.6.44",
     "gatsby-transformer-sharp": "^2.3.9",
     "gsap": "^2.1.3",
