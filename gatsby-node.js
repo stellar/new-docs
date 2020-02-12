@@ -1,35 +1,32 @@
+const Promise = require("bluebird");
 const path = require("path");
+
+const { defaultLocale, supportedLanguages } = require("./buildHelpers/i18n");
 const {
-  createMdxPages,
-  getFileName,
-  getLocale,
-} = require("./buildHelpers/createMdxPages");
+  createDocsPages,
+  queryFragment: docsQueryFragment,
+} = require("./buildHelpers/createDocsPages");
+
+const getLocale = (filename) => {
+  const nameSections = filename.split(".");
+  const length = nameSections.length;
+
+  // If there are 2+ sections after splitting on `.` (excluding file extension)
+  // and the last one is in our list of supported languages, that's our locale
+  if (length >= 2 && supportedLanguages.includes(nameSections[length - 1])) {
+    return nameSections[length - 1];
+  }
+  return defaultLocale;
+};
 
 exports.onCreateNode = ({ node, actions }) => {
   const { createNodeField } = actions;
-  const filename = getFileName(node);
-  if (filename) {
-    // For any MDX files, we want to know if they have a locale associated with
-    // them. Pull it from the filename.
-    const locale = getLocale(filename);
+  if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
+    const locale = getLocale(path.parse(node.fileAbsolutePath).base);
     createNodeField({
       node,
       name: "locale",
       value: locale,
-    });
-  }
-  if (node.internal.type === "Mdx" && node.fileAbsolutePath) {
-    const value = path.parse(
-      path.relative("./", node.fileAbsolutePath).split("docs")[1],
-    ).dir;
-    console.log(
-      node.fileAbsolutePath,
-      path.relative("./", node.fileAbsolutePath).split("docs")[1],
-    );
-    createNodeField({
-      node,
-      name: "path",
-      value,
     });
   }
 };
@@ -38,18 +35,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const result = await graphql(
     `
       {
-        allMdx {
-          edges {
-            node {
-              id
-              fileAbsolutePath
-              fields {
-                locale
-                path
-              }
-            }
-          }
-        }
+        ${docsQueryFragment}
       }
     `,
   );
@@ -58,16 +44,26 @@ exports.createPages = async ({ graphql, actions }) => {
     return Promise.reject(result.errors);
   }
 
-  const mdxFiles = result.data.allMdx.edges;
-  console.log(mdxFiles);
-  createMdxPages({ actions, mdxFiles });
+  const docs = result.data.docs.edges;
+  createDocsPages({ actions, docs });
 };
 
 // Enable absolute imports from `src/`
-exports.onCreateWebpackConfig = ({ actions }) => {
+exports.onCreateWebpackConfig = ({ actions, plugins }) => {
   actions.setWebpackConfig({
     resolve: {
       modules: ["node_modules", "src"],
     },
+    plugins: [
+      plugins.define({
+        "process.env": {
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+          IS_BETA: JSON.stringify(process.env.IS_BETA),
+          CONTEXT: JSON.stringify(process.env.CONTEXT),
+          URL: JSON.stringify(process.env.URL),
+          DEPLOY_PRIME_URL: JSON.stringify(process.env.DEPLOY_PRIME_URL),
+        },
+      }),
+    ],
   });
 };

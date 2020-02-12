@@ -1,6 +1,6 @@
 module.exports = {
   extends: ["@stellar/eslint-config"],
   rules: {
-    "import/no-unresolved": 0,
-  },
+    "import/no-unresolved": 0
+  }
 };
