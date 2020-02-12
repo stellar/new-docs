@@ -31,11 +31,11 @@ const ListItemEl = styled(ListItem)`
   margin: 0;
 `;
 
-export const SideNav = ({ children, ...props }) => (
+export const SideNav = React.forwardRef(({ children, ...props }, ref) => (
   <El {...props}>
-    <AbsoluteEl>{children}</AbsoluteEl>
+    <AbsoluteEl ref={ref}>{children}</AbsoluteEl>
   </El>
-);
+));
 
 SideNav.propTypes = {
   children: PropTypes.node.isRequired,
@@ -45,6 +45,7 @@ export const SideNavBody = ({
   isOpen = true,
   items,
   renderItem,
+  forwardedRef,
   depth = -1,
 }) => (
   <NestedUl isOpen={isOpen}>
@@ -53,6 +54,7 @@ export const SideNavBody = ({
       <ListItemEl key={index}>
         <NestedNav
           renderItem={renderItem}
+          forwardedRef={forwardedRef}
           items={subItems}
           title={subTitle}
           id={id}
@@ -66,6 +68,7 @@ export const SideNavBody = ({
 
 SideNavBody.propTypes = {
   isOpen: PropTypes.bool,
+  forwardedRef: PropTypes.shape({ current: PropTypes.object }),
   items: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -76,7 +79,14 @@ SideNavBody.propTypes = {
   depth: PropTypes.number,
 };
 
-const NestedNav = ({ id = "", title, items = [], renderItem, depth }) => {
+const NestedNav = ({
+  id = "",
+  title,
+  items = [],
+  renderItem,
+  depth,
+  forwardedRef,
+}) => {
   const uniqueId = id || slugify(title);
   const { isChildActive, isActive } = useSidebar({
     childOptions: items,
@@ -86,13 +96,14 @@ const NestedNav = ({ id = "", title, items = [], renderItem, depth }) => {
 
   return (
     <>
-      {renderItem({ depth, id: uniqueId, isActive, title })}
+      {renderItem({ depth, id: uniqueId, isActive, title, forwardedRef })}
       {isOpen && items && (
         <>
           {items.map((el, index) => (
             <NestedNav
               renderItem={renderItem}
               id={el.id}
+              forwardedRef={forwardedRef}
               // eslint-disable-next-line react/no-array-index-key
               key={index}
               items={el.items}
@@ -113,6 +124,7 @@ NestedNav.propTypes = {
   title: PropTypes.string.isRequired,
   renderItem: PropTypes.func.isRequired,
   depth: PropTypes.number,
+  forwardedRef: PropTypes.shape({ current: PropTypes.object }),
   activeNode: PropTypes.shape({
     current: PropTypes.object.isRequired,
   }),

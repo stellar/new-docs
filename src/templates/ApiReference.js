@@ -46,6 +46,9 @@ import PlusIcon from "assets/icons/icon-plus.svg";
 import MinusIcon from "assets/icons/icon-minus.svg";
 import { buildPathFromFile, normalizeRoute } from "../../buildHelpers/routes";
 
+const NAV_BAR_HEIGHT = 89;
+const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
+
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
 `;
@@ -81,6 +84,7 @@ const StyledLink = components.a;
 const DocsLink = ({ href, ...props }) => {
   const originalPath = React.useContext(SectionPathContext);
   const { onLinkClick } = React.useContext(ScrollRouterContext);
+
   let url = href;
 
   // Resolve relative links
@@ -108,12 +112,75 @@ const NavLinkEl = styled(DocsLink)`
   font-weight: unset;
 `;
 
+const isInViewport = (elem) => {
+  const bounding = elem.getBoundingClientRect();
+  return (
+    bounding.top >= 0 &&
+    bounding.left >= 0 &&
+    bounding.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    bounding.right <=
+      (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
+
+// eslint-disable-next-line react/prop-types
+const NavItem = ({ isActive, forwardedRef, children }) => {
+  const itemRef = React.useRef();
+  const parentDom = forwardedRef;
+  const { isScrollingDown } = React.useContext(ScrollRouterContext);
+
+  React.useLayoutEffect(() => {
+    if (isActive && parentDom) {
+      const activeItemSize = itemRef.current.getBoundingClientRect();
+
+      /* If the active navigation is not in view
+      For cases when a user scrolled the nav to the point
+      the active nav is out of viewport */
+      if (!isInViewport(itemRef.current)) {
+        itemRef.current.scrollIntoView();
+      }
+
+      /* If scroll direction is down and its active item's top value
+       is bigger than FIXED_NAV_DISTANCE (229px), subtract that amount
+       from scrollTop to keep the consistent top value
+       Its top value gets inconsistent when it hits the separate dropdown category
+      */
+      if (isScrollingDown.current && activeItemSize.top > FIXED_NAV_DISTANCE) {
+        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
+          /* Reset the distance between the active nav and its offset top */
+          parentDom.current.scrollTop +=
+            activeItemSize.top - FIXED_NAV_DISTANCE;
+        } else {
+          parentDom.current.scrollTop += activeItemSize.height;
+        }
+      } else if (
+        !isScrollingDown.current &&
+        activeItemSize.top < FIXED_NAV_DISTANCE
+      ) {
+        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
+          parentDom.current.scrollTop -=
+            activeItemSize.top - FIXED_NAV_DISTANCE;
+        } else {
+          parentDom.current.scrollTop -= activeItemSize.height;
+        }
+      }
+    }
+  }, [isActive, parentDom, isScrollingDown]);
+
+  return (
+    <NavItemEl isActive={isActive} ref={itemRef}>
+      {children}
+    </NavItemEl>
+  );
+};
+
 // This is a function, not a component
 // eslint-disable-next-line react/prop-types
-const renderItem = ({ depth, id, isActive, title }) => (
-  <NavItemEl depth={depth} isActive={isActive}>
+const renderItem = ({ depth, id, isActive, title, forwardedRef }) => (
+  <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
     <NavLinkEl href={id}>{title}</NavLinkEl>
-  </NavItemEl>
+  </NavItem>
 );
 
 const componentMap = {
@@ -132,14 +199,14 @@ const componentMap = {
   },
 };
 
-const ReferenceSection = React.memo(({ id, body, relativePath, title }) => {
+const ReferenceSection = React.memo(({ body, relativePath, title }) => {
   const path = normalizeRoute(`developers/${buildPathFromFile(relativePath)}`);
 
   return (
     <Route originalFilePath={relativePath} path={path}>
       <section>
         <TrackedContent>
-          <TrackedEl id={id}>
+          <TrackedEl id={path}>
             <LinkedH1 id={path}>{title}</LinkedH1>
           </TrackedEl>
         </TrackedContent>
@@ -154,7 +221,6 @@ const ReferenceSection = React.memo(({ id, body, relativePath, title }) => {
 });
 
 ReferenceSection.propTypes = {
-  id: PropTypes.string.isRequired,
   body: PropTypes.node.isRequired,
   relativePath: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
@@ -165,6 +231,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
+  const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
   return (
     <ScrollRouter>
@@ -196,7 +263,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
                 <SideNavBackground />
-                <SideNav>
+                <SideNav ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
                     <ExpansionContainerEl
                       // eslint-disable-next-line react/no-array-index-key
@@ -210,7 +277,11 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                         expandIcon={<PlusIcon />}
                         isDefaultExpanded={true}
                       >
-                        <SideNavBody items={nav[1]} renderItem={renderItem} />
+                        <SideNavBody
+                          items={nav[1]}
+                          renderItem={renderItem}
+                          forwardedRef={sideNavRef}
+                        />
                       </Expansion>
                     </ExpansionContainerEl>
                   ))}
@@ -221,7 +292,6 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   <ReferenceSection
                     relativePath={parent.relativePath}
                     key={id}
-                    id={id}
                     title={title}
                     body={body}
                   />

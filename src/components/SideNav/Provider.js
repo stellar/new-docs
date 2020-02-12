@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
-  const aY = a.current.getBoundingClientRect().y;
-  const bY = b.current.getBoundingClientRect().y;
+  const aY = a.current.getBoundingClientRect().top;
+  const bY = b.current.getBoundingClientRect().top;
   return aY - bY;
 };
 let lastScrollPosition = 0;

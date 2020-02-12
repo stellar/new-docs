@@ -27,7 +27,7 @@ export const GlobalStyles = createGlobalStyle`
   button {
     font-size: 16px;
     font-weight: 400;
-    font-family: 'suisse', sans-serif;
+    font-family: "IBM Plex Sans", sans-serif;
     line-height: 1;
   }
   /* http://tachyons.io/docs/layout/box-sizing/ */
