@@ -13,6 +13,8 @@ import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
 
+import { Tooltip } from "components/tooltip";
+
 const CODE_LANGS = {
   curl: "cURL",
   go: "Go",
@@ -42,14 +44,11 @@ const OptionsContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-
-  & > * {
-    margin-left: 1rem;
-  }
 `;
 
 const MethodContentEl = styled.div`
   position: relative;
+  overflow: auto;
   border-radius: 4px;
 `;
 
@@ -82,6 +81,12 @@ const CodeExampleEl = styled.div`
   }
 `;
 
+const CopyIconWrapper = styled.div`
+  display: block;
+  position: relative;
+  cursor: pointer;
+`;
+
 const TitleEl = styled.div`
   display: flex;
   justify-content: space-between;
@@ -96,16 +101,6 @@ const TitleEl = styled.div`
   border-bottom: 1px solid ${PALETTE.white60};
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
-`;
-
-const CopiedMessageText = styled.span`
-  position: absolute;
-  display: block;
-  color: ${PALETTE.white};
-  background: ${PALETTE.purple};
-  right: -1.5rem;
-  top: -1.75rem;
-  padding: 0.25rem;
 `;
 
 const mdxJsxToString = (jsx) => {
@@ -130,6 +125,9 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   );
   const [activeLang, setActiveLang] = React.useState("");
   const [isCopied, setCopy] = React.useState(false);
+  const [isHovered, setHover] = React.useState(false);
+  const [dimension, setDimension] = React.useState({ right: 0, top: 0 });
+
   const codeSnippetsArr = React.Children.toArray(codeSnippets);
   const selectedSnippet =
     codeSnippetsArr.find(
@@ -137,21 +135,45 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     ) || codeSnippetsArr[0];
   const SelectedSnippetStr = mdxJsxToString(selectedSnippet);
 
+  const CopyToClipboardRef = React.useCallback((node) => {
+    if (node !== null) {
+      setDimension({
+        right: Math.floor(node.getBoundingClientRect().right),
+        top: Math.floor(node.getBoundingClientRect().top),
+      });
+    }
+  }, []);
+
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
     document.cookie = `lang=${value}`;
-    navigate(`?lang=${value}`, { replace: true });
+    navigate(`?lang=${value}`, {
+      replace: true,
+    });
     setActiveLang(value);
   }, []);
 
   React.useEffect(() => {
     const langCookie = getCookie("lang");
+    let timer;
     if (langCookie) {
       setActiveLang(langCookie);
     } else {
       setActiveLang(availableLangs[0]);
     }
-  }, [availableLangs]);
+
+    if (isCopied) {
+      timer = setTimeout(() => {
+        setCopy(false);
+      }, 6000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [availableLangs, isCopied]);
 
   return (
     <MethodContentEl>
@@ -171,14 +193,23 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
               </option>
             ))}
           </LangSelect>
-          {isCopied && <CopiedMessageText>Copied</CopiedMessageText>}
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
             onCopy={() => {
               setCopy((x) => !x);
             }}
           >
-            <CopyIcon />
+            <CopyIconWrapper
+              ref={CopyToClipboardRef}
+              onMouseEnter={() => {
+                setHover(true);
+              }}
+              onMouseLeave={() => {
+                setHover(false);
+              }}
+            >
+              <CopyIcon />
+            </CopyIconWrapper>
           </CopyToClipboard>
 
           {href && (
@@ -192,6 +223,9 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
         <DocPrismStyles isCodeSnippet />
         {selectedSnippet}
       </ContentEl>
+      <Tooltip in={isHovered} isCopied={isCopied} parentDimension={dimension}>
+        {isCopied ? "Copied" : "Click to copy"}
+      </Tooltip>
     </MethodContentEl>
   );
 };
