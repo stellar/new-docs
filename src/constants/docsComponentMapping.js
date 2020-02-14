@@ -7,7 +7,7 @@ import { FONT_WEIGHT, MEDIA_QUERIES, PALETTE } from "constants/styles";
 import { BasicImage } from "basics/Images";
 import { Link } from "basics/Links";
 import { Mermaid } from "basics/Mermaid";
-import * as TextComponents from "basics/NewDocText";
+import * as TextComponents from "basics/Text";
 
 const ListItem = (props) => {
   const firstChild = React.Children.toArray(props.children)[0];
