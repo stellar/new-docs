@@ -2,10 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { ARROW_SIZES } from "constants/arrows";
 import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
-import { Arrow } from "basics/Icons";
+import Chevron from "assets/icons/chevron.svg";
+
+const ChevronDownward = styled(Chevron)`
+  position: absolute;
+  transform: rotate(90deg);
+  top: 40%;
+  right: 1rem;
+
+  path {
+    fill: ${PALETTE.white};
+  }
+`;
 
 const SelectWrapperEl = styled.div`
   position: relative;
@@ -27,24 +37,17 @@ const SelectEl = styled.select`
   border-radius: 0;
   appearance: none;
 `;
-const ArrowEl = styled(Arrow)`
-  transform: rotate(90deg);
-  position: absolute;
-  right: 0.5rem;
-  bottom: 1.125rem;
-  color: ${PALETTE.yellow};
-`;
 
 export const Select = React.forwardRef(
   ({ children, className, label, ...props }, ref) => (
     <SelectWrapperEl className={className}>
       <LabelEl>
         {label}
+        <ChevronDownward />
         <SelectEl {...props} ref={ref}>
           {children}
         </SelectEl>
       </LabelEl>
-      <ArrowEl size={ARROW_SIZES.small} arrowColor={PALETTE.yellow} />
     </SelectWrapperEl>
   ),
 );

@@ -7,6 +7,8 @@ import styled, { ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
+import Chevron from "assets/icons/chevron.svg";
+
 import {
   NAV_THEMES,
   CSS_TRANSITION_SPEED,
@@ -19,9 +21,8 @@ import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
-import { HorizontalRule } from "basics/NewDocText";
+import { HorizontalRule, LinkedH1 } from "basics/Text";
 import { Column } from "basics/Grid";
-import { LinkedH1 } from "basics/Text";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
@@ -38,8 +39,6 @@ import {
   NestedRow,
 } from "components/Documentation/SharedStyles";
 
-import PlusIcon from "assets/icons/icon-plus.svg";
-import MinusIcon from "assets/icons/icon-minus.svg";
 import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
@@ -47,6 +46,12 @@ const GreenTableCell = styled.td`
 `;
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
+`;
+const ChevronDownward = styled(Chevron)`
+  transform: rotate(90deg);
+`;
+const ChevronUpward = styled(Chevron)`
+  transform: rotate(270deg);
 `;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
@@ -157,8 +162,8 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                       title={nav[0]}
                       expandedModeTitle={nav[0]}
                       hasBorder
-                      collapseIcon={<MinusIcon />}
-                      expandIcon={<PlusIcon />}
+                      collapseIcon={<ChevronUpward />}
+                      expandIcon={<ChevronDownward />}
                       isDefaultExpanded={true}
                     >
                       <SideNavBody items={nav[1]} renderItem={renderItem} />

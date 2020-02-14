@@ -36,7 +36,7 @@ const ExpansionIconEl = styled.div`
 const ExpandedSectionEl = styled.div`
   display: block;
   overflow: hidden;
-  padding: ${(props) => (props.isExpanded ? "1rem" : "0 1rem")};
+  padding: 0 1rem;
   height: ${(props) => (props.isExpanded ? "auto" : 0)};
 `;
 
