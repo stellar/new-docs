@@ -13,7 +13,7 @@ import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
 
-import { Tooltip } from "components/tooltip";
+import { Tooltip } from "components/Tooltip";
 
 const CODE_LANGS = {
   curl: "cURL",
