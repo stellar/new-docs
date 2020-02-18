@@ -19,9 +19,9 @@ import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
-import { HorizontalRule } from "basics/NewDocText";
+import { HorizontalRule, LinkedH1 } from "basics/Text";
 import { Column } from "basics/Grid";
-import { LinkedH1 } from "basics/Text";
+import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
@@ -38,8 +38,6 @@ import {
   NestedRow,
 } from "components/Documentation/SharedStyles";
 
-import PlusIcon from "assets/icons/icon-plus.svg";
-import MinusIcon from "assets/icons/icon-minus.svg";
 import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
@@ -51,7 +49,6 @@ const OrangeTableCell = styled.td`
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
 `;
-
 const NavItemEl = styled(BasicButton)`
   text-align: left;
   white-space: nowrap;
@@ -157,8 +154,8 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                       title={nav[0]}
                       expandedModeTitle={nav[0]}
                       hasBorder
-                      collapseIcon={<MinusIcon />}
-                      expandIcon={<PlusIcon />}
+                      collapseIcon={<ArrowIcon direction="up" />}
+                      expandIcon={<ArrowIcon direction="down" />}
                       isDefaultExpanded={true}
                     >
                       <SideNavBody items={nav[1]} renderItem={renderItem} />

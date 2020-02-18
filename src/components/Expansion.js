@@ -7,11 +7,16 @@ import { PALETTE, CSS_TRANSITION_SPEED } from "constants/styles";
 const ExpansionHeaderEl = styled.div`
   cursor: pointer;
   display: flex;
-  padding: 1rem;
   justify-content: space-between;
   height: auto;
   overflow: hidden;
   transition: transform ${CSS_TRANSITION_SPEED.default} ease-out;
+`;
+
+const ExpandedSectionEl = styled.div`
+  overflow: hidden;
+  height: ${(props) => (props.isExpanded ? "auto" : 0)};
+  display: ${(props) => (props.isExpanded ? "block" : "none")};
 `;
 
 const ExpansionEl = styled.div`
@@ -23,6 +28,10 @@ const ExpansionEl = styled.div`
   ${ExpansionHeaderEl} {
     border-bottom: ${(props) =>
       props.hasBorder ? `solid 1px ${PALETTE.white60}` : "none"};
+    padding: ${(props) => (props.hasBorder ? `1rem` : `1rem 0`)};
+  }
+  ${ExpandedSectionEl} {
+    padding: ${(props) => (props.hasBorder ? `1rem` : `0`)};
   }
 `;
 
@@ -31,13 +40,6 @@ const ExpansionIconEl = styled.div`
   width: auto;
   align-items: center;
   justify-content: space-between;
-`;
-
-const ExpandedSectionEl = styled.div`
-  display: block;
-  overflow: hidden;
-  padding: ${(props) => (props.isExpanded ? "1rem" : "0 1rem")};
-  height: ${(props) => (props.isExpanded ? "auto" : 0)};
 `;
 
 const ExpandedSection = ({ children, isExpanded, ...props }) => {

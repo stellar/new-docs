@@ -1,9 +1,11 @@
-import Chevron from "assets/icons/chevron.svg";
-import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
-import { BasicButton } from "basics/Buttons";
+import PropTypes from "prop-types";
+
 import { FONT_WEIGHT } from "constants/styles";
+
+import { BasicButton } from "basics/Buttons";
+import { ArrowIcon } from "basics/Icons";
 import { Link } from "basics/Links";
 
 const topLevelNavItem = `
@@ -30,7 +32,9 @@ const TopicExpander = styled.button`
   border: 0;
   color: #333;
   cursor: pointer;
+  display: flex;
   padding: 0.375rem 0;
+
   &:focus {
     outline: 0;
   }
@@ -94,7 +98,7 @@ const Articles = ({
           onClick={() => topicToggleHandler(topicPath)}
         >
           {title}
-          <Chevron />
+          <ArrowIcon direction="right" />
         </TopicExpander>
       )}
 

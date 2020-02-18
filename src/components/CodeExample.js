@@ -8,7 +8,7 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
-import { DocPrismStyles } from "basics/NewDocPrism";
+import { PrismStyles } from "basics/Prism";
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
@@ -220,7 +220,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
         </OptionsContainer>
       </TitleEl>
       <ContentEl>
-        <DocPrismStyles isCodeSnippet />
+        <PrismStyles isCodeSnippet />
         {selectedSnippet}
       </ContentEl>
       <Tooltip in={isHovered} isCopied={isCopied} parentDimension={dimension}>

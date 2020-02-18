@@ -18,6 +18,7 @@ const EndpointEl = styled.div`
 
   table {
     align-self: center;
+    overflow-y: scroll;
   }
   thead {
     display: none;
@@ -27,6 +28,7 @@ const EndpointEl = styled.div`
     display: flex;
   }
   td {
+    white-space: nowrap;
     align-self: center;
   }
   td:first-child {

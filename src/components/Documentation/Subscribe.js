@@ -7,7 +7,7 @@ import { PALETTE, FONT_WEIGHT, CSS_TRANSITION_SPEED } from "constants/styles";
 import { URL_ENDPOINTS } from "constants/endpoints";
 import { Text } from "basics/Text";
 
-import { CloseX } from "basics/Icons";
+import { CloseIcon } from "basics/Icons";
 import MessageBlock from "components/Footer/MessageBlock";
 import { BasicButton } from "basics/Buttons";
 
@@ -172,7 +172,7 @@ export const Subscribe = () => {
               shouldApplyStatusColor={!!response.status}
             >
               {response.status === "error" ? (
-                <CloseX color={PALETTE.white} />
+                <CloseIcon color={PALETTE.white} />
               ) : (
                 "Submit"
               )}

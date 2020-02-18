@@ -18,9 +18,9 @@ import components from "constants/docsComponentMapping";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 
-import { HorizontalRule } from "basics/NewDocText";
 import { Column } from "basics/Grid";
-import { LinkedH1 } from "basics/Text";
+import { LinkedH1, H5, HorizontalRule } from "basics/Text";
+import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
@@ -42,8 +42,6 @@ import {
 } from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
-import PlusIcon from "assets/icons/icon-plus.svg";
-import MinusIcon from "assets/icons/icon-minus.svg";
 import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const NAV_BAR_HEIGHT = 89;
@@ -55,21 +53,25 @@ const GreenTableCell = styled.td`
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
-
 const TrackedEl = styled.div``;
 
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
 `;
+const NavTitleEl = styled(H5)`
+  margin: 0;
+  line-height: normal;
+  font-weight: ${FONT_WEIGHT.bold};
+  text-transform: uppercase;
+`;
 const NavItemEl = styled.div`
   display: block;
   text-align: left;
   white-space: nowrap;
-  font-size: ${(props) => (props.depth === 0 ? "1rem" : "0.875rem")};
+  font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
   color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
   padding: 0.375rem 0;
-  padding-left: ${(props) => props.depth - 1}rem;
-  line-height: 1.25;
+  padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
   transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
   font-weight: ${({ isActive }) =>
     isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
@@ -123,7 +125,7 @@ const isInViewport = (elem) => {
 };
 
 // eslint-disable-next-line react/prop-types
-const NavItem = ({ isActive, forwardedRef, children }) => {
+const NavItem = ({ isActive, forwardedRef, children, depth }) => {
   const itemRef = React.useRef();
   const parentDom = forwardedRef;
   const { isScrollingDown } = React.useContext(ScrollRouterContext);
@@ -167,7 +169,7 @@ const NavItem = ({ isActive, forwardedRef, children }) => {
   }, [isActive, parentDom, isScrollingDown]);
 
   return (
-    <NavItemEl isActive={isActive} ref={itemRef}>
+    <NavItemEl isActive={isActive} depth={depth} ref={itemRef}>
       {children}
     </NavItemEl>
   );
@@ -268,11 +270,10 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                       key={i}
                     >
                       <Expansion
-                        title={nav[0]}
-                        expandedModeTitle={nav[0]}
-                        hasBorder
-                        collapseIcon={<MinusIcon />}
-                        expandIcon={<PlusIcon />}
+                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        collapseIcon={<ArrowIcon direction="up" />}
+                        expandIcon={<ArrowIcon direction="down" />}
                         isDefaultExpanded={true}
                       >
                         <SideNavBody

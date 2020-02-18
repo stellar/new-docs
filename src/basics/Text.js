@@ -1,13 +1,18 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
-import { PALETTE, MEDIA_QUERIES, FONT_WEIGHT } from "constants/styles";
-
+import {
+  PALETTE,
+  MEDIA_QUERIES,
+  FONT_FAMILY,
+  FONT_WEIGHT,
+} from "constants/styles";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
 const textStyles = css`
   line-height: 1.5;
+  font-size: 0.875rem;
   color: ${({ theme }) => theme.text};
 `;
 
@@ -85,115 +90,123 @@ export const Quote = styled.blockquote`
 
 const listBase = css`
   padding: 0;
-  padding-left: 2rem;
+  padding-left: 1.375rem;
 `;
 export const List = styled.ul`
   ${listBase}
+  position: relative;
+  line-height: normal;
+  list-style-type: none;
+  color: ${PALETTE.black60};
+
+  & > li {
+    &::before {
+      content: "";
+      position: absolute;
+      left: -1.4rem;
+      top: 0.5rem;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: ${PALETTE.black60};
+    }
+
+    &:first-child > ul > li {
+      &::before {
+        width: 4px;
+        height: 4px;
+        border: 1px solid ${PALETTE.black60};
+        background-color: transparent;
+      }
+    }
+
+    &:nth-child(2) > ul > li {
+      &::before {
+        width: 6px;
+        height: 6px;
+        border-radius: initial;
+        background-color: ${PALETTE.black60};
+      }
+    }
+  }
 `;
 export const OrderedList = styled.ol`
   counter-reset: ordered-list-counter;
   ${listBase}
 `;
-const lineHeight = 1.5;
+
 const bulletPosition = css`
   position: absolute;
   left: -2rem;
 `;
 export const ListItem = styled.li`
-  color: ${({ theme }) => theme.darkGrey};
-  line-height: ${lineHeight};
   position: relative;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  list-style: none;
-
-  ${(props) =>
-    props.hasDot !== false &&
-    css`
-      ${List} > &:before {
-        font-size: 1.5rem;
-        line-height: 0.9;
-        color: ${PALETTE.darkGray};
-        content: "\\002022";
-        ${bulletPosition}
-      }
-
-      ${OrderedList} > &:before {
-        counter-increment: ordered-list-counter;
-        line-height: ${lineHeight};
-        font-weight: ${FONT_WEIGHT.bold};
-        color: ${PALETTE.darkGray};
-        content: counter(ordered-list-counter)".";
-        ${bulletPosition}
-      }
-
-      ${OrderedList} ${OrderedList} > &:before {
-        content: counter(ordered-list-counter, lower-roman);
-      }
-      ${OrderedList} ${OrderedList} ${OrderedList} > &:before {
-        content: counter(ordered-list-counter, lower-alpha);
-      }
-    `}
+  margin: 0.5rem 0;
 
   @media (${MEDIA_QUERIES.ltTablet}) {
     font-size: 1rem;
   }
 
-  & input[type=checkbox] {
+  & input[type="checkbox"] {
     ${bulletPosition}
     margin-top: .25rem;
-    margin-left: -.125rem;
+    margin-left: -0.125rem;
   }
 `;
 export const Small = styled.small`
   font-size: 75%;
 `;
 export const Table = styled.table`
+  display: block;
+  position: relative;
   word-break: normal;
   width: 100%;
-  margin-top: 1.5rem;
+  padding: 0;
+  margin: 0;
   border-collapse: collapse;
-  display: block;
-  overflow: auto;
 `;
 export const TableHead = styled.thead``;
 export const TableHeadCell = styled.th`
-  font-size: 0.9rem;
-  line-height: 2.5;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: ${FONT_WEIGHT.medium};
   text-align: left;
-  border-bottom: 1px solid ${PALETTE.lightestGrey};
+  border-bottom: none;
   color: ${({ theme }) => theme.text};
-  padding: 0 1.25rem;
+  padding: 0;
+  min-width: 10rem;
+  line-height: 3;
+  vertical-align: middle;
 `;
-export const TableBody = styled.tbody``;
-export const TableRow = styled.tr``;
-export const TableCell = styled.td`
-  font-size: 1rem;
-  background-color: ${({ theme }) => theme.contrast};
-  color: ${({ theme }) => theme.darkGrey};
-  padding: 1.1rem 1.25rem;
-  border-bottom: 1px solid ${PALETTE.lightestGrey};
-
-  @media (${MEDIA_QUERIES.ltMobile}) {
-    padding: 1.1rem 0.9rem;
+export const TableBody = styled.tbody`
+  font-size: 0.875rem;
+`;
+export const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: ${PALETTE.white80};
   }
 `;
+export const TableCell = styled.td`
+  color: ${PALETTE.black60};
+  padding: 0.75rem;
+  vertical-align: top;
+  border: solid 1px ${PALETTE.white60};
+`;
 export const Code = styled.code`
+  color: ${PALETTE.purple};
+  font-family: ${FONT_FAMILY.monospace};
   border-radius: 3px;
-  border: solid 0.5px ${({ theme }) => theme.medium};
-  background-color: ${PALETTE.lighterYellow};
+  border: solid 0.5px ${PALETTE.white60};
+  background-color: ${PALETTE.white80};
   padding: 0.125rem 0.25rem;
 `;
 export const Preformatted = styled.pre`
   &&& {
+    font-family: ${PALETTE.monospace};
     position: relative;
-    background-color: ${PALETTE.lighterGrey};
-    padding: 1.25rem 0;
-    padding-left: 2.2rem;
+    background: transparent;
     font-size: 0.8rem;
-    line-height: 1.7em;
-    border: 1px solid ${({ theme }) => theme.border};
-    border-radius: 0.5rem;
+    line-height: 1.7;
     color: ${PALETTE.darkGrey};
   }
 
@@ -201,22 +214,25 @@ export const Preformatted = styled.pre`
     display: inline-block;
     max-width: 100%;
     padding: 0;
-    padding-left: 1rem;
+    word-break: break-all;
     border: none;
     background-color: transparent;
     overflow: auto;
     line-height: inherit;
   }
   && .line-numbers-rows {
+    font-family: ${PALETTE.normal};
+    text-align: right;
+    line-height: 1.8;
+    color: #8d8f99;
+    opacity: 0.72;
     bottom: 0;
     border: none;
     border-top-left-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
     margin: -1px;
-    padding: 1.25rem 0;
-    padding-left: 0.8rem;
+    padding-left: 1.5rem;
     text-shadow: none;
-    line-height: inherit;
 
     // This is gross but gotta override
     & > span::before {
