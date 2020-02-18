@@ -4,16 +4,17 @@ import styled from "styled-components";
 
 import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
-import Chevron from "assets/icons/chevron.svg";
+import { ArrowIcon } from "basics/Icons";
 
-const ChevronDownward = styled(Chevron)`
+const WhiteArrowIcon = styled(ArrowIcon)`
   position: absolute;
-  transform: rotate(90deg);
-  top: 40%;
+  top: 35%;
   right: 1rem;
 
-  path {
-    fill: ${PALETTE.white};
+  svg {
+    path {
+      fill: ${PALETTE.white};
+    }
   }
 `;
 
@@ -43,7 +44,7 @@ export const Select = React.forwardRef(
     <SelectWrapperEl className={className}>
       <LabelEl>
         {label}
-        <ChevronDownward />
+        <WhiteArrowIcon direction="down" />
         <SelectEl {...props} ref={ref}>
           {children}
         </SelectEl>

@@ -2,7 +2,30 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import CloseIcon from "assets/icons/close.svg";
+import CloseSVG from "assets/icons/close.svg";
+import ChevronSVG from "assets/icons/chevron.svg";
+
+const ArrowEl = styled.div`
+  position: relative;
+
+  svg {
+    transform: ${(props) =>
+      (props.direction === "down" && "rotate(90deg)") ||
+      (props.direction === "right" && "rotate(0deg)") ||
+      (props.direction === "up" && "rotate(270deg)")};
+  }
+`;
+
+export const ArrowIcon = ({ className, direction }) => (
+  <ArrowEl className={className} direction={direction}>
+    <ChevronSVG />
+  </ArrowEl>
+);
+
+ArrowIcon.propTypes = {
+  direction: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
 
 const CloseEl = styled.div`
   position: relative;
@@ -19,12 +42,12 @@ const CloseEl = styled.div`
   }
 `;
 
-export const CloseX = ({ color }) => (
+export const CloseIcon = ({ color }) => (
   <CloseEl color={color}>
-    <CloseIcon />
+    <CloseSVG />
   </CloseEl>
 );
 
-CloseX.propTypes = {
+CloseIcon.propTypes = {
   color: PropTypes.string.isRequired,
 };

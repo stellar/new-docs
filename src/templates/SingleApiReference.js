@@ -7,8 +7,6 @@ import styled, { ThemeProvider } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
-import Chevron from "assets/icons/chevron.svg";
-
 import {
   NAV_THEMES,
   CSS_TRANSITION_SPEED,
@@ -23,6 +21,7 @@ import { groupByCategory } from "helpers/documentation";
 import { BasicButton } from "basics/Buttons";
 import { HorizontalRule, LinkedH1 } from "basics/Text";
 import { Column } from "basics/Grid";
+import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
@@ -47,16 +46,9 @@ const GreenTableCell = styled.td`
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
-const ChevronDownward = styled(Chevron)`
-  transform: rotate(90deg);
-`;
-const ChevronUpward = styled(Chevron)`
-  transform: rotate(270deg);
-`;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
 `;
-
 const NavItemEl = styled(BasicButton)`
   text-align: left;
   white-space: nowrap;
@@ -162,8 +154,8 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                       title={nav[0]}
                       expandedModeTitle={nav[0]}
                       hasBorder
-                      collapseIcon={<ChevronUpward />}
-                      expandIcon={<ChevronDownward />}
+                      collapseIcon={<ArrowIcon direction="up" />}
+                      expandIcon={<ArrowIcon direction="down" />}
                       isDefaultExpanded={true}
                     >
                       <SideNavBody items={nav[1]} renderItem={renderItem} />

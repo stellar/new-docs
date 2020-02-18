@@ -7,8 +7,6 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 
-import Chevron from "assets/icons/chevron.svg";
-
 import {
   NAV_THEMES,
   CSS_TRANSITION_SPEED,
@@ -22,6 +20,7 @@ import { groupByCategory } from "helpers/documentation";
 
 import { Column } from "basics/Grid";
 import { LinkedH1, H5, HorizontalRule } from "basics/Text";
+import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
@@ -53,12 +52,6 @@ const GreenTableCell = styled.td`
 `;
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
-`;
-const ChevronDownward = styled(Chevron)`
-  transform: rotate(90deg);
-`;
-const ChevronUpward = styled(Chevron)`
-  transform: rotate(270deg);
 `;
 const TrackedEl = styled.div``;
 
@@ -279,8 +272,8 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                       <Expansion
                         title={<NavTitleEl>{nav[0]}</NavTitleEl>}
                         expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        collapseIcon={<ChevronUpward />}
-                        expandIcon={<ChevronDownward />}
+                        collapseIcon={<ArrowIcon direction="up" />}
+                        expandIcon={<ArrowIcon direction="down" />}
                         isDefaultExpanded={true}
                       >
                         <SideNavBody
