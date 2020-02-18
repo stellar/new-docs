@@ -104,7 +104,7 @@ export const List = styled.ul`
       content: "";
       position: absolute;
       left: -1.4rem;
-      top: 0.7rem;
+      top: 0.5rem;
       width: 6px;
       height: 6px;
       border-radius: 50%;

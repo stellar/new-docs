@@ -21,30 +21,32 @@ const NestedTableEl = styled.div`
     padding: 0;
     list-style: none;
     padding: 1.5rem 0;
+    display: flex;
+    border-bottom: 1px solid ${PALETTE.white60};
+    margin: 0;
 
-      &:first-child {
-        text-transform: uppercase;
-        padding: 1rem 0;
-      }
-      &:before {
-        display: none;
-      }
+    &:first-child {
+      text-transform: uppercase;
+      padding: 1rem 0;
+    }
 
-      display: flex;
-      border-bottom: 1px solid ${PALETTE.white60};
-      margin: 0;
+    &:last-child {
+      border-bottom: none;
+    }
+    &:before {
+      display: none;
+    }
 
-      & > div {
-        display: block;
+    & > div {
+      display: block;
 
-        & > p {
-          &:first-child {
-            span {
-              font-weight: ${FONT_WEIGHT.normal};
-            }
+      & > p {
+        &:first-child {
+          span {
+            font-weight: ${FONT_WEIGHT.normal};
           }
-          min-width: 10rem;
         }
+        min-width: 10rem;
       }
     }
   }
