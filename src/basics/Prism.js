@@ -7,7 +7,7 @@ import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 // All markdown content has syntax highlighting markup created, but not all
 // pages load the css required to actually style the lines appropriately.
 // This component has to be rendered to add color to syntax.
-export const DocPrismStyles = createGlobalStyle`	
+export const PrismStyles = createGlobalStyle`	
 /* PrismJS 1.16.0	
 https://prismjs.com/download.html#themes=prism&languages=clike+javascript */	
 /**	
@@ -32,11 +32,32 @@ pre[class*="language-"] {
   -webkit-hyphens: none;	
   -moz-hyphens: none;	
   -ms-hyphens: none;	
-  hyphens: none;	
-  &.line-numbers {	
-    padding: 0;	
-  }	
+  hyphens: none;
+
+
+  &.line-numbers {
+    display: block;
+    padding-left: 2rem !important;
+
+    div[data-language="json"] & {
+      padding-left: 0 !important;
+    }
+  }
+
+  .line-numbers-rows {	
+    display: block;
+    padding-left: 0.5rem !important;
+
+    div[data-language="json"] & {
+      display: none !important;
+    }
+
+    & > span:before {
+      color: #8d8f99 !important;
+    }
+  }
 }	
+
 @media print {	
   code[class*="language-"],	
   pre[class*="language-"] {	
@@ -122,11 +143,5 @@ pre[class*="language-"] {
  */	
 .gatsby-highlight {  	
   border-radius: 0.3em;	
-}	
-.line-numbers-rows {	
-  display: ${(props) => (props.isCodeSnippet ? "block" : "none")};	
-}	
-.line-numbers {	
-  padding: ${(props) => (props.isCodeSnippet ? "block" : "none")};	
-}	
+}
 `;
