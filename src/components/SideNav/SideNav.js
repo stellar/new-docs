@@ -15,8 +15,8 @@ const { a: StyledLink } = components;
 
 const El = styled.div`
   width: 100%;
-  height: calc(100vh - 121px);
-  top: 121px;
+  height: calc(100vh - 171px);
+  top: 171px;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   position: sticky;
   z-index: 3;
