@@ -22,7 +22,10 @@ text-decoration: none;
 const ArticleLink = styled(Link)`
   ${topLevelNavItem}
 `;
-
+const ModifiedArrowIcon = styled(ArrowIcon)`
+  position: absolute;
+  right: 0;
+`;
 const NestedArticleTopicExpander = styled(BasicButton)`
   ${topLevelNavItem}
 `;
@@ -33,7 +36,7 @@ const TopicExpander = styled.button`
   color: #333;
   cursor: pointer;
   display: flex;
-  padding: 0.375rem 0;
+  padding: 0;
 
   &:focus {
     outline: 0;
@@ -54,7 +57,8 @@ const ArticleList = styled.ul`
 
   li {
     list-style-type: none;
-    padding: 0.375rem 0;
+    /* padding: 0.375rem 0; */
+    padding: 1rem 0;
   }
 `;
 
@@ -98,7 +102,7 @@ const Articles = ({
           onClick={() => topicToggleHandler(topicPath)}
         >
           {title}
-          <ArrowIcon direction="right" />
+          <ModifiedArrowIcon direction="right" />
         </TopicExpander>
       )}
 

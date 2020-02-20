@@ -25,7 +25,7 @@ import { Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
-import { NavFrame } from "components/Navigation/SharedStyles";
+import { NavFrame, NavFooterLi } from "components/Navigation/SharedStyles";
 import { NavLogo } from "components/Navigation/NavLogo";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
@@ -80,6 +80,10 @@ const NavItemEl = styled.div`
   &:hover {
     color: #999;
   }
+`;
+const DocNavEl = styled(NavFooterLi)`
+  position: absolute;
+  bottom: 0;
 `;
 
 const StyledLink = components.a;
@@ -233,6 +237,14 @@ ReferenceSection.propTypes = {
   link: PropTypes.string,
 };
 
+const AbsoluteEl = styled.div`
+  position: absolute;
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  bottom: 3.25rem;
+`;
+
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const referenceDocs = sortReference(
@@ -258,7 +270,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 <Container>
                   <ApiReferenceRow>
                     <Column xs={3} xl={4}>
-                      <NavLogo pageName="Documentation" />
+                      <NavLogo pageName="Api Reference" />
                     </Column>
                   </ApiReferenceRow>
                 </Container>
@@ -270,27 +282,32 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
                 <SideNavBackground />
-                <SideNav ref={sideNavRef}>
-                  {Object.entries(docsBySubCategory).map((nav, i) => (
-                    <ExpansionContainerEl
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={i}
-                    >
-                      <Expansion
-                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        collapseIcon={<ArrowIcon direction="up" />}
-                        expandIcon={<ArrowIcon direction="down" />}
-                        isDefaultExpanded={true}
+                <SideNav>
+                  <AbsoluteEl ref={sideNavRef}>
+                    {Object.entries(docsBySubCategory).map((nav, i) => (
+                      <ExpansionContainerEl
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={i}
                       >
-                        <SideNavBody
-                          items={nav[1]}
-                          renderItem={renderItem}
-                          forwardedRef={sideNavRef}
-                        />
-                      </Expansion>
-                    </ExpansionContainerEl>
-                  ))}
+                        <Expansion
+                          title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                          expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                          collapseIcon={<ArrowIcon direction="up" />}
+                          expandIcon={<ArrowIcon direction="down" />}
+                          isDefaultExpanded={true}
+                        >
+                          <SideNavBody
+                            items={nav[1]}
+                            renderItem={renderItem}
+                            forwardedRef={sideNavRef}
+                          />
+                        </Expansion>
+                      </ExpansionContainerEl>
+                    ))}
+                  </AbsoluteEl>
+                  <DocNavEl>
+                    <StyledLink href="/docs">Documentation</StyledLink>
+                  </DocNavEl>
                 </SideNav>
               </SideNavColumn>
               <Column xs={9} xl={18}>

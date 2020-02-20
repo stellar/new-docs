@@ -10,7 +10,6 @@ import { Location } from "@reach/router";
 import {
   DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
-  PALETTE,
   THEME,
   REDESIGN_PALETTE,
 } from "constants/styles";
@@ -37,6 +36,7 @@ import {
   SideNavColumn,
   SideNavBackground,
 } from "components/Documentation/SharedStyles";
+import { NavFooterLi } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import { Footer } from "components/Documentation/Footer";
@@ -56,6 +56,18 @@ const StickyEl = styled.div`
 const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
+  /* 
+  li:first-child {
+    margin-bottom: 0.75rem;
+  } */
+
+  li {
+    padding: 12px 0;
+
+    /* &:first-child {
+      padding-top: 0;
+    } */
+  }
 `;
 
 const RightNavEl = styled(StickyEl)`
@@ -95,10 +107,6 @@ const ModifiedEl = styled.div`
   svg {
     margin-right: 0.5em;
   }
-`;
-const ApiLink = styled.li`
-  border-top: 1px solid ${PALETTE.white60};
-  padding: 0.375rem 0;
 `;
 
 const PageOutlineItem = ({ id, isActive, title }) => (
@@ -181,9 +189,9 @@ const Documentation = ({ data, pageContext, location }) => {
           />
         );
       })}
-      <ApiLink>
+      <NavFooterLi>
         <StyledLink href="/api">API Reference</StyledLink>
-      </ApiLink>
+      </NavFooterLi>
     </Topics>
   );
   const center = (

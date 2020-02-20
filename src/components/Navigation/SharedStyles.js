@@ -34,7 +34,12 @@ export const NavImage = styled(Image)`
     display: none !important;
   }
 `;
-
+export const NavFooterLi = styled.li`
+  list-style: none;
+  border-top: 1px solid ${PALETTE.white60};
+  padding: 0.75rem 0;
+  width: 100%;
+`;
 export const Block = styled.div`
   max-width: 23rem;
   margin: 0 auto;
