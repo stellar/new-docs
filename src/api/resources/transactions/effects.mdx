@@ -1,0 +1,130 @@
+---
+title: Retrieve a Transaction's Effects
+order: 50
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { NestedTable } from "components/NestedTable";
+
+This endpoint returns the effects of a specific transaction.
+
+<Endpoint>
+
+|  |  |
+| --- | --- |
+| GET | /transactions/:transaction_hash/effects?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
+
+</Endpoint>
+
+<NestedTable>
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- transaction_hash
+  - required
+  - A hex-encoded SHA-256 hash of this transaction’s XDR-encoded form.
+- cursor
+  - optional
+  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+- order
+  - optional
+  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+- limit
+  - optional
+  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+
+</NestedTable>
+
+<CodeExample title="Example Request">
+
+```curl
+curl "https://horizon.stellar.org/transactions/512a9946bc7ff4a363299f14f79e0beb9b9cdbd0103e3a69a44446a0aa6471a8/effects"
+```
+
+```JavaScript
+var StellarSdk = require('stellar-sdk');
+var server = new StellarSdk.Server('https://horizon.stellar.org');
+
+server.effects()
+  .forTransaction("512a9946bc7ff4a363299f14f79e0beb9b9cdbd0103e3a69a44446a0aa6471a8")
+  .call()
+  .then(function (effectResults) {
+    //page 1
+    console.log(effectResults.records)
+  })
+  .catch(function (err) {
+    console.log(err)
+  })
+
+```
+
+</CodeExample>
+
+<ExampleResponse title="Example Response">
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/transactions/512a9946bc7ff4a363299f14f79e0beb9b9cdbd0103e3a69a44446a0aa6471a8/effects?cursor=\u0026limit=10\u0026order=asc"
+    },
+    "next": {
+      "href": "https://horizon.stellar.org/transactions/512a9946bc7ff4a363299f14f79e0beb9b9cdbd0103e3a69a44446a0aa6471a8/effects?cursor=121628667754319873-2\u0026limit=10\u0026order=asc"
+    },
+    "prev": {
+      "href": "https://horizon.stellar.org/transactions/512a9946bc7ff4a363299f14f79e0beb9b9cdbd0103e3a69a44446a0aa6471a8/effects?cursor=121628667754319873-1\u0026limit=10\u0026order=desc"
+    }
+  },
+  "_embedded": {
+    "records": [
+      {
+        "_links": {
+          "operation": {
+            "href": "https://horizon.stellar.org/operations/121628667754319873"
+          },
+          "succeeds": {
+            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=121628667754319873-1"
+          },
+          "precedes": {
+            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=121628667754319873-1"
+          }
+        },
+        "id": "0121628667754319873-0000000001",
+        "paging_token": "121628667754319873-1",
+        "account": "GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A",
+        "type": "account_credited",
+        "type_i": 2,
+        "created_at": "2020-02-20T21:18:33Z",
+        "asset_type": "native",
+        "amount": "1573.5112616"
+      },
+      {
+        "_links": {
+          "operation": {
+            "href": "https://horizon.stellar.org/operations/121628667754319873"
+          },
+          "succeeds": {
+            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=121628667754319873-2"
+          },
+          "precedes": {
+            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=121628667754319873-2"
+          }
+        },
+        "id": "0121628667754319873-0000000002",
+        "paging_token": "121628667754319873-2",
+        "account": "GA2XP4KMY4KWNPW4KUCUKYUF2J7Y6HO5HLPUEA3VPVSMYCM3TGNEZP5S",
+        "type": "account_debited",
+        "type_i": 3,
+        "created_at": "2020-02-20T21:18:33Z",
+        "asset_type": "native",
+        "amount": "1573.5112616"
+      }
+    ]
+  }
+}
+```
+
+</ExampleResponse>
