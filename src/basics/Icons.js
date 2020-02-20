@@ -2,8 +2,41 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import CloseSVG from "assets/icons/close.svg";
-import ChevronSVG from "assets/icons/chevron.svg";
+import CloseSVG from "assets/icons/icon-close.svg";
+import ChevronSVG from "assets/icons/icon-chevron.svg";
+import EditSVG from "assets/icons/icon-edit.svg";
+
+const EditEl = styled.div`
+  display: inline-block;
+  position: relative;
+  padding: 0 1.25rem;
+  width: 20px;
+  height: 20px;
+  width: auto;
+
+  svg {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    path {
+      fill: ${(props) => props.color};
+    }
+  }
+`;
+
+export const EditIcon = ({ color }) => (
+  <EditEl color={color}>
+    <EditSVG />
+  </EditEl>
+);
+
+EditIcon.propTypes = {
+  color: PropTypes.string.isRequired,
+};
 
 const ArrowEl = styled.div`
   position: relative;

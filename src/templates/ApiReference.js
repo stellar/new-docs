@@ -20,7 +20,8 @@ import { groupByCategory } from "helpers/documentation";
 
 import { Column } from "basics/Grid";
 import { LinkedH1, H5, HorizontalRule } from "basics/Text";
-import { ArrowIcon } from "basics/Icons";
+import { ArrowIcon, EditIcon } from "basics/Icons";
+import { Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
@@ -199,7 +200,7 @@ const componentMap = {
   },
 };
 
-const ReferenceSection = React.memo(({ body, relativePath, title }) => {
+const ReferenceSection = React.memo(({ body, relativePath, title, link }) => {
   const path = buildPathFromFile(relativePath);
 
   return (
@@ -208,6 +209,11 @@ const ReferenceSection = React.memo(({ body, relativePath, title }) => {
         <TrackedContent>
           <TrackedEl id={path}>
             <LinkedH1 id={path}>{title}</LinkedH1>
+            {link && (
+              <Link href={link} newTab>
+                <EditIcon color={PALETTE.purpleBlue} />
+              </Link>
+            )}
           </TrackedEl>
         </TrackedContent>
 
@@ -287,11 +293,12 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 </SideNav>
               </SideNavColumn>
               <Column xs={9} xl={18}>
-                {referenceDocs.map(({ body, id, parent, title }) => (
+                {referenceDocs.map(({ body, id, parent, title, link }) => (
                   <ReferenceSection
                     relativePath={parent.relativePath}
                     key={id}
                     title={title}
+                    link={link}
                     body={body}
                   />
                 ))}
