@@ -230,6 +230,7 @@ ReferenceSection.propTypes = {
   body: PropTypes.node.isRequired,
   relativePath: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  link: PropTypes.string,
 };
 
 // eslint-disable-next-line react/no-multi-comp
