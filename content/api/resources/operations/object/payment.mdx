@@ -1,4 +1,82 @@
 ---
-title: Payment object
-order: 10
+title: Payment Object
+order: 20
 ---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { NestedTable } from "components/NestedTable";
+
+Sends an amount in a specific asset to a destination account.
+
+See the [`Payment` errors](../../../errors/result-codes/operation-specific/payment.mdx).
+
+<NestedTable>
+
+- ATTRIBUTE
+  - DATA TYPE
+  - DESCRIPTION
+- amount
+  - string
+  - Amount sent.
+- asset_type
+  - string
+  - Asset type: lumens (“native”) or all other assets (alphanum4 or alphanum12).
+- from
+  - string
+  - The payment sender’s public key.
+- id
+  - number
+  - The operation’s ID number.
+- paging_token
+  - string
+  - A token that specifies where to begin results for a page of operations.
+- to
+  - string
+  - The payment destination’s public key.
+- transaction_successful
+  - boolean
+  - Whether or not the parent transaction’s effects were included in the ledger.
+- type_i
+  - number
+  - A number indicating the operation type.
+- type
+  - string
+  - The name of the operation type.
+
+</NestedTable>
+
+<ExampleResponse>
+
+```json
+{
+  "_links": {
+    "effects": {
+      "href": "/operations/58402965295104/effects/{?cursor,limit,order}",
+      "templated": true
+    },
+    "precedes": {
+      "href": "/operations?cursor=58402965295104&order=asc"
+    },
+    "self": {
+      "href": "/operations/58402965295104"
+    },
+    "succeeds": {
+      "href": "/operations?cursor=58402965295104&order=desc"
+    },
+    "transactions": {
+      "href": "/transactions/58402965295104"
+    }
+  },
+  "amount": "200.0",
+  "asset_type": "native",
+  "from": "GAKLBGHNHFQ3BMUYG5KU4BEWO6EYQHZHAXEWC33W34PH2RBHZDSQBD75",
+  "id": 58402965295104,
+  "paging_token": "58402965295104",
+  "to": "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
+  "transaction_successful": true,
+  "type_i": 1,
+  "type": "payment"
+}
+```
+
+</ExampleResponse>
