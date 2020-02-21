@@ -9,10 +9,8 @@ export const query = graphql`
     frontmatter {
       title
       order
-      link
     }
     body
-    tableOfContents
     parent {
       ... on File {
         relativePath
