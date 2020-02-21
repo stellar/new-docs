@@ -177,12 +177,27 @@ const NavItem = ({ isActive, forwardedRef, children, depth }) => {
 };
 
 // This is a function, not a component
-// eslint-disable-next-line react/prop-types
-const renderItem = ({ depth, id, isActive, title, forwardedRef }) => (
-  <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
-    <NavLinkEl href={id}>{title}</NavLinkEl>
-  </NavItem>
-);
+const renderItem = ({
+  /* eslint-disable react/prop-types */
+  depth,
+  id,
+  isActive,
+  title,
+  forwardedRef,
+  isFirstItem,
+  /* eslint-disable react/prop-types */
+}) => {
+  /* There are cases when folder's index.mdx shares the same title as
+    its metadata.json's title. We are preventing redundancy by replacing
+    its sub navigation's title to "Overview" if its title is the same
+    as its metadata.json's */
+  const navTitle = isFirstItem ? "Overview" : title;
+  return (
+    <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
+      <NavLinkEl href={id}>{navTitle}</NavLinkEl>
+    </NavItem>
+  );
+};
 
 const componentMap = {
   ...components,
