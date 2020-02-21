@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import { FONT_WEIGHT } from "constants/styles";
+import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
 import { BasicButton } from "basics/Buttons";
 import { ArrowIcon } from "basics/Icons";
@@ -21,13 +21,17 @@ text-decoration: none;
 
 const ArticleLink = styled(Link)`
   ${topLevelNavItem}
+  font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
+  color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
+  padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
   right: 0;
 `;
 const NestedArticleTopicExpander = styled(BasicButton)`
-  ${topLevelNavItem}
+  ${topLevelNavItem};
+  padding-bottom: 0.5rem;
 `;
 
 const TopicExpander = styled.button`
@@ -37,6 +41,8 @@ const TopicExpander = styled.button`
   cursor: pointer;
   display: flex;
   padding: 0;
+  width: 100%;
+  padding-bottom: 0.5rem;
 
   &:focus {
     outline: 0;
@@ -55,20 +61,31 @@ const ArticleList = styled.ul`
   transition: ${({ isCollapsed }) =>
     isCollapsed ? "max-height 1s ease-in" : "max-height .25s ease-out"};
 
+  &:first-child {
+    padding-top: 0.5rem;
+  }
+
   li {
     list-style-type: none;
-    /* padding: 0.375rem 0; */
-    padding: 1rem 0;
+    padding: 0;
+    padding-top: 1.5rem;
   }
 `;
 
-const Article = ({ article = {} }) => {
+const Article = ({ article = {}, depth }) => {
   const { id, title, url } = article;
+
   return (
     <li key={id}>
-      <ArticleLink href={url}>{title}</ArticleLink>
+      <ArticleLink depth={depth} href={url}>
+        {title}
+      </ArticleLink>
     </li>
   );
+};
+
+Article.propTypes = {
+  depth: PropTypes.number.isRequired,
 };
 
 const Articles = ({
@@ -78,6 +95,7 @@ const Articles = ({
   isNested,
   title,
   topicPath,
+  depth = 0,
 }) => {
   const [topicState, setTopicState] = React.useState(initialTopicsState);
   const isCollapsed = topicState[topicPath];
@@ -121,6 +139,7 @@ const Articles = ({
               topicPath={article.topicPath}
               topicState={topicState}
               topicToggleHandler={topicToggleHandler}
+              depth={depth + 1}
             />
           </ArticleList>
         ) : (
@@ -132,6 +151,7 @@ const Articles = ({
               key={`Article${article.id}`}
               isCollapsed={isCollapsed}
               article={article}
+              depth={depth + 1}
             />
           </ArticleList>
         ),
@@ -147,6 +167,7 @@ Articles.propTypes = {
   articles: PropTypes.object,
   title: PropTypes.string,
   topicPath: PropTypes.string,
+  depth: PropTypes.number.isRequired,
 };
 
 Article.propTypes = {
