@@ -66,21 +66,28 @@ export const SideNavBody = ({
   depth = -1,
 }) => (
   <NestedUl isOpen={isOpen}>
-    {items.map(({ id, title: subTitle, items: subItems, order }, index) => (
-      // eslint-disable-next-line react/no-array-index-key
-      <ListItemEl key={index}>
-        <NestedNav
-          renderItem={renderItem}
-          forwardedRef={forwardedRef}
-          items={subItems}
-          title={subTitle}
-          id={id}
-          isOpen={isOpen}
-          isFirstItem={order === 0}
-          depth={depth + 1}
-        />
-      </ListItemEl>
-    ))}
+    {items.map(
+      ({ id, title: subTitle, items: subItems, order, parent }, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <ListItemEl key={index}>
+          <NestedNav
+            renderItem={renderItem}
+            forwardedRef={forwardedRef}
+            items={subItems}
+            title={subTitle}
+            id={id}
+            isOpen={isOpen}
+            isFirstItem={
+              order === 0 &&
+              parent.relativePath.split("/")[
+                parent.relativePath.split("/").length - 1
+              ] === "index.mdx"
+            }
+            depth={depth + 1}
+          />
+        </ListItemEl>
+      ),
+    )}
   </NestedUl>
 );
 
@@ -143,7 +150,13 @@ const NestedNav = ({
               key={index}
               items={el.items}
               title={el.title}
-              isFirstItem={el.order === 0}
+              relativePath={el.parent.relativePath}
+              isFirstItem={
+                el.order === 0 &&
+                el.parent.relativePath.split("/")[
+                  el.parent.relativePath.split("/").length - 1
+                ] === "index.mdx"
+              }
               isOpen={isOpen}
               depth={depth + 1}
             />
