@@ -40,7 +40,7 @@ const components = {
     color: ${({ theme }) => theme.darkGrey};
 
     @media (${MEDIA_QUERIES.gtTablet}) {
-      line-height: 1.7;
+      line-height: 1.75;
     }
   `,
   sub: styled.sub`
