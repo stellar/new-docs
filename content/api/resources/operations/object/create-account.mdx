@@ -1,4 +1,71 @@
 ---
-title: Create Account object
-order: 0
+title: Create Account Object
+order: 10
 ---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { NestedTable } from "components/NestedTable";
+
+Creates and funds a new account with the specified starting balance.
+
+See the [‘Create Account’ errors](../../../errors/result-codes/operation-specific/create-account.mdx).
+
+<NestedTable>
+
+- ATTRIBUTE
+  - DATA TYPE
+  - DESCRIPTION
+- account
+  - string
+  - A new account that is funded.
+- funder
+  - string
+  - The account that funds the new account.
+- paging_token
+  - string
+  - A token that specifies where to begin results for a page of operations.
+- starting_balance
+  - string
+  - The amount of XLM to send the newly created account.
+- type_i
+  - number
+  - A number indicating the operation type.
+- type
+  - string
+  - The name of the operation type.
+
+</NestedTable>
+
+<ExampleResponse>
+
+```json
+{
+  "_links": {
+    "effects": {
+      "href": "/operations/402494270214144/effects/{?cursor,limit,order}",
+      "templated": true
+    },
+    "precedes": {
+      "href": "/operations?cursor=402494270214144&order=asc"
+    },
+    "self": {
+      "href": "/operations/402494270214144"
+    },
+    "succeeds": {
+      "href": "/operations?cursor=402494270214144&order=desc"
+    },
+    "transactions": {
+      "href": "/transactions/402494270214144"
+    }
+  },
+  "account": "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
+  "funder": "GBIA4FH6TV64KSPDAJCNUQSM7PFL4ILGUVJDPCLUOPJ7ONMKBBVUQHRO",
+  "id": 402494270214144,
+  "paging_token": "402494270214144",
+  "starting_balance": "10000.0",
+  "type_i": 0,
+  "type": "create_account"
+}
+```
+
+</ExampleResponse>
