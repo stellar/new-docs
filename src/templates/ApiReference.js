@@ -240,7 +240,7 @@ ReferenceSection.propTypes = {
 const AbsoluteEl = styled.div`
   position: absolute;
   overflow-y: scroll;
-  height: 100%;
+  height: calc(100% - 48px);
   width: 100%;
   bottom: 3.25rem;
 `;

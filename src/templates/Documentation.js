@@ -25,13 +25,12 @@ import {
 } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
-import { Column, Row } from "basics/Grid";
+import { Column, Container, Row } from "basics/Grid";
 
 import Articles from "components/Documentation/Articles";
 import { DocsBase } from "components/layout/DocsBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
-  Container,
   Content,
   SideNavColumn,
   SideNavBackground,
@@ -56,30 +55,29 @@ const StickyEl = styled.div`
 const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
-  /* 
-  li:first-child {
-    margin-bottom: 0.75rem;
-  } */
 
   li {
     padding: 12px 0;
-
-    /* &:first-child {
-      padding-top: 0;
-    } */
   }
 `;
 
 const RightNavEl = styled(StickyEl)`
   font-size: 0.875rem;
   line-height: 1rem;
+  margin: 1em 0;
+
+  li:before {
+    display: none;
+  }
 `;
 const NavItemEl = styled(BasicButton)`
   display: block;
-  margin-bottom: 0.75rem;
   line-height: 1.5rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${(props) => (props.isActive ? THEME.text : THEME.lightGrey)};
+  padding: 0.5rem 0;
+  text-align: left;
+
   &:focus {
     outline: 0;
   }
@@ -87,7 +85,7 @@ const NavItemEl = styled(BasicButton)`
 const OutlineTitleEl = styled.div`
   text-transform: uppercase;
   font-weight: ${FONT_WEIGHT.bold};
-  margin-bottom: 1rem;
+  padding: 13px 0;
 `;
 
 const RootEl = styled(StyledLink)`

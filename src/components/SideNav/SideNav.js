@@ -12,8 +12,8 @@ import { useSidebar } from "./useSidebar";
 
 const El = styled.div`
   width: 100%;
-  height: calc(100vh - 171px);
-  top: 171px;
+  height: calc(100vh - 121px);
+  top: 121px;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   position: sticky;
   z-index: 3;
