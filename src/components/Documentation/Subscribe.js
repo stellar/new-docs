@@ -11,7 +11,9 @@ import { CloseIcon } from "basics/Icons";
 import MessageBlock from "components/Footer/MessageBlock";
 import { BasicButton } from "basics/Buttons";
 
-const FormContainerEl = styled.div``;
+const FormContainerEl = styled.div`
+  width: 268px;
+`;
 const Form = styled.form.attrs(() => ({
   action: URL_ENDPOINTS.mailchimp.developer,
   method: "post",
@@ -28,12 +30,15 @@ const SubmitButtonEl = styled(BasicButton).attrs((props) => ({
   disabled: props.formStatus === "error",
 }))`
   background-color: ${PALETTE.purpleBlue};
-  font-weight: ${FONT_WEIGHT.normal};
+  font-weight: ${FONT_WEIGHT.bold};
   cursor: pointer;
   color: ${PALETTE.white};
+  margin-top: 0.625rem;
   padding: 0.5rem 1.5rem;
   border-radius: 0.125rem;
   line-height: 1.75;
+  box-shadow: 0 8px 16px -8px rgba(62, 27, 219, 0.72);
+  transition: all 0.2s ease-in-out;
 
   ${({ shouldApplyStatusColor, formStatus }) =>
     shouldApplyStatusColor &&
@@ -45,12 +50,16 @@ const SubmitButtonEl = styled(BasicButton).attrs((props) => ({
   &:disabled {
     cursor: not-allowed;
   }
+  &:hover {
+    box-shadow: 0 8px 16px -4px rgba(62, 27, 219, 0.72);
+    background-color: #3115af;
+  }
 `;
 
 const InputContainer = styled.div`
   position: relative;
   display: flex;
-  max-width: 25rem;
+  flex-direction: column;
 `;
 const EmailInput = styled.input.attrs({
   type: "email",
@@ -61,31 +70,29 @@ const EmailInput = styled.input.attrs({
 })`
   width: 100%;
   transition: border ${CSS_TRANSITION_SPEED.default} ease;
-  color: ${PALETTE.black60};
+  color: ${PALETTE.black80};
   background: none;
   padding: 0.5rem 1rem;
   border: 1px solid ${PALETTE.white60};
-  border-radius: 0.125rem;
+  border-radius: 2px;
   line-height: 1.75;
   vertical-align: middle;
+  box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.16);
 
   ::placeholder {
-    color: ${PALETTE.lightGrey};
-    font-size: 0.875rem;
+    color: ${PALETTE.black80};
+    font-size: 1rem;
   }
 
   :focus {
     outline-color: transparent;
     outline-style: none;
-    border-bottom-color: ${(props) => props.lineColor};
+    border-color: ${PALETTE.purpleBlue};
   }
 `;
 const InputLabel = styled.label.attrs({
   htmlFor: "mce-EMAIL",
 })`
-  margin-right: 0.5rem;
-  flex-grow: 1;
-
   ${Text} {
     display: none;
   }
@@ -174,7 +181,7 @@ export const Subscribe = () => {
               {response.status === "error" ? (
                 <CloseIcon color={PALETTE.white} />
               ) : (
-                "Submit"
+                "Subscribe"
               )}
             </SubmitButtonEl>
           </InputContainer>
