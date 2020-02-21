@@ -66,7 +66,7 @@ export const SideNavBody = ({
   depth = -1,
 }) => (
   <NestedUl isOpen={isOpen}>
-    {items.map(({ id, title: subTitle, items: subItems }, index) => (
+    {items.map(({ id, title: subTitle, items: subItems, order }, index) => (
       // eslint-disable-next-line react/no-array-index-key
       <ListItemEl key={index}>
         <NestedNav
@@ -76,6 +76,7 @@ export const SideNavBody = ({
           title={subTitle}
           id={id}
           isOpen={isOpen}
+          isFirstItem={order === 0}
           depth={depth + 1}
         />
       </ListItemEl>
@@ -103,6 +104,7 @@ const NestedNav = ({
   renderItem,
   depth,
   forwardedRef,
+  isFirstItem,
 }) => {
   const uniqueId = id || slugify(title);
   const { isChildActive, isActive } = useSidebar({
@@ -111,9 +113,25 @@ const NestedNav = ({
   });
   const isOpen = isChildActive || isActive;
 
+  /* Nested navigation's default index.mdx has the same title as 
+    its folder's metadata.json's title which causes redundancy. 
+    For example, "Ledgers" navigation is created from metadata.json 
+    but its content that is in its index.mdx also has the title "Ledgers"
+    which creates two "Ledgers" in the navigation. We are omitting 
+    redundancy by skipping renderItem() if that's the case */
+  const isSubnavOverview = isFirstItem && depth > 0;
+
   return (
     <>
-      {renderItem({ depth, id: uniqueId, isActive, title, forwardedRef })}
+      {!isSubnavOverview &&
+        renderItem({
+          depth,
+          id: uniqueId,
+          isActive,
+          title,
+          forwardedRef,
+          isFirstItem,
+        })}
       {isOpen && items && (
         <>
           {items.map((el, index) => (
@@ -125,6 +143,7 @@ const NestedNav = ({
               key={index}
               items={el.items}
               title={el.title}
+              isFirstItem={el.order === 0}
               isOpen={isOpen}
               depth={depth + 1}
             />
@@ -141,6 +160,7 @@ NestedNav.propTypes = {
   title: PropTypes.string.isRequired,
   renderItem: PropTypes.func.isRequired,
   depth: PropTypes.number,
+  isFirstItem: PropTypes.bool,
   forwardedRef: PropTypes.shape({ current: PropTypes.object }),
   activeNode: PropTypes.shape({
     current: PropTypes.object.isRequired,
