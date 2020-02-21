@@ -11,7 +11,6 @@ export const query = graphql`
       order
     }
     body
-    tableOfContents
     parent {
       ... on File {
         relativePath

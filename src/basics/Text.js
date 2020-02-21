@@ -30,13 +30,15 @@ const headingBase = ({ theme }) => `
 `;
 export const H1 = styled.h1`
   ${headingBase};
-  font-size: 2.5rem;
+  display: inline-block;
+  font-size: 2rem;
   margin: 1.25em 0 0.67em;
   letter-spacing: -1.2px;
-  font-weight: ${FONT_WEIGHT.bold};
+  font-weight: ${FONT_WEIGHT.normal};
 `;
 export const H2 = styled.h2`
   ${headingBase};
+  display: inline-block;
   margin: 3.125rem 0 1.56rem;
   letter-spacing: -1.2px;
   font-weight: ${FONT_WEIGHT.normal};

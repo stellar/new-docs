@@ -1,12 +1,18 @@
+const DOCS_CONTENT_URL =
+  "https://github.com/stellar/new-docs/blob/master/content/";
+
 export const normalizeMdx = (node) => {
   const { id, frontmatter, body, parent } = node;
   const metadata = (parent.fields && parent.fields.metadata.data) || {};
   const parentRelativeDirSplit = parent.relativeDirectory.split("/");
+  const mdxLink = parent.relativePath && DOCS_CONTENT_URL + parent.relativePath;
+
   return {
     ...node,
     id,
     order: frontmatter.order,
     title: frontmatter.title,
+    link: mdxLink,
     body,
     // paths always start with `docs` or `api` which isn't useful. Strip it.
     directory: parentRelativeDirSplit.slice(1).join("/"),

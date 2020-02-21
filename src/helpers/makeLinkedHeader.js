@@ -17,6 +17,7 @@ import LinkIcon from "assets/icons/link.svg";
 const ScrollHackEl = styled.div`
   padding-top: 5rem;
   margin-top: -5rem;
+  display: inline-block;
 `;
 
 export const makeLinkedHeader = (Component) => {
