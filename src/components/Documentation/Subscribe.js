@@ -11,9 +11,7 @@ import { CloseIcon } from "basics/Icons";
 import MessageBlock from "components/Footer/MessageBlock";
 import { BasicButton } from "basics/Buttons";
 
-const FormContainerEl = styled.div`
-  width: 268px;
-`;
+const FormContainerEl = styled.div``;
 const Form = styled.form.attrs(() => ({
   action: URL_ENDPOINTS.mailchimp.developer,
   method: "post",
@@ -33,9 +31,9 @@ const SubmitButtonEl = styled(BasicButton).attrs((props) => ({
   font-weight: ${FONT_WEIGHT.bold};
   cursor: pointer;
   color: ${PALETTE.white};
-  margin-top: 0.625rem;
   padding: 0.5rem 1.5rem;
   border-radius: 0.125rem;
+  margin-left: 0.5rem;
   line-height: 1.75;
   box-shadow: 0 8px 16px -8px rgba(62, 27, 219, 0.72);
   transition: all 0.2s ease-in-out;
@@ -59,7 +57,6 @@ const SubmitButtonEl = styled(BasicButton).attrs((props) => ({
 const InputContainer = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
 `;
 const EmailInput = styled.input.attrs({
   type: "email",
@@ -69,6 +66,7 @@ const EmailInput = styled.input.attrs({
   "aria-label": "mce-EMAIL",
 })`
   width: 100%;
+  min-width: 291px;
   transition: border ${CSS_TRANSITION_SPEED.default} ease;
   color: ${PALETTE.black80};
   background: none;
