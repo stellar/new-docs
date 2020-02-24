@@ -25,6 +25,10 @@ const ArticleLink = styled(Link)`
   color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
   padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
   display: block;
+
+  &:hover {
+    color: #999;
+  }
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
