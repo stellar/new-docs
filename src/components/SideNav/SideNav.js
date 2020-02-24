@@ -30,8 +30,10 @@ const ListItemEl = styled(ListItem)`
 `;
 
 /* Check to see if the parent directory has index.mdx */
-const checkIfOverview = (relativePath) =>
-  relativePath.split("/")[relativePath.split("/").length - 1] === "index.mdx";
+const checkIfOverview = (relativePath) => {
+  const pathSegments = relativePath.split("/");
+  return pathSegments[pathSegments.length - 1] === "index.mdx";
+};
 
 export const SideNav = ({ children, ...props }) => (
   <El {...props}>{children}</El>
@@ -119,18 +121,19 @@ const NestedNav = ({
         })}
       {isOpen && items && (
         <>
-          {items.map((el, index) => (
+          {items.map((subnavItem, index) => (
             <NestedNav
               renderItem={renderItem}
-              id={el.id}
+              id={subnavItem.id}
               forwardedRef={forwardedRef}
               // eslint-disable-next-line react/no-array-index-key
               key={index}
-              items={el.items}
-              title={el.title}
-              relativePath={el.parent && el.parent.relativePath}
+              items={subnavItem.items}
+              title={subnavItem.title}
+              relativePath={subnavItem.parent && subnavItem.parent.relativePath}
               isFirstItem={
-                el.order === 0 && checkIfOverview(el.parent.relativePath)
+                subnavItem.order === 0 &&
+                checkIfOverview(subnavItem.parent.relativePath)
               }
               isOpen={isOpen}
               depth={depth + 1}
