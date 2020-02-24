@@ -29,6 +29,10 @@ const ListItemEl = styled(ListItem)`
   margin: 0;
 `;
 
+/* Check to see if the parent directory has index.mdx */
+const checkIfOverview = (relativePath) =>
+  relativePath.split("/")[relativePath.split("/").length - 1] === "index.mdx";
+
 export const SideNav = ({ children, ...props }) => (
   <El {...props}>{children}</El>
 );
@@ -56,12 +60,7 @@ export const SideNavBody = ({
             title={subTitle}
             id={id}
             isOpen={isOpen}
-            isFirstItem={
-              order === 0 &&
-              parent.relativePath.split("/")[
-                parent.relativePath.split("/").length - 1
-              ] === "index.mdx"
-            }
+            isFirstItem={order === 0 && checkIfOverview(parent.relativePath)}
             depth={depth + 1}
           />
         </ListItemEl>
@@ -129,12 +128,9 @@ const NestedNav = ({
               key={index}
               items={el.items}
               title={el.title}
-              relativePath={el.parent.relativePath}
+              relativePath={el.parent && el.parent.relativePath}
               isFirstItem={
-                el.order === 0 &&
-                el.parent.relativePath.split("/")[
-                  el.parent.relativePath.split("/").length - 1
-                ] === "index.mdx"
+                el.order === 0 && checkIfOverview(el.parent.relativePath)
               }
               isOpen={isOpen}
               depth={depth + 1}
