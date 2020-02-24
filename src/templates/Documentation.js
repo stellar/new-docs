@@ -10,7 +10,6 @@ import { Location } from "@reach/router";
 import {
   DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
-  PALETTE,
   THEME,
   REDESIGN_PALETTE,
 } from "constants/styles";
@@ -26,17 +25,17 @@ import {
 } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
-import { Column, Row } from "basics/Grid";
+import { Column, Container, Row } from "basics/Grid";
 
 import Articles from "components/Documentation/Articles";
 import { DocsBase } from "components/layout/DocsBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
-  Container,
   Content,
   SideNavColumn,
   SideNavBackground,
 } from "components/Documentation/SharedStyles";
+import { NavFooterLi } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import { Footer } from "components/Documentation/Footer";
@@ -56,18 +55,29 @@ const StickyEl = styled.div`
 const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
+
+  li {
+    padding: 0.55rem 0;
+  }
 `;
 
 const RightNavEl = styled(StickyEl)`
   font-size: 0.875rem;
   line-height: 1rem;
+  margin: 1em 0;
+
+  li:before {
+    display: none;
+  }
 `;
 const NavItemEl = styled(BasicButton)`
   display: block;
-  margin-bottom: 0.75rem;
   line-height: 1.5rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${(props) => (props.isActive ? THEME.text : THEME.lightGrey)};
+  padding: 0.5rem 0;
+  text-align: left;
+
   &:focus {
     outline: 0;
   }
@@ -75,7 +85,7 @@ const NavItemEl = styled(BasicButton)`
 const OutlineTitleEl = styled.div`
   text-transform: uppercase;
   font-weight: ${FONT_WEIGHT.bold};
-  margin-bottom: 1rem;
+  padding: 13px 0;
 `;
 
 const RootEl = styled(StyledLink)`
@@ -95,10 +105,6 @@ const ModifiedEl = styled.div`
   svg {
     margin-right: 0.5em;
   }
-`;
-const ApiLink = styled.li`
-  border-top: 1px solid ${PALETTE.white60};
-  padding: 0.375rem 0;
 `;
 
 const PageOutlineItem = ({ id, isActive, title }) => (
@@ -181,9 +187,9 @@ const Documentation = ({ data, pageContext, location }) => {
           />
         );
       })}
-      <ApiLink>
+      <NavFooterLi>
         <StyledLink href="/api">API Reference</StyledLink>
-      </ApiLink>
+      </NavFooterLi>
     </Topics>
   );
   const center = (

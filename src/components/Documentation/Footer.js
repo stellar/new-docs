@@ -10,30 +10,36 @@ import { Subscribe } from "./Subscribe";
 
 const El = styled.div`
   display: flex;
-  padding-top: 3rem;
+  padding-top: 7.5rem;
   padding-bottom: 6rem;
+  justify-content: space-between;
 `;
 const ContainerEl = styled.div`
-  flex-basis: 50%;
-  padding-right: 1rem;
+  min-width: 176px;
 `;
 const SubscribeHeadingEl = styled(H4)`
+  font-size: 1rem;
   font-weight: ${FONT_WEIGHT.normal};
+  color: ${PALETTE.black60};
   margin: 0;
   margin-bottom: 1rem;
 `;
 const LittleHeadingEl = styled(H6)`
   text-transform: uppercase;
   font-size: 0.875rem;
+  font-weight: ${FONT_WEIGHT.bold};
   color: ${PALETTE.black80};
   margin: 0;
   margin-bottom: 0.5rem;
 `;
 const FooterItemEl = styled.div`
   color: ${PALETTE.black60};
-  font-size: 0.875rem;
-  font-weight: ${FONT_WEIGHT.normal};
+  font-size: 1rem;
   line-height: 1.75;
+
+  a {
+    font-weight: ${FONT_WEIGHT.normal};
+  }
 `;
 
 export const Footer = () => (

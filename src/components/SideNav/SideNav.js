@@ -2,8 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import components from "constants/docsComponentMapping";
-import { DEFAULT_COLUMN_WIDTH, PALETTE } from "constants/styles";
+import { DEFAULT_COLUMN_WIDTH } from "constants/styles";
 
 import { slugify } from "helpers/slugify";
 
@@ -11,30 +10,15 @@ import { List, ListItem } from "basics/Text";
 
 import { useSidebar } from "./useSidebar";
 
-const { a: StyledLink } = components;
-
 const El = styled.div`
   width: 100%;
-  height: calc(100vh - 171px);
-  top: 171px;
+  height: calc(100vh - 121px);
+  top: 121px;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   position: sticky;
   z-index: 3;
 `;
-const AbsoluteEl = styled.div`
-  position: absolute;
-  overflow-y: scroll;
-  height: 100%;
-  width: 100%;
-  bottom: 3.25rem;
-`;
-const DocNavEl = styled.div`
-  position: absolute;
-  border-top: 1px solid ${PALETTE.white60};
-  bottom: 0;
-  width: 100%;
-  padding: 0.75rem 0;
-`;
+
 const NestedUl = styled(List)`
   list-style: none;
   margin: 0;
@@ -45,14 +29,9 @@ const ListItemEl = styled(ListItem)`
   margin: 0;
 `;
 
-export const SideNav = React.forwardRef(({ children, ...props }, ref) => (
-  <El {...props}>
-    <AbsoluteEl ref={ref}>{children}</AbsoluteEl>
-    <DocNavEl>
-      <StyledLink href="/docs">Documentation</StyledLink>
-    </DocNavEl>
-  </El>
-));
+export const SideNav = ({ children, ...props }) => (
+  <El {...props}>{children}</El>
+);
 
 SideNav.propTypes = {
   children: PropTypes.node.isRequired,

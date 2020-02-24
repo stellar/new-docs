@@ -11,7 +11,7 @@ import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
 const textStyles = css`
-  line-height: 1.5;
+  line-height: 1.75;
   font-size: 0.875rem;
   color: ${({ theme }) => theme.text};
 `;
@@ -27,6 +27,7 @@ export const Colored = styled.span`
 
 const headingBase = ({ theme }) => `
   color: ${theme.text};
+  font-weight: ${FONT_WEIGHT.normal};
 `;
 export const H1 = styled.h1`
   ${headingBase};
@@ -34,14 +35,12 @@ export const H1 = styled.h1`
   font-size: 2rem;
   margin: 1.25em 0 0.67em;
   letter-spacing: -1.2px;
-  font-weight: ${FONT_WEIGHT.normal};
 `;
 export const H2 = styled.h2`
   ${headingBase};
   display: inline-block;
   margin: 3.125rem 0 1.56rem;
   letter-spacing: -1.2px;
-  font-weight: ${FONT_WEIGHT.normal};
 `;
 export const H3 = styled.h3`
   ${headingBase};
@@ -91,22 +90,23 @@ export const Quote = styled.blockquote`
 `;
 
 const listBase = css`
+  ${textStyles};
   padding: 0;
   padding-left: 1.375rem;
+  color: ${PALETTE.black60};
+  font-size: 1rem;
 `;
 export const List = styled.ul`
   ${listBase}
   position: relative;
-  line-height: normal;
   list-style-type: none;
-  color: ${PALETTE.black60};
 
   & > li {
     &::before {
       content: "";
       position: absolute;
       left: -1.4rem;
-      top: 0.5rem;
+      top: 11px;
       width: 6px;
       height: 6px;
       border-radius: 50%;
@@ -143,7 +143,6 @@ const bulletPosition = css`
 `;
 export const ListItem = styled.li`
   position: relative;
-  margin: 0.5rem 0;
 
   @media (${MEDIA_QUERIES.ltTablet}) {
     font-size: 1rem;
