@@ -181,6 +181,7 @@ const Documentation = ({ data, pageContext, location }) => {
           <Articles
             articles={articles}
             key={id}
+            id={id}
             initialTopicsState={initialTopicsState}
             title={title}
             topicPath={topicPath}
