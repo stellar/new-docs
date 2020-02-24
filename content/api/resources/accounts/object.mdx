@@ -25,30 +25,12 @@ When Horizon returns information about an account, it uses the following format:
 - subentry_count
   - number
   - The number of subentries on this account.
-- balances
-  - array of objects
-  - The assets this account holds.
-    - balance
-      - string
-      - The number of units of an asset held by this account.
-    - buying_liabilities
-      - string
-      - The sum of all buy offers owned by this account for this asset.
-    - selling_liabilities
-      - string
-      - The sum of all sell offers owned by this account for this asset.
-    - limit
-      - number (optional)
-      - The maximum amount of this asset that this account is willing to accept. Specified when opening a trustline.
-    - asset_type
-      - string
-      - Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
-    - asset_code
-      - string (optional)
-      - The code this asset.
-    - asset_issuer
-      - string (optional)
-      - The Stellar address of this asset's issuer.
+- home_domain
+  - string
+  - The domain that hosts this account's `stellar.toml` file.
+- last_modified_ledger
+  - number
+  - The ID of the last ledger that included changes to this account.
 - thresholds
   - object
   - Operations have varying levels of access. This field specifies thresholds for different access levels, as well as the weight of the master key.
@@ -73,6 +55,30 @@ When Horizon returns information about an account, it uses the following format:
     - auth_revocable
       - boolean
       - If set to `true`, this account can freeze the balance of a holder of an asset issued by this account.
+- balances
+  - array of objects
+  - The assets this account holds.
+    - balance
+      - string
+      - The number of units of an asset held by this account.
+    - buying_liabilities
+      - string
+      - The sum of all buy offers owned by this account for this asset.
+    - selling_liabilities
+      - string
+      - The sum of all sell offers owned by this account for this asset.
+    - limit
+      - number (optional)
+      - The maximum amount of this asset that this account is willing to accept. Specified when opening a trustline.
+    - asset_type
+      - string
+      - Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+    - asset_code
+      - string (optional)
+      - The code this asset.
+    - asset_issuer
+      - string (optional)
+      - The Stellar address of this asset's issuer.
 - signers
   - array of objects
   - The public keys and associated weights that can be used to authorize transactions for this account. Used for multi-sig.
