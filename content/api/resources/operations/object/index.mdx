@@ -1,32 +1,26 @@
 ---
-title: Create Account Object
-order: 10
+title: The Operation Object
+order: 0
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
 import { NestedTable } from "components/NestedTable";
 
-Creates and funds a new account with the specified starting balance.
+Each of Stellar’s operations have unique response shapes. Below are the attributes that are consistent across each operation object.
 
-See the [`Create Account` errors](../../../errors/result-codes/operation-specific/create-account.mdx).
+See the [generic Operation errors](../../errors/result-codes/operations.mdx).
 
 <NestedTable>
 
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
-- account
-  - string
-  - A new account that is funded.
-- funder
-  - string
-  - The account that funds the new account.
+- id
+  - number
+  - The operation's ID number.
 - paging_token
   - string
-  - A token that specifies where to begin results for a page of operations.
-- starting_balance
-  - string
-  - The amount of XLM to send the newly created account.
+  - A cursor value for use in [pagination](../../introduction/pagination/index.mdx).
 - type_i
   - number
   - A number indicating the operation type.
@@ -58,11 +52,8 @@ See the [`Create Account` errors](../../../errors/result-codes/operation-specifi
       "href": "/transactions/402494270214144"
     }
   },
-  "account": "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
-  "funder": "GBIA4FH6TV64KSPDAJCNUQSM7PFL4ILGUVJDPCLUOPJ7ONMKBBVUQHRO",
   "id": 402494270214144,
   "paging_token": "402494270214144",
-  "starting_balance": "10000.0",
   "type_i": 0,
   "type": "create_account"
 }
