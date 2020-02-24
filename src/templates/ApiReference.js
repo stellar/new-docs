@@ -78,7 +78,7 @@ const NavItemEl = styled.div`
     isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
 
   &:hover {
-    color: #999;
+    color: ${PALETTE.lightGrey};
   }
 `;
 const DocNavEl = styled(NavFooterLi)`

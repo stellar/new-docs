@@ -81,7 +81,7 @@ pre[class*="language-"] {
   color: ${(props) => (props.isCodeSnippet ? "#8fa4af" : "slategray")};	
 }	
 .token.punctuation {	
-  color: #999;	
+  color: ${PALETTE.lightGrey};
 }	
 .namespace {	
   opacity: 0.7;	

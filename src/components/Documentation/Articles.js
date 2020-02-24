@@ -24,7 +24,7 @@ const ArticleLink = styled(Link)`
   display: block;
 
   &:hover {
-    color: #999;
+    color: ${PALETTE.lightGrey};
   }
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`

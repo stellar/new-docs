@@ -62,7 +62,7 @@ const NavItemEl = styled(BasicButton)`
     isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
 
   &:hover {
-    color: #999;
+    color: ${PALETTE.lightGrey};
   }
 `;
 
