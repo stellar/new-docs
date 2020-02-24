@@ -166,6 +166,7 @@ const Documentation = ({ data, pageContext, location }) => {
     href: `#${slugify(value)}`,
     title: value,
   }));
+
   const left = (
     <Topics>
       {Object.values(docsContents).map((content) => {
@@ -185,6 +186,7 @@ const Documentation = ({ data, pageContext, location }) => {
             initialTopicsState={initialTopicsState}
             title={title}
             topicPath={topicPath}
+            activeItem={name}
           />
         );
       })}
