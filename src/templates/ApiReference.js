@@ -115,6 +115,7 @@ const DocsLink = ({ href, ...props }) => {
 const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
+  display: block;
 `;
 
 const isInViewport = (elem) => {

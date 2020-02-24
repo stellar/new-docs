@@ -24,6 +24,7 @@ const ArticleLink = styled(Link)`
   font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
   color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
   padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
+  display: block;
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
