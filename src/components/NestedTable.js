@@ -71,14 +71,6 @@ const ColumnEl = styled.div`
   flex-direction: column;
   font-family: ${FONT_FAMILY.base};
 `;
-const LabelEl = styled(ColumnEl)`
-  padding: 0;
-  font-family: ${FONT_FAMILY.monospace};
-
-  span {
-    color: ${PALETTE.lightGrey};
-  }
-`;
 const DataTypeTextEl = styled.span`
   display: block;
   font-family: ${FONT_FAMILY.monospace};
@@ -113,30 +105,6 @@ const DATA_TYPES = {
   undefined: "undefined",
 };
 
-const ColumnContentEl = ({ children, hasBorder, ...props }) => (
-  <ColumnEl hasBorder {...props}>
-    {children}
-  </ColumnEl>
-);
-
-ColumnContentEl.propTypes = {
-  children: PropTypes.node.isRequired,
-  hasBorder: PropTypes.bool,
-};
-
-const ColumnLabelEl = ({ children, ...props }) => (
-  <LabelEl {...props}>{children}</LabelEl>
-);
-
-ColumnLabelEl.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-/**
- * Note: This exports a React component instead of a styled-component.
- * [Design Mockup](https://zpl.io/V1DGqJ5)
- */
-
 const ListItem = ({ items }) =>
   items.map(({ props }, i) => {
     const getObjectChild = props.children.filter(
@@ -154,17 +122,17 @@ const ListItem = ({ items }) =>
     return (
       // eslint-disable-next-line react/no-array-index-key
       <ListEl key={i}>
-        <ColumnContentEl>
+        <ColumnEl>
           <RowContentEl>
             <strong>{props.children[0]}</strong>
             {dataTypeItem}
           </RowContentEl>
-        </ColumnContentEl>
-        <ColumnContentEl>
+        </ColumnEl>
+        <ColumnEl>
           {nestedItems.length > 0 && (
             <NestedItems items={React.Children.toArray(nestedItems)} />
           )}
-        </ColumnContentEl>
+        </ColumnEl>
       </ListEl>
     );
   });
@@ -184,7 +152,7 @@ const NestedItems = ({ items }) =>
         if (child.props && typeof child.props.children === "object") {
           return (
             // eslint-disable-next-line react/no-array-index-key
-            <ColumnContentEl key={i}>
+            <ColumnEl key={i}>
               <Expansion
                 title="Show child attributes"
                 expandedModeTitle="Hide child attributes"
@@ -219,7 +187,7 @@ const NestedItems = ({ items }) =>
                   ),
                 )}
               </Expansion>
-            </ColumnContentEl>
+            </ColumnEl>
           );
         }
         if (dataTypeText) {
