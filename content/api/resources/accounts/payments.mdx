@@ -246,3 +246,23 @@ server.payments()
 ```
 
 </ExampleResponse>
+
+<CodeExample title="JavaScript Streaming Example">
+
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+var paymentHandler = function (paymentResponse) {
+  console.log(paymentResponse);
+};
+
+var es = server.payments()
+  .forAccount("GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ")
+  .cursor('now')
+  .stream({
+    onmessage: paymentHandler
+  })
+```
+
+</CodeExample>
