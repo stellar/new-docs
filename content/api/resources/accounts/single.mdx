@@ -1,0 +1,184 @@
+---
+title: Retrieve an Account
+order: 20
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { NestedTable } from "components/NestedTable";
+
+The single account endpoint provides information on a specific account.
+
+The balances section in the response will also list all the trustlines this account has established. Note this will only return trustlines that have the necessary authorization to work. If an account `A` trusts another account `B` that has the authorization required flag set, the trustline won’t show up until account `B` allows account `A` to hold its assets.
+
+<Endpoint>
+
+|     |                              |
+| --- | ---------------------------- |
+| GET | /accounts/:account_id |
+
+</Endpoint>
+
+<NestedTable>
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- account_id
+  - required
+  - This account's public key encoded in a base32 string representation.
+
+</NestedTable>
+
+<CodeExample title="Example Request">
+
+```curl
+curl "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA"
+```
+
+```JavaScript
+var StellarSdk = require('stellar-sdk');
+var server = new StellarSdk.Server('https://horizon.stellar.org');
+
+server.transactions()
+  .transaction("GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA")
+  .call()
+  .then(function (transactionResult) {
+    console.log(transactionResult)
+  })
+  .catch(function (err) {
+    console.log(err)
+  })
+```
+
+</CodeExample>
+
+<ExampleResponse title="Example Response">
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA"
+    },
+    "transactions": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/transactions{?cursor,limit,order}",
+      "templated": true
+    },
+    "operations": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/operations{?cursor,limit,order}",
+      "templated": true
+    },
+    "payments": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/payments{?cursor,limit,order}",
+      "templated": true
+    },
+    "effects": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/effects{?cursor,limit,order}",
+      "templated": true
+    },
+    "offers": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/offers{?cursor,limit,order}",
+      "templated": true
+    },
+    "trades": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/trades{?cursor,limit,order}",
+      "templated": true
+    },
+    "data": {
+      "href": "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/data/{key}",
+      "templated": true
+    }
+  },
+  "id": "GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA",
+  "account_id": "GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA",
+  "sequence": "120192344791187470",
+  "subentry_count": 5,
+  "last_modified_ledger": 28105812,
+  "thresholds": {
+    "low_threshold": 0,
+    "med_threshold": 0,
+    "high_threshold": 0
+  },
+  "flags": {
+    "auth_required": false,
+    "auth_revocable": false,
+    "auth_immutable": false
+  },
+  "balances": [
+    {
+      "balance": "3.0000000",
+      "limit": "922337203685.4775807",
+      "buying_liabilities": "0.0000000",
+      "selling_liabilities": "0.0000000",
+      "last_modified_ledger": 27984507,
+      "is_authorized": true,
+      "asset_type": "credit_alphanum4",
+      "asset_code": "EURT",
+      "asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
+    },
+    {
+      "balance": "20.0000000",
+      "limit": "922337203685.4775807",
+      "buying_liabilities": "0.0000000",
+      "selling_liabilities": "0.0000000",
+      "last_modified_ledger": 27984988,
+      "is_authorized": true,
+      "asset_type": "credit_alphanum4",
+      "asset_code": "CNY",
+      "asset_issuer": "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"
+    },
+    {
+      "balance": "199.9999990",
+      "limit": "922337203685.4775807",
+      "buying_liabilities": "0.0000000",
+      "selling_liabilities": "0.0000000",
+      "last_modified_ledger": 27984513,
+      "is_authorized": true,
+      "asset_type": "credit_alphanum4",
+      "asset_code": "NGNT",
+      "asset_issuer": "GAWODAROMJ33V5YDFY3NPYTHVYQG7MJXVJ2ND3AOGIHYRWINES6ACCPD"
+    },
+    {
+      "balance": "1.0000000",
+      "limit": "922337203685.4775807",
+      "buying_liabilities": "0.0000000",
+      "selling_liabilities": "0.0000000",
+      "last_modified_ledger": 27984972,
+      "is_authorized": true,
+      "asset_type": "credit_alphanum4",
+      "asset_code": "BB1",
+      "asset_issuer": "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN"
+    },
+    {
+      "balance": "4.0000000",
+      "limit": "922337203685.4775807",
+      "buying_liabilities": "0.0000000",
+      "selling_liabilities": "0.0000000",
+      "last_modified_ledger": 27985131,
+      "is_authorized": true,
+      "asset_type": "credit_alphanum4",
+      "asset_code": "USD",
+      "asset_issuer": "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"
+    },
+    {
+      "balance": "72.8563792",
+      "buying_liabilities": "0.0000000",
+      "selling_liabilities": "0.0000000",
+      "asset_type": "native"
+    }
+  ],
+  "signers": [
+    {
+      "weight": 1,
+      "key": "GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA",
+      "type": "ed25519_public_key"
+    }
+  ],
+  "data": {},
+  "paging_token": ""
+}
+```
+
+</ExampleResponse>
