@@ -72,16 +72,16 @@ export const findInitialOpenTopics = (data, pagePath, rootDir) => {
     initialTopicsState[relPath] = relPath === pgPath;
 
     const pathSegments = relPath.split("/");
+    const currentPathSegments = pgPath.split("/");
 
-    // if path is nested, open the parent dir as well
-    if (pathSegments.length > 2) {
-      const pagePathSegments = pgPath.split("/");
+    if (currentPathSegments.length > 2) {
       findPath(
         pathSegments.slice(0, pathSegments.length - 1).join("/"),
-        pagePathSegments.slice(0, pagePathSegments.length - 1).join("/"),
+        currentPathSegments.slice(0, currentPathSegments.length - 1).join("/"),
       );
     }
   };
+
   data.forEach((file) => {
     const relPath = buildRelPath(file.fieldValue, rootDir);
     findPath(relPath, pagePath);

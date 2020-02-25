@@ -18,7 +18,7 @@ const ContainerEl = styled.div`
   min-width: 176px;
 `;
 const SubscribeHeadingEl = styled(H4)`
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${PALETTE.black60};
   margin: 0;

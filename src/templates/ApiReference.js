@@ -78,7 +78,7 @@ const NavItemEl = styled.div`
     isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
 
   &:hover {
-    color: #999;
+    color: ${PALETTE.lightGrey};
   }
 `;
 const DocNavEl = styled(NavFooterLi)`
@@ -115,6 +115,7 @@ const DocsLink = ({ href, ...props }) => {
 const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
+  display: block;
 `;
 
 const isInViewport = (elem) => {

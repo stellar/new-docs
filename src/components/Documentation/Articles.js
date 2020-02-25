@@ -21,9 +21,11 @@ text-decoration: none;
 
 const ArticleLink = styled(Link)`
   ${topLevelNavItem}
-  font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
-  color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
-  padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
+  display: block;
+
+  &:hover {
+    color: ${PALETTE.lightGrey};
+  }
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
@@ -72,20 +74,31 @@ const ArticleList = styled.ul`
   }
 `;
 
-const Article = ({ article = {}, depth }) => {
+const CustomList = styled.li`
+  ${ArticleLink} {
+    font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
+    color: ${(props) =>
+      props.depth === 0 ? PALETTE.black80 : PALETTE.black60};
+    padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
+    font-weight: ${(props) =>
+      props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+  }
+`;
+
+const Article = ({ article = {}, activeItem, depth }) => {
   const { id, title, url } = article;
+  const isActive = url.includes(activeItem);
 
   return (
-    <li key={id}>
-      <ArticleLink depth={depth} href={url}>
-        {title}
-      </ArticleLink>
-    </li>
+    <CustomList key={id} isActive={isActive} depth={depth}>
+      <ArticleLink href={url}>{title}</ArticleLink>
+    </CustomList>
   );
 };
 
 Article.propTypes = {
-  depth: PropTypes.number.isRequired,
+  depth: PropTypes.number,
+  activeItem: PropTypes.string,
 };
 
 const Articles = ({
@@ -96,6 +109,7 @@ const Articles = ({
   title,
   topicPath,
   depth = 0,
+  activeItem,
 }) => {
   const [topicState, setTopicState] = React.useState(initialTopicsState);
   const isCollapsed = topicState[topicPath];
@@ -139,6 +153,7 @@ const Articles = ({
               topicPath={article.topicPath}
               topicState={topicState}
               topicToggleHandler={topicToggleHandler}
+              activeItem={activeItem}
               depth={depth + 1}
             />
           </ArticleList>
@@ -152,6 +167,7 @@ const Articles = ({
               isCollapsed={isCollapsed}
               article={article}
               depth={depth + 1}
+              activeItem={activeItem}
             />
           </ArticleList>
         ),
@@ -167,7 +183,8 @@ Articles.propTypes = {
   articles: PropTypes.object,
   title: PropTypes.string,
   topicPath: PropTypes.string,
-  depth: PropTypes.number.isRequired,
+  depth: PropTypes.number,
+  activeItem: PropTypes.string,
 };
 
 Article.propTypes = {
