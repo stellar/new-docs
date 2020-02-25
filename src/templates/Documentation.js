@@ -73,6 +73,7 @@ const RightNavEl = styled(StickyEl)`
 const NavItemEl = styled(BasicButton)`
   display: block;
   line-height: 1.5rem;
+  font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${(props) => (props.isActive ? THEME.text : THEME.lightGrey)};
   padding: 0.5rem 0;
