@@ -209,15 +209,17 @@ export const Preformatted = styled.pre`
     font-size: 0.8rem;
     line-height: 1.7;
     color: ${PALETTE.darkGrey};
-    white-space: pre;
   }
 
-  & ${Code} {
+  &&& ${Code} {
     display: inline-block;
-    padding: 0;
     border: none;
     background-color: transparent;
     line-height: inherit;
+    white-space: pre-wrap;
+    max-width: 90rem;
+    width: 1000rem;
+    word-break: break-all;
   }
   && .line-numbers-rows {
     font-family: ${PALETTE.normal};
