@@ -186,3 +186,23 @@ server.operations()
 ```
 
 </ExampleResponse>
+
+<CodeExample title="JavaScript Streaming Example">
+
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org');
+
+var operationHandler = function (operationResponse) {
+    console.log(operationResponse);
+};
+
+var es = server.operations()
+    .forAccount("GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA")
+    .cursor('now')
+    .stream({
+        onmessage: operationHandler
+    })
+```
+
+</CodeExample>
