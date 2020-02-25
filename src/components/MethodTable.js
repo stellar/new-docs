@@ -3,15 +3,16 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 import { PALETTE, FONT_WEIGHT } from "constants/styles";
+import { Code, Table } from "basics/Text";
 
 const MethodTableEl = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0 1.5rem;
   background: ${PALETTE.white80};
   border-radius: 4px;
   max-height: 56.25rem;
+  width: 100%;
 
   thead {
     display: none;
@@ -30,6 +31,7 @@ const MethodTableEl = styled.div`
 
 const TitleEl = styled.div`
   position: relative;
+  margin-left: 1.5rem;
   padding: 0;
   padding-top: 1.5rem;
   padding-bottom: 1rem;
@@ -42,6 +44,10 @@ const ContentEl = styled.div`
   padding: 0;
   padding-top: 1rem;
   padding-bottom: 1.5rem;
+
+  ${Code}, ${Table} {
+    padding-left: 1.5rem;
+  }
 `;
 
 /**

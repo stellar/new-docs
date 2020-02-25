@@ -209,16 +209,14 @@ export const Preformatted = styled.pre`
     font-size: 0.8rem;
     line-height: 1.7;
     color: ${PALETTE.darkGrey};
+    white-space: pre;
   }
 
   & ${Code} {
     display: inline-block;
-    max-width: 100%;
     padding: 0;
-    word-break: break-all;
     border: none;
     background-color: transparent;
-    overflow: auto;
     line-height: inherit;
   }
   && .line-numbers-rows {
