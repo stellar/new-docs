@@ -47,7 +47,7 @@ export const H3 = styled.h3`
   ${headingBase};
   font-size: 1.5rem;
   padding: 0;
-  margin: 1.22rem 0;
+  margin: 1.22rem 0 0;
 `;
 export const H4 = styled.h4`
   ${headingBase};
