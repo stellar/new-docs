@@ -45,7 +45,7 @@ export const ScrollRouter = ({ children }) => {
       activeNodeRef.current = newActiveNode;
       window.history.replaceState(null, null, routeMap.get(newActiveNode));
     }
-  }, 1000);
+  }, 60);
 
   // Scroll listener
   React.useEffect(() => {
