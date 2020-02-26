@@ -32,18 +32,22 @@ const headingBase = ({ theme }) => `
 export const H1 = styled.h1`
   ${headingBase};
   display: inline-block;
-  font-size: 2rem;
-  margin: 1.25em 0 0.67em;
+  font-size: 2.5rem;
+  margin: 4rem 0 0.5em;
   letter-spacing: -1.2px;
 `;
 export const H2 = styled.h2`
   ${headingBase};
   display: inline-block;
-  margin: 3.125rem 0 1.56rem;
+  font-size: 2.5rem;
+  margin: 3.125rem 0 0.5rem;
   letter-spacing: -1.2px;
 `;
 export const H3 = styled.h3`
   ${headingBase};
+  font-size: 1.5rem;
+  padding: 0;
+  margin: 1.22rem 0;
 `;
 export const H4 = styled.h4`
   ${headingBase};
