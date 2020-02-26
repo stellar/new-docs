@@ -20,7 +20,14 @@ const ScrollHackEl = styled.div`
   display: inline-block;
 `;
 
-export const makeLinkedHeader = (Component) => {
+// We need API Reference to treat these as normal links, so give an escape
+// hatch. We also need to be able to override the links, because JS-less
+// API ref pages (mostly for SEO but they should probably work right for
+// users that hit it) need to adjust the href.
+export const makeLinkedHeader = (
+  Component,
+  { treatIdAsHref = false, LinkComponent = Link } = {},
+) => {
   const El = styled(Component)`
     position: relative;
     padding-left: 1.25rem;
@@ -49,9 +56,9 @@ export const makeLinkedHeader = (Component) => {
     return (
       <ScrollHackEl id={id}>
         <El {...props}>
-          <Link href={`#${id}`}>
+          <LinkComponent href={treatIdAsHref ? id : `#${id}`}>
             <LinkIcon width={16} height={16} />
-          </Link>
+          </LinkComponent>
           {props.children}
         </El>
       </ScrollHackEl>

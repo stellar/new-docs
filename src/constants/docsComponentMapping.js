@@ -21,7 +21,7 @@ ListItem.propTypes = {
 
 const Div = styled.div``;
 
-const components = {
+export const components = {
   // eslint-disable-next-line react/prop-types
   div: ({ children, className, ...props }) => {
     if (className === "mermaid") {
@@ -49,15 +49,8 @@ const components = {
   sup: styled(TextComponents.Sup)`
     top: -0.375rem;
   `,
-  h1: styled(TextComponents.LinkedH1)`
-    font-size: 2.5rem;
-    margin-top: 4rem;
-    margin-bottom: 0.5rem;
-  `,
+  h1: styled(TextComponents.LinkedH1)``,
   h2: styled(TextComponents.LinkedH2)`
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-
     a {
       color: ${({ theme }) => theme.text};
       @media (${MEDIA_QUERIES.canHover}) {
@@ -68,11 +61,6 @@ const components = {
     }
   `,
   h3: styled(TextComponents.LinkedH3)`
-    font-size: 1.5rem;
-    padding: 0;
-    margin: 0;
-    margin-top: 1.22rem;
-
     a {
       color: ${({ theme }) => theme.text};
       @media (${MEDIA_QUERIES.canHover}) {
@@ -122,4 +110,3 @@ const components = {
   small: TextComponents.Small,
 };
 
-export default components;

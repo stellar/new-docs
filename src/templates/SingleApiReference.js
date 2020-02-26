@@ -13,13 +13,14 @@ import {
   FONT_WEIGHT,
   PALETTE,
 } from "constants/styles";
-import components from "constants/docsComponentMapping";
+import { components } from "constants/docsComponentMapping";
 
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
+import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 
 import { BasicButton } from "basics/Buttons";
-import { HorizontalRule, LinkedH1 } from "basics/Text";
+import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ArrowIcon } from "basics/Icons";
 
@@ -96,10 +97,27 @@ const renderItem = ({ depth, id, isActive, title }) => (
   </NavItemEl>
 );
 
+const headerOptions = {
+  treatIdAsHref: true,
+  LinkComponent: DocsLink,
+};
+const ApiRefH1 = makeLinkedHeader(H1, headerOptions);
+const ApiRefH2 = makeLinkedHeader(H2, headerOptions);
+const ApiRefH3 = makeLinkedHeader(H3, headerOptions);
+const ApiRefH4 = makeLinkedHeader(H4, headerOptions);
+const ApiRefH5 = makeLinkedHeader(H5, headerOptions);
+const ApiRefH6 = makeLinkedHeader(H6, headerOptions);
+
 const componentMap = {
   ...components,
   a: DocsLink,
   wrapper: ApiReferenceWrapper,
+  h1: styled(components.h1).attrs({ as: ApiRefH1 }),
+  h2: styled(components.h2).attrs({ as: ApiRefH2 }),
+  h3: styled(components.h3).attrs({ as: ApiRefH3 }),
+  h4: styled(components.h4).attrs({ as: ApiRefH4 }),
+  h5: styled(components.h5).attrs({ as: ApiRefH5 }),
+  h6: styled(components.h6).attrs({ as: ApiRefH6 }),
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
     if (children === "GET") {
@@ -166,7 +184,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             </SideNavColumn>
             <Column xs={9} xl={18}>
               <section>
-                <LinkedH1 id={path}>{frontmatter.title}</LinkedH1>
+                <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
                 <NestedRow>
                   <MDXRenderer>{body}</MDXRenderer>
                 </NestedRow>
