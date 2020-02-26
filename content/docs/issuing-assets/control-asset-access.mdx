@@ -3,6 +3,8 @@ title: Controlling access to an asset
 order: 50
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 ## High-level view of authorization flags
 When you issue an asset on Stellar, anyone can hold it by default.  In general, that’s a good thing: easy access means better reach and better liquidity, and most of the time, issuers with KYC requirements can handle those when an asset moves onto or off of the network.  Most fiat-backed token issuers, for instance, use the transfer server protocol specified in SEP-24 to decide whether to honor deposits and withdrawals rather than setting account-level flags.      
 
@@ -30,10 +32,12 @@ To get a sense of how authorization flags work, you can step through how an issu
 7. User cannot send or accept this asset
 
 ## Sample code
-The following example sets authorization to be both required and revocable:
-<CodeExample name="Asset Authorization">
 
-```js
+The following example sets authorization to be both required and revocable:
+
+<CodeExample title="Asset Authorization">
+
+```JavaScript
 var StellarSdk = require('stellar-sdk');
 var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
@@ -88,11 +92,4 @@ server.submitTransaction(setAuthorization);
 
 </CodeExample>
 
-
 The following example authorizes an account to hold an `auth_required` asset:
-<CodeExample name="Allow Trust">
-```
-Need code badly
-```
-</CodeExample>
-

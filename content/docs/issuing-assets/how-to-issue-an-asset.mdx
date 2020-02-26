@@ -3,6 +3,8 @@ title: How to issue an asset
 order: 20
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 ## High-level view of the steps
 There is no dedicated operation to create an asset on Stellar.  Instead, assets are created with a payment operation: an issuing account makes a payment using the asset it’s issuing, and that payment actually creates the asset on the network.
 
@@ -47,9 +49,10 @@ If you’re planning to do, really, anything with your asset, your next step is 
 Once you’ve done that, you can also create a sell offer to get your asset onto the Stellar decentralized exchange, and put some effort into market making to create liquidity for it.     
 
 ## Sample Code
-<code-example name="Issuing an Asset">
 
-```js
+<CodeExample title="Issuing an Asset">
+
+```JavaScript
 var StellarSdk = require('stellar-sdk');
 var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
@@ -190,4 +193,4 @@ _, err = horizon.DefaultTestNetClient.SubmitTransaction(paymentTxeB64)
 if err != nil { log.Fatal(err) }
 ```
 
-</code-example>
+</CodeExample>
