@@ -13,7 +13,7 @@ import {
   FONT_WEIGHT,
   PALETTE,
 } from "constants/styles";
-import components from "constants/docsComponentMapping";
+import { components } from "constants/docsComponentMapping";
 
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";

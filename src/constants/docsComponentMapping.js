@@ -21,7 +21,7 @@ ListItem.propTypes = {
 
 const Div = styled.div``;
 
-const components = {
+export const components = {
   // eslint-disable-next-line react/prop-types
   div: ({ children, className, ...props }) => {
     if (className === "mermaid") {
@@ -122,4 +122,3 @@ const components = {
   small: TextComponents.Small,
 };
 
-export default components;

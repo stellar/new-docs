@@ -13,7 +13,7 @@ import {
   THEME,
   REDESIGN_PALETTE,
 } from "constants/styles";
-import components from "constants/docsComponentMapping";
+import { components } from "constants/docsComponentMapping";
 
 import { slugify } from "helpers/slugify";
 import { smoothScrollTo } from "helpers/dom";
