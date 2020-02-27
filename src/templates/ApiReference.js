@@ -273,10 +273,14 @@ ReferenceSection.propTypes = {
 
 const AbsoluteEl = styled.div`
   position: absolute;
-  overflow-y: scroll;
+  overflow: hidden;
   height: calc(100% - 48px);
   width: 100%;
   bottom: 3.25rem;
+
+  &:hover {
+    overflow-y: scroll;
+  }
 `;
 
 // eslint-disable-next-line react/no-multi-comp
