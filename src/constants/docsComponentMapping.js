@@ -11,7 +11,10 @@ import * as TextComponents from "basics/Text";
 
 const ListItem = (props) => {
   const firstChild = React.Children.toArray(props.children)[0];
-  const hasCheckbox = firstChild.props && firstChild.props.type === "checkbox";
+
+  // checking 'firstChild &&' because there are cases when a list is intentionally empty
+  const hasCheckbox =
+    firstChild && firstChild.props && firstChild.props.type === "checkbox";
 
   return <TextComponents.ListItem hasDot={!hasCheckbox} {...props} />;
 };
@@ -109,4 +112,3 @@ export const components = {
   br: styled.br``,
   small: TextComponents.Small,
 };
-

@@ -99,10 +99,11 @@ const DATA_TYPES = {
   string: "string",
   number: "number",
   array: "array",
-  bool: "bool",
+  boolean: "boolean",
   object: "object",
   null: "null",
   undefined: "undefined",
+  "key type": "key type",
 };
 
 const ListItem = ({ items }) =>
