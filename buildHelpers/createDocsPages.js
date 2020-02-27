@@ -8,7 +8,12 @@ const {
   DOCS_ROOT,
 } = require("./routes");
 
-const isReference = (doc) => doc.relativeDirectory.includes(REFERENCE_ROOT);
+const isReference = (doc) => {
+  const pathSegments = doc.relativeDirectory.split("/");
+  const parentDirectory = pathSegments[0];
+
+  return parentDirectory.includes(REFERENCE_ROOT);
+};
 
 const createDocsPages = ({ actions, docs }) => {
   // TODO: These pages don't support internationalization. This should be
