@@ -95,13 +95,13 @@ When Horizon returns information about an account, it uses the following format:
       - string
       - The type of hash for this signer.
         - ed25519_public_key
-          - key type
+          - 
           - A normal Stellar public key.
         - sha256_hash
-          - key type
+          - 
           - The SHA256 hash of some arbitrary `x`. Adding a signature of this type allows anyone who knows x to sign a transaction from this account. *Note: Once this transaction is broadcast, x will be known publicly.*
         - preauth_tx
-          - key type
+          - 
           - The hash of a pre-authorized transaction. This signer is automatically removed from the account when a matching transaction is properly applied.
 - data
   - object
