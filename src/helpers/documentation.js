@@ -274,6 +274,9 @@ export const nextUpLink = (topicArticles, articleIndex, nextTopic) => {
 
 /**
  * findNextFirstArticle recursively drills down nested articles to find the first article we can link to
+ * Scenario 1: Next article is a sibling, simply return that article
+ * Scenario 2: Next article is in another topic, drill down a level to get that topic's articles
+ * Scenario 3: Next article is nested multiple levels deep, keep drilling down
  * @param {object} articleData List of articles of the current topic.
  * @returns {object} { title, url }
  */
