@@ -31,31 +31,6 @@ export const query = graphql`
 export const buildRelPath = (relativeDirectory, rootDir) =>
   relativeDirectory.replace(rootDir, "") || "/";
 
-export const nextUp = (topicArr, topicIndex, childArr, childIndex) => {
-  // End of list
-  if (topicIndex + 1 === topicArr.length) {
-    return { title: "", url: "" };
-  }
-
-  // Go to next topic
-  if (childIndex === childArr.length - 1) {
-    const nextTopic = topicArr[topicIndex + 1].nodes[0];
-    return {
-      title: nextTopic.fields
-        ? nextTopic.fields.metadata.data.title
-        : "MISSING METADATA.JSON",
-      url: `${buildPathFromFile(nextTopic.relativePath)}`,
-    };
-  }
-
-  // Go to next article in topic
-  const nextChild = childArr[childIndex + 1];
-  return {
-    title: nextChild.childMdx.frontmatter.title,
-    url: buildPathFromFile(nextChild.relativePath),
-  };
-};
-
 /**
  * findInitialOpenTopics builds an object of booleans signifying which nav items should be in an open state on page load.
  * @param {object} data Raw data from graphQL query.
@@ -199,7 +174,7 @@ export const buildDocsContents = (data, rootDir) => {
     );
   });
 
-  sortedDocs.forEach((topic, topicIndex, topicArr) => {
+  sortedDocs.forEach((topic) => {
     const { fieldValue: topicPath } = topic;
     const firstTopic = topic.nodes[0];
     const relPath = buildRelPath(topicPath, rootDir);
@@ -209,7 +184,7 @@ export const buildDocsContents = (data, rootDir) => {
       : "MISSING METADATA.JSON";
     const articles = {};
 
-    topic.nodes.forEach((node, childIndex, childArr) => {
+    topic.nodes.forEach((node) => {
       const { childMdx, modifiedTime, name, relativePath } = node;
       const {
         body,
@@ -224,7 +199,6 @@ export const buildDocsContents = (data, rootDir) => {
         modifiedTime,
         title: articleTitle || "{`title` Not Found}",
         url: buildPathFromFile(relativePath),
-        nextUp: nextUp(topicArr, topicIndex, childArr, childIndex),
       };
     });
     const rootPageData = {
@@ -235,7 +209,83 @@ export const buildDocsContents = (data, rootDir) => {
     insertPageData(relPath, contents, articles, rootPageData);
   });
 
+  // Now that content is in proper order, travel through tree and add Next Up link to each article
+  const contentsList = Object.values(contents);
+  contentsList.forEach((topicData, topicIndex) => {
+    const topicArticles = Object.values(topicData.articles);
+    const nextTopic = contentsList[topicIndex + 1];
+
+    addNextUpToArticles(topicArticles, 0, nextTopic);
+  });
   return contents;
+};
+
+/**
+ * addNextUpToArticles recursively travels through contents tree to add a Next Up property to each
+ * @param {array} articles List of articles of the current topic.
+ * @param {number} articleIndex The index of the article we're working with
+ * @param {number} nextTopic List of articles of the next topic
+ * @returns {void}
+ */
+const addNextUpToArticles = (articles, articleIndex, nextTopic) => {
+  if (articles.length === articleIndex) return;
+  const articleData = articles[articleIndex];
+  if (articleData && articleData.articles) {
+    addNextUpToArticles(Object.values(articleData.articles), 0, nextTopic);
+  } else {
+    Object.assign(articleData, {
+      nextUp: nextUpLink(articles, articleIndex, nextTopic),
+    });
+    addNextUpToArticles(articles, articleIndex + 1, nextTopic);
+  }
+};
+
+/**
+ * nextUpLink returns the url and title of the next article, whether it's in the same topic or if it's in the next topic
+ * @param {array} topicArticles List of articles of the current topic.
+ * @param {number} articleIndex The index of the article we're working with
+ * @param {number} nextTopic List of articles of the next topic
+ * @returns {object} { title, url }
+ */
+export const nextUpLink = (topicArticles, articleIndex, nextTopic) => {
+  // // Go to next topic
+  if (topicArticles.length === articleIndex + 1) {
+    // We've reached the end
+    if (!nextTopic) {
+      return null;
+    }
+    const nextTopicFirstArticle = findNextFirstArticle(nextTopic);
+
+    return {
+      title: nextTopicFirstArticle.title,
+      url: nextTopicFirstArticle.url,
+    };
+  }
+
+  // Go to next article in topic
+  const nextChild = topicArticles[articleIndex + 1];
+  const nextNestedFirstArticle = findNextFirstArticle(nextChild);
+
+  return {
+    title: nextNestedFirstArticle.title,
+    url: nextNestedFirstArticle.url,
+  };
+};
+
+/**
+ * findNextFirstArticle recursively drills down nested articles to find the first article we can link to
+ * @param {object} articleData List of articles of the current topic.
+ * @returns {object} { title, url }
+ */
+const findNextFirstArticle = (articleData) => {
+  if (!articleData.articles) return articleData;
+  const firstChild = Object.values(articleData.articles)[0];
+
+  if (firstChild.articles) {
+    return findNextFirstArticle(firstChild);
+  }
+
+  return firstChild;
 };
 
 // The `groupByCategory` function is used to build up the categories for the API
