@@ -304,7 +304,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 <Container>
                   <ApiReferenceRow>
                     <Column xs={3} xl={4}>
-                      <NavLogo pageName="Api Reference" />
+                      <NavLogo pageName="API Reference" />
                     </Column>
                   </ApiReferenceRow>
                 </Container>
