@@ -222,7 +222,7 @@ export const Preformatted = styled.pre`
     line-height: inherit;
     white-space: pre-wrap;
     max-width: 90rem;
-    width: 100%;
+    width: 1000rem;
     word-break: break-all;
   }
   && .line-numbers-rows {
