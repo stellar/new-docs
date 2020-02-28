@@ -1,0 +1,263 @@
+---
+title: Setup for anchored assets
+order: 20
+---
+
+So how do we make use of SEP-0024 for the purpose of depositing and withdrawing these anchored assets? Well first let’s boot our project with what we have so far.
+
+[View trustline boilerplate code on GitHub][1]
+
+Next we need to walk through what our goals are. Essentially what we’re attempting to do is connect with some other “lake” entity and deposit one of their assets  to the Stellar “lake”. From there we can interact with it just like we would any other Stellar asset. At any time though we can then withdraw that asset back to the original “lake” by following this flow in reverse. If you’re still a little lost it will all hopefully become clear as we get coding.
+
+This tutorial will consist of a few minor `./events/` updates and two new `./methods/`. Let’s start with the updates first. We actually need to update the core `wallet.ts` component.
+
+```ts
+import {
+  Component,
+  State,
+  Prop
+} from '@stencil/core'
+import {
+  Server,
+  ServerApi,
+} from 'stellar-sdk'
+
+import componentWillLoad from './events/componentWillLoad' // UPDATE
+import render from './events/render' // UPDATE
+
+import createAccount from './methods/createAccount'
+import updateAccount from './methods/updateAccount'
+import depositAsset from './methods/depositAsset' // NEW
+import withdrawAsset from './methods/withdrawAsset' // NEW
+import trustAsset from './methods/trustAsset'
+import makePayment from './methods/makePayment'
+import copyAddress from './methods/copyAddress'
+import copySecret from './methods/copySecret'
+import signOut from './methods/signOut'
+import setPrompt from './methods/setPrompt'
+
+import { Prompter } from '@prompt/prompt'
+
+interface StellarAccount {
+  publicKey: string,
+  keystore: string,
+  state?: ServerApi.AccountRecord,
+}
+
+interface Loading {
+  fund?: boolean,
+  pay?: boolean,
+  trust?: boolean,
+  update?: boolean,
+  deposit?: boolean, // NEW
+  withdraw?: boolean // NEW
+}
+
+@Component({
+  tag: 'stellar-wallet',
+  styleUrl: 'wallet.scss',
+  shadow: true
+})
+export class Wallet {
+  @State() account: StellarAccount
+  @State() prompter: Prompter = {show: false}
+  @State() loading: Loading = {}
+  @State() error: any = null
+
+  @Prop() server: Server
+  @Prop() homeDomain: String // NEW
+  @Prop() toml: Object // NEW
+
+  // Component events
+  componentWillLoad() {}
+  render() {}
+
+  // Stellar methods
+  createAccount = createAccount
+  updateAccount = updateAccount
+  depositAsset = depositAsset // NEW
+  withdrawAsset = withdrawAsset // NEW
+  trustAsset = trustAsset
+  makePayment = makePayment
+  copyAddress = copyAddress
+  copySecret = copySecret
+  signOut = signOut
+
+  // Misc methods
+  setPrompt = setPrompt
+}
+
+Wallet.prototype.componentWillLoad = componentWillLoad
+Wallet.prototype.render = render
+```
+
+You can see from the `// NEW` and `// UPDATE` comments what we are adding and updating. Nothing worth noting here other than near the bottom two new `@Prop`’s.
+
+```ts
+@Prop() homeDomain: String // NEW
+@Prop() toml: Object // NEW
+```
+
+We’ll talk more about home domain’s and toml files in a moment but take special note of these as they will play a critical roll in connecting with the world outside of Stellar.
+
+First let’s add a couple buttons for deposit and withdraw to the `./events/render.tsx`.
+
+```tsx
+import { h } from '@stencil/core'
+import { has as loHas } from 'lodash-es'
+
+export default function render() {
+  return [
+    <stellar-prompt prompter={this.prompter} />,
+
+    this.account
+    ? [
+      <div class="account-key">
+        <p>{this.account.publicKey}</p>
+        <button class="small" type="button" onClick={(e) => this.copyAddress(e)}>Copy Address</button>
+        <button class="small" type="button" onClick={(e) => this.copySecret(e)}>Copy Secret</button>
+      </div>,
+
+      <button class={this.loading.deposit ? 'loading' : null} type="button" onClick={(e) => this.depositAsset(e)}>{this.loading.deposit ? <stellar-loader /> : null} Deposit Asset</button>,
+      <button class={this.loading.withdraw ? 'loading' : null} type="button" onClick={(e) => this.withdrawAsset(e)}>{this.loading.withdraw ? <stellar-loader /> : null} Withdraw Asset</button>,
+
+      <button class={this.loading.trust ? 'loading' : null} type="button" onClick={(e) => this.trustAsset(e)}>{this.loading.trust ? <stellar-loader /> : null} Trust Asset</button>,
+      <button class={this.loading.pay ? 'loading' : null} type="button" onClick={(e) => this.makePayment(e)}>{this.loading.pay ? <stellar-loader /> : null} Make Payment</button>,
+    ]
+    : <button class={this.loading.fund ? 'loading' : null} type="button" onClick={(e) => this.createAccount(e)}>{this.loading.fund ? <stellar-loader /> : null} Create Account</button>,
+
+    this.error ? <pre class="error">{JSON.stringify(this.error, null, 2)}</pre> : null,
+
+    loHas(this.account, 'state') ? <pre class="account-state">{JSON.stringify(this.account.state, null, 2)}</pre> : null,
+
+    this.account ? [
+      <button class={this.loading.update ? 'loading' : null} type="button" onClick={(e) => this.updateAccount(e)}>{this.loading.update ? <stellar-loader /> : null} Update Account</button>,
+      <button type="button" onClick={(e) => this.signOut(e)}>Sign Out</button>,
+    ] : null,
+  ]
+}
+```
+
+Literally all we’re changing in this file from the previous tutorial is adding two buttons.
+
+```tsx
+<button class={this.loading.deposit ? 'loading' : null} type="button" onClick={(e) => this.depositAsset(e)}>{this.loading.deposit ? <stellar-loader /> : null} Deposit Asset</button>,
+<button class={this.loading.withdraw ? 'loading' : null} type="button" onClick={(e) => this.withdrawAsset(e)}>{this.loading.withdraw ? <stellar-loader /> : null} Withdraw Asset</button>,
+```
+
+“Deposit Asset” and “Withdraw Asset” connected to the `this.depositAsset` and `this.withdrawAsset` methods respectively. We’ll create those methods momentarily.
+
+Before that though let’s make a change to the `./events/componentWillLoad.ts` file.
+
+```ts
+import { Server, StellarTomlResolver } from 'stellar-sdk'
+import { handleError } from '@services/error'
+import { get } from '@services/storage'
+
+export default async function componentWillLoad() {
+  try {
+    let keystore = await get('keyStore')
+
+    this.error = null
+    this.server = new Server('https://horizon-testnet.stellar.org')
+    this.homeDomain = 'stellar-anchor-server.herokuapp.com'
+    this.toml = await StellarTomlResolver.resolve(this.homeDomain)
+
+    if (keystore) {
+      keystore = atob(keystore)
+
+      const { publicKey } = JSON.parse(atob(JSON.parse(keystore).adata))
+
+      this.account = {
+        publicKey,
+        keystore
+      }
+
+      this.updateAccount()
+    }
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+Only changes here are the inclusion of the `StellarTomlResolver` from the `stellar-sdk` package and setting the values for `this.homeDomain` and `this.toml`.
+
+```ts
+this.homeDomain = 'stellar-anchor-server.herokuapp.com'
+this.toml = await StellarTomlResolver.resolve(this.homeDomain)
+```
+
+You know what, let’s just go ahead and cover TOML files. A `stellar.toml` file lives at `https://{homeDomain}/.well-known/stellar.toml`. The Stellar SDK `StellarTomlResolver.resolve` method pulls that file in and parses it. These files contain all sorts of identification information. For instances here’s [StellarX.com’s TOML file][2].
+
+```Toml
+FEDERATION_SERVER="https://federation.stellarx.com/federation"
+
+ACCOUNTS=[
+"GDM4UWTGHCWSTM7Z46PNF4BLH35GS6IUZYBWNNI4VU5KVIHYSIVQ55Y6"
+]
+
+[DOCUMENTATION]
+ORG_NAME="Diamond Ltd."
+ORG_DBA="StellarX"
+ORG_URL="https://www.stellarx.com"
+ORG_LOGO="https://www.stellarx.com/emailAssets/stellarx.png"
+ORG_DESCRIPTION="The first full-featured trading app for Stellar's universal marketplace"
+ORG_PHYSICAL_ADDRESS="Hamilton, Bermuda"
+ORG_OFFICIAL_EMAIL="support@stellarx.com"
+```
+
+And another one by [AnchorUSD][3].
+
+```Toml
+# ----- AnchorUSD Stellar Anchor <www.anchorusd.com> -----
+
+NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
+
+ACCOUNTS=["GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX", "GASWJWFRYE55KC7MGANZMMRBK5NPXT3HMPDQ6SEXZN6ZPWYXVVYBFRTE"]
+TRANSFER_SERVER="https://api.anchorusd.com/transfer/"
+WEB_AUTH_ENDPOINT="https://api.anchorusd.com/api/webauth"
+
+[DOCUMENTATION]
+ORG_NAME="AnchorCoin LLC"
+ORG_DBA="AnchorUSD"
+ORG_URL="https://www.anchorusd.com"
+ORG_LOGO="https://www.anchorusd.com/assets/images/logo/logo.png"
+ORG_DESCRIPTION="AnchorUSD develops a stable cryptocurrency backed one-for-one to the US dollar."
+ORG_TWITTER="AnchorUSD"
+ORG_OFFICIAL_EMAIL="support@anchorusd.com"
+
+[[PRINCIPALS]]
+name="Jim Berkley-Danz"
+email="j@anchorusd.com"
+twitter="jimdanz"
+github="jimdanz"
+
+[[CURRENCIES]]
+code="USD"
+issuer="GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"
+display_decimals=2
+anchor_asset_type="fiat"
+anchor_asset="USD"
+name="US Dollar"
+desc="Cryptocurrency backed one-for-one to the US dollar.  All dollar deposits are held in an audited, US-domiciled escrow account for the exclusive benefit of AnchorUSD token holders."
+image="https://www.anchorusd.com/img/usdx.png"
+```
+
+You can see the different various data provided by these companies to help identify who they are, what they do and the services they provide. For our purposes in this tutorial we’re interested in the `\[\[CURRENCIES\]\]` they issue as that’s what we’re trying to get ahold of. To identify an anchor though we aren’t just looking for currencies we’re looking for the `TRANSFER\_SERVER` keyword. That and the existence of `WEB\_AUTH\_ENDPOINT` are the tickets we need to deposit and withdraw from this entity. Find these three fields and you’ve found a “lake” you can interoperate with.
+
+To learn everything you ever wanted to know about Stellar TOML files [read up on the official SEP-0001][4] which originated this feature.
+
+Once we’ve found an entity to deposit and withdraw from we can begin the process of connecting with them from our wallet. For our purposes while on testnet we’ll be utilizing an SDF testing anchor server located at `stellar-anchor-server.herokuapp.com` You can [view the TOML file for this entity][5] here.
+
+[Prev][6] — [Next][7]
+
+[1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/trustline
+[2]:	https://www.stellarx.com/.well-known/stellar.toml
+[3]:	https://www.anchorusd.com/.well-known/stellar.toml
+[4]:	https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md
+[5]:	https://stellar-anchor-server.herokuapp.com/.well-known/stellar.toml
+[6]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/1%20SEP-0024%20Explained.md
+[7]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/3%20Deposit%20Anchored%20Assets.md
