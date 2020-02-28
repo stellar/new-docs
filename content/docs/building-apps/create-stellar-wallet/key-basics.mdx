@@ -1,7 +1,35 @@
 ---
-title: Basic key creation, storage, and use
+title: Create a Basic Wallet
 order: 10
 ---
+
+## Key Management
+Step one for any user service is to sort out onboarding. This is a doubly crucial step for crypto services as a large part of your offering will revolve around the Stellar account we append to the user object.
+
+At its core, though, any app built on Stellar relies on the same basic functions: key storage, account creation, transaction signing, and queries to the Stellar database.
+
+There are several considerations when beginning this process, the first and most important of which is who will “own” the account. There are three answers to that question and the right answer for you will depend on your use case.
+
+1. You, the service provider, will store and delegate key usage rights to the user. You will be a “custodial” service.
+2. The user will store their own account credentials, and will permission your app to send requests or delegate transaction signing. This is a “non-custodial” service.
+3. A mixture of the two via multisig. This is especially useful for maintaining non-custodial status while still allowing for account recovery.
+
+For our purposes, and in general we will assume #2. Be very careful taking a custodial stance or any mixture where you as the service provider are storing user secrets. It’s easy to get wrong and the consequences can be devastating.
+
+Rolling with the #2 option however poses some very real usability issues as your user must now securely store their own account credentials and safely and intelligently navigate transaction signing on their end. There are several user friendly options out there one of which is a keystore file guarded by a passphrase. This keystore file is stored locally on the browser with the ability to export/import that keystore into other systems. As long as the passphrase is secure enough it’s a pretty good system. I wouldn’t recommend it for higher security production applications or anything beyond what you would traditionally guard  with a basic password but for our purposes today it’ll work just fine.
+
+---- 
+
+Other options here would include things like:
+
+- [Albedo][1]
+- [StellarAuth][2]
+- [Stellar Authenticator][3]
+- [Ledger][4]
+- [Trezor][5]
+- [StellarGuard][6]
+- [LobstrVault][7]
+
 
 With our Stencil project setup it’s time to generate, store and use Stellar accounts.
 
@@ -11,7 +39,7 @@ Once the tough decisions of where and how to store keys has been made the actual
 
 We’ll be doing all our work right inside of `src/components/wallet/` so let’s head over there now.
 
-> In this tutorial the goal is simply to get to a place where a user can create, store and access their Stellar account through an intuitive pincode encryption method.
+> In this tutorial the goal is simply to get to a place where a user can create, store, and access their Stellar account through an intuitive pincode encryption method.
 
 As far as the StellarSdk goes we’re actually only going to be utilizing one Keypair command `StellarSdk.Keypair.random()`. That’ll be the easy part, generating a new valid Stellar keypair. The work will be in storing that vital information in a secure yet accessible manner.
 
@@ -744,3 +772,13 @@ In summary a pretty basic tutorial but lays an incredibly solid foundation for a
 [10]:	https://github.com/tyvdh/stellar-demo-wallet/tree/keystore
 [11]:	/1%20Create%20a%20Stellar%20Wallet/0%20Intro.md
 [12]:	/2%20Make%20XLM%20Payments/0%20Intro.md
+
+[1]:	https://albedo.link/
+[2]:	https://stellarauth.com/
+[3]:	https://stellar-authenticator.org/
+[4]:	https://www.ledger.com/
+[5]:	https://trezor.io/
+[6]:	https://stellarguard.me/
+[7]:	https://vault.lobstr.co/
+[8]:	/0%20Stellar%20Wallet%20Overview/1%20Project%20Setup.md
+[9]:	/1%20Create%20a%20Stellar%20Wallet/1%20Basic%20Key%20Creation%2C%20Storage%20and%20Use.md
