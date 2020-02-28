@@ -1,0 +1,40 @@
+---
+title: Basic key creation, storage, and use
+order: 10
+---
+
+Alright, to the computer! Step one for any user service is sorting out how you're going to get people onboarded into your app. This is a doubly crucial step for crypto services as a large part of your offering will revolve around the Stellar account we append to the user object.
+
+There are several considerations when beginning this process, the first and most important of which is who will “own” the account. There are three answers to that question and the right answer for you will depend on your use case.
+
+1. You, the service provider, will store and delegate key usage rights to the user. You will be a “custodial” service.
+2. They, the users, will store their own account credentials and will permission your app to send requests or delegate transaction signing. This would be a “non-custodial” service.
+3. A mixture of the two via multisig. Especially useful for maintaining non-custodial status while still allowing for account recovery.
+
+For our purposes, and in general we will assume #2. Be very careful taking a custodial stance or any mixture where you as the service provider are storing user secrets. It’s easy to get wrong and the consequences can be devastating.
+
+Rolling with the #2 option however poses some very real usability issues as your user must now securely store their own account credentials and safely and intelligently navigate transaction signing on their end. There are several user friendly options out there one of which is a keystore file guarded by a passphrase. This keystore file is stored locally on the browser with the ability to export/import that keystore into other systems. As long as the passphrase is secure enough it’s a pretty good system. I wouldn’t recommend it for higher security production applications or anything beyond what you would traditionally guard  with a basic password but for our purposes today it’ll work just fine.
+
+---- 
+
+Other options here would include things like:
+
+- [Albedo][1]
+- [StellarAuth][2]
+- [Stellar Authenticator][3]
+- [Ledger][4]
+- [Trezor][5]
+- [StellarGuard][6]
+- [LobstrVault][7]
+
+[Prev][8] — [Next][9]
+
+[1]:	https://albedo.link/
+[2]:	https://stellarauth.com/
+[3]:	https://stellar-authenticator.org/
+[4]:	https://www.ledger.com/
+[5]:	https://trezor.io/
+[6]:	https://stellarguard.me/
+[7]:	https://vault.lobstr.co/
+[8]:	/0%20Stellar%20Wallet%20Overview/1%20Project%20Setup.md
+[9]:	/1%20Create%20a%20Stellar%20Wallet/1%20Basic%20Key%20Creation%2C%20Storage%20and%20Use.md
