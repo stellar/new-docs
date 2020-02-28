@@ -16,39 +16,39 @@ When Horizon returns information about an order book, it uses the following form
 - bids
   - object
   - The prices and amounts for the buyside of the asset pair.
-  - price_r
-    - object
-    - A precise representation of the bid price of the asset pair.
-      - n
-        - number
-        - The numerator.
-      - d
-        - number
-        - The denominator.
-  - price
-    - string
-    - The bid price of the base asset denominated in the counter asset. A number representing the decimal form of `price_r`.
-  - amount
-    - string
-    - The amount of counter asset that the account making this offer is willing to buy at this price.
+    - price_r
+      - object
+      - A precise representation of the bid price of the asset pair.
+        - n
+          - number
+          - The numerator.
+        - d
+          - number
+          - The denominator.
+    - price
+      - string
+      - The bid price of the base asset denominated in the counter asset. A number representing the decimal form of `price_r`.
+    - amount
+      - string
+      - The amount of counter asset that the account making this offer is willing to buy at this price.
 - asks
   - object
   - The prices and amounts for the sellside of the asset pair.
-  - price_r
-    - object
-    - A precise representation of the ask price of the asset pair.
-      - n
-        - number
-        - The numerator.
-      - d
-        - number
-        - The denominator.
-  - price
-    - string
-    - The ask price of the base asset denominated in the counter asset. A number representing the decimal form of `price_r`.
-  - amount
-    - string
-    - The amount of counter asset that the account making this offer is willing to sell at this price.
+    - price_r
+      - object
+      - A precise representation of the ask price of the asset pair.
+        - n
+          - number
+          - The numerator.
+        - d
+          - number
+          - The denominator.
+    - price
+      - string
+      - The ask price of the base asset denominated in the counter asset. A number representing the decimal form of `price_r`.
+    - amount
+      - string
+      - The amount of counter asset that the account making this offer is willing to sell at this price.
 - base
   - object
   - Details about the base asset.
