@@ -1,0 +1,642 @@
+---
+title: XLM payments
+order: 10
+---
+
+To the computer!
+
+> In this tutorial we’re going to modify our base wallet app to include functionality to send other Stellar accounts some XLM.
+
+[View keystore boilerplate code on GitHub][1]
+
+So right now we’ve got a method for creating an account and for storing the account secrets securely and usably. From here we can begin to more fully utilize all of the Stellar asset management goodness. You’ll be happy to know there isn’t too much new or complicated here, just building on what we already have. Again most of the work will be in `src/components/wallet/`, however before we dive into that file let’s clean up our project just a touch and add a little helpful polish. Namely a loader component.
+
+Hopefully by now you’re familiar with how to generate new Stencil components.
+
+```bash
+npm run generate
+```
+
+We'll call it `stellar-loader` and deselect both test files leaving only the styling. Once we’ve got that open `src/components/loader/` and rename the `.css` file to `.scss`. After that replace the `loader.tsx` contents with this.
+
+```tsx
+import Combinatorics from 'js-combinatorics'
+import {
+  Component,
+  h,
+  State,
+  Prop
+} from '@stencil/core';
+import {
+  isEqual as loIsEqual,
+  sample as loSample
+} from 'lodash-es'
+
+@Component({
+  tag: 'stellar-loader',
+  styleUrl: 'loader.scss',
+  shadow: true
+})
+export class Loader {
+  @State() chances: any = []
+  @State() chance: any = null
+  @Prop() interval: any
+
+  componentWillLoad() {
+    return new Promise((resolve) => {
+      if (!this.chances.length)
+        this.generateChances(9)
+
+      if (!this.interval)
+        this.interval = setInterval(() => this.getChance(), 100)
+
+      resolve()
+    })
+  }
+
+  generateChances(int: number) {
+    const baseN = Combinatorics.baseN([0, 1], int)
+
+    this.chances = baseN.toArray()
+    this.getChance()
+  }
+  getChance() {
+    const chance = loSample(this.chances)
+
+    if (loIsEqual(chance, this.chance))
+      this.getChance()
+    else
+      this.chance = chance
+  }
+
+  render() {
+    return (
+      <div class="loader">
+        {this.chance.map((int, i) =>
+          <div class={int ? 'on' : null} key={`${int}${i}`}></div>
+        )}
+      </div>
+    )
+  }
+}
+```
+
+Don’t forget to install new packages kids!
+
+```bash
+npm i -D js-combinatorics
+```
+
+It’s a fancy wackadoodle little component which at the end of the day just produces a little loader for use in our action buttons.
+
+![][image-1]
+
+Okie dokie, we’re now ready to tackle the `src/components/wallet/wallet.ts` file.
+
+```ts
+import {
+  Component,
+  State,
+  Prop
+} from '@stencil/core'
+import {
+  Server,
+  ServerApi,
+} from 'stellar-sdk'
+
+import componentWillLoad from './events/componentWillLoad'
+import render from './events/render'
+
+import createAccount from './methods/createAccount'
+import updateAccount from './methods/updateAccount'
+import makePayment from './methods/makePayment'
+import copyAddress from './methods/copyAddress'
+import copySecret from './methods/copySecret'
+import signOut from './methods/signOut'
+import setPrompt from './methods/setPrompt'
+
+import { Prompter } from '@prompt/prompt'
+
+interface StellarAccount {
+  publicKey: string,
+  keystore: string,
+  state?: ServerApi.AccountRecord,
+}
+
+interface Loading {
+  fund?: boolean,
+  pay?: boolean,
+  update?: boolean,
+}
+
+@Component({
+  tag: 'stellar-wallet',
+  styleUrl: 'wallet.scss',
+  shadow: true
+})
+export class Wallet {
+  @State() account: StellarAccount
+  @State() prompter: Prompter = {show: false}
+  @State() loading: Loading = {}
+  @State() error: any = null
+
+  @Prop() server: Server
+
+  // Component events
+  componentWillLoad() {}
+  render() {}
+
+  // Stellar methods
+  createAccount = createAccount
+  updateAccount = updateAccount
+  makePayment = makePayment
+  copyAddress = copyAddress
+  copySecret = copySecret
+  signOut = signOut
+
+  // Misc methods
+  setPrompt = setPrompt
+}
+
+Wallet.prototype.componentWillLoad = componentWillLoad
+Wallet.prototype.render = render
+```
+
+If you’ve followed other tutorials in this series much of this may be review but we’ll just walk along this file and see exactly what’s going on.
+
+```ts
+import {
+  Component,
+  State,
+  Prop
+} from '@stencil/core'
+import {
+  Server,
+  ServerApi,
+} from 'stellar-sdk'
+
+import componentWillLoad from './events/componentWillLoad' // UPDATE
+import render from './events/render' // UPDATE
+
+import createAccount from './methods/createAccount' // UPDATE
+import updateAccount from './methods/updateAccount' // NEW
+import makePayment from './methods/makePayment' // NEW
+import copyAddress from './methods/copyAddress'
+import copySecret from './methods/copySecret'
+import signOut from './methods/signOut'
+import setPrompt from './methods/setPrompt'
+
+import { Prompter } from '@prompt/prompt'
+```
+
+Imports galore! Nothing really noteworthy here other than you’ll notice we’re importing `./methods/updateAccount` and `./methods/makePayment` methods which we’ll be creating soon. There are a number of updates in the other methods from previous tutorials and we’ll walk through all of those in a moment as well.
+
+```ts
+interface StellarAccount { // UPDATE
+  publicKey: string,
+  keystore: string,
+  state?: ServerApi.AccountRecord,
+}
+
+interface Loading { // NEW
+  fund?: boolean,
+  pay?: boolean,
+  update?: boolean,
+}
+```
+
+Here we’re setting up two TypeScript classes one for our account and the other for our loading states. Pretty simple stuff.
+
+```ts
+@Component({
+  tag: 'stellar-wallet',
+  styleUrl: 'wallet.scss',
+  shadow: true
+})
+export class Wallet {
+  @State() account: StellarAccount
+  @State() prompter: Prompter = {show: false}
+  @State() loading: Loading = {} // NEW
+  @State() error: any = null
+
+  @Prop() server: Server // NEW
+
+  ...
+}
+```
+
+Here we set up our `@State`’s, those dynamic properties with values which will change and alter the DOM of the component, and our `@Prop` which will hold in this case a static reference to our Stellar server instance.
+
+Next let’s update our two component events `./events/componentWillLoad.ts` and `./events/render.tsx`.
+
+```ts
+import { Server } from 'stellar-sdk'
+import { handleError } from '@services/error'
+import { get } from '@services/storage'
+
+export default async function componentWillLoad() {
+  try {
+    let keystore = await get('keyStore')
+
+    this.error = null
+    this.server = new Server('https://horizon-testnet.stellar.org')
+
+    if (keystore) {
+      keystore = atob(keystore)
+
+      const { publicKey } = JSON.parse(atob(JSON.parse(keystore).adata))
+
+      this.account = {
+        publicKey,
+        keystore
+      }
+
+      this.updateAccount()
+    }
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+In Stencil’s `componentWillLoad` method we set up our default values for the States and Props we initialized earlier. Most notably in this case we’re setting our server and account. You’ll notice we’re utilizing the `horizon-testnet` for now for obvious reasons, in production you’d likely want to change this to just the `horizon` endpoint or even one of your own Horizon API endpoints. For the account we’re simply checking to see if a `keyStore` value has been stored and if so we’re grabbing the public key and keystore from it and adding those to the account `@State`. The `state` value, which is optional, is not set here as we’ll need to run the method `updateAccount()` to find if the account exists and if so what the state of that account looks like. We’ll get to that method shortly. For now let’s update our `render.tsx` method next.
+
+```tsx
+import { h } from '@stencil/core'
+import { has as loHas } from 'lodash-es'
+
+export default function render() {
+  return [
+    <stellar-prompt prompter={this.prompter} />,
+
+    this.account
+    ? [
+      <div class="account-key">
+        <p>{this.account.publicKey}</p>
+        <button class="small" type="button" onClick={(e) => this.copyAddress(e)}>Copy Address</button>
+        <button class="small" type="button" onClick={(e) => this.copySecret(e)}>Copy Secret</button>
+      </div>,
+
+      <button class={this.loading.pay ? 'loading' : null} type="button" onClick={(e) => this.makePayment(e)}>{this.loading.pay ? <stellar-loader /> : null} Make Payment</button>,
+    ]
+    : <button class={this.loading.fund ? 'loading' : null} type="button" onClick={(e) => this.createAccount(e)}>{this.loading.fund ? <stellar-loader /> : null} Create Account</button>,
+
+    this.error ? <pre class="error">{JSON.stringify(this.error, null, 2)}</pre> : null,
+
+    loHas(this.account, 'state') ? <pre class="account-state">{JSON.stringify(this.account.state, null, 2)}</pre> : null,
+
+    this.account ? [
+      <button class={this.loading.update ? 'loading' : null} type="button" onClick={(e) => this.updateAccount(e)}>{this.loading.update ? <stellar-loader /> : null} Update Account</button>,
+      <button type="button" onClick={(e) => this.signOut(e)}>Sign Out</button>,
+    ] : null,
+  ]
+}
+```
+
+Yikers amirite!? Don’t worry though, it’s actually quite simple if you’ve spent any time with HTML in JS before. Just a few ternary operators toggling the UI between different states based on the account status. Basically just a bunch of buttons wired up to their subsequent actions. Which, as it turns out, are next on the list to create! `updateAccount` and `makePayment` are new while `createAccount` will just need a few tweaks. Let’s start with that one.
+
+```ts
+import sjcl from '@tinyanvil/sjcl'
+import axios from 'axios'
+import { Keypair } from 'stellar-sdk'
+
+import { handleError } from '@services/error'
+import { set } from '@services/storage'
+
+export default async function createAccount(e: Event) {
+  try {
+    e.preventDefault()
+
+    const pincode_1 = await this.setPrompt('Enter a keystore pincode')
+    const pincode_2 = await this.setPrompt('Enter keystore pincode again')
+
+    if (
+      !pincode_1
+      || !pincode_2
+      || pincode_1 !== pincode_2
+    ) throw 'Invalid pincode'
+
+    this.error = null
+    this.loading = {...this.loading, fund: true}
+
+    const keypair = Keypair.random()
+
+    await axios(`https://friendbot.stellar.org?addr=${keypair.publicKey()}`)
+    .finally(() => this.loading = {...this.loading, fund: false})
+
+    this.account = {
+      publicKey: keypair.publicKey(),
+      keystore: sjcl.encrypt(pincode_1, keypair.secret(), {
+        adata: JSON.stringify({
+          publicKey: keypair.publicKey()
+        })
+      })
+    }
+
+    await set('keyStore', btoa(this.account.keystore))
+
+    this.updateAccount()
+  }
+
+  catch(err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+Quite actually the only new thing we’re adding here, besides adding a loading state and an initial `this.updateAccount()` call at the end, is the call to [friendbot.stellar.org][2] which will automatically fund our new testnet account with 10,000 XLM, a nice little shortcut to kickstart our development.
+
+```ts
+await axios(`https://friendbot.stellar.org?addr=${keypair.publicKey()}`)
+.finally(() => this.loading = {...this.loading, fund: false})
+```
+
+In production this funding process would need to be handled by other means, either your service or by the user themselves operating as the funding source.
+
+So that’s the updated `./methods/createAccount.ts` file. Now let’s create two new files for updating the account and making XLM payments.
+
+```bash
+touch src/components/wallet/methods/{updateAccount,makePayment}.ts
+```
+
+Let’s start with the simpler one, `./methods/updateAccount.ts`
+
+```ts
+import {
+  omit as loOmit,
+  map as loMap
+} from 'lodash-es'
+
+import { handleError } from '@services/error'
+
+export default async function updateAccount(e?: Event) {
+  try {
+    if (e) e.preventDefault()
+
+    this.error = null
+    this.loading = {...this.loading, update: true}
+
+    await this.server
+    .accounts()
+    .accountId(this.account.publicKey)
+    .call()
+    .then((account) => {
+      account.balances = loMap(account.balances, (balance) => loOmit(balance, [
+        'limit',
+        'buying_liabilities',
+        'selling_liabilities',
+        'is_authorized',
+        'last_modified_ledger',
+        balance.asset_type !== 'native' ? 'asset_type' : null
+      ]))
+
+      this.account = {...this.account, state: loOmit(account, [
+        'id',
+        '_links',
+        'sequence',
+        'subentry_count',
+        'last_modified_ledger',
+        'flags',
+        'thresholds',
+        'account_id',
+        'signers',
+        'paging_token',
+        'data_attr'
+      ])}
+    })
+    .finally(() => this.loading = {...this.loading, update: false})
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+All we’re doing here is looking up the state of our Stellar account on the ledger and saving that to the `this.account.state`. You’ll also notice we’re omitting several fields from the account and balances of the account for easier readability. You may choose to save these and just selectively display the values you care about. In our example we’re just displaying the raw JSON so cleaning things up a little is the right move here. `this.account = {...this.account, state: loOmit(account, ['id', ...])}` may feel odd but it’s just the Stencil way of updating a state’s object key in such a way as to trigger a re-render of the DOM. You’ll notice `this.loading` follows the same pattern. We’ll make use of this data further down in the `render` method but for now just know this is how we would grab ahold of the account to get the latest state for our account.
+
+Next let’s break down the main subject method for this tutorial, `./methods/makePayment.ts`. Dun dun duuuun!!
+
+```ts
+import sjcl from '@tinyanvil/sjcl'
+import {
+  Keypair,
+  Account,
+  TransactionBuilder,
+  BASE_FEE,
+  Networks,
+  Operation,
+  Asset
+} from 'stellar-sdk'
+import { has as loHas } from 'lodash-es'
+
+import { handleError } from '@services/error'
+
+export default async function makePayment(e: Event) {
+  try {
+    e.preventDefault()
+
+    let instructions = await this.setPrompt('{Amount} {Destination}')
+        instructions = instructions.split(' ')
+
+    const pincode = await this.setPrompt('Enter your keystore pincode')
+
+    if (
+      !instructions
+      || !pincode
+    ) return
+
+    const keypair = Keypair.fromSecret(
+      sjcl.decrypt(pincode, this.account.keystore)
+    )
+
+    this.error = null
+    this.loading = {...this.loading, pay: true}
+
+    await this.server
+    .accounts()
+    .accountId(keypair.publicKey())
+    .call()
+    .then(({sequence}) => {
+      const account = new Account(keypair.publicKey(), sequence)
+      const transaction = new TransactionBuilder(account, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.TESTNET
+      })
+      .addOperation(Operation.payment({
+        destination: instructions[1],
+        asset: Asset.native(),
+        amount: instructions[0]
+      }))
+      .setTimeout(0)
+      .build()
+
+      transaction.sign(keypair)
+      return this.server.submitTransaction(transaction)
+      .catch((err) => {
+        if ( // Paying an account which doesn't exist, create it instead
+          loHas(err, 'response.data.extras.result_codes.operations')
+          && err.response.data.status === 400
+          && err.response.data.extras.result_codes.operations.indexOf('op_no_destination') !== -1
+        ) {
+          const transaction = new TransactionBuilder(account, {
+            fee: BASE_FEE,
+            networkPassphrase: Networks.TESTNET
+          })
+          .addOperation(Operation.createAccount({
+            destination: instructions[1],
+            startingBalance: instructions[0]
+          }))
+          .setTimeout(0)
+          .build()
+
+          transaction.sign(keypair)
+          return this.server.submitTransaction(transaction)
+        }
+
+        else throw err
+      })
+    })
+    .then((res) => console.log(res))
+    .finally(() => {
+      this.loading = {...this.loading, pay: false}
+      this.updateAccount()
+    })
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+This method is quite massive so let’s break it down further by its parts to help understand what exactly is going on.
+
+```ts
+export default async function makePayment(e: Event) {
+  try {
+    e.preventDefault()
+
+    let instructions = await this.setPrompt('{Amount} {Destination}')
+        instructions = instructions.split(' ')
+
+    const pincode = await this.setPrompt('Enter your keystore pincode')
+
+    if (
+      !instructions
+      || !pincode
+    ) return
+
+...
+```
+
+We’re going to need a couple pieces of info from the user, namely the amount of XLM to send, what address to send it to and the pincode for unlocking the keystore file. We request those asynchronously and cancel out of the method if they aren’t provided.
+
+```ts
+...
+
+    const keypair = Keypair.fromSecret(
+      sjcl.decrypt(pincode, this.account.keystore)
+    )
+
+    this.error = null
+    this.loading = {...this.loading, pay: true}
+
+...
+```
+
+From there we unpack the keystore with the pincode and reset any existing errors and trigger the `pay` loading boolean.
+
+```ts
+ ...
+
+    await this.server
+    .accounts()
+    .accountId(keypair.publicKey())
+    .call()
+    .then(({sequence}) => {
+      const account = new Account(keypair.publicKey(), sequence)
+      const transaction = new TransactionBuilder(account, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.TESTNET
+      })
+      .addOperation(Operation.payment({
+        destination: instructions[1],
+        asset: Asset.native(),
+        amount: instructions[0]
+      }))
+      .setTimeout(0)
+      .build()
+
+      transaction.sign(keypair)
+      return this.server.submitTransaction(transaction)
+
+...
+```
+
+From there we call the keypair account to retrieve its current sequence number so we can prepare a transaction with a payment operation. We set the destination and amount to the instructions from the prompt we collected and split earlier. Finally we build, sign and submit that transaction to the Stellar Horizon API server.
+
+```ts
+...
+
+      .catch((err) => {
+        if ( // Paying an account which doesn't exist, create it instead
+          loHas(err, 'response.data.extras.result_codes.operations')
+          && err.response.data.status === 400
+          && err.response.data.extras.result_codes.operations.indexOf('op_no_destination') !== -1
+        ) {
+          const transaction = new TransactionBuilder(account, {
+            fee: BASE_FEE,
+            networkPassphrase: Networks.TESTNET
+          })
+          .addOperation(Operation.createAccount({
+            destination: instructions[1],
+            startingBalance: instructions[0]
+          }))
+          .setTimeout(0)
+          .build()
+
+          transaction.sign(keypair)
+          return this.server.submitTransaction(transaction)
+        }
+
+        else throw err
+      })
+
+...
+```
+
+There’s an obvious issue in our method right now and that’s if the account we want to send XLM hasn’t been created yet, this `catch` handles that potential issue and if `op_no_destination` is sent back on the payment attempt we’ll try again with a `createAccount` operation. For any other issues we’ll just pass the error on unmodified.
+
+```ts
+    })
+    .then((res) => console.log(res))
+    .finally(() => {
+      this.loading = {...this.loading, pay: false}
+      this.updateAccount()
+    })
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+Finally we log any success transaction, kill the loader and `updateAccount` to reflect the new balance in our account after successfully sending XLM. We also have our `catch` block which passes to the `handleError` service which will trickle down to render a nice error block in the UI.
+
+There we go! That wasn’t so bad right? Pretty simple, and yet from this tutorial we have the power to make payments, keep and observe balances between users using the power of the Stellar ledger. Amazing!
+
+[View this code on GitHub][3]
+
+[Prev][4] — [Next][5]
+
+[1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/keystore
+[2]:	https://friendbot.stellar.org/
+[3]:	https://github.com/tyvdh/stellar-demo-wallet/tree/pay
+[4]:	/2%20Make%20XLM%20Payments/0%20Intro.md
+[5]:	/3%20Make%20Use%20of%20Trustlines/0%20Intro.md
+
+[image-1]:	https://tyler.link/pM4Z2R+

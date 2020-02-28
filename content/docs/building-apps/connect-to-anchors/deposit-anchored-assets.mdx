@@ -1,0 +1,380 @@
+---
+title: Deposit anchored assets
+order: 30
+---
+
+Alright, with our entity in hand, the TOML file loaded into a `@Prop` on our component, we’re ready to begin the initial deposit of their asset into our wallet. Let’s create `./methods/depositAsset.ts`.
+
+```ts
+import sjcl from '@tinyanvil/sjcl'
+import {
+  Transaction,
+  Keypair,
+} from 'stellar-sdk'
+import axios from 'axios'
+import {
+  get as loGet,
+  each as loEach,
+  findIndex as loFindIndex,
+} from 'lodash-es'
+
+import { handleError } from '@services/error'
+
+export default async function depositAsset(e: Event) {
+  try {
+    e.preventDefault()
+
+    let currency = await this.setPrompt('Select the currency you\'d like to deposit', null, this.toml.CURRENCIES)
+        currency = currency.split(':')
+
+    const pincode = await this.setPrompt('Enter your keystore pincode')
+
+    if (!pincode)
+        return
+
+    const balances = loGet(this.account, 'state.balances')
+    const hasCurrency = loFindIndex(balances, {
+      asset_code: currency[0],
+      asset_issuer: currency[1]
+    })
+
+    if (hasCurrency === -1)
+      await this.trustAsset(null, currency[0], currency[1], pincode)
+
+    const info = await axios.get(`${this.toml.TRANSFER_SERVER}/info`)
+    .then(({data}) => data)
+
+    console.log(info)
+
+    const auth = await axios.get(`${this.toml.WEB_AUTH_ENDPOINT}`, {
+      params: {
+        account: this.account.publicKey
+      }
+    })
+    .then(async ({data}) => {
+      const transaction: any = new Transaction(data.transaction, data.network_passphrase)
+
+      this.error = null
+      this.loading = {...this.loading, deposit: true}
+
+      const keypair = Keypair.fromSecret(
+        sjcl.decrypt(pincode, this.account.keystore)
+      )
+
+      transaction.sign(keypair)
+      return transaction.toXDR()
+    })
+    .then((transaction) => axios.post(`${this.toml.WEB_AUTH_ENDPOINT}`, {transaction}, {headers: {'Content-Type': 'application/json'}}))
+    .then(({data: {token}}) => token)
+
+    console.log(auth)
+
+    const formData = new FormData()
+
+    loEach({
+      asset_code: currency[0],
+      account: this.account.publicKey,
+      lang: 'en'
+    }, (value, key) => formData.append(key, value))
+
+    const interactive = await axios.post(`${this.toml.TRANSFER_SERVER}/transactions/deposit/interactive`, formData, {
+      headers: {
+        'Authorization': `Bearer ${auth}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then(({data}) => data)
+
+    console.log(interactive)
+
+    const transactions = await axios.get(`${this.toml.TRANSFER_SERVER}/transactions`, {
+      params: {
+        asset_code: currency[0],
+        limit: 1,
+        kind: 'deposit',
+      },
+      headers: {
+        'Authorization': `Bearer ${auth}`
+      }
+    })
+    .then(({data: {transactions}}) => transactions)
+
+    console.log(transactions)
+
+    const urlBuilder = new URL(interactive.url)
+          urlBuilder.searchParams.set('callback', 'postMessage')
+    const popup = open(urlBuilder.toString(), 'popup', 'width=500,height=800')
+
+    if (!popup) {
+      this.loading = {...this.loading, deposit: false}
+      throw 'Popups are blocked. You\'ll need to enable popups for this demo to work'
+    }
+
+    window.onmessage = ({data: {transaction}}) => {
+      console.log(transaction.status, transaction)
+
+      if (transaction.status === 'completed') {
+        this.updateAccount()
+        this.loading = {...this.loading, deposit: false}
+      }
+
+      else {
+        setTimeout(() => {
+          const urlBuilder = new URL(transaction.more_info_url)
+                urlBuilder.searchParams.set('callback', 'postMessage')
+
+          popup.location.replace(urlBuilder.toString())
+        }, 1000)
+      }
+    }
+  }
+
+  catch (err) {
+    this.loading = {...this.loading, deposit: false}
+    this.error = handleError(err)
+  }
+}
+```
+
+It’s a lot of code but keep in mind this is all we need to completely interoperate with financial infrastructure completely foreign to the Stellar ecosystem. That’s a big ask and in \~130 lines of code it’s a modern day miracle!
+
+First things first install the missing `axios` package.
+
+```bash
+npm i -D axios
+```
+
+We’ll skip the rest of the top import stuff as you’re well aware of what those are and we’ve installed and walked through anything noteworthy here already.
+
+```ts
+export default async function depositAsset(e: Event) {
+  try {
+    e.preventDefault()
+
+    let currency = await this.setPrompt('Select the currency you\'d like to deposit', null, this.toml.CURRENCIES)
+        currency = currency.split(':')
+
+    const pincode = await this.setPrompt('Enter your keystore pincode')
+
+    if (!pincode)
+      return
+
+    const keypair = Keypair.fromSecret(
+      sjcl.decrypt(pincode, this.account.keystore)
+    )
+
+...
+```
+
+Only thing here we haven’t seen before is the prompt selection of the currency code and issuer we’d like to deposit. To get this we send the `this.setPrompt` a final options array argument, in this case the values from `this.toml.CURRENCIES`. This will open the prompt with a select\<\>options input field rather than a text input field.
+
+![][image-1]
+
+That selection will come back as a string in the form of `{code}:{issuer}` so we split that by the `:` so we’ll have a nice tidy array of `[{code}, {issuer}]` to use later.
+
+```ts
+...
+
+    const balances = loGet(this.account, 'state.balances')
+    const hasCurrency = loFindIndex(balances, {
+      asset_code: currency[0],
+      asset_issuer: currency[1]
+    })
+
+    if (hasCurrency === -1)
+      await this.trustAsset(null, currency[0], currency[1], pincode)
+
+...
+```
+
+Once we’ve got the currency we’re dealing with we need to check if we have a trustline for that asset setup for our account. The anchor won’t be able to deposit their token into our account if we don’t have a trustline set for it first. So we get the balance from the `this.account.state` and then inspect the `balances` to see if that currency exists. If it doesn’t we trigger the `this.trustAsset` method with the arguments set to automatically add that trustline to our account.
+
+```ts
+...
+
+    const info = await axios.get(`${this.toml.TRANSFER_SERVER}/info`)
+    .then(({data}) => data)
+
+    console.log(info)
+
+...
+```
+
+Once our account is setup it’s time to start asking the anchor some questions about itself and the features it supports. We get at that info by calling a GET on the `TRANSFER_SERVER/info` url from the anchor’s TOML file. Easy enough, for our purposes today we won’t make use of any of this data but in here will be fee and feature information which you display to the UI for your wallet user.
+
+```ts
+...
+
+    const auth = await axios.get(`${this.toml.WEB_AUTH_ENDPOINT}`, {
+      params: {
+        account: this.account.publicKey
+      }
+    })
+    .then(async ({data: {transaction, network_passphrase}}) => {
+      const txn: any = new Transaction(transaction, network_passphrase)
+
+      this.error = null
+      this.loading = {...this.loading, withdraw: true}
+
+      txn.sign(keypair)
+      return txn.toXDR()
+    })
+    .then((transaction) => axios.post(`${this.toml.WEB_AUTH_ENDPOINT}`, {transaction}, {headers: {'Content-Type': 'application/json'}}))
+    .then(({data: {token}}) => token)
+
+    console.log(auth)
+
+...
+```
+
+This next call is actually a part of SEP-0010 which allows us to verify ownership of our public key for use in the actual deposit to ensure the request is coming from a valid entity. You don’t want me issuing deposit requests on your account so to get around that you sign a dummy authentication transaction and send it to the server which will respond with a JWT token which will be used to verify all further API calls to the anchor.
+
+The endpoint for this JWT endpoint is noted by the `WEB_AUTH_ENDPOINT` on the TOML file. The first request is a GET request with a public `account` param which will send back an unsigned transaction for that account. In response you’ll sign that transaction and POST it back. If the signature checks out the success response will contain an Authorization Bearer header JWT which you’ll want to store and use for all future interactions with the anchor.
+
+```ts
+...
+
+    const formData = new FormData()
+
+    loEach({
+      asset_code: currency[0],
+      account: this.account.publicKey,
+      lang: 'en'
+    }, (value, key) => formData.append(key, value))
+
+    const interactive = await axios.post(`${this.toml.TRANSFER_SERVER}/transactions/withdraw/interactive`, formData, {
+      headers: {
+        'Authorization': `Bearer ${auth}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then(({data}) => data)
+
+    console.log(interactive)
+
+...
+```
+
+This call is our first little bit of magic. Once we setup our `multipart/form-data` entry values we can POST them to the `${this.toml.TRANSFER_SERVER}/transactions/withdraw/interactive` endpoint along with our `auth` Authorization Bearer `auth` token we acquired earlier. The response to this call will contain a special url for interacting directly with the anchor providing the data they need to accept our deposit asset.
+
+```json
+{
+  "type": "interactive_customer_info_needed",
+  "url": "https://stellar-anchor-server.herokuapp.com/transactions/deposit/webapp?asset_code=SRT&transaction_id=3dcf204e-e3e8-4831-a840-8e36c0695a07&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3N0ZWxsYXItYW5jaG9yLXNlcnZlci5oZXJva3VhcHAuY29tL3RyYW5zYWN0aW9ucy9kZXBvc2l0L2ludGVyYWN0aXZlIiwiaWF0IjoxNTgxNDUyMjI0Ljk4NzcyNjcsImV4cCI6MTU4MTQ1MjI1NC45ODc3MjY3LCJzdWIiOiJHQjM0QVU2NlRTR1Q1RlMzRVVMSk9UUjMyTVdLQU9NRlpLNk1QV003VjRTSUJOTE41UDVURlJKRyIsImp0aSI6IjNkY2YyMDRlLWUzZTgtNDgzMS1hODQwLThlMzZjMDY5NWEwNyJ9.N4N_vIUGu6y7-Hd5IlvevX4DLg9PjisuYEl98ejvhf8",
+  "id": "3dcf204e-e3e8-4831-a840-8e36c0695a07"
+}
+```
+
+In a moment we’ll open that `url` in an iframe, popup or new tab. Once we’ve sent that request there will be a pending transaction request we can inspect at the `${this.toml.TRANSFER_SERVER}/transactions` route.
+
+```ts
+...
+
+    const transactions = await axios.get(`${this.toml.TRANSFER_SERVER}/transactions`, {
+      params: {
+        asset_code: currency[0],
+        limit: 1,
+        kind: 'deposit',
+      },
+      headers: {
+        'Authorization': `Bearer ${auth}`
+      }
+    })
+    .then(({data: {transactions}}) => transactions)
+
+    console.log(transactions)
+
+...
+```
+
+This request should return the deposit status for the request we just made.
+
+```json
+{
+  "transactions": [
+    {
+      "id": "3dcf204e-e3e8-4831-a840-8e36c0695a07",
+      "kind": "deposit",
+      "status": "incomplete",
+      "status_eta": 3600,
+      "amount_in": null,
+      "amount_out": null,
+      "amount_fee": null,
+      "started_at": "2020-02-11T20:17:04.984590Z",
+      "completed_at": null,
+      "stellar_transaction_id": null,
+      "external_transaction_id": null,
+      "external_extra": null,
+      "external_extra_text": null,
+      "deposit_memo": null,
+      "deposit_memo_type": "text",
+      "more_info_url": "https://stellar-anchor-server.herokuapp.com/transaction/more_info?id=3dcf204e-e3e8-4831-a840-8e36c0695a07",
+      "to": "GB34AU66TSGT5FS3EULJOTR32MWKAOMFZK6MPWM7V4SIBNLN5P5TFRJG",
+      "from": null
+    }
+  ]
+}
+```
+
+Once we’re certain we’ve got a `"status": "incomplete",` ready for interacting with we can go back to the `interactive.url` route and open that to begin filling out the deposit requirements.
+
+```ts
+...
+
+    const urlBuilder = new URL(interactive.url)
+          urlBuilder.searchParams.set('callback', 'postMessage')
+    const popup = open(urlBuilder.toString(), 'popup', 'width=500,height=800')
+
+    if (!popup) {
+      this.loading = {...this.loading, deposit: false}
+      throw 'Popups are blocked. You\'ll need to enable popups for this demo to work'
+    }
+
+...
+```
+
+We’ll opt for a popup. When you first open that url it’s likely the anchor will ask for some level of KYC data; Name, email, address, verification docs, (bank statements, passport/license, etc). Our demo server will ask for name and email. After passing that screen you’ll enter the amount of asset you’re looking to deposit on the next screen. So for instance if you enter $500, once that deposit clears (on this demo it will clear automatically) 500 of the anchor token **less any fees** will be deposited to our wallet. In our case 498.95, (1.05 is taken out in fees for a $500 deposit).
+
+If popups are disabled we should kill the loader and show that error in the UI.
+
+```ts
+...
+
+    window.onmessage = ({data: {transaction}}) => {
+      console.log(transaction.status, transaction)
+
+      if (transaction.status === 'completed') {
+        this.updateAccount()
+        this.loading = {...this.loading, deposit: false}
+      }
+
+      else {
+        setTimeout(() => {
+          const urlBuilder = new URL(transaction.more_info_url)
+                urlBuilder.searchParams.set('callback', 'postMessage')
+
+          popup.location.replace(urlBuilder.toString())
+        }, 1000)
+      }
+    }
+  }
+
+  catch (err) {
+    this.loading = {...this.loading, deposit: false}
+    this.error = handleError(err)
+  }
+}
+```
+
+SEP-0024 allows for two methods of communicating between the anchor window and the wallet. A POST JSON message and postMessage, one for when you have a server and the other when you’re dealing with a client side service. We don’t have a server so we opt for the `urlBuilder.searchParams.set('callback', 'postMessage')`. With that set we can setup a window `'message'` event listener which will fire whenever the anchor popup window sends a `postMessage` to our popup `window`. From there we just listen to the popup message until `transaction.status` equals `'completed'` at which point our deposit has succeeded and we can `this.updateAccount()` and kill the loader. Otherwise if the transaction is still in a pending status we’ll wait 1 second before reloading the anchor popup window and checking again.
+
+If at any point during this flow there’s an error we should catch that, kill the loader, and display the error to the user.
+
+Whew!
+\*wipes sweat from brow then hands on sleeves
+Nice work! “Just like that” we’ve deposited an anchored asset into our wallet! We can now make payments with that asset to anyone else who has a trustline enabled for this asset.
+
+[Prev][1] — [Next][2]
+
+[1]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/2%20Setup%20for%20Anchored%20Assets.md
+[2]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/4%20Withdraw%20Anchored%20Asset.md
+
+[image-1]:	https://tyler.link/y419zR+

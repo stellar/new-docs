@@ -1,0 +1,746 @@
+---
+title: Basic key creation, storage, and use
+order: 10
+---
+
+With our Stencil project setup it’s time to generate, store and use Stellar accounts.
+
+[View setup boilerplate code on GitHub][1]
+
+Once the tough decisions of where and how to store keys has been made the actual coding becomes much simpler and straight forward. In our case as a non-custodial wallet this is especially true as we won’t need to communicate with a server or database at all, everything can happen locally right on the user’s device.
+
+We’ll be doing all our work right inside of `src/components/wallet/` so let’s head over there now.
+
+> In this tutorial the goal is simply to get to a place where a user can create, store and access their Stellar account through an intuitive pincode encryption method.
+
+As far as the StellarSdk goes we’re actually only going to be utilizing one Keypair command `StellarSdk.Keypair.random()`. That’ll be the easy part, generating a new valid Stellar keypair. The work will be in storing that vital information in a secure yet accessible manner.
+
+The flow will work like this. Click “Create Account” → UI modal popup asking for a pincode → Enter pincode, click “OK” → App encrypts a new Stellar keypair secret key with pincode → App saves encrypted secret to `localStorage`. From there, on page reload, we’ll fetch the `publicKey` to “login” the user but for any protected action such as “Copy Secret” the modal will pop back up asking for the original pincode.
+
+Alright so for code the best place to start will actually be looking at the popup modal. We’ll be mimicking the browser’s `prompt` functionality with our own new, more powerful component. So first things first we should generate a new component.
+
+```bash
+npm run generate
+```
+
+We'll call it `stellar-prompt` and deselect both test files leaving only the styling. Once we’ve got that, open `src/components/prompt/` and rename the `.css` file to `.scss`. Fill that style file with this
+
+```scss
+@import '../../global/style.scss';
+
+:host {
+  display: block;
+  font-family: $font-family;
+  font-size: 15px;
+
+  .prompt-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: rgba(black, 0.2);
+    z-index: 1;
+  }
+  .prompt {
+    background-color: white;
+    padding: 20px;
+    max-width: 350px;
+    width: 100%;
+    position: relative;
+
+    p {
+      margin-bottom: 10px;
+    }
+    input {
+      width: 100%;
+      margin: 0;
+      padding: 5px;
+      outline: none;
+      border: 1px solid black;
+      text-transform: uppercase;
+
+      &:focus {
+        border-color: blue;
+      }
+    }
+  }
+  .select-wrapper {
+    position: relative;
+    display: inline-flex;
+
+    select {
+      border-color: blue;
+      padding: 0 10px;
+      min-width: 100px;
+    }
+
+    &:after,
+    &:before {
+      font-size: 12px;
+      position: absolute;
+      right: 10px;
+      color: blue;
+    }
+    &:after {
+      content: '◀';
+      top: calc(50% - 5px);
+      transform: translate(0, -50%) rotate(90deg);
+    }
+    &:before {
+      content: '▶';
+      top: calc(50% + 5px);
+      transform: translate(0, -50%) rotate(90deg);
+    }
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+
+    button {
+      margin: 0;
+      min-width: 50px;
+    }
+    .cancel {
+      background: none;
+      border: 1px solid blue;
+      color: blue;
+    }
+    .submit {
+      margin-left: 10px;
+    }
+  }
+}
+```
+
+After that replace the `prompt.tsx` contents with this.
+
+```tsx
+import {
+  Component,
+  Prop,
+  Element,
+  Watch,
+  h,
+  State
+} from '@stencil/core'
+import { defer as loDefer } from 'lodash-es'
+
+export interface Prompter {
+  show: boolean
+  message?: string
+  placeholder?: string
+  options?: Array<any>
+  resolve?: Function
+  reject?: Function
+}
+
+@Component({
+  tag: 'stellar-prompt',
+  styleUrl: 'prompt.scss',
+  shadow: true
+})
+export class Prompt {
+  @Element() private element: HTMLElement
+
+  @Prop({mutable: true}) prompter: Prompter
+
+  @State() private input: string
+
+  @Watch('prompter')
+  watchHandler(newValue: Prompter, oldValue: Prompter) {
+    if (newValue.show === oldValue.show)
+      return
+
+    if (newValue.show) {
+      this.input = null
+
+      if (newValue.options)
+        this.input = this.input || `${newValue.options[0].code}:${newValue.options[0].issuer}`
+      else
+        loDefer(() => this.element.shadowRoot.querySelector('input').focus())
+    }
+
+    else {
+      this.prompter.message = null
+      this.prompter.placeholder = null
+      this.prompter.options = null
+    }
+  }
+
+  componentDidLoad() {
+    addEventListener('keyup', (e: KeyboardEvent) => {
+      if (this.prompter.show)
+        e.keyCode === 13
+        ? this.submit(e)
+        : e.keyCode === 27
+        ? this.cancel(e)
+        : null
+    })
+  }
+
+  cancel(e: Event) {
+    e.preventDefault()
+
+    this.prompter = {
+      ...this.prompter,
+      show: false
+    }
+    this.prompter.reject(null)
+  }
+
+  submit(e: Event) {
+    e.preventDefault()
+
+    this.prompter = {
+      ...this.prompter,
+      show: false
+    }
+    this.prompter.resolve(this.input)
+  }
+
+  update(e) {
+    this.input = e.target.value.toUpperCase()
+  }
+
+  render() {
+    return this.prompter.show ? (
+      <div class="prompt-wrapper">
+        <div class="prompt">
+          {this.prompter.message ? <p>{this.prompter.message}</p> : null}
+
+          {
+            this.prompter.options
+            ? <div class="select-wrapper">
+                <select
+                  onInput={(e) => this.update(e)}
+                > {this.prompter.options.map((option) =>
+                    <option
+                      value={`${option.code}:${option.issuer}`}
+                      selected={this.input === `${option.code}:${option.issuer}`}
+                    >{option.code}</option>
+                  )}
+                </select>
+              </div>
+            : <input type="text"
+                placeholder={this.prompter.placeholder}
+                value={this.input}
+                onInput={(e) => this.update(e)}
+              ></input>
+          }
+
+          <div class="actions">
+            <button class="cancel" type="button" onClick={(e) => this.cancel(e)}>Cancel</button>
+            <button class="submit" type="button" onClick={(e) => this.submit(e)}>OK</button>
+          </div>
+        </div>
+      </div>
+    ) : null
+  }
+}
+```
+
+One of the first things you’ll notice is the use of `lodash-es`, let’s make sure we’ve got that imported before moving forward
+
+```bash
+npm i -D lodash-es
+```
+
+There’s a bit going on in this file but as this isn’t a Stencil tutorial we’ll skip over exactly what’s going on here and summarize as this allowing us to use a `<stellar-prompt prompter={this.prompter} />` component elsewhere in our project. One thing worth noting are the variables available to us in the `prompter` property.
+
+```ts
+export interface Prompter {
+  show: boolean
+  message?: string
+  placeholder?: string
+  options?: Array<any>
+  resolve?: Function
+  reject?: Function
+}
+```
+
+The values we’ll be making most use of are those first three, `show`, `message` and `placeholder`. The last two `resolve` and `reject` are for promisifying the prompt so we can await a response before continuing on with further logic. That will make more sense in a moment once we include this component in `src/components/wallet/`. Speaking of, let’s swing over to that component now.
+
+We’ve got a lot of work to do in here so I’ll just paste the code here in all it’s glory and we’ll just walk through it block by block.
+
+```ts
+import {
+  Component,
+  State
+} from '@stencil/core'
+
+import componentWillLoad from './events/componentWillLoad'
+import render from './events/render'
+
+import createAccount from './methods/createAccount'
+import copyAddress from './methods/copyAddress'
+import copySecret from './methods/copySecret'
+import signOut from './methods/signOut'
+import setPrompt from './methods/setPrompt'
+
+import { Prompter } from '@prompt/prompt'
+
+interface StellarAccount {
+  publicKey: string,
+  keystore: string,
+}
+
+@Component({
+  tag: 'stellar-wallet',
+  styleUrl: 'wallet.scss',
+  shadow: true
+})
+export class Wallet {
+  @State() account: StellarAccount
+  @State() prompter: Prompter = {show: false}
+  @State() error: any = null
+
+  // Component events
+  componentWillLoad() {}
+  render() {}
+
+  // Stellar methods
+  createAccount = createAccount
+  copyAddress = copyAddress
+  copySecret = copySecret
+  signOut = signOut
+
+  // Misc methods
+  setPrompt = setPrompt
+}
+
+Wallet.prototype.componentWillLoad = componentWillLoad
+Wallet.prototype.render = render
+```
+
+They say the beginning is a good place to start, so let’s just do that.
+
+```js
+import {
+  Component,
+  State
+} from '@stencil/core'
+
+import componentWillLoad from './events/componentWillLoad'
+import render from './events/render'
+
+import createAccount from './methods/createAccount'
+import copyAddress from './methods/copyAddress'
+import copySecret from './methods/copySecret'
+import signOut from './methods/signOut'
+import setPrompt from './methods/setPrompt'
+
+import { Prompter } from '@prompt/prompt'
+```
+
+Just one import from a library we should already have installed.
+
+The other relative path imports are all the events and methods we’ll be creating here in a moment. For now let’s just generate all those files in their appropriate directories. Ensure your console is at the root of the `stellar-wallet` project before running this string of commands.
+
+```bash
+mkdir -p src/components/wallet/{events,methods}
+touch src/components/wallet/events/{componentWillLoad.ts,render.tsx}
+touch src/components/wallet/methods/{createAccount,copyAddress,copySecret,signOut,setPrompt}.ts
+```
+
+Next we have this funky line which may seem like an npm team import, but is actually a fancy typescript module alias path.
+
+```ts
+import { Prompter } from '@prompt/prompt'
+```
+
+This allows us to avoid long error prone `../../../` paths and just use `@{alias}/{path?}/{module}`. In order to get this past both the linter and compiler we’ll need to modify a couple files.
+
+First modify the `tsconfig.json` file to include these values in the `compilerOptions` object.
+
+```JSON5
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@prompt/*": ["components/prompt/*"],
+      "@services/*": ["services/*"]
+    },
+    // ...
+  },
+  // ...
+}
+
+```
+
+Next modify the `package.json` file to include a `_moduleAliases` key at the root of the object.
+
+```JSON5
+{
+  // ...
+  "_moduleAliases": {
+    "@prompt": "dist/collection/components/prompt",
+    "@services": "dist/collection/services"
+  }
+}
+```
+
+Finally install the `module-alias` package and add it to the top of the `src/index.ts` file.
+
+```bash
+npm i -D module-alias
+```
+
+```ts
+import 'module-alias/register'
+export * from './components'
+```
+
+Cool! With any luck we should be able to use these slick alias imports for the prompt and services directories now.
+
+```ts
+interface StellarAccount {
+  publicKey: string,
+  keystore: string,
+}
+```
+
+`interface` is just the TypeScript way of setting up a tidy typed class. `StellarAccount` will be our account class including the `publicKey` for easy reference later in Horizon or Astrograph calls as well as the Top Secret™ `keystore` key containing the encrypted account secret cipher.
+
+```js
+@Component({
+  tag: 'stellar-wallet',
+  styleUrl: 'wallet.scss',
+  shadow: true
+})
+export class Wallet {
+  @State() account: StellarAccount
+  @State() prompter: Prompter = {show: false}
+  @State() error: any = null
+
+  ...
+}
+```
+
+Pretty standard boring bits, setting up the `@Component` with its defining values and initializing with some `@State` and `@Prop` data. You can see we’re setting up an `account` state with our `StellarAccount` class as well as a `prompter` state with that `Prompter` class from the `stellar-prompt` we imported earlier. We’re initializing that `prompter` state with a `show` value of `false` so the prompt modal rendereth not initially.
+
+Everything after this are assignments of our imported events and methods from up above. Let’s begin with the `./events/componentWillLoad.ts`
+
+```js
+import { handleError } from '@services/error'
+import { get } from '@services/storage'
+
+export default async function componentWillLoad() {
+  try {
+    let keystore = await get('keyStore')
+
+    this.error = null
+
+    if (keystore) {
+      keystore = atob(keystore)
+
+      const { publicKey } = JSON.parse(atob(JSON.parse(keystore).adata))
+
+      this.account = {
+        publicKey,
+        keystore
+      }
+    }
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+`componentWillLoad` is the Stencil way of pre-filling the state and prop values before actually rendering the component. In our case we’ll use this method to populate the `account` `@State` with any saved storage `keyStore` value if there is one. At first there won’t be so we’ll come back to this once we’ve actually gone over how to create and save accounts. For now just know it’s here, and you’re smart so I imagine you can already kind of see how it works.
+
+“But wait!” you say, “What are the `@services/error` and `@services/storage` packages?” Fine, yes, we should go over those. Remember the module alias stuff from earlier? Well one was for `@prompt` and the other was for `@services`. Go ahead and create these two files and add them to the `src/services` directory.
+
+```bash
+mkdir -p src/services
+touch src/services/{error,storage}.ts
+```
+
+`error.ts` will look like this.
+
+```ts
+import { get as loGet } from 'lodash-es'
+
+export function handleError(err: any) {
+  return loGet(err, 'response.data', loGet(err, 'message', err))
+}
+```
+
+Nothing fancy, just a clean little error handler we’ll make use of later when processing API requests.
+
+Next is `storage.ts`.
+
+```js
+import { Plugins } from '@capacitor/core'
+
+const { Storage } = Plugins
+
+export async function set(key: string, value: any): Promise<void> {
+  await Storage.set({
+    key,
+    value
+  })
+}
+
+export async function get(key: string): Promise<any> {
+  const item = await Storage.get({ key })
+  return item.value
+}
+
+export async function remove(key: string): Promise<void> {
+  await Storage.remove({ key })
+}
+```
+
+You’ll notice a new package `@capacitor/core`. Let’s install and set that up.
+
+```bash
+# Install dependencies
+npm i -D @capacitor/core @capacitor/cli
+
+# Initialize Capacitor
+npx cap init
+```
+
+```bash
+? App name Stellar Wallet
+? App Package ID (in Java package format, no dashes) com.wallet.stellar
+? Which npm client would you like to use? npm
+✔ Initializing Capacitor project in /Users/tylervanderhoeven/Desktop/Web/Clients/Stellar/stellar-demo-wallet in 1.91ms
+
+
+🎉   Your Capacitor project is ready to go!  🎉
+
+Add platforms using "npx cap add":
+
+  npx cap add android
+  npx cap add ios
+  npx cap add electron
+
+Follow the Developer Workflow guide to get building:
+https://capacitor.ionicframework.com/docs/basics/workflow
+```
+
+We’re not really making full use of [ Capacitor ][2] but it is an amazing service so be sure and check it out! For now we just need it to make storing and retrieving our data a bit more stable.
+
+This storage service is simply a key setter and getter helper for storing and retrieving data. We’ll use this for any persistent data we want to store, for now, our Stellar account data.
+
+Alright so that’s everything we need for the `componentWillLoad` event. On to the `./events/render.tsx` file.
+
+```tsx
+import { h } from '@stencil/core'
+
+export default function render() {
+  return [
+    <stellar-prompt prompter={this.prompter} />,
+    this.account
+    ? [
+      <div class="account-key">
+        <p>{this.account.publicKey}</p>
+        <button class="small" type="button" onClick={(e) => this.copyAddress(e)}>Copy Address</button>
+        <button class="small" type="button" onClick={(e) => this.copySecret(e)}>Copy Secret</button>
+      </div>,
+    ]
+    : <button type="button" onClick={(e) => this.createAccount(e)}>Create Account</button>,
+
+    this.error ? <pre class="error">{JSON.stringify(this.error, null, 2)}</pre> : null,
+    this.account ? <button type="button" onClick={(e) => this.signOut(e)}>Sign Out</button> : null,
+  ]
+}
+```
+
+Ew, messy, not really though, it’s a pretty simple `.tsx` file rendering out our DOM based off a series of conditional values. You can see we’re including the  `stellar-prompt` component and setting the prompter prop to our `this.prompter` state. We then have a ternary operation toggling between a Create Account button and a basic account UI. If `this.account` has a truthy value we’ll print out the account’s `publicKey` along with some interaction buttons. If `this.account` is falsey we’ll print out a singular Create Account button connected to, you guessed it, the `creatAccount` method. After that logic we print out an error if there is one and finally a Sign Out button if there’s an account to sign out of. Those are the two `Wallet` `@Component` events, let’s look at the methods now beginning with the `./methods/createAccount.ts` file.
+
+```ts
+import sjcl from '@tinyanvil/sjcl'
+import { Keypair } from 'stellar-sdk'
+
+import { handleError } from '@services/error'
+import { set } from '@services/storage'
+
+export default async function createAccount(e: Event) {
+  try {
+    e.preventDefault()
+
+    const pincode_1 = await this.setPrompt('Enter a keystore pincode')
+    const pincode_2 = await this.setPrompt('Enter keystore pincode again')
+
+    if (
+      !pincode_1
+      || !pincode_2
+      || pincode_1 !== pincode_2
+    ) throw 'Invalid pincode'
+
+    this.error = null
+
+    const keypair = Keypair.random()
+
+    this.account = {
+      publicKey: keypair.publicKey(),
+      keystore: sjcl.encrypt(pincode_1, keypair.secret(), {
+        adata: JSON.stringify({
+          publicKey: keypair.publicKey()
+        })
+      })
+    }
+
+    await set('keyStore', btoa(this.account.keystore))
+  }
+
+  catch(err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+Aha! Finally something interesting. This method forms the meat of our component. Thankfully it’s really simple. Before we dive in though let’s install the missing `@tinyanvil/sjcl` package.
+
+```bash
+npm i -D @tinyanvil/sjcl
+```
+
+Essentially all we’re doing is making a request to create an account, which triggers the Prompt modal to ask for a pincode which will be used in the `sjcl.encrypt` method to encrypt the secret key from the `Keypair.random()` method. We set the `this.account` with the `publicKey` and that encrypted `keystore` cipher and finally store that cipher in base64 format in `localStorage` via our `set('keyStore')` method for easy retrieval later when the browser reloads. We could also encode that cipher into a QR code or link to share with other devices if need be. Since it requires the pincode that encrypted cipher is as secure as the pincode you encrypt it with.
+
+Next up, once we’ve created an account there are three more actions I’d like to enable, `copyAddress`, `copySecret` and `signOut`.
+
+First `./methods/copyAddress.ts`
+
+```ts
+import copy from 'copy-to-clipboard'
+
+export default async function copyAddress(e: Event) {
+  e.preventDefault()
+  copy(this.account.publicKey)
+}
+```
+
+Well there you go, the easiest code you’ll see all day. Just `copy` the `publicKey` from the `this.account` object to the clipboard. Before we jump though don’t forget to install that `copy-to-clipboard` package.
+
+```bash
+npm i -D copy-to-clipboard
+```
+
+Next `./methods/copySecret.ts`
+
+```ts
+import sjcl from '@tinyanvil/sjcl'
+import copy from 'copy-to-clipboard'
+
+import { handleError } from '@services/error'
+
+export default async function copySecret(e: Event) {
+  try {
+    e.preventDefault()
+
+    const pincode = await this.setPrompt('Enter your keystore pincode')
+
+    if (!pincode)
+      return
+
+    this.error = null
+
+    const secret = sjcl.decrypt(pincode, this.account.keystore)
+    copy(secret)
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+You may not actually include this in your production wallet but it will serve for now as a simple way of demonstrating how you’ll programmatically gain access to the secret key at a later date, for making payments, creating trustlines, etc. It’s essentially the `createAccount` in reverse, asking for the pincode to decrypt the keystore which contains the secret seed which, once decrypted, we `copy` into the clipboard.
+
+Finally `./methods/signOut.ts`
+
+```ts
+import { remove } from '@services/storage'
+import { handleError } from '@services/error'
+
+export default async function signOut(e: Event) {
+  try {
+    e.preventDefault()
+
+    const confirmNuke = await this.setPrompt('Are you sure? This will nuke your account', 'Enter NUKE to confirm')
+
+    if (
+      !confirm
+      || !/nuke/gi.test(confirmNuke)
+    ) return
+
+    this.error = null
+
+    await remove('keyStore')
+    location.reload()
+  }
+
+  catch (err) {
+    this.error = handleError(err)
+  }
+}
+```
+
+It’s important to allow our users a method to nuke their account however we do need to be careful and confirm that action with our faithful `setPrompt`. Once they opt to “NUKE” the account we can remove the `keyStore` and reload the app.
+
+Speaking of `setPrompt` the last method in our `wallet.ts` file is `./methods/setPrompt.ts`.
+
+```ts
+export default function setPrompt(
+  message: string,
+  placeholder?: string,
+  options?: Array<any>
+): Promise<string> {
+  this.prompter = {
+    ...this.prompter,
+    show: true,
+    message,
+    placeholder,
+    options
+  }
+
+  return new Promise((resolve, reject) => {
+    this.prompter.resolve = resolve
+    this.prompter.reject = reject
+  })
+}
+```
+
+In `setPrompt` we see how the prompt state is set and how the Promise is setup to allow us to await on the prompt whenever we call this method. It’s actually pretty slick and it might be worth looking back at the `src/components/prompt/prompt.tsx` to see how the `resolve` and `reject` functions get called. It’s not central to our wallet creation but it’s a pretty handy little component which will serve us well in the future as we continue to make requests of the user asking for input and needing to await a response either to a resolution or rejection.
+
+That’s it folks! Restart the server with `npm start` and you’ve got a perfectly legitimate, minimal Stellar wallet key creation and storage Web Component! 👏
+
+In summary a pretty basic tutorial but lays an incredibly solid foundation for a non-custodial wallet without handing over a confusing UX, just a simple pincode. For even greater security without sacrificing on usability checkout services like these.
+
+- [Albedo][3]
+- [StellarAuth][4]
+- [Stellar Authenticator][5]
+- [Ledger][6]
+- [Trezor][7]
+- [StellarGuard][8]
+- [LobstrVault][9]
+
+[View this code on GitHub][10]
+
+[Prev][11] — [Next][12]
+
+[1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/setup
+[2]:	https://capacitor.ionicframework.com/ "Capacitor"
+[3]:	https://albedo.link/
+[4]:	https://stellarauth.com/
+[5]:	https://stellar-authenticator.org/
+[6]:	https://www.ledger.com/
+[7]:	https://trezor.io/
+[8]:	https://stellarguard.me/
+[9]:	https://vault.lobstr.co/
+[10]:	https://github.com/tyvdh/stellar-demo-wallet/tree/keystore
+[11]:	/1%20Create%20a%20Stellar%20Wallet/0%20Intro.md
+[12]:	/2%20Make%20XLM%20Payments/0%20Intro.md
