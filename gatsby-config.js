@@ -46,6 +46,12 @@ module.exports = {
               ],
             },
           },
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 800,
+            },
+          },
         ],
       },
     },
@@ -59,6 +65,12 @@ module.exports = {
               theme: "neutral",
               fontFamily:
                 '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+            },
+          },
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 1200,
             },
           },
           {
