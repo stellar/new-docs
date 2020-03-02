@@ -33,14 +33,16 @@ const ModifiedArrowIcon = styled(ArrowIcon)`
 `;
 const NestedArticleTopicExpander = styled(BasicButton)`
   ${topLevelNavItem};
+  text-align: left;
   padding-bottom: 0.5rem;
 `;
 
 const TopicExpander = styled.button`
+  cursor: pointer;
+  text-align: left;
   background: none;
   border: 0;
   color: #333;
-  cursor: pointer;
   display: flex;
   padding: 0;
   width: 100%;

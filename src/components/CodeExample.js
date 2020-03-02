@@ -197,7 +197,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
               </option>
             ))}
           </LangSelect>
-          <DividerEl color="rgba(255, 255, 255, 0.1)" />
+          <DividerEl />
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
             onCopy={() => {

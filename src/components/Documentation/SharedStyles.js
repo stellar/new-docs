@@ -30,7 +30,7 @@ export const DividerEl = styled.span`
   width: 0.0625rem;
   height: 0.75rem;
   margin: 0 1rem;
-  background-color: ${(props) => props.color};
+  background-color: rgba(255, 255, 255, 0.1);
 `;
 export const Content = styled.article`
   position: relative;

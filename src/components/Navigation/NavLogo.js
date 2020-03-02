@@ -25,6 +25,7 @@ const PageNameEl = styled.span`
 `;
 const NavDividerEl = styled(DividerEl)`
   height: 3rem;
+  background-color: ${({ theme }) => theme.border};
 `;
 
 export const NavLogo = ({ pageName = "" }) => (
@@ -32,7 +33,7 @@ export const NavLogo = ({ pageName = "" }) => (
     <LogoEl />
     {pageName && (
       <>
-        <NavDividerEl color={({ theme }) => theme.border} />
+        <NavDividerEl />
         <PageNameEl>{pageName}</PageNameEl>
       </>
     )}
