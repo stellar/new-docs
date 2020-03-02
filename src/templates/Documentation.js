@@ -202,15 +202,17 @@ const Documentation = ({ data, pageContext, location }) => {
         <Clock />
         Last updated {modifiedTime}
       </ModifiedEl>
-      <NextUpEl>
-        Next Up:{" "}
-        <StyledLink
-          href={articleNextUp.url}
-          state={{ compiledDocsContents: docsContents }}
-        >
-          {articleNextUp.title}
-        </StyledLink>
-      </NextUpEl>
+      {articleNextUp && (
+        <NextUpEl>
+          Next Up:{" "}
+          <StyledLink
+            href={articleNextUp.url}
+            state={{ compiledDocsContents: docsContents }}
+          >
+            {articleNextUp.title}
+          </StyledLink>
+        </NextUpEl>
+      )}
     </Content>
   );
   const right = (
