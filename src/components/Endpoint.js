@@ -19,6 +19,11 @@ const EndpointEl = styled.div`
   table {
     align-self: center;
     overflow-y: scroll;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   thead {
     display: none;
