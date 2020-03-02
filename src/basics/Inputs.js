@@ -9,7 +9,7 @@ import { ArrowIcon } from "basics/Icons";
 const WhiteArrowIcon = styled(ArrowIcon)`
   position: absolute;
   top: 35%;
-  right: 1rem;
+  right: 0;
 
   svg {
     path {
