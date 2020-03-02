@@ -59,7 +59,7 @@ export const THEME = {
   medium: PALETTE.mediumGrey,
   lightGrey: PALETTE.lightGrey,
   darkGrey: PALETTE.darkGrey,
-  border: PALETTE.lightestGrey,
+  border: PALETTE.white60,
 };
 
 export const FONT_FAMILY = {
