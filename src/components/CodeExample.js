@@ -91,12 +91,8 @@ const TitleEl = styled.div`
   display: flex;
   justify-content: space-between;
   position: relative;
-  padding: 1.5rem;
+  padding: 0 1rem;
   align-items: center;
-  padding-top: 0.2rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 0;
   color: ${PALETTE.white};
   border-bottom: 1px solid ${PALETTE.white60};
   font-size: 0.875rem;

@@ -61,12 +61,12 @@ pre[class*="language-"] {
 @media print {	
   code[class*="language-"],	
   pre[class*="language-"] {	
-    text-shadow: none;	
+    text-shadow: none;
   }	
 }	
 /* Code blocks */	
 pre[class*="language-"] {	
-  margin: 0.5em 0;	
+  margin: 0;
 }	
 /* Inline code */	
 :not(pre) > code[class*="language-"] {	
