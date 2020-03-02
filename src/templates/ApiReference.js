@@ -274,9 +274,9 @@ ReferenceSection.propTypes = {
 const AbsoluteEl = styled.div`
   position: absolute;
   overflow: hidden;
-  height: calc(100% - 48px);
+  height: calc(100% - 61px);
   width: 100%;
-  bottom: 3.25rem;
+  bottom: 61px;
 
   &:hover {
     overflow-y: scroll;
