@@ -37,7 +37,7 @@ export const NavImage = styled(Image)`
 export const NavFooterLi = styled.li`
   list-style: none;
   border-top: 1px solid ${PALETTE.white60};
-  padding: 0.75rem 0;
+  padding: 0.75rem 0 2rem;
   width: 100%;
 `;
 export const Block = styled.div`

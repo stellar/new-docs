@@ -15,10 +15,16 @@ const EndpointEl = styled.div`
   padding: 0;
   padding-right: 1rem;
   margin: 1rem 0;
+  border: 1px solid ${PALETTE.white60};
 
   table {
     align-self: center;
     overflow-y: scroll;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   thead {
     display: none;

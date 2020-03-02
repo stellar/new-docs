@@ -25,7 +25,13 @@ export const SideNavBackground = styled.div`
   top: -10rem;
   bottom: 0rem;
 `;
-
+export const DividerEl = styled.span`
+  display: inline-block;
+  width: 0.0625rem;
+  height: 0.75rem;
+  margin: 0 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+`;
 export const Content = styled.article`
   position: relative;
   margin: 0 auto;

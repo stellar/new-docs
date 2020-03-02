@@ -10,9 +10,11 @@ const MethodTableEl = styled.div`
   flex-direction: column;
   overflow: hidden;
   background: ${PALETTE.white80};
+  border: 1px solid ${PALETTE.white60};
   border-radius: 4px;
   max-height: 56.25rem;
   width: 100%;
+  margin-bottom: 2rem;
 
   thead {
     display: none;
@@ -30,11 +32,10 @@ const MethodTableEl = styled.div`
 `;
 
 const TitleEl = styled.div`
+  display: flex;
+  justify-content: space-between;
   position: relative;
-  margin-left: 1.5rem;
-  padding: 0;
-  padding-top: 1.5rem;
-  padding-bottom: 1rem;
+  padding: 1rem;
   border-bottom: 1px solid ${PALETTE.white60};
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
@@ -42,11 +43,10 @@ const TitleEl = styled.div`
 const ContentEl = styled.div`
   overflow-y: auto;
   padding: 0;
-  padding-top: 1rem;
-  padding-bottom: 1.5rem;
+  padding: 1rem 0;
 
   ${Code}, ${Table} {
-    padding-left: 1.5rem;
+    padding-left: 1rem;
   }
 `;
 

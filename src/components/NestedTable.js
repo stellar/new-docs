@@ -65,8 +65,6 @@ const ColumnEl = styled.div`
   font-size: 0.875rem;
   min-width: 10rem;
   padding: 0;
-  padding-top: 5px;
-  padding-bottom: 5px;
   display: flex;
   flex-direction: column;
   font-family: ${FONT_FAMILY.base};
