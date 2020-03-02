@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { DEFAULT_COLUMN_WIDTH } from "constants/styles";
-
 import { slugify } from "helpers/slugify";
 
 import { List, ListItem } from "basics/Text";
@@ -14,7 +12,6 @@ const El = styled.div`
   width: 100%;
   height: calc(100vh - 121px);
   top: 121px;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   position: sticky;
   z-index: 3;
 `;

@@ -11,6 +11,7 @@ import {
   NAV_THEMES,
   CSS_TRANSITION_SPEED,
   FONT_WEIGHT,
+  DEFAULT_COLUMN_WIDTH,
   PALETTE,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
@@ -59,6 +60,7 @@ const TrackedEl = styled.div``;
 
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
 `;
 const NavTitleEl = styled(H5)`
   margin: 0;
