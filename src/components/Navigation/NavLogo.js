@@ -27,7 +27,7 @@ const DividerEl = styled.span`
   display: inline-block;
   width: 0.0625rem;
   height: 3rem;
-  margin: -1.5rem 0.5rem;
+  margin: 0 1rem;
   background-color: ${({ theme }) => theme.border};
 `;
 
