@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { PALETTE } from "constants/styles";
-
+import { DividerEl } from "components/Documentation/SharedStyles";
 import Logo from "assets/icons/stellar-logo.svg";
 
 export const El = styled.div`
@@ -23,12 +23,8 @@ const PageNameEl = styled.span`
   font-size: 1.125rem;
   margin-bottom: -0.25rem;
 `;
-const DividerEl = styled.span`
-  display: inline-block;
-  width: 0.0625rem;
+const NavDividerEl = styled(DividerEl)`
   height: 3rem;
-  margin: 0 1rem;
-  background-color: ${({ theme }) => theme.border};
 `;
 
 export const NavLogo = ({ pageName = "" }) => (
@@ -36,7 +32,7 @@ export const NavLogo = ({ pageName = "" }) => (
     <LogoEl />
     {pageName && (
       <>
-        <DividerEl />
+        <NavDividerEl color={({ theme }) => theme.border} />
         <PageNameEl>{pageName}</PageNameEl>
       </>
     )}

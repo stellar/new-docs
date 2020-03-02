@@ -14,6 +14,7 @@ import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
 
 import { Tooltip } from "components/Tooltip";
+import { DividerEl } from "components/Documentation/SharedStyles";
 
 const CODE_LANGS = {
   curl: "cURL",
@@ -103,14 +104,6 @@ const TitleEl = styled.div`
   border-bottom: 1px solid ${PALETTE.white60};
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
-`;
-
-const DividerEl = styled.span`
-  display: inline-block;
-  width: 0.0625rem;
-  height: 0.75rem;
-  margin: 0 1rem;
-  background-color: rgba(255, 255, 255, 0.1);
 `;
 
 const mdxJsxToString = (jsx) => {
@@ -203,7 +196,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
               </option>
             ))}
           </LangSelect>
-          <DividerEl />
+          <DividerEl color="rgba(255, 255, 255, 0.1)" />
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
             onCopy={() => {
