@@ -50,6 +50,7 @@ const OptionsContainer = styled.div`
 
 const MethodContentEl = styled.div`
   position: relative;
+  overflow: auto;
   border-radius: 4px;
 `;
 
@@ -101,7 +102,7 @@ const TitleEl = styled.div`
   padding: 0 1rem;
   align-items: center;
   color: ${PALETTE.white};
-  border-bottom: 1px solid ${PALETTE.white60};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
 `;

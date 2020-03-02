@@ -10,6 +10,7 @@ const MethodTableEl = styled.div`
   flex-direction: column;
   overflow: hidden;
   background: ${PALETTE.white80};
+  border: 1px solid ${PALETTE.white60};
   border-radius: 4px;
   max-height: 56.25rem;
   width: 100%;
