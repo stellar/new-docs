@@ -2,19 +2,19 @@ import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 
 import {
-  NAV_THEMES,
   CSS_TRANSITION_SPEED,
   FONT_WEIGHT,
   DEFAULT_COLUMN_WIDTH,
   PALETTE,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
+import { docType } from "constants/docType";
 
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
@@ -27,8 +27,7 @@ import { Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
-import { NavFrame, NavFooterLi } from "components/Navigation/SharedStyles";
-import { NavLogo } from "components/Navigation/NavLogo";
+import { NavFooterLi, NavAbsoluteEl } from "components/Navigation/SharedStyles";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
@@ -84,10 +83,6 @@ const NavItemEl = styled.div`
     color: ${PALETTE.lightGrey};
   }
 `;
-const DocNavEl = styled(NavFooterLi)`
-  position: absolute;
-  bottom: 0;
-`;
 
 const StyledLink = components.a;
 // eslint-disable-next-line react/prop-types
@@ -119,6 +114,10 @@ const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
   display: block;
+`;
+const AbsoluteNavFooterEl = styled(NavFooterLi)`
+  position: absolute;
+  bottom: 0;
 `;
 
 const isInViewport = (elem) => {
@@ -273,18 +272,6 @@ ReferenceSection.propTypes = {
   link: PropTypes.string,
 };
 
-const AbsoluteEl = styled.div`
-  position: absolute;
-  overflow: hidden;
-  height: calc(100% - 61px);
-  width: 100%;
-  bottom: 61px;
-
-  &:hover {
-    overflow-y: scroll;
-  }
-`;
-
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const referenceDocs = sortReference(
@@ -302,28 +289,13 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         </noscript>
       </Helmet>
       <MDXProvider components={componentMap}>
-        <DocsBase
-          pageContext={pageContext}
-          navigation={
-            <ThemeProvider theme={NAV_THEMES.docs}>
-              <NavFrame>
-                <Container>
-                  <ApiReferenceRow>
-                    <Column xs={3} xl={4}>
-                      <NavLogo pageName="API Reference" />
-                    </Column>
-                  </ApiReferenceRow>
-                </Container>
-              </NavFrame>
-            </ThemeProvider>
-          }
-        >
+        <DocsBase pageContext={pageContext}>
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
                 <SideNavBackground />
-                <SideNav>
-                  <AbsoluteEl ref={sideNavRef}>
+                <SideNav docType={docType.api}>
+                  <NavAbsoluteEl ref={sideNavRef}>
                     {Object.entries(docsBySubCategory).map((nav, i) => (
                       <ExpansionContainerEl
                         // eslint-disable-next-line react/no-array-index-key
@@ -344,10 +316,10 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                         </Expansion>
                       </ExpansionContainerEl>
                     ))}
-                  </AbsoluteEl>
-                  <DocNavEl>
+                  </NavAbsoluteEl>
+                  <AbsoluteNavFooterEl>
                     <StyledLink href="/docs">Documentation</StyledLink>
-                  </DocNavEl>
+                  </AbsoluteNavFooterEl>
                 </SideNav>
               </SideNavColumn>
               <Column xs={9} xl={18}>

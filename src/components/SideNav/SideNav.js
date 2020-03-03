@@ -6,15 +6,10 @@ import { slugify } from "helpers/slugify";
 
 import { List, ListItem } from "basics/Text";
 
-import { useSidebar } from "./useSidebar";
+import { NavLogo } from "components/Navigation/NavLogo";
+import { StickyEl, NavAbsoluteEl } from "components/Navigation/SharedStyles";
 
-const El = styled.div`
-  width: 100%;
-  height: calc(100vh - 121px);
-  top: 121px;
-  position: sticky;
-  z-index: 3;
-`;
+import { useSidebar } from "./useSidebar";
 
 const NestedUl = styled(List)`
   list-style: none;
@@ -32,8 +27,11 @@ const checkIfOverview = (relativePath) => {
   return pathSegments[pathSegments.length - 1] === "index.mdx";
 };
 
-export const SideNav = ({ children, ...props }) => (
-  <El {...props}>{children}</El>
+export const SideNav = ({ children, docType, ...props }) => (
+  <StickyEl {...props}>
+    {docType && <NavLogo pageName={docType} />}
+    {children}
+  </StickyEl>
 );
 
 SideNav.propTypes = {
