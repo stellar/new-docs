@@ -19,8 +19,9 @@ You can also find an outline of the basic steps issuers need to complete in the 
 Before you start building infrastructure to connect a Stellar-network token to banking rails, you need to do three things:
 
 1. Issue the asset on the network, which you can find out how to do [here](link)
+1. Or use an existing asset from a trustworthy issuer
 1. Add meta-information to the asset by completing and linking to a stellar.toml file, which you can find out how to do [here](link)
-1. Define the location of your `TRANSFER_SERVER` in your `stellar.toml` so that wallets know where to find the server and relevant endpoints.
+1. Define the location of your `TRANSFER_SERVER_SEP0024` in your `stellar.toml` so that wallets know where to find the server and relevant endpoints.
 
 Those steps are a prerequisite to what follows. After taking those steps, you will have a Stellar-network token linked to public information about who you are and what your asset represents, which is what wallets and interfaces use to populate their listings, and consumers use to understand your offering. Once you have done that, you should start by implementing an `/info` endpoint.
 
@@ -78,7 +79,7 @@ You can find the complete parameters for the `/info` endpoint in the [Interactiv
 
 ## Implementing Authentication
 
-To provide a simpler experience for wallet users, issuers can authenticate individuals with their Stellar accounts instead of requiring usernames and passwords. The method for doing that is specified in the Stellar Web Authentication SEP (aka [SEP-10](link)).
+To provide a simpler experience for wallet users, anchors (aka on/off ramps) can authenticate individuals with their Stellar accounts instead of requiring usernames and passwords. The method for doing that is specified in the Stellar Web Authentication SEP (aka [SEP-10](link)).
 
 Stellar Web Authentication is a protocol for verifying that a user controls a Stellar private key for a given account, and for creating a persistent session for that user. It relies on a variation of mutual challenge-response, and uses Stellar transactions to encode challenges and responses: an asset issuer provides a 'challenge' transaction; the client signs it on behalf of the user and returns it to the issuer; the issuer checks that the signature is valid, and if it is, issues a JWT.
 
@@ -126,11 +127,11 @@ In the interactive flow, the issuer’s server responds to the wallet’s POST w
 
 If authentication is required, it should be handled before kicking off the deposit by the server hosting the interactive flow, usually using a one-time-use JWT to start a backend persistent session as described in the [previous section](link). If you use Polaris, authentication is handled for you.
 
-When the flow is finished, the [webapp?] should respond to the callback given by the client. This can be either a javascript `postMessage` call or a call to a wallet-provided URL. In native apps, this URL can have a custom protocol to call back to the opening app.
+When the flow is finished, the webapp should respond to the callback given by the client. This can be either a javascript `postMessage` call or a call to a wallet-provided URL. In native apps, this URL can have a custom protocol to call back to the opening app.
 
 ### Implementing the Interactive Webapp Interface
 
-The webapp is an interface that collects any information you need from the user, including KYC requirements and deposit information here, such as amount. It doesn’t have to be complicated, but to provide a seamless user experience that aligns with wallets’ expectations, it should follow the UX guidelines described in this [Github repo](link). If you’ve already collected information from this user, you can either skip these screens or pre-fill them.
+The webappis an interface that collects any information you need from the user, including KYC requirements and deposit information, such as amount. It doesn’t have to be complicated, but to provide a seamless user experience that aligns with wallets’ expectations, it should follow the UX guidelines described in this [Github repo](link). If you’ve already collected information from this user, you can either skip these screens or pre-fill them.
 
 For testing purposes, it's important that the staging infrastructure allows third parties to complete the flow without a real bank account or phone number, and without transferring any real money. Each screen should be properly internationalized using either an existing customer's preferences or the optional `lang` parameter from the initial `POST /transactions/deposit/interactive` call.
 
@@ -160,9 +161,9 @@ It should also be noted that the JSON object representation of a particular tran
 
 The `/transaction` endpoint should return a single JSON object representing the specified transaction. Unlike the filtering parameters for `/transactions`, this endpoint should accept the various identifiers for a particular transaction. Again, refer to the [SEP](link) for a complete spec.
 
-## Implementing a Withdraw Flow
+## Implementing a Withdrawal Flow
 
-The withdraw flow is the off-ramp from the Stellar Network. In it, a user makes a payment on the Stellar network to return digital assets to an issuer, and receives the equivalent value as fiat currency from the issuer in their bank account in return. This section will go through all the steps necessary to implement a working withdrawal functionality
+The withdrawal flow is the off-ramp from the Stellar Network. In it, a user makes a payment on the Stellar network to return digital assets to an issuer, and receives the equivalent value as fiat currency from the issuer in their bank account in return. This section will go through all the steps necessary to implement a working withdrawal functionality
 
 Like deposit flows, withdraw flows involve a back-and-forth between an issuer’s server and a wallet’s client that starts with the wallet polling the `/info` endpoint and setting up an authenticated user session as described in the previous sections. The general sequence of deposit events looks like this:
 
@@ -189,7 +190,7 @@ The response to the wallet’s POST request to the `/transactions/withdraw/inter
 There are a number of UI pages that should be served to the user while walking through the withdraw flow. These pages can be divided into three separate categories or phases.
 
 - Mocked KYC: When starting a withdrawal, the issuer may be legally obligated to collect specific information from the user. In the testing phase, you don’t need to store this information permanently, but you still need to provide the interface to collect it. There is no restriction on the number of pages used, but often, you can get all you need with a single page. Make sure you understand relevant legal requirements before implementing this phase of the process.
-- Withdraw information: The issuer needs to collect the numerical amount of the asset to transfer. There may be other pieces of data you want to collect as well. Make sure you have all the information necessary to submit a successful transaction to the stellar network.
+- Withdrawal information: The issuer needs to collect the numerical amount of the asset to transfer. There may be other pieces of data you want to collect as well. Make sure you have all the information necessary to submit a successful transaction to the stellar network.
 - Waiting for transfer: Once the issuer has collected all the information needed for a withdrawal, the last page rendered in the interactive flow should make a `postMessage` call to the Wallet, notifying the wallet that it has all the information it needs.
 
 The wallet then submits the transaction to the Stellar network that sends tokens from the user’s Stellar account to the issuer’s Stellar account, andl begins polling the issuer’s `/transaction` endpoint until the relevant transaction has the expected status. For withdrawals, the expected status is “complete.”
