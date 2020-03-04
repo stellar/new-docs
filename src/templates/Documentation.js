@@ -34,15 +34,12 @@ import { Column, Container, Row } from "basics/Grid";
 import Articles from "components/Documentation/Articles";
 import { DocsBase } from "components/layout/DocsBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import {
-  Content,
-  SideNavColumn,
-  SideNavBackground,
-} from "components/Documentation/SharedStyles";
-import {
-  NavFooterLi,
   NavAbsoluteEl,
+  AbsoluteNavFooterEl,
   StickyEl,
+  SideNavBackground,
 } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
@@ -198,9 +195,6 @@ const Documentation = ({ data, pageContext, location }) => {
           />
         );
       })}
-      <NavFooterLi>
-        <StyledLink href="/api">API Reference</StyledLink>
-      </NavFooterLi>
     </Topics>
   );
   const center = (
@@ -247,6 +241,9 @@ const Documentation = ({ data, pageContext, location }) => {
               <SideNavBackground />
               <SideNav docType={docType.doc}>
                 <NavAbsoluteEl>{left}</NavAbsoluteEl>
+                <AbsoluteNavFooterEl>
+                  <StyledLink href="/api">API Reference</StyledLink>
+                </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
             {/*

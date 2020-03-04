@@ -29,9 +29,9 @@ import {
   ApiReferenceRow,
   ApiReferenceWrapper,
   SideNavColumn,
-  SideNavBackground,
   NestedRow,
 } from "components/Documentation/SharedStyles";
+import { SideNavBackground } from "components/Navigation/SharedStyles";
 
 import { buildPathFromFile } from "../../buildHelpers/routes";
 

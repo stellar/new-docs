@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { REDESIGN_PALETTE, MEDIA_QUERIES } from "constants/styles";
+import { MEDIA_QUERIES } from "constants/styles";
 
 import { Column, Container as GridContainer, gridHelpers } from "basics/Grid";
 
@@ -13,17 +13,8 @@ export const Container = styled(GridContainer)`
     max-width: 140rem;
   }
 `;
-
 export const SideNavColumn = styled(Column)`
   position: relative;
-`;
-export const SideNavBackground = styled.div`
-  position: absolute;
-  background-color: ${REDESIGN_PALETTE.grey[0]};
-  left: -100rem;
-  right: 0;
-  top: -10rem;
-  bottom: 0rem;
 `;
 export const DividerEl = styled.span`
   display: inline-block;
