@@ -239,37 +239,39 @@ const componentMap = {
   },
 };
 
-const ReferenceSection = React.memo(({ body, relativePath, title, link }) => {
-  const path = buildPathFromFile(relativePath);
+const ReferenceSection = React.memo(
+  ({ body, relativePath, title, githubLink }) => {
+    const path = buildPathFromFile(relativePath);
 
-  return (
-    <Route originalFilePath={relativePath} path={path}>
-      <section>
-        <TrackedContent>
-          <TrackedEl id={path}>
-            <ApiRefH1 id={path}>{title}</ApiRefH1>
-            {link && (
-              <Link href={link} newTab>
-                <EditIcon color={PALETTE.purpleBlue} />
-              </Link>
-            )}
-          </TrackedEl>
-        </TrackedContent>
+    return (
+      <Route originalFilePath={relativePath} path={path}>
+        <section>
+          <TrackedContent>
+            <TrackedEl id={path}>
+              <ApiRefH1 id={path}>{title}</ApiRefH1>
+              {githubLink && (
+                <Link href={githubLink} newTab>
+                  <EditIcon color={PALETTE.purpleBlue} />
+                </Link>
+              )}
+            </TrackedEl>
+          </TrackedContent>
 
-        <NestedRow>
-          <MDXRenderer>{body}</MDXRenderer>
-        </NestedRow>
-        <HorizontalRule />
-      </section>
-    </Route>
-  );
-});
+          <NestedRow>
+            <MDXRenderer>{body}</MDXRenderer>
+          </NestedRow>
+          <HorizontalRule />
+        </section>
+      </Route>
+    );
+  },
+);
 
 ReferenceSection.propTypes = {
   body: PropTypes.node.isRequired,
   relativePath: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  link: PropTypes.string,
+  githubLink: PropTypes.string,
 };
 
 // eslint-disable-next-line react/no-multi-comp
@@ -323,15 +325,17 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 </SideNav>
               </SideNavColumn>
               <Column xs={9} xl={18}>
-                {referenceDocs.map(({ body, id, parent, title, link }) => (
-                  <ReferenceSection
-                    relativePath={parent.relativePath}
-                    key={id}
-                    title={title}
-                    link={link}
-                    body={body}
-                  />
-                ))}
+                {referenceDocs.map(
+                  ({ body, id, parent, title, githubLink }) => (
+                    <ReferenceSection
+                      relativePath={parent.relativePath}
+                      key={id}
+                      title={title}
+                      githubLink={githubLink}
+                      body={body}
+                    />
+                  ),
+                )}
                 <Footer />
               </Column>
               <Column xs={4} xl={9} />

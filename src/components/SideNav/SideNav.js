@@ -7,7 +7,7 @@ import { slugify } from "helpers/slugify";
 import { List, ListItem } from "basics/Text";
 
 import { NavLogo } from "components/Navigation/NavLogo";
-import { StickyEl, NavAbsoluteEl } from "components/Navigation/SharedStyles";
+import { StickyEl } from "components/Navigation/SharedStyles";
 
 import { useSidebar } from "./useSidebar";
 
@@ -36,6 +36,7 @@ export const SideNav = ({ children, docType, ...props }) => (
 
 SideNav.propTypes = {
   children: PropTypes.node.isRequired,
+  docType: PropTypes.string,
 };
 
 export const SideNavBody = ({

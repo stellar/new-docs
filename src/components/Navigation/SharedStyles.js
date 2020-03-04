@@ -1,11 +1,6 @@
 import styled, { css } from "styled-components";
 
-import {
-  MEDIA_QUERIES,
-  PALETTE,
-  FONT_WEIGHT,
-  Z_INDEXES,
-} from "constants/styles";
+import { MEDIA_QUERIES, PALETTE, FONT_WEIGHT } from "constants/styles";
 
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";

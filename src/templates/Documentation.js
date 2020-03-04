@@ -12,6 +12,7 @@ import {
   THEME,
   REDESIGN_PALETTE,
   DEFAULT_COLUMN_WIDTH,
+  PALETTE,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
@@ -26,6 +27,8 @@ import {
 } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
+import { EditIcon } from "basics/Icons";
+import { Link } from "basics/Links";
 import { Column, Container, Row } from "basics/Grid";
 
 import Articles from "components/Documentation/Articles";
@@ -46,7 +49,7 @@ import Clock from "assets/icons/clock.svg";
 import { Footer } from "components/Documentation/Footer";
 
 const contentId = "content";
-const { h2: H2, a: StyledLink } = components;
+const { h1: H1, h2: H2, a: StyledLink } = components;
 
 const Topics = styled.ul`
   list-style-type: none;
@@ -159,7 +162,13 @@ const Documentation = ({ data, pageContext, location }) => {
     rootDir,
   );
   const article = findArticle(pagePath, docsContents)[name];
-  const { body, modifiedTime, nextUp: articleNextUp } = article;
+  const {
+    title: header,
+    body,
+    modifiedTime,
+    githubLink,
+    nextUp: articleNextUp,
+  } = article;
 
   const pageOutline = article.headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
@@ -196,6 +205,12 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const center = (
     <Content>
+      <H1>{header}</H1>
+      {githubLink && (
+        <Link href={githubLink} newTab>
+          <EditIcon color={PALETTE.purpleBlue} />
+        </Link>
+      )}
       <MDXRenderer>{body}</MDXRenderer>
       <ModifiedEl>
         <Clock />

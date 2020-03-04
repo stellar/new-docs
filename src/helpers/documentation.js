@@ -3,6 +3,9 @@ import { graphql } from "gatsby";
 import { groupBy } from "helpers/groupBy";
 import { buildPathFromFile } from "utils";
 
+export const DOCS_CONTENT_URL =
+  "https://github.com/stellar/new-docs/blob/master/content/";
+
 export const query = graphql`
   fragment ApiReferencePage on Mdx {
     id
@@ -186,6 +189,7 @@ export const buildDocsContents = (data, rootDir) => {
 
     topic.nodes.forEach((node) => {
       const { childMdx, modifiedTime, name, relativePath } = node;
+      const mdxLink = relativePath && DOCS_CONTENT_URL + relativePath;
       const {
         body,
         headings,
@@ -196,6 +200,7 @@ export const buildDocsContents = (data, rootDir) => {
         id: articleId,
         body,
         headings,
+        githubLink: mdxLink,
         modifiedTime,
         title: articleTitle || "{`title` Not Found}",
         url: buildPathFromFile(relativePath),
