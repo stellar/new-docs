@@ -3,16 +3,11 @@ import { Location } from "@reach/router";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
-import {
-  NAV_THEMES,
-  CSS_TRANSITION_SPEED,
-  FONT_WEIGHT,
-  PALETTE,
-} from "constants/styles";
+import { CSS_TRANSITION_SPEED, FONT_WEIGHT, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 
 import { sortReference, normalizeMdx } from "helpers/sortReference";
@@ -27,8 +22,7 @@ import { ArrowIcon } from "basics/Icons";
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
 import { Expansion } from "components/Expansion";
-import { NavFrame } from "components/Navigation/SharedStyles";
-import { NavLogo } from "components/Navigation/NavLogo";
+
 import { SideNav, SideNavBody } from "components/SideNav";
 import {
   Container,
@@ -142,22 +136,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
 
   return (
     <MDXProvider components={componentMap}>
-      <DocsBase
-        pageContext={pageContext}
-        navigation={
-          <ThemeProvider theme={NAV_THEMES.docs}>
-            <NavFrame>
-              <Container>
-                <ApiReferenceRow>
-                  <Column xs={3} xl={4}>
-                    <NavLogo pageName="Documentation" />
-                  </Column>
-                </ApiReferenceRow>
-              </Container>
-            </NavFrame>
-          </ThemeProvider>
-        }
-      >
+      <DocsBase pageContext={pageContext}>
         <Container>
           <ApiReferenceRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>

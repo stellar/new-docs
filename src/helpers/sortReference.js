@@ -1,5 +1,4 @@
-const DOCS_CONTENT_URL =
-  "https://github.com/stellar/new-docs/blob/master/content/";
+import { DOCS_CONTENT_URL } from "helpers/documentation";
 
 export const normalizeMdx = (node) => {
   const { id, frontmatter, body, parent } = node;
@@ -12,7 +11,7 @@ export const normalizeMdx = (node) => {
     id,
     order: frontmatter.order,
     title: frontmatter.title,
-    link: mdxLink,
+    githubLink: mdxLink,
     body,
     // paths always start with `docs` or `api` which isn't useful. Strip it.
     directory: parentRelativeDirSplit.slice(1).join("/"),

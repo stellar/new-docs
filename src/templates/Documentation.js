@@ -8,12 +8,14 @@ import path from "path";
 import { Location } from "@reach/router";
 
 import {
-  DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
   THEME,
   REDESIGN_PALETTE,
+  DEFAULT_COLUMN_WIDTH,
+  PALETTE,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
+import { docType } from "constants/docType";
 
 import { slugify } from "helpers/slugify";
 import { smoothScrollTo } from "helpers/dom";
@@ -25,6 +27,8 @@ import {
 } from "helpers/documentation";
 
 import { BasicButton } from "basics/Buttons";
+import { EditIcon } from "basics/Icons";
+import { Link } from "basics/Links";
 import { Column, Container, Row } from "basics/Grid";
 
 import Articles from "components/Documentation/Articles";
@@ -35,28 +39,25 @@ import {
   SideNavColumn,
   SideNavBackground,
 } from "components/Documentation/SharedStyles";
-import { NavFooterLi } from "components/Navigation/SharedStyles";
+import {
+  NavFooterLi,
+  NavAbsoluteEl,
+  StickyEl,
+} from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import { Footer } from "components/Documentation/Footer";
 
 const contentId = "content";
-const { h2: H2, a: StyledLink } = components;
-
-const StickyEl = styled.div`
-  width: 100%;
-  height: calc(100vh - 121px);
-  top: 121px;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-  position: sticky;
-  z-index: 3;
-`;
+const { h1: H1, h2: H2, a: StyledLink } = components;
 
 const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
 
   li {
+    position: relative;
     padding: 0.55rem 0;
   }
 `;
@@ -161,7 +162,13 @@ const Documentation = ({ data, pageContext, location }) => {
     rootDir,
   );
   const article = findArticle(pagePath, docsContents)[name];
-  const { body, modifiedTime, nextUp: articleNextUp } = article;
+  const {
+    title: header,
+    body,
+    modifiedTime,
+    githubLink,
+    nextUp: articleNextUp,
+  } = article;
 
   const pageOutline = article.headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
@@ -198,6 +205,12 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const center = (
     <Content>
+      <H1>{header}</H1>
+      {githubLink && (
+        <Link href={githubLink} newTab>
+          <EditIcon color={PALETTE.purpleBlue} />
+        </Link>
+      )}
       <MDXRenderer>{body}</MDXRenderer>
       <ModifiedEl>
         <Clock />
@@ -232,7 +245,9 @@ const Documentation = ({ data, pageContext, location }) => {
           <Row>
             <SideNavColumn md={3} lg={3}>
               <SideNavBackground />
-              <StickyEl>{left}</StickyEl>
+              <SideNav docType={docType.doc}>
+                <NavAbsoluteEl>{left}</NavAbsoluteEl>
+              </SideNav>
             </SideNavColumn>
             {/*
               We want the right hand side to appear above content on mobile

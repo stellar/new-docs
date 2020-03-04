@@ -68,6 +68,10 @@ const ColumnEl = styled.div`
   display: flex;
   flex-direction: column;
   font-family: ${FONT_FAMILY.base};
+
+  &:first-child {
+    padding-bottom: 2px;
+  }
 `;
 const DataTypeTextEl = styled.span`
   display: block;
