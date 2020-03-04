@@ -131,7 +131,7 @@ When the flow is finished, the webapp should respond to the callback given by th
 
 ### Implementing the Interactive Webapp Interface
 
-The webappis an interface that collects any information you need from the user, including KYC requirements and deposit information, such as amount. It doesn’t have to be complicated, but to provide a seamless user experience that aligns with wallets’ expectations, it should follow the UX guidelines described in this [Github repo](link). If you’ve already collected information from this user, you can either skip these screens or pre-fill them.
+The webapp is an interface that collects any information you need from the user, including KYC requirements and deposit information, such as amount. It doesn’t have to be complicated, but to provide a seamless user experience that aligns with wallets’ expectations, it should follow the UX guidelines described in this [Github repo](link). If you’ve already collected information from this user, you can either skip these screens or pre-fill them.
 
 For testing purposes, it's important that the staging infrastructure allows third parties to complete the flow without a real bank account or phone number, and without transferring any real money. Each screen should be properly internationalized using either an existing customer's preferences or the optional `lang` parameter from the initial `POST /transactions/deposit/interactive` call.
 
