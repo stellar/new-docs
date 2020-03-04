@@ -39,7 +39,7 @@ export const H1 = styled.h1`
 export const H2 = styled.h2`
   ${headingBase};
   display: inline-block;
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin: 3.125rem 0 0.5rem;
   letter-spacing: -1.2px;
 `;
