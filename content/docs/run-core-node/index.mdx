@@ -2,3 +2,22 @@
 title: "Overview"
 order: 0
 ---
+
+Stellar is a peer-to-peer network made up of nodes, which are computers that run a program called Stellar Core to communicate, validate transactions, and construct a chain of ledgers guaranteed to be in agreement across all participating nodes at all times.   
+
+It explains the technical and operational aspects of installing, configuring, and maintaining a Stellar core node. 
+
+Generally, people run a node in conjunction with the Horizon API, which allows them to easily query the ledger and submit transactions.  
+
+You don’t need to run a node to build on Stellar: you can start developing using your [SDK of choice](link), and use public instances of Horizon to query the ledger and submit transactions.  
+
+The Stellar Development Foundation runs two Horizon servers, one for the public network and one for the test network, free for anyone's use at https://horizon.stellar.org and https://horizon-testnet.stellar.org.  These servers are good for development and small-scale projects — most businesses building on Stellar don’t need to worry about mastering the operational requirements of running a node until after their project is off the ground — but we don’t recommend using them for production services that need strong reliability.
+
+Basic flow:
+* Choose which type of node you want to run
+* Install Stellar Core
+* Configure Stellar Core
+* Prepare Your Environment
+* Join the network
+* Monitor and maintain your node
+* Join the validators channels to stay on top of critical upgrades and network votes
