@@ -1,0 +1,194 @@
+---
+title: Configuring Your Node
+order: 
+---
+## Basics
+
+All configuration for stellar-core is done with a TOML file. 
+
+By default 
+stellar-core loads `./stellar-core.cfg`, but you can specify a different file to load on the command line:
+
+`$ stellar-core --conf betterfile.cfg <COMMAND>`
+
+The [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) is not a real configuration, but documents all possible configuration elements as well as their default values.
+
+Here is an [example test network config](https://github.com/stellar/docker-stellar-core-horizon/blob/master/testnet/core/etc/stellar-core.cfg) for connecting to the test network.
+
+Here is an [example public network config](https://github.com/stellar/docs/blob/master/other/stellar-core-validator-example.cfg) for connecting to the public network.
+
+The examples in this file don't specify `--conf betterfile.cfg` for brevity.
+
+Auditing of the P2P network is enabled by default, see the [overlay topology](#overlay-topology-survey) section for more detail if you'd like to disable it
+
+### Validating node
+Nodes are considered **validating** if they take part in SCP and sign messages 
+pledging that the network agreed to a particular transaction set.
+
+If you want to validate, you must generate a public/private key for your node.
+ Nodes shouldn't share keys. You should carefully *secure your private key*. 
+If it is compromised, someone can send false messages to the network and those 
+messages will look like they came from you.
+
+Generate a key pair like this:
+
+`$ stellar-core gen-seed`
+the output will look something like
+```
+Secret seed: SBAAOHEU4WSWX6GBZ3VOXEGQGWRBJ72ZN3B3MFAJZWXRYGDIWHQO37SY
+Public: GDMTUTQRCP6L3JQKX3OOKYIGZC6LG2O6K2BSUCI6WNGLL4XXCIB3OK2P
+```
+
+Place the seed in your config:
+
+`NODE_SEED="SBAAOHEU4WSWX6GBZ3VOXEGQGWRBJ72ZN3B3MFAJZWXRYGDIWHQO37SY"`
+
+and set the following value in your config:
+
+`NODE_IS_VALIDATOR=true`
+
+If you don't include a `NODE_SEED` or set `NODE_IS_VALIDATOR=true`, you will still
+watch SCP and see all the data in the network but will not send validation messages.
+
+NB: if you run more than one node, set the `HOME_DOMAIN` common to those nodes using the `NODE_HOME_DOMAIN` property.
+Doing so will allow your nodes to be grouped correctly during [quorum set generation](#home-domains-array).
+
+If you want other validators to add your node to their quorum sets, you should also share your public key (GDMTUTQ... ) by publishing a stellar.toml file on your homedomain following specs laid out in [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md). 
+
+### Choosing your quorum set
+A good quorum set:
+* aligns with your organization’s priorities 
+* has enough redundancy to handle arbitrary node failures
+* maintains good quorum intersection 
+
+Since crafting a good quorum set is a difficult thing to do, stellar core *automatically* generates a quorum set for you based on structured information you provide in your config file.  You choose the validators you want to trust; stellar core configures them into an optimal quorum set.
+
+To generate a quorum set, stellar core:
+* Groups validators run by the same organization into a subquorum
+* Sets the threshold for each of those subquorums
+* Gives weights to those subquorums based on quality
+
+While this does not absolve you of all responsibility — you still need to pick trustworthy validators and keep an eye on them to ensure that they’re consistent and reliable — it does make your life easier, and reduces the chances for human error.
+
+#### Validator discovery
+When you add a validating node to your quorum set, it’s generally because you trust the *organization* running the node: you trust SDF, not some anonymous Stellar public key. 
+
+In order to create a self-verified link between a node and the organization that runs it, a validator declares a home domain on-chain using a `set_options` operation, and publishes organizational information in a stellar.toml file hosted on that domain.  To find out how that works, take a look at [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md).  
+
+As a result of that link, you can look up a node by its Stellar public key and check the stellar.toml to find out who runs it.  It’s possible to do that manually, but you can also just consult the list of nodes on [Stellarbeat.io](https://stellarbeat.io/nodes).  If you decide to trust an organization, you can use that list to collect the information necessary to add their nodes to your configuration.  
+
+When you look at that list, you will discover that the most reliable organizations actually run more than one validator, and adding all of an organization’s nodes to your quorum set creates the redundancy necessary to sustain arbitrary node failure.  When an organization with a trio of nodes takes one down for maintenance, for instance, the remaining two vote on the organization’s behalf, and the organization’s network presence persists.
+
+One important thing to note: you need to either depend on exactly one entity OR have **at least 4 entities** for automatic quorum set configuration to work properly.  At least 4 is the better option.
+
+#### Home domains array
+To create your quorum set, stellar cores relies on two arrays of tables: `[[HOME_DOMAINS]]` and `[[VALIDATORS]]`.  Check out the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L372) to see those arrays in action.
+
+`[[HOME_DOMAINS]]` defines a superset of validators: when you add nodes hosted by the same organization to your configuration, they share a home domain, and the information in the `[[HOME_DOMAINS]]` table, specifically the quality rating, will automatically apply to every one of those validators. 
+
+For each organization you want to add, create a separate `[[HOME_DOMAINS]]` table, and complete the following required fields:
+
+Field | Requirements | Description
+------|--------------|------------
+HOME_DOMAIN | string | URL of home domain linked to a group of validators
+QUALITY | string | Rating for organization's nodes: `HIGH`, `MEDIUM`, or `LOW`
+
+Here’s an example:
+```
+[[HOME_DOMAINS]]
+HOME_DOMAIN="testnet.stellar.org"
+QUALITY="HIGH"
+
+[[HOME_DOMAINS]]
+HOME_DOMAIN="some-other-domain"
+QUALITY="LOW"
+```
+
+#### Validators array
+For each node you would like to add to your quorum set, complete a `[[VALIDATORS]]` table with the following fields:  
+
+Field | Requirements | Description
+------|--------------|------------
+NAME | string | A unique alias for the node
+QUALITY | string | Rating for node (required unless specified in `[[HOME_DOMAINS]]`): `HIGH`, `MEDIUM`, or `LOW`.
+HOME_DOMAIN | string | URL of home domain linked to validator
+PUBLIC_KEY | string | Stellar public key associated with validator
+ADDRESS | string | Peer:port associated with validator (optional)
+HISTORY | string | archive GET command associated with validator (optional)
+
+If the node's `HOME_DOMAIN` aligns with an organization defined in the `[[HOME_DOMAINS]]` array, the quality rating specified there will apply to the node.  If you’re adding an individual node that is *not* covered in that array, you’ll need to specify the `QUALITY` here.
+
+Here’s an example:
+```
+[[VALIDATORS]]
+NAME="sdftest1"
+HOME_DOMAIN="testnet.stellar.org"
+PUBLIC_KEY="GDKXE2OZMJIPOSLNA6N6F2BVCI3O777I2OOC4BV7VOYUEHYX7RTRYA7Y"
+ADDRESS="core-testnet1.stellar.org"
+HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_001/{0} -o {1}"
+
+[[VALIDATORS]]
+NAME="sdftest2"
+HOME_DOMAIN="testnet.stellar.org"
+PUBLIC_KEY="GCUCJTIYXSOXKBSNFGNFWW5MUQ54HKRPGJUTQFJ5RQXZXNOLNXYDHRAP"
+ADDRESS="core-testnet2.stellar.org"
+HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_002/{0} -o {1}"
+
+[[VALIDATORS]]
+NAME="rando-node"
+QUALITY="LOW"
+HOME_DOMAIN="rando.com"
+PUBLIC_KEY="GC2V2EFSXN6SQTWVYA5EPJPBWWIMSD2XQNKUOHGEKB535AQE2I6IXV2Z"
+ADDRESS="core.rando.com"
+```
+
+#### Validator quality
+`QUALITY` is a required field for each node you add to your quorum set.  Whether you specify it for a suite of nodes in `[[HOME_DOMAINS]]` or for a single node in `[[VALIDATORS]]`, it means the same thing, and you have the same three rating options: HIGH, MEDIUM, or LOW.
+
+**HIGH** quality validators are given the most weight in automatic quorum set configuration.  Before assigning a high quality rating to a node, make sure it has low latency and good uptime, and that the organization running the node is reliable and trustworthy.  
+
+A high quality a validator:
+* publishes an archive
+* belongs to a suite of nodes that provide redundancy 
+
+Choosing redundant nodes is good practice.  The archive requirement is programmatically enforced.
+
+**MEDIUM** quality validators are nested below high quality validators, and their combined weight is equivalent to a *single high quality entity*.  If a node doesn't publish an archive, but you deem it reliable, or have an organizational interest in including in your quorum set, give it a medium quality rating.  
+
+**LOW** quality validators are nested below medium quality validators, and their combined weight is equivalent to a *single medium quality entity*.    Should they prove reliable over time, you can upgrade their rating to medium to give them a bigger role in your quorum set configuration. 
+ 
+#### Automatic quorum set generation
+Once you add validators to your configuration, stellar core automatically generates a quorum set using the following rules:
+* Validators with the same home domain are automatically grouped together and given a threshold requiring a simple majority (2f+1)
+* Heterogeneous groups of validators are given a threshold assuming byzantine failure (3f+1)
+* Entities are grouped by QUALITY and nested from HIGH to LOW 
+* HIGH quality entities are at the top, and are given decision-making priority 
+* The combined weight of MEDIUM quality entities equals a single HIGH quality entity  
+* The combined weight of LOW quality entities equals a single MEDIUM quality entity
+
+Here's a diagram depicting the nested quality levels and how they interact:
+
+![Diagram Automatic Quorum Set Generation](https://raw.githubusercontent.com/stellar/docs/master/guides/walkthroughs/assets/validator_complete.png)
+
+
+#### Quorum and overlay network
+
+It is generally a good idea to give information to your validator on other validators that you rely on. This is achieved by configuring `KNOWN_PEERS` and `PREFERRED_PEERS` with the addresses of your dependencies.
+
+Additionally, configuring `PREFERRED_PEER_KEYS` with the keys from your quorum set might be a good idea to give priority to the nodes that allows you to reach consensus.
+
+Without those settings, your validator depends on other nodes on the network to forward you the right messages, which is typically done as a best effort.
+
+#### Special considerations during quorum set updates
+
+Sometimes an organization needs to make changes that impact other's quorum sets:
+
+  * taking a validator down for long period of time
+  * adding new validators to their pool
+
+In both cases, it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
+
+  * removing too many nodes from your quorum set *before* the nodes are taken down : if different people remove different sets the remaining sets may not overlap between nodes and may cause network splits
+  * adding too many nodes in your quorum set at the same time : if not done carefully can cause those nodes to overpower your configuration
+
+Recommended steps are for the entity that adds/removes nodes to do so first between their own nodes, and then have people reflect those changes gradually (over several rounds) in their quorum configuration.
