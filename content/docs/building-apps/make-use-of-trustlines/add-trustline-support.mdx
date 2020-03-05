@@ -1,13 +1,14 @@
 ---
-title: Add trustline support
+title: Handle Custom Assets
 order: 20
 ---
 
-> Building off what we’re already created in previous lessons we’ll increase the functionality of our basic wallet to allow for the creation of new trustlines as well as the ability to make payments in these new currencies.
+> In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed the [Build a Basic Wallet](link) and [Make XLM Payments](link).
 
 [View pay boilerplate code on GitHub][1]
 
-In order to enable this new functionality we only need to modify three files and create one new one. Let’s start with our modifications. First up the `./events/render.tsx` file. We need to add a button for creating these new trustlines!
+## Add Trustlines Button
+To enable custom asset handling, we need to modify three files and create one new one. Let’s start with our modifications. First up the `./events/render.tsx` file. We need to add a button for creating these new trustlines!
 
 ```tsx
 import { h } from '@stencil/core'
@@ -42,9 +43,9 @@ export default function render() {
 }
 ```
 
-If you look closely you’ll spot the Trust Asset button right below our `account-key` div. Nothing funky here, just a button which will trigger the `this.trustAsset` method which we’ll add in a moment.
+If you look closely you’ll spot the Trust Asset button right below our `account-key` div. Nothing funky here, just a button that triggers `this.trustAsset` method which we’ll add in a moment.
 
-Next up let’s update the `./methods/makePayment.ts` file.
+Next up, let’s update the `./methods/makePayment.ts` file.
 
 ```ts
 import sjcl from '@tinyanvil/sjcl'
@@ -146,7 +147,7 @@ export default async function makePayment(e: Event) {
 }
 ```
 
-This is a big file which has been covered in great detail in the [Make XLM Payments]() tutorial so we’ll just focus on the changes to support custom asset payments.
+This is a big file was covered in great detail in the [Make XLM Payments](link) tutorial, so we’ll just focus on the changes we need to make to support custom asset payments.
 
 ```ts
 ...
@@ -160,7 +161,7 @@ This is a big file which has been covered in great detail in the [Make XLM Payme
 ...
 ```
 
-This change allows us to indicate a specific asset code we’d like to make the pay with as well as triggering an additional prompt to set the issuer for that asset if it’s not the native XLM.
+This change allows us to indicate a specific asset code we’d like use to make a payment, and triggers an additional prompt to set the issuer for that asset if it’s not the native XLM.
 
 ```ts
 ...
@@ -179,7 +180,7 @@ This is just a nifty little helper shortcut to allow us to use the `ME` “issue
 ...
 ```
 
-The final noteworthy change is a ternary operation which switches our payment asset between the native XLM and a custom asset based off of our prompt responses. Essentially if `instructions[3]` exists, or there is an issuer, use that issuer and custom token as the asset to make the payment with. Otherwise just use the native `Asset`.
+The final noteworthy change is a ternary operation that switches our payment asset between the native XLM and a custom asset based off of responses to our prompt. Essentially, if `instructions[3]` exists—meaning there is an issuer—use that issuer and custom token as the asset for the payment. Otherwise, just use the native `Asset`.
 
 The final changes are in the `wallet.ts` itself and tie together all the other updates as well as pull in the new `trustAsset` method.
 
@@ -256,6 +257,8 @@ Wallet.prototype.render = render
 ```
 
 Only thing worth seeing here besides the inclusion of the new `trustAsset` method is the addition of the `trust?: boolean,` in the `Loading` class.
+
+## Adding Trustlines
 
 Alright so, finally we get to the `./methods/trustAsset.ts` file!
 
@@ -340,7 +343,7 @@ export default async function trustAsset(
 }
 ```
 
-This will look very familiar to the `makePayment` method but there are a couple tiny tweaks worth noting before wrapping up.
+This is similar to the `makePayment` method but there are a couple tiny tweaks worth noting:
 
 ```ts
 export default async function trustAsset(
@@ -368,15 +371,12 @@ export default async function trustAsset(
     pincode = pincode || await this.setPrompt('Enter your keystore pincode')
 ```
 
-We’re allowing the inclusion of several arguments in this function, namely `asset`, `issuer` and `pincode`. We won’t be making use of them here but they will prove useful as transparently creating trustlines from within other functions will prove incredibly useful.
+We’re allowing the inclusion of several arguments in this function, namely `asset`, `issuer`, and `pincode`. We won’t be making use of them here, but transparently creating trustlines from within other functions will prove useful later.
 
-If we have any of those variables set we can “preload” our interface a bit and even bypass user input altogether if a pincode is provided. Again, not something we’ll make use of quite yet but once we look into depositing and withdrawing assets from an Anchor or accepting incoming payments for which we don’t yet have a trustline this functionality will prove useful.
+If we have any of those variables set, we can “preload” our interface a bit, and even bypass user input altogether if a pincode is provided. Again, not something we’ll make use of quite yet, but once we look into depositing and withdrawing assets from an Anchor or accepting incoming payments for which we don’t yet have a trustline this functionality will prove useful.
 
 So there we have it! The ability to accept and pay with custom assets on Stellar!
 
-[View this code on GitHub][3]
-
-[Prev][4] — [Next][5]
 
 [1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/pay
 [3]:	https://github.com/tyvdh/stellar-demo-wallet/tree/trustline
