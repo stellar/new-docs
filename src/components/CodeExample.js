@@ -14,29 +14,31 @@ import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
 
 import { Tooltip } from "components/Tooltip";
+import { DividerEl } from "components/Documentation/SharedStyles";
 
 const CODE_LANGS = {
   curl: "cURL",
   go: "Go",
-  javascript: "JavaScript",
+  javascript: "JAVASCRIPT",
   java: "Java",
 };
 
 const LangSelect = styled(Select)`
-  width: auto;
+  width: 100%;
   display: inline-block;
   margin: 0;
-  padding-right: 1rem;
 
   select {
     display: inline-block;
     border: none;
     background: transparent;
     color: ${PALETTE.white};
+    margin: calc(1rem - 1px);
+    padding: 0;
+    height: 1rem;
     font-family: ${FONT_FAMILY.monospace};
     font-weight: 500;
     font-size: 0.75rem;
-    text-transform: uppercase;
   }
 `;
 
@@ -54,6 +56,12 @@ const MethodContentEl = styled.div`
 
 const ContentEl = styled.div`
   padding: 1rem;
+  overflow: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const CodeExampleEl = styled.div`
@@ -91,14 +99,10 @@ const TitleEl = styled.div`
   display: flex;
   justify-content: space-between;
   position: relative;
-  padding: 1.5rem;
+  padding: 0 1rem;
   align-items: center;
-  padding-top: 0.2rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 0;
   color: ${PALETTE.white};
-  border-bottom: 1px solid ${PALETTE.white60};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
 `;
@@ -193,6 +197,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
               </option>
             ))}
           </LangSelect>
+          <DividerEl />
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
             onCopy={() => {

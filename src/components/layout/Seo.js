@@ -10,9 +10,9 @@ import favicon96 from "assets/favicon/favicon-96x96.png";
 import favicon180 from "assets/favicon/apple-icon-180x180.png";
 import favicon192 from "assets/favicon/android-chrome-192x192.png";
 import favicon512 from "assets/favicon/android-chrome-512x512.png";
-import StellarLogo from "assets/images/stellar-logo.png";
+import StellarDocsImage from "assets/images/og_developers.jpg";
 
-export const Seo = ({ title, description = "", previewImage, path }) => {
+export const Seo = ({ title, description = "", path }) => {
   const data = useStaticQuery(graphql`
     query Metadata {
       site {
@@ -33,13 +33,6 @@ export const Seo = ({ title, description = "", previewImage, path }) => {
   const url = path ? siteUrl + path : siteUrl;
   const finalDescription = description || defaultDescription;
 
-  const isFullPath = (previewImage || "").startsWith("http");
-
-  let previewImageUrl = siteUrl + StellarLogo;
-  if (previewImage) {
-    previewImageUrl = isFullPath ? previewImage : siteUrl + previewImage;
-  }
-
   return (
     <Helmet
       title={title}
@@ -51,7 +44,7 @@ export const Seo = ({ title, description = "", previewImage, path }) => {
         { property: "og:type", content: "website" },
         { property: "og:description", content: finalDescription },
         { property: "og:url", content: url },
-        { property: "og:image", content: previewImageUrl },
+        { property: "og:image", content: StellarDocsImage },
 
         { name: "twitter:card", content: "summary" },
         { property: "twitter:site", content: "@StellarOrg" },
@@ -82,6 +75,5 @@ export const Seo = ({ title, description = "", previewImage, path }) => {
 Seo.propTypes = {
   path: PropTypes.string.isRequired,
   title: PropTypes.node,
-  previewImage: PropTypes.string,
   description: PropTypes.node,
 };

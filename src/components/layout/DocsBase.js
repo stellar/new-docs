@@ -4,10 +4,6 @@ import { ThemeProvider } from "styled-components";
 
 import { NAV_THEMES, PALETTE } from "constants/styles";
 
-import { Row, Column, Container } from "basics/Grid";
-
-import { NavFrame } from "components/Navigation/SharedStyles";
-import { NavLogo } from "components/Navigation/NavLogo";
 import { Provider as SideNavProvider } from "components/SideNav";
 
 import LayoutBase from "./LayoutBase";
@@ -18,27 +14,10 @@ const theme = {
 };
 
 export const DocsBase = (props) => {
-  const { children, navigation, ...rest } = props;
+  const { children, ...rest } = props;
 
   return (
-    <LayoutBase
-      {...rest}
-      navigation={
-        navigation || (
-          <ThemeProvider theme={NAV_THEMES.docs}>
-            <NavFrame>
-              <Container>
-                <Row>
-                  <Column xs={3}>
-                    <NavLogo pageName="Documentation" />
-                  </Column>
-                </Row>
-              </Container>
-            </NavFrame>
-          </ThemeProvider>
-        )
-      }
-    >
+    <LayoutBase {...rest}>
       <ThemeProvider theme={(orig) => ({ ...orig, ...theme, ...navTheme })}>
         <SideNavProvider>{children}</SideNavProvider>
       </ThemeProvider>
@@ -48,5 +27,4 @@ export const DocsBase = (props) => {
 
 DocsBase.propTypes = {
   children: PropTypes.node,
-  navigation: PropTypes.node,
 };

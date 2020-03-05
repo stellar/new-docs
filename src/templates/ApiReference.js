@@ -2,18 +2,19 @@ import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 
 import {
-  NAV_THEMES,
   CSS_TRANSITION_SPEED,
   FONT_WEIGHT,
+  DEFAULT_COLUMN_WIDTH,
   PALETTE,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
+import { docType } from "constants/docType";
 
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
@@ -26,8 +27,7 @@ import { Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
-import { NavFrame, NavFooterLi } from "components/Navigation/SharedStyles";
-import { NavLogo } from "components/Navigation/NavLogo";
+import { NavFooterLi, NavAbsoluteEl } from "components/Navigation/SharedStyles";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
@@ -59,6 +59,7 @@ const TrackedEl = styled.div``;
 
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
 `;
 const NavTitleEl = styled(H5)`
   margin: 0;
@@ -81,10 +82,6 @@ const NavItemEl = styled.div`
   &:hover {
     color: ${PALETTE.lightGrey};
   }
-`;
-const DocNavEl = styled(NavFooterLi)`
-  position: absolute;
-  bottom: 0;
 `;
 
 const StyledLink = components.a;
@@ -117,6 +114,10 @@ const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
   display: block;
+`;
+const AbsoluteNavFooterEl = styled(NavFooterLi)`
+  position: absolute;
+  bottom: 0;
 `;
 
 const isInViewport = (elem) => {
@@ -238,50 +239,40 @@ const componentMap = {
   },
 };
 
-const ReferenceSection = React.memo(({ body, relativePath, title, link }) => {
-  const path = buildPathFromFile(relativePath);
+const ReferenceSection = React.memo(
+  ({ body, relativePath, title, githubLink }) => {
+    const path = buildPathFromFile(relativePath);
 
-  return (
-    <Route originalFilePath={relativePath} path={path}>
-      <section>
-        <TrackedContent>
-          <TrackedEl id={path}>
-            <ApiRefH1 id={path}>{title}</ApiRefH1>
-            {link && (
-              <Link href={link} newTab>
-                <EditIcon color={PALETTE.purpleBlue} />
-              </Link>
-            )}
-          </TrackedEl>
-        </TrackedContent>
+    return (
+      <Route originalFilePath={relativePath} path={path}>
+        <section>
+          <TrackedContent>
+            <TrackedEl id={path}>
+              <ApiRefH1 id={path}>{title}</ApiRefH1>
+              {githubLink && (
+                <Link href={githubLink} newTab>
+                  <EditIcon color={PALETTE.purpleBlue} />
+                </Link>
+              )}
+            </TrackedEl>
+          </TrackedContent>
 
-        <NestedRow>
-          <MDXRenderer>{body}</MDXRenderer>
-        </NestedRow>
-        <HorizontalRule />
-      </section>
-    </Route>
-  );
-});
+          <NestedRow>
+            <MDXRenderer>{body}</MDXRenderer>
+          </NestedRow>
+          <HorizontalRule />
+        </section>
+      </Route>
+    );
+  },
+);
 
 ReferenceSection.propTypes = {
   body: PropTypes.node.isRequired,
   relativePath: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  link: PropTypes.string,
+  githubLink: PropTypes.string,
 };
-
-const AbsoluteEl = styled.div`
-  position: absolute;
-  overflow: hidden;
-  height: calc(100% - 48px);
-  width: 100%;
-  bottom: 3.25rem;
-
-  &:hover {
-    overflow-y: scroll;
-  }
-`;
 
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
@@ -300,28 +291,13 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         </noscript>
       </Helmet>
       <MDXProvider components={componentMap}>
-        <DocsBase
-          pageContext={pageContext}
-          navigation={
-            <ThemeProvider theme={NAV_THEMES.docs}>
-              <NavFrame>
-                <Container>
-                  <ApiReferenceRow>
-                    <Column xs={3} xl={4}>
-                      <NavLogo pageName="API Reference" />
-                    </Column>
-                  </ApiReferenceRow>
-                </Container>
-              </NavFrame>
-            </ThemeProvider>
-          }
-        >
+        <DocsBase pageContext={pageContext}>
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
                 <SideNavBackground />
-                <SideNav>
-                  <AbsoluteEl ref={sideNavRef}>
+                <SideNav docType={docType.api}>
+                  <NavAbsoluteEl ref={sideNavRef}>
                     {Object.entries(docsBySubCategory).map((nav, i) => (
                       <ExpansionContainerEl
                         // eslint-disable-next-line react/no-array-index-key
@@ -342,22 +318,24 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                         </Expansion>
                       </ExpansionContainerEl>
                     ))}
-                  </AbsoluteEl>
-                  <DocNavEl>
+                  </NavAbsoluteEl>
+                  <AbsoluteNavFooterEl>
                     <StyledLink href="/docs">Documentation</StyledLink>
-                  </DocNavEl>
+                  </AbsoluteNavFooterEl>
                 </SideNav>
               </SideNavColumn>
               <Column xs={9} xl={18}>
-                {referenceDocs.map(({ body, id, parent, title, link }) => (
-                  <ReferenceSection
-                    relativePath={parent.relativePath}
-                    key={id}
-                    title={title}
-                    link={link}
-                    body={body}
-                  />
-                ))}
+                {referenceDocs.map(
+                  ({ body, id, parent, title, githubLink }) => (
+                    <ReferenceSection
+                      relativePath={parent.relativePath}
+                      key={id}
+                      title={title}
+                      githubLink={githubLink}
+                      body={body}
+                    />
+                  ),
+                )}
                 <Footer />
               </Column>
               <Column xs={4} xl={9} />

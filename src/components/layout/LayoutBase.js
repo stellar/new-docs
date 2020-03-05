@@ -35,7 +35,6 @@ const LayoutBase = ({
   title,
   description = "",
   previewImage,
-  navigation,
   children,
 }) => (
   <>
@@ -53,14 +52,12 @@ const LayoutBase = ({
       path={pageContext.urlPath}
     />
     <SkipToContentEl />
-    {navigation}
     <ContentEl>{children}</ContentEl>
   </>
 );
 
 LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,
-  navigation: PropTypes.node.isRequired,
   title: PropTypes.node,
   previewImage: PropTypes.string,
   description: PropTypes.node,

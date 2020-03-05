@@ -1,11 +1,6 @@
 import styled, { css } from "styled-components";
 
-import {
-  MEDIA_QUERIES,
-  PALETTE,
-  FONT_WEIGHT,
-  Z_INDEXES,
-} from "constants/styles";
+import { MEDIA_QUERIES, PALETTE, FONT_WEIGHT } from "constants/styles";
 
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
@@ -14,18 +9,18 @@ export const H2 = styled(BasicH2)`
   font-weight: ${FONT_WEIGHT.normal};
   color: ${({ theme }) => theme.medium};
 `;
-
-export const NavFrame = styled.header`
-  position: sticky;
-  padding: 1.25rem 0;
-  top: 0;
+export const NavAbsoluteEl = styled.div`
+  position: absolute;
+  overflow: hidden;
+  height: calc(100% - 125px);
   width: 100%;
-  background-color: ${({ theme }) => theme.background};
-  z-index: ${Z_INDEXES.nav};
-  margin-bottom: -0.0625rem;
-  border-bottom: 0.0625rem solid ${({ theme }) => theme.border};
-`;
+  top: 64px;
+  bottom: 61px;
 
+  &:hover {
+    overflow-y: scroll;
+  }
+`;
 export const NavImage = styled(Image)`
   width: 100%;
   margin-top: 1.5rem;
@@ -37,7 +32,7 @@ export const NavImage = styled(Image)`
 export const NavFooterLi = styled.li`
   list-style: none;
   border-top: 1px solid ${PALETTE.white60};
-  padding: 0.75rem 0;
+  padding: 0.75rem 0 2rem;
   width: 100%;
 `;
 export const Block = styled.div`
@@ -89,4 +84,12 @@ export const NavItem = styled.div`
     color: ${({ theme }) => theme.text};
     opacity: 0.8;
   }
+`;
+
+export const StickyEl = styled.div`
+  width: 100%;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 3;
 `;

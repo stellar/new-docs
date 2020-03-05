@@ -203,7 +203,7 @@ export const Code = styled.code`
   border-radius: 3px;
   border: solid 0.5px ${PALETTE.white60};
   background-color: ${PALETTE.white80};
-  padding: 0.125rem 0.25rem;
+  padding: 0 0.25rem;
 `;
 export const Preformatted = styled.pre`
   &&& {
@@ -235,8 +235,7 @@ export const Preformatted = styled.pre`
     border: none;
     border-top-left-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
-    margin: -1px;
-    padding-left: 1.5rem;
+    margin: 0;
     text-shadow: none;
 
     // This is gross but gotta override

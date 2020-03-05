@@ -2,12 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { PALETTE } from "constants/styles";
+import { PALETTE, DEFAULT_COLUMN_WIDTH } from "constants/styles";
+import { DividerEl } from "components/Documentation/SharedStyles";
 
 import Logo from "assets/icons/stellar-logo.svg";
 
 export const El = styled.div`
-  padding: 0.75rem 0;
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  padding: 0.5rem 0;
   line-height: 1.5rem;
   display: flex;
   align-items: center;
@@ -23,11 +25,8 @@ const PageNameEl = styled.span`
   font-size: 1.125rem;
   margin-bottom: -0.25rem;
 `;
-const DividerEl = styled.span`
-  display: inline-block;
-  width: 0.0625rem;
+const NavDividerEl = styled(DividerEl)`
   height: 3rem;
-  margin: -1.5rem 0.5rem;
   background-color: ${({ theme }) => theme.border};
 `;
 
@@ -36,7 +35,7 @@ export const NavLogo = ({ pageName = "" }) => (
     <LogoEl />
     {pageName && (
       <>
-        <DividerEl />
+        <NavDividerEl />
         <PageNameEl>{pageName}</PageNameEl>
       </>
     )}
