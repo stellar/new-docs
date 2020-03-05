@@ -102,3 +102,41 @@ administrative interface.
 against a running system.
  The default log level is `INFO`, which is moderately verbose and should emit 
  progress messages every few seconds under normal operation.
+ 
+ ## Validator maintenance
+
+Maintenance here refers to anything involving taking your validator temporarily out of the network (to apply security patches, system upgrade, etc).
+
+As an administrator of a validator, you must ensure that the maintenance you are about to apply to the validator is safe for the overall network and for your validator.
+
+Safe means that the other validators that depend on yours will not be affected too much when you turn off your validator for maintenance and that your validator will continue to operate as part of the network when it comes back up.
+
+If you are changing some settings that may impact network wide settings such as protocol version, review [the section on network configuration](#network-configuration).
+
+If you're changing your quorum set configuration, also read the [section on what to do](#special-considerations-during-quorum-set-updates).
+
+### Recommended steps to perform as part of a maintenance
+
+We recommend performing the following steps in order (repeat sequentially as needed if you run multiple nodes).
+
+  1. Advertise your intention to others that may depend on you. Some coordination is required to avoid situations where too many nodes go down at the same time.
+  2. Dependencies should assess the health of their quorum, refer to the section
+     "Understanding quorum and reliability".
+  3. If there is no objection, take your instance down
+  4. When done, start your instance that should rejoin the network
+  5. The instance will be completely caught up when it's both `Synced` and *there is no backlog in uploading history*.
+
+#### Special considerations during quorum set updates
+
+Sometimes an organization needs to make changes that impact other's quorum sets:
+
+  * taking a validator down for long period of time
+  * adding new validators to their pool
+
+In both cases, it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
+
+  * removing too many nodes from your quorum set *before* the nodes are taken down : if different people remove different sets the remaining sets may not overlap between nodes and may cause network splits
+  * adding too many nodes in your quorum set at the same time : if not done carefully can cause those nodes to overpower your configuration
+
+Recommended steps are for the entity that adds/removes nodes to do so first between their own nodes, and then have people reflect those changes gradually (over several rounds) in their quorum configuration.
+
