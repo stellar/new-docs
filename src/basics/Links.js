@@ -11,6 +11,7 @@ const basicLinkStyles = css`
   text-decoration: none;
   color: inherit;
   font-weight: ${FONT_WEIGHT.bold};
+  line-height: 1.5;
 `;
 const BasicLink = styled(GatsbyLink)`
   ${basicLinkStyles};

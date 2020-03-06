@@ -27,7 +27,11 @@ import { Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { DocsBase } from "components/layout/DocsBase";
-import { NavFooterLi, NavAbsoluteEl } from "components/Navigation/SharedStyles";
+import {
+  AbsoluteNavFooterEl,
+  NavAbsoluteEl,
+  SideNavBackground,
+} from "components/Navigation/SharedStyles";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
@@ -40,7 +44,6 @@ import {
   Container,
   NestedRow,
   SideNavColumn,
-  SideNavBackground,
 } from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
@@ -60,6 +63,10 @@ const TrackedEl = styled.div``;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+
+  &:last-child {
+    padding-bottom: 1.75rem;
+  }
 `;
 const NavTitleEl = styled(H5)`
   margin: 0;
@@ -114,10 +121,6 @@ const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
   display: block;
-`;
-const AbsoluteNavFooterEl = styled(NavFooterLi)`
-  position: absolute;
-  bottom: 0;
 `;
 
 const isInViewport = (elem) => {
