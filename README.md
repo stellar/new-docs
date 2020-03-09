@@ -39,11 +39,13 @@ src/
 
 ## Local production build
 
-The build has been dockerized so we can host with nginx on Kubernetes.
-
-To build and run locally:
+The build has been dockerized so we can host with nginx on Kubernetes, which can
+be compiled and run with `yarn` scripts. Make sure you have Docker set up on
+your machine.
 
 ```sh
-docker image build -t new-docs:0.0 .
-docker run -p 8000:80 new-docs:0.0
+yarn production
+# or
+yarn prod:build
+yarn prod:serve
 ```

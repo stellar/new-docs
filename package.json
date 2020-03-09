@@ -7,8 +7,10 @@
     "lint": "eslint --ext .js,.jsx --ignore-pattern public .",
     "test": "jest",
     "build": "gatsby build",
-    "compile-i18n": "lingui compile",
-    "check-not-master": "[ \"$(git rev-parse --abbrev-ref HEAD)\" = \"master\" ] && echo \"\\033[31mDon't commit to master\" && exit 1 || exit 0"
+    "check-not-master": "[ \"$(git rev-parse --abbrev-ref HEAD)\" = \"master\" ] && echo \"\\033[31mDon't commit to master\" && exit 1 || exit 0",
+    "prod:build": "docker image build -t new-docs:localbuild .",
+    "prod:serve": "docker run -p 8000:80 new-docs:localbuild",
+    "production": "yarn prod:build && yarn prod:serve"
   },
   "husky": {
     "hooks": {
