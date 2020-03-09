@@ -20,7 +20,7 @@ import { Column } from "basics/Grid";
 import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
-import { DocsBase } from "components/layout/DocsBase";
+import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
 import { SideNav, SideNavBody } from "components/SideNav";
@@ -136,7 +136,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
 
   return (
     <MDXProvider components={componentMap}>
-      <DocsBase pageContext={pageContext}>
+      <LayoutBase pageContext={pageContext}>
         <Container>
           <ApiReferenceRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>
@@ -174,7 +174,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             <Column xs={4} xl={9} />
           </ApiReferenceRow>
         </Container>
-      </DocsBase>
+      </LayoutBase>
     </MDXProvider>
   );
 });

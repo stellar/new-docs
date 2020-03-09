@@ -38,14 +38,20 @@ export const REDESIGN_PALETTE = {
 };
 
 export const THEME = {
-  body: PALETTE.light,
-  bodyAlt: PALETTE.lighterGrey,
+  body: PALETTE.white,
   text: PALETTE.dark,
   contrast: PALETTE.white,
   medium: PALETTE.mediumGrey,
   lightGrey: PALETTE.lightGrey,
   darkGrey: PALETTE.darkGrey,
-  border: PALETTE.white60,
+  link: tinycolor(PALETTE.dark)
+    .setAlpha(0.7)
+    .toRgbString(),
+  cta: {
+    body: PALETTE.yellow,
+    text: PALETTE.light,
+  },
+  logo: PALETTE.dark,
 };
 
 export const FONT_FAMILY = {

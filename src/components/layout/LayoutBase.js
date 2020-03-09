@@ -7,6 +7,8 @@ import { FONTS } from "constants/fonts";
 
 import { Link } from "basics/Links";
 
+import { Provider as SideNavProvider } from "components/SideNav";
+
 import { Seo } from "./Seo";
 
 const contentId = "content";
@@ -30,7 +32,7 @@ const SkipToContentEl = styled(Link).attrs({
   }
 `;
 
-const LayoutBase = ({
+export const LayoutBase = ({
   pageContext,
   title,
   description = "",
@@ -52,7 +54,9 @@ const LayoutBase = ({
       path={pageContext.urlPath}
     />
     <SkipToContentEl />
-    <ContentEl>{children}</ContentEl>
+    <ContentEl>
+      <SideNavProvider>{children}</SideNavProvider>
+    </ContentEl>
   </>
 );
 
@@ -66,5 +70,3 @@ LayoutBase.propTypes = {
     urlPath: PropTypes.string.isRequired,
   }).isRequired,
 };
-
-export default LayoutBase;

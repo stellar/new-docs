@@ -26,7 +26,7 @@ import { ArrowIcon, EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
-import { DocsBase } from "components/layout/DocsBase";
+import { LayoutBase } from "components/layout/LayoutBase";
 import {
   AbsoluteNavFooterEl,
   NavAbsoluteEl,
@@ -294,7 +294,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         </noscript>
       </Helmet>
       <MDXProvider components={componentMap}>
-        <DocsBase pageContext={pageContext}>
+        <LayoutBase pageContext={pageContext}>
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
@@ -344,7 +344,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               <Column xs={4} xl={9} />
             </ApiReferenceRow>
           </Container>
-        </DocsBase>
+        </LayoutBase>
       </MDXProvider>
     </ScrollRouter>
   );

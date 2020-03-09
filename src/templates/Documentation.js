@@ -32,7 +32,7 @@ import { Link } from "basics/Links";
 import { Column, Container, Row } from "basics/Grid";
 
 import Articles from "components/Documentation/Articles";
-import { DocsBase } from "components/layout/DocsBase";
+import { LayoutBase } from "components/layout/LayoutBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import {
@@ -234,7 +234,7 @@ const Documentation = ({ data, pageContext, location }) => {
 
   return (
     <MDXProvider components={componentMapping}>
-      <DocsBase pageContext={pageContext}>
+      <LayoutBase pageContext={pageContext}>
         <Container id={contentId}>
           <Row>
             <SideNavColumn md={3} lg={3}>
@@ -257,7 +257,7 @@ const Documentation = ({ data, pageContext, location }) => {
             <Column md={2}>{right}</Column>
           </Row>
         </Container>
-      </DocsBase>
+      </LayoutBase>
     </MDXProvider>
   );
 };
