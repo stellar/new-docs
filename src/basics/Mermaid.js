@@ -1,9 +1,10 @@
 import styled from "styled-components";
+import { FONT_FAMILY } from "constants/styles";
 
 export const Mermaid = styled.div`
   svg {
     text {
-      font-family: "suisse", sans-serif;
+      font-family: ${FONT_FAMILY.base};
     }
     .actor {
       stroke: #000000;
