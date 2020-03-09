@@ -1,5 +1,7 @@
 # Stellar docs
 
+## Structure
+
 `yarn start` to start local development.
 
 `src/` contains all documentation, API reference sections, and web assets
@@ -33,4 +35,15 @@ src/
     └── horizon/
         ├── metadata.json
         └── index.mdx
+```
+
+## Local production build
+
+The build has been dockerized so we can host with nginx on Kubernetes.
+
+To build and run locally:
+
+```sh
+docker image build -t new-docs:0.0 .
+docker run -p 8000:80 new-docs:0.0
 ```
