@@ -1,8 +1,0 @@
-/en/* /:splat
-
-# SEO optimization for API Reference. This lets crawlers only see the content
-# from each individual section.
-/api/* javascript=:js /no-js/api/:splat?javascript=:js 200
-
-# Don't render a 404 on API reference sub-pages
-/api/* /api 200
