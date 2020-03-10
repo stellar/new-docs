@@ -2,7 +2,7 @@ import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
@@ -74,6 +74,13 @@ const NavTitleEl = styled(H5)`
   font-weight: ${FONT_WEIGHT.bold};
   text-transform: uppercase;
 `;
+const activeStyles = `
+  color: ${PALETTE.purpleBlue};
+  background: rgba(0,0,0,0.05);
+  border-radius: 2px;
+  padding-left: 0.75rem;
+  font-weight: ${FONT_WEIGHT.bold};
+`;
 const NavItemEl = styled.div`
   display: block;
   text-align: left;
@@ -83,8 +90,14 @@ const NavItemEl = styled.div`
   padding: 0.375rem 0;
   padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
   transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${({ isActive }) =>
-    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+  font-weight: ${FONT_WEIGHT.normal};
+
+  ${(props) =>
+    props.isActive
+      ? css`
+          ${activeStyles}
+        `
+      : ""}
 
   &:hover {
     color: ${PALETTE.lightGrey};
