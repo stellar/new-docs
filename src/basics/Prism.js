@@ -47,6 +47,7 @@ pre[class*="language-"] {
   .line-numbers-rows {	
     display: block;
     padding-left: 0.5rem !important;
+    left: -0.3125rem !important;
 
     div[data-language="json"] & {
       display: none !important;
