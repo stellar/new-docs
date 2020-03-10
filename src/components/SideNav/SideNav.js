@@ -58,7 +58,9 @@ export const SideNavBody = ({
             title={subTitle}
             id={id}
             isOpen={isOpen}
-            isFirstItem={order === 0 && checkIfOverview(parent.relativePath)}
+            isFirstItem={
+              order === 0 && parent && checkIfOverview(parent.relativePath)
+            }
             depth={depth + 1}
           />
         </ListItemEl>
@@ -129,6 +131,7 @@ const NestedNav = ({
               relativePath={subnavItem.parent && subnavItem.parent.relativePath}
               isFirstItem={
                 subnavItem.order === 0 &&
+                subnavItem.parent &&
                 checkIfOverview(subnavItem.parent.relativePath)
               }
               isOpen={isOpen}
