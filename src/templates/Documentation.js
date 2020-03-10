@@ -84,7 +84,7 @@ const NavItemEl = styled(BasicButton)`
 const OutlineTitleEl = styled.div`
   text-transform: uppercase;
   font-weight: ${FONT_WEIGHT.bold};
-  padding: 13px 0;
+  padding: 0.75rem 0;
 `;
 
 const RootEl = styled(StyledLink)`

@@ -17,10 +17,10 @@ export const H2 = styled(BasicH2)`
 export const NavAbsoluteEl = styled.div`
   position: absolute;
   overflow: hidden;
-  height: calc(100% - 133px);
+  height: calc(100% - 8.31rem);
   width: 100%;
-  top: 64px;
-  bottom: 69px;
+  top: 4rem;
+  bottom: 4.31rem;
 
   &:hover {
     overflow-y: scroll;
@@ -30,10 +30,10 @@ export const NavAbsoluteEl = styled.div`
     content: "";
     z-index: 2;
     position: fixed;
-    top: 43px;
-    left: 40px;
-    width: 250px;
-    height: 50px;
+    top: 2.68rem;
+    left: 2.5rem;
+    width: 15.62rem;
+    height: 3.125rem;
     background: rgb(250, 250, 250);
     background: linear-gradient(
       180deg,
@@ -49,10 +49,10 @@ export const NavAbsoluteEl = styled.div`
     content: "";
     z-index: 2;
     position: fixed;
-    bottom: 69px;
-    left: 40px;
-    width: 250px;
-    height: 50px;
+    bottom: 4.312rem;
+    left: 2.5rem;
+    width: 15.625rem;
+    height: 3.125rem;
     background: rgb(250, 250, 250);
     background: linear-gradient(
       0deg,

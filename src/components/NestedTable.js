@@ -70,7 +70,7 @@ const ColumnEl = styled.div`
   font-family: ${FONT_FAMILY.base};
 
   &:first-child {
-    padding-bottom: 2px;
+    padding-bottom: 0.125rem;
   }
 `;
 const DataTypeTextEl = styled.span`

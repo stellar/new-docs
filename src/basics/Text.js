@@ -110,17 +110,17 @@ export const List = styled.ul`
       content: "";
       position: absolute;
       left: -1.4rem;
-      top: 11px;
-      width: 6px;
-      height: 6px;
+      top: 0.75rem;
+      width: 0.375rem;
+      height: 0.375rem;
       border-radius: 50%;
       background-color: ${PALETTE.black60};
     }
 
     &:first-child > ul > li {
       &::before {
-        width: 4px;
-        height: 4px;
+        width: 0.25rem;
+        height: 0.25rem;
         border: 1px solid ${PALETTE.black60};
         background-color: transparent;
       }
@@ -128,8 +128,8 @@ export const List = styled.ul`
 
     &:nth-child(2) > ul > li {
       &::before {
-        width: 6px;
-        height: 6px;
+        width: 0.375rem;
+        height: 0.375rem;
         border-radius: initial;
         background-color: ${PALETTE.black60};
       }
@@ -240,7 +240,7 @@ export const Preformatted = styled.pre`
 
     // This is gross but gotta override
     & > span::before {
-      font-size: 12px;
+      font-size: 0.75rem;
       color: ${({ theme }) => theme.contrast};
     }
   }
@@ -268,5 +268,5 @@ export const Sup = styled(({ children, ...props }) => {
   font-size: 0.687rem;
   color: ${PALETTE.yellow};
   font-weight: ${FONT_WEIGHT.bold};
-  padding-left: 2px;
+  padding-left: 0.125rem;
 `;

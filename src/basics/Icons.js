@@ -10,14 +10,14 @@ const EditEl = styled.div`
   display: inline-block;
   position: relative;
   padding: 0 1.25rem;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   width: auto;
 
   svg {
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 0.75rem;
+    height: 0.75rem;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -66,8 +66,8 @@ const CloseEl = styled.div`
 
   svg {
     position: absolute;
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
