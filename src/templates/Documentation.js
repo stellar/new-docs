@@ -145,7 +145,7 @@ const componentMapping = {
 };
 
 const Documentation = ({ data, pageContext, location }) => {
-  const { allFile } = data;
+  const { articleBody, allFile } = data;
   const { relativeDirectory, name, rootDir } = pageContext;
 
   const docsContents =
@@ -159,16 +159,16 @@ const Documentation = ({ data, pageContext, location }) => {
     pagePath,
     rootDir,
   );
-  const article = findArticle(pagePath, docsContents)[name];
+
+  const { body, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
-    body,
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
   } = article;
 
-  const pageOutline = article.headings.map(({ value }) => ({
+  const pageOutline = headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
     title: value,
   }));
@@ -281,7 +281,13 @@ PageOutlineItem.propTypes = {
 export default Documentation;
 
 export const pageQuery = graphql`
-  query DocumentationQuery {
+  query DocumentationQuery($mdxId: String) {
+    articleBody: file(childMdx: { id: { eq: $mdxId } }) {
+      childMdx {
+        body
+        mdxAST
+      }
+    }
     allFile(
       filter: {
         sourceInstanceName: { eq: "docs" }
@@ -298,7 +304,6 @@ export const pageQuery = graphql`
           name
           relativePath
           childMdx {
-            body
             headings(depth: h2) {
               value
             }
