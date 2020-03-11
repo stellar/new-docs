@@ -26,6 +26,7 @@ import {
   buildDocsContents,
 } from "helpers/documentation";
 import { getDescriptionFromAst } from "helpers/mdx";
+import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
@@ -245,7 +246,7 @@ const Documentation = ({ data, pageContext, location }) => {
     <MDXProvider components={componentMapping}>
       <LayoutBase
         title={
-          location.pathname === "/docs"
+          normalizeRoute(location.pathname) === "/docs/"
             ? "Stellar Documentation"
             : `${header} – Stellar Documentation`
         }
