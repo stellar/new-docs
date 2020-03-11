@@ -295,7 +295,11 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         </noscript>
       </Helmet>
       <MDXProvider components={componentMap}>
-        <LayoutBase previewImage={DevelopersPreview} pageContext={pageContext}>
+        <LayoutBase
+          previewImage={DevelopersPreview}
+          description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
+          pageContext={pageContext}
+        >
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
