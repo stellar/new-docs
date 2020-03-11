@@ -15,7 +15,7 @@ const El = styled.div`
   justify-content: space-between;
 `;
 const ContainerEl = styled.div`
-  min-width: 176px;
+  min-width: 11rem;
 `;
 const SubscribeHeadingEl = styled(H4)`
   font-size: 1.25rem;

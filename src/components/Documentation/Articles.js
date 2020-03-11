@@ -59,7 +59,7 @@ const TopicExpander = styled.button`
 `;
 
 const ArticleList = styled.ul`
-  max-height: ${({ isCollapsed }) => (isCollapsed ? "1000px" : "0")};
+  max-height: ${({ isCollapsed }) => (isCollapsed ? "62.5rem" : "0")};
   overflow: hidden;
   padding: 0;
   transition: ${({ isCollapsed }) =>
