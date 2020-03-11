@@ -25,6 +25,7 @@ import {
   findArticle,
   buildDocsContents,
 } from "helpers/documentation";
+import { getDescriptionFromAst } from "helpers/mdx";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
@@ -35,6 +36,7 @@ import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
+import { Footer } from "components/Documentation/Footer";
 import {
   NavAbsoluteEl,
   AbsoluteNavFooterEl,
@@ -44,8 +46,6 @@ import {
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { Footer } from "components/Documentation/Footer";
-import { getDescriptionFromAst } from "helpers/mdx";
 
 const contentId = "content";
 const { h1: H1, h2: H2, a: StyledLink } = components;
