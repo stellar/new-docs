@@ -45,6 +45,7 @@ import {
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
 import { Footer } from "components/Documentation/Footer";
+import { getDescriptionFromAst } from "helpers/mdx";
 
 const contentId = "content";
 const { h1: H1, h2: H2, a: StyledLink } = components;
@@ -163,10 +164,17 @@ const Documentation = ({ data, pageContext, location }) => {
   const { body, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
+    description: contentDescription,
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
-  } = article;
+    headings,
+  } = findArticle(pagePath, docsContents)[name];
+
+  const description = React.useMemo(
+    () => contentDescription || getDescriptionFromAst(mdxAst),
+    [mdxAst, contentDescription],
+  );
 
   const pageOutline = headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
@@ -236,6 +244,12 @@ const Documentation = ({ data, pageContext, location }) => {
   return (
     <MDXProvider components={componentMapping}>
       <LayoutBase
+        title={
+          location.pathname === "/docs"
+            ? "Stellar Documentation"
+            : `${header} – Stellar Documentation`
+        }
+        description={description}
         previewImage={DevelopersPreview}
         pageContext={pageContext}
       >
@@ -310,6 +324,7 @@ export const pageQuery = graphql`
             id
             frontmatter {
               title
+              description
               order
             }
           }

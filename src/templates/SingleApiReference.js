@@ -13,6 +13,7 @@ import { components } from "constants/docsComponentMapping";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { getDescriptionFromAst } from "helpers/mdx";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -132,12 +133,20 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   );
   const docsBySubCategory = groupByCategory(referenceDocs);
 
-  const { parent, frontmatter, body } = data.doc;
+  const { parent, frontmatter, body, mdxAST: mdxAst } = data.doc;
   const path = buildPathFromFile(parent.relativePath);
+  const description = React.useMemo(
+    () => frontmatter.description || getDescriptionFromAst(mdxAst),
+    [mdxAst, frontmatter.description],
+  );
 
   return (
     <MDXProvider components={componentMap}>
-      <LayoutBase previewImage={DevelopersPreview} pageContext={pageContext}>
+      <LayoutBase
+        previewImage={DevelopersPreview}
+        description={description}
+        pageContext={pageContext}
+      >
         <Container>
           <ApiReferenceRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>
@@ -191,6 +200,7 @@ export const pageQuery = graphql`
   query SingleApiReferenceQuery($ids: [String], $docId: String) {
     doc: mdx(id: { eq: $docId }) {
       ...ApiReferencePage
+      mdxAST
     }
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
