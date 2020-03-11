@@ -33,6 +33,7 @@ import {
 } from "components/Documentation/SharedStyles";
 import { SideNavBackground } from "components/Navigation/SharedStyles";
 
+import DevelopersPreview from "assets/images/og_developers.jpg";
 import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
@@ -136,7 +137,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
 
   return (
     <MDXProvider components={componentMap}>
-      <LayoutBase pageContext={pageContext}>
+      <LayoutBase previewImage={DevelopersPreview} pageContext={pageContext}>
         <Container>
           <ApiReferenceRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>

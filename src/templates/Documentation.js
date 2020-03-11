@@ -43,6 +43,7 @@ import {
 } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
+import DevelopersPreview from "assets/images/og_developers.jpg";
 import { Footer } from "components/Documentation/Footer";
 
 const contentId = "content";
@@ -234,7 +235,10 @@ const Documentation = ({ data, pageContext, location }) => {
 
   return (
     <MDXProvider components={componentMapping}>
-      <LayoutBase pageContext={pageContext}>
+      <LayoutBase
+        previewImage={DevelopersPreview}
+        pageContext={pageContext}
+      >
         <Container id={contentId}>
           <Row>
             <SideNavColumn md={3} lg={3}>

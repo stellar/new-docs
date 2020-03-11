@@ -47,6 +47,7 @@ import {
 } from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
+import DevelopersPreview from "assets/images/og_developers.jpg";
 import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const NAV_BAR_HEIGHT = 89;
@@ -294,7 +295,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         </noscript>
       </Helmet>
       <MDXProvider components={componentMap}>
-        <LayoutBase pageContext={pageContext}>
+        <LayoutBase previewImage={DevelopersPreview} pageContext={pageContext}>
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
