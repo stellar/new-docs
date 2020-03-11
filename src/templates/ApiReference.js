@@ -19,6 +19,7 @@ import { docType } from "constants/docType";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { buildPathFromFile } from "helpers/routes";
 
 import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -48,7 +49,6 @@ import {
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const NAV_BAR_HEIGHT = 89;
 const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;

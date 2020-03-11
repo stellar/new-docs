@@ -14,6 +14,7 @@ import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { getDescriptionFromAst } from "helpers/mdx";
+import { buildPathFromFile } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -35,7 +36,6 @@ import {
 import { SideNavBackground } from "components/Navigation/SharedStyles";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
