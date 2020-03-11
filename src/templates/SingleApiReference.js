@@ -13,6 +13,7 @@ import { components } from "constants/docsComponentMapping";
 import { sortReference, normalizeMdx } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { getDescriptionFromAst } from "helpers/mdx";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -20,7 +21,7 @@ import { Column } from "basics/Grid";
 import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
-import { DocsBase } from "components/layout/DocsBase";
+import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
 import { SideNav, SideNavBody } from "components/SideNav";
@@ -33,6 +34,7 @@ import {
 } from "components/Documentation/SharedStyles";
 import { SideNavBackground } from "components/Navigation/SharedStyles";
 
+import DevelopersPreview from "assets/images/og_developers.jpg";
 import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
@@ -131,12 +133,20 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   );
   const docsBySubCategory = groupByCategory(referenceDocs);
 
-  const { parent, frontmatter, body } = data.doc;
+  const { parent, frontmatter, body, mdxAST: mdxAst } = data.doc;
   const path = buildPathFromFile(parent.relativePath);
+  const description = React.useMemo(
+    () => frontmatter.description || getDescriptionFromAst(mdxAst),
+    [mdxAst, frontmatter.description],
+  );
 
   return (
     <MDXProvider components={componentMap}>
-      <DocsBase pageContext={pageContext}>
+      <LayoutBase
+        previewImage={DevelopersPreview}
+        description={description}
+        pageContext={pageContext}
+      >
         <Container>
           <ApiReferenceRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>
@@ -174,7 +184,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             <Column xs={4} xl={9} />
           </ApiReferenceRow>
         </Container>
-      </DocsBase>
+      </LayoutBase>
     </MDXProvider>
   );
 });
@@ -190,6 +200,7 @@ export const pageQuery = graphql`
   query SingleApiReferenceQuery($ids: [String], $docId: String) {
     doc: mdx(id: { eq: $docId }) {
       ...ApiReferencePage
+      mdxAST
     }
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {

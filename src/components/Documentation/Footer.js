@@ -46,7 +46,7 @@ export const Footer = () => (
   <El>
     <ContainerEl>
       <SubscribeHeadingEl>Subscribe to developer updates</SubscribeHeadingEl>
-      <Subscribe customBtnColor={PALETTE.darkCoolBlue} />
+      <Subscribe />
     </ContainerEl>
     <ContainerEl>
       <LittleHeadingEl>Dev Resources</LittleHeadingEl>

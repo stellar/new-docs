@@ -41,6 +41,7 @@ const createDocsPages = ({ actions, docs }) => {
       path: docPath,
       component: docTemplate,
       context: {
+        mdxId: doc.childMdx.id,
         urlPath: docPath,
         locale: defaultLocale,
         name: doc.name,
