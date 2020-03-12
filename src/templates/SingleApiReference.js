@@ -10,10 +10,10 @@ import { MDXProvider } from "@mdx-js/react";
 import { CSS_TRANSITION_SPEED, FONT_WEIGHT, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 
-import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
-import { getDescriptionFromAst } from "helpers/mdx";
+import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";

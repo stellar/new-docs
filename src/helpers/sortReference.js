@@ -1,28 +1,3 @@
-import { DOCS_CONTENT_URL } from "helpers/documentation";
-
-export const normalizeMdx = (node) => {
-  const { id, frontmatter, body, parent } = node;
-  const metadata = (parent.fields && parent.fields.metadata.data) || {};
-  const parentRelativeDirSplit = parent.relativeDirectory.split("/");
-  const mdxLink = parent.relativePath && DOCS_CONTENT_URL + parent.relativePath;
-
-  return {
-    ...node,
-    id,
-    order: frontmatter.order,
-    title: frontmatter.title,
-    githubLink: mdxLink,
-    body,
-    // paths always start with `docs` or `api` which isn't useful. Strip it.
-    directory: parentRelativeDirSplit.slice(1).join("/"),
-    currentDirectory: parentRelativeDirSplit[parentRelativeDirSplit.length - 1],
-    folder: {
-      order: metadata.order,
-      title: metadata.title,
-    },
-  };
-};
-
 const compareOrders = (a, b) => a.order - b.order;
 const compareNestedEntries = (a, b) => compareOrders(a[1], b[1]);
 

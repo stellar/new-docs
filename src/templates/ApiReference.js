@@ -16,9 +16,10 @@ import {
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
-import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
 
 import { Column } from "basics/Grid";
