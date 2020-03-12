@@ -23,6 +23,7 @@ const MethodTableEl = styled.div`
   td {
     border: none;
     padding: 0.5rem 0;
+    vertical-align: top;
 
     &:first-child {
       font-weight: ${FONT_WEIGHT.bold};
