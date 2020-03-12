@@ -127,7 +127,10 @@ const componentMap = {
 };
 
 // eslint-disable-next-line react/no-multi-comp
-const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
+const SingleApiReference = React.memo(function ApiReference({
+  data,
+  pageContext,
+}) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
@@ -189,12 +192,12 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   );
 });
 
-ApiReference.propTypes = {
+SingleApiReference.propTypes = {
   data: PropTypes.object.isRequired,
   pageContext: PropTypes.object.isRequired,
 };
 
-export default ApiReference;
+export default SingleApiReference;
 
 export const pageQuery = graphql`
   query SingleApiReferenceQuery($ids: [String], $docId: String) {
@@ -205,7 +208,25 @@ export const pageQuery = graphql`
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
         node {
-          ...ApiReferencePage
+          id
+          frontmatter {
+            title
+            order
+          }
+          parent {
+            ... on File {
+              relativePath
+              relativeDirectory
+              fields {
+                metadata {
+                  data {
+                    order
+                    title
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

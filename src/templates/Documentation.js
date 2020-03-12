@@ -162,14 +162,13 @@ const Documentation = ({ data, pageContext, location }) => {
     rootDir,
   );
 
-  const { body, mdxAST: mdxAst } = articleBody.childMdx;
+  const { body, headings, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
     description: contentDescription,
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
-    headings,
   } = findArticle(pagePath, docsContents)[name];
 
   const description = React.useMemo(
@@ -301,6 +300,9 @@ export const pageQuery = graphql`
       childMdx {
         body
         mdxAST
+        headings(depth: h2) {
+          value
+        }
       }
     }
     allFile(
@@ -319,9 +321,6 @@ export const pageQuery = graphql`
           name
           relativePath
           childMdx {
-            headings(depth: h2) {
-              value
-            }
             id
             frontmatter {
               title
