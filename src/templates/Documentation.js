@@ -26,6 +26,7 @@ import {
   buildDocsContents,
 } from "helpers/documentation";
 import { getDescriptionFromAst } from "helpers/mdx";
+import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
@@ -161,14 +162,13 @@ const Documentation = ({ data, pageContext, location }) => {
     rootDir,
   );
 
-  const { body, mdxAST: mdxAst } = articleBody.childMdx;
+  const { body, headings, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
     description: contentDescription,
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
-    headings,
   } = findArticle(pagePath, docsContents)[name];
 
   const description = React.useMemo(
@@ -245,7 +245,7 @@ const Documentation = ({ data, pageContext, location }) => {
     <MDXProvider components={componentMapping}>
       <LayoutBase
         title={
-          location.pathname === "/docs"
+          normalizeRoute(location.pathname) === "/docs/"
             ? "Stellar Documentation"
             : `${header} – Stellar Documentation`
         }
@@ -300,6 +300,9 @@ export const pageQuery = graphql`
       childMdx {
         body
         mdxAST
+        headings(depth: h2) {
+          value
+        }
       }
     }
     allFile(
@@ -318,9 +321,6 @@ export const pageQuery = graphql`
           name
           relativePath
           childMdx {
-            headings(depth: h2) {
-              value
-            }
             id
             frontmatter {
               title

@@ -1,4 +1,5 @@
-export const basic = {
+export const mdxAsts = {};
+mdxAsts.basic = {
   type: "root",
   children: [
     {
@@ -225,4 +226,28 @@ export const basic = {
     },
   ],
   position: {},
+};
+
+export const mdxNodes = {
+  basic: {
+    id: "4e754fbc-ac44-5769-920c-7c1a1faf4af0",
+    frontmatter: {
+      title: "Literally a title",
+      order: 0,
+    },
+    body: "some long body string",
+    parent: {
+      relativePath: "some/path/index.mdx",
+      relativeDirectory: "some/path",
+      fields: {
+        metadata: {
+          data: {
+            order: 10,
+            title: "Folder title",
+          },
+        },
+      },
+    },
+  },
+  empty: {},
 };

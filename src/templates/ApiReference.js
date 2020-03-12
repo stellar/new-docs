@@ -16,9 +16,11 @@ import {
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
-import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { normalizeMdx } from "helpers/mdx";
+import { buildPathFromFile } from "helpers/routes";
 
 import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -48,7 +50,6 @@ import {
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const NAV_BAR_HEIGHT = 89;
 const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
@@ -310,6 +311,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
       <MDXProvider components={componentMap}>
         <LayoutBase
           previewImage={DevelopersPreview}
+          title="Stellar API Reference"
           description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
           pageContext={pageContext}
         >

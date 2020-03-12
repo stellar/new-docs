@@ -10,10 +10,11 @@ import { MDXProvider } from "@mdx-js/react";
 import { CSS_TRANSITION_SPEED, FONT_WEIGHT, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 
-import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
-import { getDescriptionFromAst } from "helpers/mdx";
+import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
+import { buildPathFromFile } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -35,7 +36,6 @@ import {
 import { SideNavBackground } from "components/Navigation/SharedStyles";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { buildPathFromFile } from "../../buildHelpers/routes";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -127,7 +127,10 @@ const componentMap = {
 };
 
 // eslint-disable-next-line react/no-multi-comp
-const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
+const SingleApiReference = React.memo(function ApiReference({
+  data,
+  pageContext,
+}) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
@@ -189,12 +192,12 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   );
 });
 
-ApiReference.propTypes = {
+SingleApiReference.propTypes = {
   data: PropTypes.object.isRequired,
   pageContext: PropTypes.object.isRequired,
 };
 
-export default ApiReference;
+export default SingleApiReference;
 
 export const pageQuery = graphql`
   query SingleApiReferenceQuery($ids: [String], $docId: String) {
@@ -205,7 +208,25 @@ export const pageQuery = graphql`
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
         node {
-          ...ApiReferencePage
+          id
+          frontmatter {
+            title
+            order
+          }
+          parent {
+            ... on File {
+              relativePath
+              relativeDirectory
+              fields {
+                metadata {
+                  data {
+                    order
+                    title
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

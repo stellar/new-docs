@@ -1,7 +1,7 @@
 import { graphql } from "gatsby";
 
 import { groupBy } from "helpers/groupBy";
-import { buildPathFromFile } from "utils";
+import { buildPathFromFile } from "helpers/routes";
 
 export const DOCS_CONTENT_URL =
   "https://github.com/stellar/new-docs/blob/master/content/";
