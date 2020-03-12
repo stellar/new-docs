@@ -58,7 +58,7 @@ const Topics = styled.ul`
 
   li {
     position: relative;
-    padding: 0.55rem 0;
+    padding: 0.5rem 0;
   }
 `;
 
