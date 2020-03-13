@@ -26,6 +26,7 @@ import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { ArrowIcon, EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
+import { PrismStyles } from "basics/Prism";
 
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -315,6 +316,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
           pageContext={pageContext}
         >
+          <PrismStyles />
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>

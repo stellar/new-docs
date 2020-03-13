@@ -32,6 +32,7 @@ import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
 import { Column, Container, Row } from "basics/Grid";
+import { PrismStyles } from "basics/Prism";
 
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -254,6 +255,7 @@ const Documentation = ({ data, pageContext, location }) => {
         previewImage={DevelopersPreview}
         pageContext={pageContext}
       >
+        <PrismStyles isDoc />
         <Container id={contentId}>
           <Row>
             <SideNavColumn md={3} lg={3}>

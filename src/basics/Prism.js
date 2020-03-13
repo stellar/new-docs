@@ -17,7 +17,7 @@ https://prismjs.com/download.html#themes=prism&languages=clike+javascript */
  */	
 code[class*="language-"],	
 pre[class*="language-"] {	
-  color: ${(props) => (props.isCodeSnippet ? PALETTE.white : PALETTE.darkGrey)};	
+  color: ${PALETTE.white};
   font-family: ${FONT_FAMILY.monospace};	
   font-size: 1em;	
   text-align: left;	
@@ -64,7 +64,17 @@ pre[class*="language-"] {
   pre[class*="language-"] {	
     text-shadow: none;
   }	
-}	
+}
+
+div[data-language="json"] {
+  .token.property,
+  .token.tag,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    color: ${(props) => (props.isDoc ? PALETTE.white : "slategray")};
+  }
+}
 /* Code blocks */	
 pre[class*="language-"] {	
   margin: 0;
@@ -79,7 +89,7 @@ pre[class*="language-"] {
 .token.prolog,	
 .token.doctype,	
 .token.cdata {	
-  color: ${(props) => (props.isCodeSnippet ? "#8fa4af" : "slategray")};	
+  color: "slategray";
 }	
 .token.punctuation {	
   color: ${PALETTE.lightGrey};
@@ -106,7 +116,7 @@ pre[class*="language-"] {
 .token.char,	
 .token.builtin,	
 .token.inserted {	
-  color: ${(props) => (props.hasNoLineNumber ? "#d5ff99" : "#abcc7d")};	
+  color: #abcc7d;
 }	
 .token.operator,	
 .token.entity,	

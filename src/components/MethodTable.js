@@ -47,8 +47,12 @@ const ContentEl = styled.div`
   padding: 0;
   padding: 1rem 0;
 
-  ${Code}, ${Table} {
+  ${Code} {
     padding-left: 1rem;
+  }
+
+  ${Table} {
+    padding: 0 1rem;
   }
 `;
 

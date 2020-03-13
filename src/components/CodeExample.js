@@ -8,7 +8,6 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
-import { PrismStyles } from "basics/Prism";
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
@@ -23,6 +22,7 @@ const CODE_LANGS = {
   ts: "TypeScript",
   java: "Java",
   bash: "bash",
+  json: "json",
 };
 
 const LangSelect = styled(Select)`
@@ -239,10 +239,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           )}
         </OptionsContainer>
       </TitleEl>
-      <ContentEl>
-        <PrismStyles isCodeSnippet />
-        {selectedSnippet}
-      </ContentEl>
+      <ContentEl>{selectedSnippet}</ContentEl>
       <Tooltip in={isHovered} isCopied={isCopied} parentDimension={dimension}>
         {isCopied ? "Copied" : "Click to copy"}
       </Tooltip>
