@@ -19,8 +19,10 @@ import { DividerEl } from "components/Documentation/SharedStyles";
 const CODE_LANGS = {
   curl: "cURL",
   go: "Go",
-  javascript: "JAVASCRIPT",
+  javascript: "JavaScript",
+  ts: "TypeScript",
   java: "Java",
+  bash: "bash",
 };
 
 const LangSelect = styled(Select)`
@@ -250,7 +252,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
 
 CodeSnippet.propTypes = {
   codeSnippets: PropTypes.node.isRequired,
-  title: PropTypes.node.isRequired,
+  title: PropTypes.node,
   href: PropTypes.string,
 };
 
@@ -271,7 +273,7 @@ export const CodeExample = React.forwardRef(function CodeExample(
 });
 
 CodeExample.propTypes = {
-  title: PropTypes.node.isRequired,
+  title: PropTypes.node,
   children: PropTypes.node.isRequired,
   href: PropTypes.string,
 };
