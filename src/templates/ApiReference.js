@@ -67,7 +67,7 @@ const ExpansionContainerEl = styled.div`
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
 
   &:last-child {
-    padding-bottom: 1.75rem;
+    padding-bottom: 2.25rem;
   }
 `;
 const NavTitleEl = styled(H5)`

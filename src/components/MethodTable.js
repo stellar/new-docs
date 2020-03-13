@@ -24,6 +24,7 @@ const MethodTableEl = styled.div`
     border: none;
     padding: 0.5rem 0;
     vertical-align: top;
+    line-height: 1.5;
 
     &:first-child {
       font-weight: ${FONT_WEIGHT.bold};

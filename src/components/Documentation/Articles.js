@@ -44,7 +44,6 @@ const TopicExpander = styled.button`
   color: #333;
   display: flex;
   padding: 0;
-  padding-bottom: 0.25rem;
   width: 100%;
   line-height: 1.5;
 

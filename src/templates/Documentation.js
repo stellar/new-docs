@@ -55,6 +55,7 @@ const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  padding-bottom: 1rem;
 
   li {
     position: relative;
