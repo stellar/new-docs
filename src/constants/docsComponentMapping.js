@@ -76,11 +76,7 @@ export const components = {
   h4: TextComponents.LinkedH4,
   h5: TextComponents.LinkedH5,
   h6: TextComponents.LinkedH6,
-  blockquote: styled(TextComponents.Quote)`
-    ::before {
-      color: ${({ theme }) => theme.cta.body};
-    }
-  `,
+  blockquote: TextComponents.Quote,
   ul: TextComponents.List,
   ol: TextComponents.OrderedList,
   li: ListItem,
