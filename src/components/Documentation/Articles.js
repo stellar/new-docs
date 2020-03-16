@@ -144,12 +144,9 @@ const Articles = ({
         </TopicExpander>
       )}
 
-      {Object.values(articles).map((article) =>
-        article.articles ? (
-          <ArticleList
-            key={`ArticleList${id}${article.id}`}
-            isCollapsed={isCollapsed}
-          >
+      <ArticleList isCollapsed={isCollapsed}>
+        {Object.values(articles).map((article) =>
+          article.articles ? (
             <Articles
               articles={article.articles}
               initialTopicsState={initialTopicsState}
@@ -162,12 +159,7 @@ const Articles = ({
               activeItem={activeItem}
               depth={depth + 1}
             />
-          </ArticleList>
-        ) : (
-          <ArticleList
-            key={`ArticleList${id}${article.id}`}
-            isCollapsed={isCollapsed}
-          >
+          ) : (
             <Article
               key={`Article${article.id}`}
               isCollapsed={isCollapsed}
@@ -175,9 +167,9 @@ const Articles = ({
               depth={depth + 1}
               activeItem={activeItem}
             />
-          </ArticleList>
-        ),
-      )}
+          ),
+        )}
+      </ArticleList>
     </li>
   );
 };
