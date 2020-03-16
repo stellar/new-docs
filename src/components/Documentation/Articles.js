@@ -22,10 +22,6 @@ text-decoration: none;
 const ArticleLink = styled(Link)`
   ${topLevelNavItem}
   display: block;
-
-  &:hover {
-    color: ${PALETTE.lightGrey};
-  }
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
@@ -34,7 +30,10 @@ const ModifiedArrowIcon = styled(ArrowIcon)`
 const NestedArticleTopicExpander = styled(BasicButton)`
   ${topLevelNavItem};
   text-align: left;
-  padding-bottom: 0.5rem;
+
+  &:hover {
+    color: ${PALETTE.lightGrey};
+  }
 `;
 
 const TopicExpander = styled.button`
@@ -46,7 +45,7 @@ const TopicExpander = styled.button`
   display: flex;
   padding: 0;
   width: 100%;
-  padding-bottom: 0.5rem;
+  line-height: 1.5;
 
   &:focus {
     outline: 0;
@@ -72,7 +71,12 @@ const ArticleList = styled.ul`
   li {
     list-style-type: none;
     padding: 0;
-    padding-top: 1.5rem;
+  }
+
+  ${ArticleLink} {
+    &:hover {
+      color: ${PALETTE.lightGrey};
+    }
   }
 `;
 

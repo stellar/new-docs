@@ -173,8 +173,6 @@ export default async function depositAsset(e: Event) {
     const keypair = Keypair.fromSecret(
       sjcl.decrypt(pincode, this.account.keystore)
     )
-
-...
 ```
 
 </CodeExample>
@@ -188,18 +186,14 @@ That selection will come back as a string in the form of `{code}:{issuer}` so we
 <CodeExample>
 
 ```ts
-...
+const balances = loGet(this.account, 'state.balances')
+const hasCurrency = loFindIndex(balances, {
+  asset_code: currency[0],
+  asset_issuer: currency[1]
+})
 
-    const balances = loGet(this.account, 'state.balances')
-    const hasCurrency = loFindIndex(balances, {
-      asset_code: currency[0],
-      asset_issuer: currency[1]
-    })
-
-    if (hasCurrency === -1)
-      await this.trustAsset(null, currency[0], currency[1], pincode)
-
-...
+if (hasCurrency === -1)
+  await this.trustAsset(null, currency[0], currency[1], pincode)
 ```
 
 </CodeExample>
@@ -209,14 +203,10 @@ Once we’ve got the currency we’re dealing with we need to check if we have a
 <CodeExample>
 
 ```ts
-...
+const info = await axios.get(`${this.toml.TRANSFER_SERVER}/info`)
+.then(({data}) => data)
 
-    const info = await axios.get(`${this.toml.TRANSFER_SERVER}/info`)
-    .then(({data}) => data)
-
-    console.log(info)
-
-...
+console.log(info)
 ```
 
 </CodeExample>
@@ -226,28 +216,24 @@ Once our account is setup it’s time to start asking the anchor some questions 
 <CodeExample>
 
 ```ts
-...
+const auth = await axios.get(`${this.toml.WEB_AUTH_ENDPOINT}`, {
+  params: {
+    account: this.account.publicKey
+  }
+})
+.then(async ({data: {transaction, network_passphrase}}) => {
+  const txn: any = new Transaction(transaction, network_passphrase)
 
-    const auth = await axios.get(`${this.toml.WEB_AUTH_ENDPOINT}`, {
-      params: {
-        account: this.account.publicKey
-      }
-    })
-    .then(async ({data: {transaction, network_passphrase}}) => {
-      const txn: any = new Transaction(transaction, network_passphrase)
+  this.error = null
+  this.loading = {...this.loading, withdraw: true}
 
-      this.error = null
-      this.loading = {...this.loading, withdraw: true}
+  txn.sign(keypair)
+  return txn.toXDR()
+})
+.then((transaction) => axios.post(`${this.toml.WEB_AUTH_ENDPOINT}`, {transaction}, {headers: {'Content-Type': 'application/json'}}))
+.then(({data: {token}}) => token)
 
-      txn.sign(keypair)
-      return txn.toXDR()
-    })
-    .then((transaction) => axios.post(`${this.toml.WEB_AUTH_ENDPOINT}`, {transaction}, {headers: {'Content-Type': 'application/json'}}))
-    .then(({data: {token}}) => token)
-
-    console.log(auth)
-
-...
+console.log(auth)
 ```
 
 </CodeExample>
@@ -259,26 +245,22 @@ The endpoint for this JWT endpoint is noted by the `WEB_AUTH_ENDPOINT` on the TO
 <CodeExample>
 
 ```ts
-...
+const formData = new FormData()
 
-    const formData = new FormData()
+loEach({
+  asset_code: currency[0],
+  account: this.account.publicKey,
+  lang: 'en'
+}, (value, key) => formData.append(key, value))
 
-    loEach({
-      asset_code: currency[0],
-      account: this.account.publicKey,
-      lang: 'en'
-    }, (value, key) => formData.append(key, value))
+const interactive = await axios.post(`${this.toml.TRANSFER_SERVER}/transactions/withdraw/interactive`, formData, {
+  headers: {
+    'Authorization': `Bearer ${auth}`,
+    'Content-Type': 'multipart/form-data'
+  }
+}).then(({data}) => data)
 
-    const interactive = await axios.post(`${this.toml.TRANSFER_SERVER}/transactions/withdraw/interactive`, formData, {
-      headers: {
-        'Authorization': `Bearer ${auth}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then(({data}) => data)
-
-    console.log(interactive)
-
-...
+console.log(interactive)
 ```
 
 </CodeExample>
@@ -302,23 +284,19 @@ In a moment we’ll open that `url` in an iframe, popup or new tab. Once we’ve
 <CodeExample>
 
 ```ts
-...
+const transactions = await axios.get(`${this.toml.TRANSFER_SERVER}/transactions`, {
+  params: {
+    asset_code: currency[0],
+    limit: 1,
+    kind: 'deposit',
+  },
+  headers: {
+    'Authorization': `Bearer ${auth}`
+  }
+})
+.then(({data: {transactions}}) => transactions)
 
-    const transactions = await axios.get(`${this.toml.TRANSFER_SERVER}/transactions`, {
-      params: {
-        asset_code: currency[0],
-        limit: 1,
-        kind: 'deposit',
-      },
-      headers: {
-        'Authorization': `Bearer ${auth}`
-      }
-    })
-    .then(({data: {transactions}}) => transactions)
-
-    console.log(transactions)
-
-...
+console.log(transactions)
 ```
 
 </CodeExample>
@@ -361,8 +339,6 @@ Once we’re certain we’ve got a `"status": "incomplete",` ready for interacti
 <CodeExample>
 
 ```ts
-...
-
     const urlBuilder = new URL(interactive.url)
           urlBuilder.searchParams.set('callback', 'postMessage')
     const popup = open(urlBuilder.toString(), 'popup', 'width=500,height=800')
@@ -371,8 +347,6 @@ Once we’re certain we’ve got a `"status": "incomplete",` ready for interacti
       this.loading = {...this.loading, deposit: false}
       throw 'Popups are blocked. You\'ll need to enable popups for this demo to work'
     }
-
-...
 ```
 
 </CodeExample>
@@ -384,8 +358,6 @@ If popups are disabled we should kill the loader and show that error in the UI.
 <CodeExample>
 
 ```ts
-...
-
     window.onmessage = ({data: {transaction}}) => {
       console.log(transaction.status, transaction)
 
