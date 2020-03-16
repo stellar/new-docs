@@ -191,15 +191,11 @@ export const buildDocsContents = (data, rootDir) => {
       const { childMdx, modifiedTime, name, relativePath } = node;
       const mdxLink = relativePath && DOCS_CONTENT_URL + relativePath;
       const {
-        body,
-        headings,
         frontmatter: { title: articleTitle, description },
         id: articleId,
       } = childMdx;
       articles[name] = {
         id: articleId,
-        body,
-        headings,
         githubLink: mdxLink,
         modifiedTime,
         title: articleTitle || "{`title` Not Found}",
