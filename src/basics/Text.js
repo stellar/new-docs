@@ -66,30 +66,19 @@ export const LinkedH5 = makeLinkedHeader(H5);
 export const LinkedH6 = makeLinkedHeader(H6);
 
 export const Quote = styled.blockquote`
-  position: relative;
-  margin: 2.3rem 0;
-  width: 100%;
+  margin: 1rem 0;
+  padding: 0.5rem 1.25rem;
+  border-left: 0.125rem solid ${PALETTE.purpleBlue};
 
   p {
-    font-size: 1.5rem;
-    font-weight: ${FONT_WEIGHT.normal};
-    line-height: 1.29;
-    color: ${PALETTE.dark};
-    margin-left: 2.4rem;
-  }
+    color: #000;
+    font-size: 1.125rem;
+    line-height: 2;
+    margin-top: 0;
 
-  ::before {
-    content: "“";
-    font-size: 4rem;
-    font-weight: ${FONT_WEIGHT.bold};
-    position: absolute;
-    left: -0.2rem;
-    top: -1rem;
-    width: auto;
-  }
-
-  @media (${MEDIA_QUERIES.gtLaptop}) {
-    width: 80%;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 `;
 
