@@ -90,6 +90,7 @@ const CustomList = styled.li`
       props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
   }
 `;
+const IndexArticleLink = styled(ArticleLink)``;
 
 const Article = ({ title, url, activeItem, depth }) => {
   const isActive = url.includes(activeItem);
@@ -100,6 +101,15 @@ const Article = ({ title, url, activeItem, depth }) => {
     </CustomList>
   );
 };
+const IndexArticle = ({ title, url, activeItem, depth }) => {
+  const isActive = url.includes(activeItem);
+
+  return (
+    <IndexArticleLink isActive={isActive} depth={depth} href={url}>
+      {title}
+    </IndexArticleLink>
+  );
+};
 
 Article.propTypes = {
   depth: PropTypes.number,
@@ -107,6 +117,7 @@ Article.propTypes = {
   title: PropTypes.string,
   url: PropTypes.string,
 };
+IndexArticle.propTypes = Article.propTypes;
 
 const Articles = ({
   articles,
@@ -126,12 +137,27 @@ const Articles = ({
     });
   };
 
+  // `articles` is keyed by directory or file name.
+  // Directories have a leading `/`, "index" here represents the filename
+  const indexArticle = articles.index;
+
   return (
     <li key={id}>
+      {/* eslint-disable-next-line */}
       {isNested ? (
-        <NestedArticleTopicExpander onClick={() => topicToggleHandler()}>
-          {title}
-        </NestedArticleTopicExpander>
+        indexArticle ? (
+          <IndexArticle
+            isCollapsed={false}
+            title={title}
+            url={indexArticle.url}
+            depth={depth}
+            activeItem={activeItem}
+          />
+        ) : (
+          <NestedArticleTopicExpander onClick={() => topicToggleHandler()}>
+            {title}
+          </NestedArticleTopicExpander>
+        )
       ) : (
         <TopicExpander
           isCollapsed={isCollapsed}
@@ -145,23 +171,24 @@ const Articles = ({
       )}
 
       <ArticleList isCollapsed={isCollapsed}>
-        {Object.values(articles).map((article) =>
-          article.articles ? (
-            <Articles
-              articles={article.articles}
-              initialTopicsState={initialTopicsState}
-              isNested
-              key={article.id}
-              title={article.title}
-              topicPath={article.topicPath}
-              topicState={topicState}
-              topicToggleHandler={topicToggleHandler}
-              activeItem={activeItem}
-              depth={depth + 1}
-            />
-          ) : (
-          ),
-        )}
+        {Object.entries(articles)
+          .filter(([filename]) => filename !== "index")
+          // Only get second arg
+          .map(([, article]) =>
+            article.articles ? (
+              <Articles
+                articles={article.articles}
+                initialTopicsState={initialTopicsState}
+                isNested
+                key={article.id}
+                title={article.title}
+                topicPath={article.topicPath}
+                topicState={topicState}
+                topicToggleHandler={topicToggleHandler}
+                activeItem={activeItem}
+                depth={depth + 1}
+              />
+            ) : (
               <Article
                 key={article.id}
                 isCollapsed={isCollapsed}
@@ -170,6 +197,8 @@ const Articles = ({
                 depth={depth + 1}
                 activeItem={activeItem}
               />
+            ),
+          )}
       </ArticleList>
     </li>
   );
