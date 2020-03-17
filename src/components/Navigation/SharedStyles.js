@@ -1,6 +1,11 @@
 import styled, { css } from "styled-components";
 
-import { MEDIA_QUERIES, PALETTE, FONT_WEIGHT } from "constants/styles";
+import {
+  MEDIA_QUERIES,
+  REDESIGN_PALETTE,
+  PALETTE,
+  FONT_WEIGHT,
+} from "constants/styles";
 
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
@@ -12,14 +17,60 @@ export const H2 = styled(BasicH2)`
 export const NavAbsoluteEl = styled.div`
   position: absolute;
   overflow: hidden;
-  height: calc(100% - 125px);
+  height: calc(100% - 8.31rem);
   width: 100%;
-  top: 64px;
-  bottom: 61px;
+  top: 4rem;
+  bottom: 4.31rem;
 
   &:hover {
     overflow-y: scroll;
   }
+
+  &::before {
+    content: "";
+    z-index: 2;
+    position: fixed;
+    top: 2.68rem;
+    left: 2.5rem;
+    width: 15.62rem;
+    height: 3.125rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      180deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
+
+  &::after {
+    content: "";
+    z-index: 2;
+    position: fixed;
+    bottom: 4.312rem;
+    left: 2.5rem;
+    width: 15.625rem;
+    height: 3.125rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      0deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
+`;
+export const SideNavBackground = styled.div`
+  position: absolute;
+  background-color: ${REDESIGN_PALETTE.grey[0]};
+  left: -100rem;
+  right: 0;
+  top: -10rem;
+  bottom: 0rem;
 `;
 export const NavImage = styled(Image)`
   width: 100%;
@@ -29,11 +80,13 @@ export const NavImage = styled(Image)`
     display: none !important;
   }
 `;
-export const NavFooterLi = styled.li`
+export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
   border-top: 1px solid ${PALETTE.white60};
   padding: 0.75rem 0 2rem;
   width: 100%;
+  position: absolute;
+  bottom: 0;
 `;
 export const Block = styled.div`
   max-width: 23rem;
@@ -45,7 +98,6 @@ export const Block = styled.div`
     padding: 0 1.125rem 2.5rem;
   }
 `;
-
 export const NavTab = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
@@ -56,7 +108,6 @@ export const NavTab = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-
 export const NavItem = styled.div`
   padding: 2rem 0;
   margin: 0 1.5rem;

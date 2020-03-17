@@ -14,8 +14,8 @@ const TooltipEl = styled.div`
   border-radius: 4px;
   overflow: auto;
   font-size: 0.75rem;
-  width: 100px;
-  padding: 10px;
+  width: 6.25rem;
+  padding: 0.625rem;
   z-index: ${Z_INDEXES.tooltip};
   color: ${PALETTE.white};
   background-color: rgba(41, 45, 62, 1);

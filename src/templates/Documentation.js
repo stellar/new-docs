@@ -25,28 +25,29 @@ import {
   findArticle,
   buildDocsContents,
 } from "helpers/documentation";
+import { getDescriptionFromAst } from "helpers/mdx";
+import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
 import { Column, Container, Row } from "basics/Grid";
+import { PrismStyles } from "basics/Prism";
 
 import Articles from "components/Documentation/Articles";
-import { DocsBase } from "components/layout/DocsBase";
+import { LayoutBase } from "components/layout/LayoutBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
+import { Footer } from "components/Documentation/Footer";
 import {
-  Content,
-  SideNavColumn,
-  SideNavBackground,
-} from "components/Documentation/SharedStyles";
-import {
-  NavFooterLi,
   NavAbsoluteEl,
+  AbsoluteNavFooterEl,
   StickyEl,
+  SideNavBackground,
 } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
-import { Footer } from "components/Documentation/Footer";
+import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const contentId = "content";
 const { h1: H1, h2: H2, a: StyledLink } = components;
@@ -55,10 +56,11 @@ const Topics = styled.ul`
   list-style-type: none;
   padding: 0;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  padding-bottom: 1rem;
 
   li {
     position: relative;
-    padding: 0.55rem 0;
+    padding: 0.5rem 0;
   }
 `;
 
@@ -87,7 +89,7 @@ const NavItemEl = styled(BasicButton)`
 const OutlineTitleEl = styled.div`
   text-transform: uppercase;
   font-weight: ${FONT_WEIGHT.bold};
-  padding: 13px 0;
+  padding: 0.75rem 0;
 `;
 
 const RootEl = styled(StyledLink)`
@@ -147,7 +149,7 @@ const componentMapping = {
 };
 
 const Documentation = ({ data, pageContext, location }) => {
-  const { allFile } = data;
+  const { articleBody, allFile } = data;
   const { relativeDirectory, name, rootDir } = pageContext;
 
   const docsContents =
@@ -161,16 +163,22 @@ const Documentation = ({ data, pageContext, location }) => {
     pagePath,
     rootDir,
   );
-  const article = findArticle(pagePath, docsContents)[name];
+
+  const { body, headings, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
-    body,
+    description: contentDescription,
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
-  } = article;
+  } = findArticle(pagePath, docsContents)[name];
 
-  const pageOutline = article.headings.map(({ value }) => ({
+  const description = React.useMemo(
+    () => contentDescription || getDescriptionFromAst(mdxAst),
+    [mdxAst, contentDescription],
+  );
+
+  const pageOutline = headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
     title: value,
   }));
@@ -198,9 +206,6 @@ const Documentation = ({ data, pageContext, location }) => {
           />
         );
       })}
-      <NavFooterLi>
-        <StyledLink href="/api">API Reference</StyledLink>
-      </NavFooterLi>
     </Topics>
   );
   const center = (
@@ -240,13 +245,26 @@ const Documentation = ({ data, pageContext, location }) => {
 
   return (
     <MDXProvider components={componentMapping}>
-      <DocsBase pageContext={pageContext}>
+      <LayoutBase
+        title={
+          normalizeRoute(location.pathname) === "/docs/"
+            ? "Stellar Documentation"
+            : `${header} – Stellar Documentation`
+        }
+        description={description}
+        previewImage={DevelopersPreview}
+        pageContext={pageContext}
+      >
+        <PrismStyles isDoc />
         <Container id={contentId}>
           <Row>
             <SideNavColumn md={3} lg={3}>
               <SideNavBackground />
               <SideNav docType={docType.doc}>
                 <NavAbsoluteEl>{left}</NavAbsoluteEl>
+                <AbsoluteNavFooterEl>
+                  <StyledLink href="/api">API Reference</StyledLink>
+                </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
             {/*
@@ -260,7 +278,7 @@ const Documentation = ({ data, pageContext, location }) => {
             <Column md={2}>{right}</Column>
           </Row>
         </Container>
-      </DocsBase>
+      </LayoutBase>
     </MDXProvider>
   );
 };
@@ -280,7 +298,16 @@ PageOutlineItem.propTypes = {
 export default Documentation;
 
 export const pageQuery = graphql`
-  query DocumentationQuery {
+  query DocumentationQuery($mdxId: String) {
+    articleBody: file(childMdx: { id: { eq: $mdxId } }) {
+      childMdx {
+        body
+        mdxAST
+        headings(depth: h2) {
+          value
+        }
+      }
+    }
     allFile(
       filter: {
         sourceInstanceName: { eq: "docs" }
@@ -297,13 +324,10 @@ export const pageQuery = graphql`
           name
           relativePath
           childMdx {
-            body
-            headings(depth: h2) {
-              value
-            }
             id
             frontmatter {
               title
+              description
               order
             }
           }

@@ -2,7 +2,7 @@ import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
@@ -16,18 +16,25 @@ import {
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
-import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { normalizeMdx } from "helpers/mdx";
+import { buildPathFromFile } from "helpers/routes";
 
 import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { ArrowIcon, EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
+import { PrismStyles } from "basics/Prism";
 
 import { Footer } from "components/Documentation/Footer";
-import { DocsBase } from "components/layout/DocsBase";
-import { NavFooterLi, NavAbsoluteEl } from "components/Navigation/SharedStyles";
+import { LayoutBase } from "components/layout/LayoutBase";
+import {
+  AbsoluteNavFooterEl,
+  NavAbsoluteEl,
+  SideNavBackground,
+} from "components/Navigation/SharedStyles";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
@@ -40,11 +47,10 @@ import {
   Container,
   NestedRow,
   SideNavColumn,
-  SideNavBackground,
 } from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
-import { buildPathFromFile } from "../../buildHelpers/routes";
+import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const NAV_BAR_HEIGHT = 89;
 const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
@@ -60,12 +66,23 @@ const TrackedEl = styled.div``;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+
+  &:last-child {
+    padding-bottom: 2.25rem;
+  }
 `;
 const NavTitleEl = styled(H5)`
   margin: 0;
   line-height: normal;
   font-weight: ${FONT_WEIGHT.bold};
   text-transform: uppercase;
+`;
+const activeStyles = `
+  color: ${PALETTE.purpleBlue};
+  background: rgba(0,0,0,0.04);
+  border-radius: 2px;
+  padding-left: 0.75rem;
+  font-weight: ${FONT_WEIGHT.bold};
 `;
 const NavItemEl = styled.div`
   display: block;
@@ -76,8 +93,14 @@ const NavItemEl = styled.div`
   padding: 0.375rem 0;
   padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
   transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${({ isActive }) =>
-    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+  font-weight: ${FONT_WEIGHT.normal};
+
+  ${(props) =>
+    props.isActive
+      ? css`
+          ${activeStyles}
+        `
+      : ""}
 
   &:hover {
     color: ${PALETTE.lightGrey};
@@ -114,10 +137,6 @@ const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
   display: block;
-`;
-const AbsoluteNavFooterEl = styled(NavFooterLi)`
-  position: absolute;
-  bottom: 0;
 `;
 
 const isInViewport = (elem) => {
@@ -291,7 +310,13 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         </noscript>
       </Helmet>
       <MDXProvider components={componentMap}>
-        <DocsBase pageContext={pageContext}>
+        <LayoutBase
+          previewImage={DevelopersPreview}
+          title="Stellar API Reference"
+          description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
+          pageContext={pageContext}
+        >
+          <PrismStyles />
           <Container>
             <ApiReferenceRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
@@ -341,7 +366,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               <Column xs={4} xl={9} />
             </ApiReferenceRow>
           </Container>
-        </DocsBase>
+        </LayoutBase>
       </MDXProvider>
     </ScrollRouter>
   );

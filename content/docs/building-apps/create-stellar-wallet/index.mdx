@@ -1,23 +1,25 @@
 ---
-title: Basic key creation, storage, and use
+title: Overview
 order: 10
 ---
+## Key Management Basics
 
-Alright, to the computer! Step one for any user service is sorting out how you're going to get people onboarded into your app. This is a doubly crucial step for crypto services as a large part of your offering will revolve around the Stellar account we append to the user object.
+Step one for any app is to sort out user onboarding.  Since a Stellar wallet is an interface that gives a user access to an account stored on the ledger, and since that access is controlled by the account's secret key, the first thing you have to decide is how to handle a user's secret key, and how to append the Stellar account it unlocks to a user object.
 
-There are several considerations when beginning this process, the first and most important of which is who will “own” the account. There are three answers to that question and the right answer for you will depend on your use case.
+The most important question: who will “own” the account? There are three possible answers:
 
-1. You, the service provider, will store and delegate key usage rights to the user. You will be a “custodial” service.
-2. They, the users, will store their own account credentials and will permission your app to send requests or delegate transaction signing. This would be a “non-custodial” service.
-3. A mixture of the two via multisig. Especially useful for maintaining non-custodial status while still allowing for account recovery.
+1. You, the service provider, store the secret key and delegate usage rights to the user. This is a “custodial” service.
+2. They, the user, will store their own account credentials and permission your app to send requests or delegate transaction signing. This is a “non-custodial” service.
+3. A mixture of the two via multisig. This is especially useful for maintaining non-custodial status while still allowing for account recovery.
 
-For our purposes, and in general we will assume #2. Be very careful taking a custodial stance or any mixture where you as the service provider are storing user secrets. It’s easy to get wrong and the consequences can be devastating.
+Be very careful taking a custodial approach or using any mixture where you are storing user secrets. It’s easy to get wrong, and the consequences can be devastating.  For our purposes, we will assume choice #2.  This tutorial will show you hold to build a non-custodial service. 
 
-Rolling with the #2 option however poses some very real usability issues as your user must now securely store their own account credentials and safely and intelligently navigate transaction signing on their end. There are several user friendly options out there one of which is a keystore file guarded by a passphrase. This keystore file is stored locally on the browser with the ability to export/import that keystore into other systems. As long as the passphrase is secure enough it’s a pretty good system. I wouldn’t recommend it for higher security production applications or anything beyond what you would traditionally guard  with a basic password but for our purposes today it’ll work just fine.
+The non-custodial option poses some very real usability issues: your user has to securely store their own account credentials and safely navigate transaction signing on their end. There are ways to make that process more user-friendly, one of which is to create a keystore file guarded by a passphrase, and that's the approach we'll take in this tutorial.
 
----- 
+Creating a keystore file and storing it locally in the browser allows a user to import or export it into other systems, and  works pretty well as long as the user's passphrase is secure enough. We don't recommend this approach for high-security production applications, but it's the best way to get started, and for this tutorial, which lays out the foundation for a basic Stellar wallet, it’ll work just fine.
 
-Other options here would include things like:
+## Third-party Key Management Applications
+There are also several apps and services that specialize in adding additional security layers to users' accounts.  Check them out if you're interested:
 
 - [Albedo][1]
 - [StellarAuth][2]
@@ -27,7 +29,7 @@ Other options here would include things like:
 - [StellarGuard][6]
 - [LobstrVault][7]
 
-[Prev][8] — [Next][9]
+
 
 [1]:	https://albedo.link/
 [2]:	https://stellarauth.com/

@@ -1,7 +1,7 @@
 import { graphql } from "gatsby";
 
 import { groupBy } from "helpers/groupBy";
-import { buildPathFromFile } from "utils";
+import { buildPathFromFile } from "helpers/routes";
 
 export const DOCS_CONTENT_URL =
   "https://github.com/stellar/new-docs/blob/master/content/";
@@ -193,7 +193,7 @@ export const buildDocsContents = (data, rootDir) => {
       const {
         body,
         headings,
-        frontmatter: { title: articleTitle },
+        frontmatter: { title: articleTitle, description },
         id: articleId,
       } = childMdx;
       articles[name] = {
@@ -203,6 +203,7 @@ export const buildDocsContents = (data, rootDir) => {
         githubLink: mdxLink,
         modifiedTime,
         title: articleTitle || "{`title` Not Found}",
+        description,
         url: buildPathFromFile(relativePath),
       };
     });

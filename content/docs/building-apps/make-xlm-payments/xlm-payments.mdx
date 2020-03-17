@@ -1,23 +1,24 @@
 ---
-title: XLM payments
+title: Make XLM Payments
 order: 10
 ---
 
-To the computer!
-
-> In this tutorial we’re going to modify our base wallet app to include functionality to send other Stellar accounts some XLM.
+> In this tutorial we’re going to modify our base wallet app to include functionality to send XLM to other Stellar accounts.
 
 [View keystore boilerplate code on GitHub][1]
 
-So right now we’ve got a method for creating an account and for storing the account secrets securely and usably. From here we can begin to more fully utilize all of the Stellar asset management goodness. You’ll be happy to know there isn’t too much new or complicated here, just building on what we already have. Again most of the work will be in `src/components/wallet/`, however before we dive into that file let’s clean up our project just a touch and add a little helpful polish. Namely a loader component.
+In the [Build a Basic Wallet tutorial](link), we did the hard work of wiring up a secure client and rock-solid key creation and storage structure with a clear plan for key use and management.  Now that we have a method for creating an account—and for storing that account's secrets so they're safe and easy to use—we're ready to start making payments.
 
+There isn’t too much that's new or complicated here: we'll be building on what we already have. Again, most of the work will be in `src/components/wallet/`; however, before we dive into that file let’s clean up our project just a touch and add some helpful polish. Namely a loader component.
+
+## Add Loader Component
 Hopefully by now you’re familiar with how to generate new Stencil components.
 
 ```bash
 npm run generate
 ```
 
-We'll call it `stellar-loader` and deselect both test files leaving only the styling. Once we’ve got that open `src/components/loader/` and rename the `.css` file to `.scss`. After that replace the `loader.tsx` contents with this.
+We'll call the component `stellar-loader`, and deselect both test files leaving only the styling. Once you've done that, open `src/components/loader/` and rename the `.css` file to `.scss`. Then replace the `loader.tsx` contents with this:
 
 ```tsx
 import Combinatorics from 'js-combinatorics'
@@ -81,7 +82,7 @@ export class Loader {
 }
 ```
 
-Don’t forget to install new packages kids!
+Don’t forget to install new packages!
 
 ```bash
 npm i -D js-combinatorics
@@ -91,7 +92,8 @@ It’s a fancy wackadoodle little component which at the end of the day just pro
 
 ![][image-1]
 
-Okie dokie, we’re now ready to tackle the `src/components/wallet/wallet.ts` file.
+## Import Methods
+We’re now ready to tackle the `src/components/wallet/wallet.ts` file.
 
 ```ts
 import {
@@ -162,7 +164,7 @@ Wallet.prototype.componentWillLoad = componentWillLoad
 Wallet.prototype.render = render
 ```
 
-If you’ve followed other tutorials in this series much of this may be review but we’ll just walk along this file and see exactly what’s going on.
+If you’ve followed other tutorials in this series much of this may be review, but we’ll just walk along this file and see exactly what’s going on.
 
 ```ts
 import {
@@ -189,7 +191,7 @@ import setPrompt from './methods/setPrompt'
 import { Prompter } from '@prompt/prompt'
 ```
 
-Imports galore! Nothing really noteworthy here other than you’ll notice we’re importing `./methods/updateAccount` and `./methods/makePayment` methods which we’ll be creating soon. There are a number of updates in the other methods from previous tutorials and we’ll walk through all of those in a moment as well.
+Imports galore! Nothing really noteworthy here other than you’ll notice we’re importing `./methods/updateAccount` and `./methods/makePayment` methods which we’ll be creating soon. There are a number of updates in the other methods from previous tutorials, and we’ll walk through all of those in a moment as well.
 
 ```ts
 interface StellarAccount { // UPDATE
@@ -205,7 +207,7 @@ interface Loading { // NEW
 }
 ```
 
-Here we’re setting up two TypeScript classes one for our account and the other for our loading states. Pretty simple stuff.
+Here we’re setting up two TypeScript classes: one for our account and the other for our loading states.
 
 ```ts
 @Component({
@@ -225,9 +227,10 @@ export class Wallet {
 }
 ```
 
-Here we set up our `@State`’s, those dynamic properties with values which will change and alter the DOM of the component, and our `@Prop` which will hold in this case a static reference to our Stellar server instance.
+Here we set up our `@State`’s, those dynamic properties with values that will change and alter the DOM of the component, and our `@Prop`, which in this case will hold a static reference to our Stellar server instance.
 
-Next let’s update our two component events `./events/componentWillLoad.ts` and `./events/render.tsx`.
+## Update Component Events
+Next let’s update our two component events `./events/componentWillLoad.ts` and `./events/render.tsx`:
 
 ```ts
 import { Server } from 'stellar-sdk'
@@ -261,7 +264,9 @@ export default async function componentWillLoad() {
 }
 ```
 
-In Stencil’s `componentWillLoad` method we set up our default values for the States and Props we initialized earlier. Most notably in this case we’re setting our server and account. You’ll notice we’re utilizing the `horizon-testnet` for now for obvious reasons, in production you’d likely want to change this to just the `horizon` endpoint or even one of your own Horizon API endpoints. For the account we’re simply checking to see if a `keyStore` value has been stored and if so we’re grabbing the public key and keystore from it and adding those to the account `@State`. The `state` value, which is optional, is not set here as we’ll need to run the method `updateAccount()` to find if the account exists and if so what the state of that account looks like. We’ll get to that method shortly. For now let’s update our `render.tsx` method next.
+In Stencil’s `componentWillLoad` method, we set up default values for the States and Props we initialized earlier. Most notably, we’re setting our server and account. You’ll notice we’re using the public `horizon-testnet` for now—we're just learning, and not ready to send live XLM— but in production you’d want to change this to the public `horizon` endpoint or, if you're running your own Horizon, to one of your own Horizon API endpoints. 
+
+For the account we’re simply checking to see if a `keyStore` value has been stored, and if so we’re grabbing the public key and keystore from it and adding those to the account `@State`. The `state` value, which is optional, is not set here as we’ll need to run the method `updateAccount()` to find if the account exists, and if so what the state of that account looks like. We’ll get to that method shortly. For now let’s update our `render.tsx` method:
 
 ```tsx
 import { h } from '@stencil/core'
@@ -295,7 +300,10 @@ export default function render() {
 }
 ```
 
-Yikers amirite!? Don’t worry though, it’s actually quite simple if you’ve spent any time with HTML in JS before. Just a few ternary operators toggling the UI between different states based on the account status. Basically just a bunch of buttons wired up to their subsequent actions. Which, as it turns out, are next on the list to create! `updateAccount` and `makePayment` are new while `createAccount` will just need a few tweaks. Let’s start with that one.
+Yikers amirite!? Don’t worry though: it’s actually quite simple if you’ve spent any time with HTML in JS before. What we're looking at are a few ternary operators toggling the UI between different states based on the account status. Basically just a bunch of buttons wired up to their subsequent actions. Turns out creating those buttons is next on our to-do list!
+
+## Create Buttons
+`updateAccount` and `makePayment` are new; `createAccount` will just need a few tweaks. Let’s start with that one.
 
 ```ts
 import sjcl from '@tinyanvil/sjcl'
@@ -346,16 +354,20 @@ export default async function createAccount(e: Event) {
 }
 ```
 
-Quite actually the only new thing we’re adding here, besides adding a loading state and an initial `this.updateAccount()` call at the end, is the call to [friendbot.stellar.org][2] which will automatically fund our new testnet account with 10,000 XLM, a nice little shortcut to kickstart our development.
+## Fund Account Using Friendbot
+The only new thing we’re adding here—other than a loading state and an initial `this.updateAccount()` call at the end—is the call to [friendbot.stellar.org][2], which is a testnet tool that we can use to automatically fund our new testnet account with 10,000 XLM. Nice little shortcut to kickstart our development.
 
 ```ts
 await axios(`https://friendbot.stellar.org?addr=${keypair.publicKey()}`)
 .finally(() => this.loading = {...this.loading, fund: false})
 ```
 
-In production this funding process would need to be handled by other means, either your service or by the user themselves operating as the funding source.
+In production, you would have to find an actual source for funding the account.  Some wallets fund users' accounts for them; some require the user to supply the funds. 
 
-So that’s the updated `./methods/createAccount.ts` file. Now let’s create two new files for updating the account and making XLM payments.
+So that’s the updated `./methods/createAccount.ts` file. 
+
+## Update Account Method
+Now let’s create two new files for updating the account and making XLM payments.
 
 ```bash
 touch src/components/wallet/methods/{updateAccount,makePayment}.ts
@@ -415,9 +427,12 @@ export default async function updateAccount(e?: Event) {
 }
 ```
 
-All we’re doing here is looking up the state of our Stellar account on the ledger and saving that to the `this.account.state`. You’ll also notice we’re omitting several fields from the account and balances of the account for easier readability. You may choose to save these and just selectively display the values you care about. In our example we’re just displaying the raw JSON so cleaning things up a little is the right move here. `this.account = {...this.account, state: loOmit(account, ['id', ...])}` may feel odd but it’s just the Stencil way of updating a state’s object key in such a way as to trigger a re-render of the DOM. You’ll notice `this.loading` follows the same pattern. We’ll make use of this data further down in the `render` method but for now just know this is how we would grab ahold of the account to get the latest state for our account.
+All we’re doing here is looking up the state of the Stellar account on the ledger and saving it to the `this.account.state`. You’ll also notice we’re omitting several fields from the account and balances for easier readability. You may choose to save these and selectively display the values you care about, but in our example we’re just displaying the raw JSON, so cleaning things up a little is the right move. 
 
-Next let’s break down the main subject method for this tutorial, `./methods/makePayment.ts`. Dun dun duuuun!!
+`this.account = {...this.account, state: loOmit(account, ['id', ...])}` may feel odd, but it’s just the Stencil way of updating a state’s object key to trigger a re-render of the DOM. You’ll notice `this.loading` follows the same pattern. We’ll make use of this data further down in the `render` method, but for now just know this is how we would grab ahold of the account to get the latest state.
+
+## Make Payment Method
+Next let’s break down the main subject method for this tutorial, `./methods/makePayment.ts`:
 
 ```ts
 import sjcl from '@tinyanvil/sjcl'
@@ -512,7 +527,7 @@ export default async function makePayment(e: Event) {
 }
 ```
 
-This method is quite massive so let’s break it down further by its parts to help understand what exactly is going on.
+This method is quite massive, so let’s break it down further so it's easier to understand exactly what is going on.
 
 ```ts
 export default async function makePayment(e: Event) {
@@ -532,7 +547,7 @@ export default async function makePayment(e: Event) {
 ...
 ```
 
-We’re going to need a couple pieces of info from the user, namely the amount of XLM to send, what address to send it to and the pincode for unlocking the keystore file. We request those asynchronously and cancel out of the method if they aren’t provided.
+We’re going to need a couple pieces of info from the user: the amount of XLM to send, what address to send it to, and the pincode for unlocking the keystore file. We request those asynchronously and cancel out of the method if they aren’t provided.
 
 ```ts
 ...
@@ -547,7 +562,7 @@ We’re going to need a couple pieces of info from the user, namely the amount o
 ...
 ```
 
-From there we unpack the keystore with the pincode and reset any existing errors and trigger the `pay` loading boolean.
+Next we unpack the keystore with the pincode, reset any existing errors, and trigger the `pay` loading boolean:
 
 ```ts
  ...
@@ -576,7 +591,7 @@ From there we unpack the keystore with the pincode and reset any existing errors
 ...
 ```
 
-From there we call the keypair account to retrieve its current sequence number so we can prepare a transaction with a payment operation. We set the destination and amount to the instructions from the prompt we collected and split earlier. Finally we build, sign and submit that transaction to the Stellar Horizon API server.
+From there we call the keypair account to retrieve its current sequence number so we can prepare a transaction with a payment operation. We set the destination and amount using the instructions from the prompt we collected and split earlier. Finally, we build, sign, and submit that transaction to the Stellar Horizon API server.
 
 ```ts
 ...
@@ -608,7 +623,7 @@ From there we call the keypair account to retrieve its current sequence number s
 ...
 ```
 
-There’s an obvious issue in our method right now and that’s if the account we want to send XLM hasn’t been created yet, this `catch` handles that potential issue and if `op_no_destination` is sent back on the payment attempt we’ll try again with a `createAccount` operation. For any other issues we’ll just pass the error on unmodified.
+If the account we want to send XLM is unfunded (and therefore doesn't yet exist on the ledger), we'll get back `op_no_destination`.  This `catch` handles that issue by trying again with a `createAccount` operation. For any other issues we just pass the error on unmodified.
 
 ```ts
     })
@@ -625,13 +640,10 @@ There’s an obvious issue in our method right now and that’s if the account w
 }
 ```
 
-Finally we log any success transaction, kill the loader and `updateAccount` to reflect the new balance in our account after successfully sending XLM. We also have our `catch` block which passes to the `handleError` service which will trickle down to render a nice error block in the UI.
+Finally, we log any success transaction, kill the loader, and `updateAccount` to reflect the new balance in our account after successfully sending XLM. We also have our `catch` block that passes to the `handleError` service.  We will render that in a nice error block in the UI.
 
-There we go! That wasn’t so bad right? Pretty simple, and yet from this tutorial we have the power to make payments, keep and observe balances between users using the power of the Stellar ledger. Amazing!
+There we go! That wasn’t so bad right? Pretty simple, and yet from this tutorial we have the power to hold and observe balances, and to make payments using the power of the Stellar ledger. Amazing!
 
-[View this code on GitHub][3]
-
-[Prev][4] — [Next][5]
 
 [1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/keystore
 [2]:	https://friendbot.stellar.org/

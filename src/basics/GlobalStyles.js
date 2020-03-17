@@ -2,6 +2,7 @@ import { createGlobalStyle, css } from "styled-components";
 import styledNormalize from "styled-normalize";
 
 import { FONTS } from "constants/fonts";
+import { FONT_FAMILY } from "constants/styles";
 
 export const GlobalStyles = createGlobalStyle`
   body,
@@ -26,7 +27,7 @@ export const GlobalStyles = createGlobalStyle`
   button {
     font-size: 16px;
     font-weight: 400;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: ${FONT_FAMILY.base};
     line-height: 1;
   }
   /* http://tachyons.io/docs/layout/box-sizing/ */

@@ -17,6 +17,11 @@ module.exports = {
   },
   pathPrefix: "/",
   plugins: [
+    "gatsby-transformer-sharp",
+    "gatsby-plugin-react-helmet",
+    "gatsby-plugin-sharp",
+    "gatsby-plugin-styled-components",
+    "gatsby-remark-images",
     {
       resolve: "gatsby-plugin-mdx",
       options: {
@@ -28,6 +33,12 @@ module.exports = {
               theme: "neutral",
               fontFamily:
                 '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+            },
+          },
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 800,
             },
           },
           {
@@ -62,6 +73,12 @@ module.exports = {
             },
           },
           {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 800,
+            },
+          },
+          {
             resolve: `gatsby-remark-prismjs`,
             options: {
               showLineNumbers: true,
@@ -80,10 +97,27 @@ module.exports = {
         ],
       },
     },
-    "gatsby-transformer-sharp",
-    "gatsby-plugin-react-helmet",
-    "gatsby-plugin-sharp",
-    "gatsby-plugin-styled-components",
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "images",
+        path: `${__dirname}/src/assets/images/`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "docs-images",
+        path: `${__dirname}/content/docs/web-assets/`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "docs",
+        path: `${__dirname}/content/`,
+      },
+    },
     {
       resolve: "gatsby-plugin-eslint",
       options: {
@@ -109,20 +143,6 @@ module.exports = {
         rule: {
           include: [/icons/, /svg\//],
         },
-      },
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        name: "images",
-        path: `${__dirname}/src/assets/images/`,
-      },
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        name: "docs",
-        path: `${__dirname}/content/`,
       },
     },
     "gatsby-plugin-folder-metadata",

@@ -23,6 +23,8 @@ const MethodTableEl = styled.div`
   td {
     border: none;
     padding: 0.5rem 0;
+    vertical-align: top;
+    line-height: 1.5;
 
     &:first-child {
       font-weight: ${FONT_WEIGHT.bold};
@@ -45,8 +47,12 @@ const ContentEl = styled.div`
   padding: 0;
   padding: 1rem 0;
 
-  ${Code}, ${Table} {
+  ${Code} {
     padding-left: 1rem;
+  }
+
+  ${Table} {
+    padding: 0 1rem;
   }
 `;
 

@@ -1,4 +1,4 @@
 export const docType = {
-  api: "API Reference",
-  doc: "Documentation",
+  api: "API",
+  doc: "Docs",
 };

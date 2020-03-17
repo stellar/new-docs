@@ -39,7 +39,7 @@ export const H1 = styled.h1`
 export const H2 = styled.h2`
   ${headingBase};
   display: inline-block;
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin: 3.125rem 0 0.5rem;
   letter-spacing: -1.2px;
 `;
@@ -66,30 +66,19 @@ export const LinkedH5 = makeLinkedHeader(H5);
 export const LinkedH6 = makeLinkedHeader(H6);
 
 export const Quote = styled.blockquote`
-  position: relative;
-  margin: 2.3rem 0;
-  width: 100%;
+  margin: 1rem 0;
+  padding: 0.5rem 1.25rem;
+  border-left: 0.125rem solid ${PALETTE.purpleBlue};
 
   p {
-    font-size: 1.5rem;
-    font-weight: ${FONT_WEIGHT.normal};
-    line-height: 1.29;
-    color: ${PALETTE.dark};
-    margin-left: 2.4rem;
-  }
+    color: #000;
+    font-size: 1.125rem;
+    line-height: 2;
+    margin-top: 0;
 
-  ::before {
-    content: "“";
-    font-size: 4rem;
-    font-weight: ${FONT_WEIGHT.bold};
-    position: absolute;
-    left: -0.2rem;
-    top: -1rem;
-    width: auto;
-  }
-
-  @media (${MEDIA_QUERIES.gtLaptop}) {
-    width: 80%;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 `;
 
@@ -110,17 +99,17 @@ export const List = styled.ul`
       content: "";
       position: absolute;
       left: -1.4rem;
-      top: 11px;
-      width: 6px;
-      height: 6px;
+      top: 0.75rem;
+      width: 0.375rem;
+      height: 0.375rem;
       border-radius: 50%;
       background-color: ${PALETTE.black60};
     }
 
     &:first-child > ul > li {
       &::before {
-        width: 4px;
-        height: 4px;
+        width: 0.25rem;
+        height: 0.25rem;
         border: 1px solid ${PALETTE.black60};
         background-color: transparent;
       }
@@ -128,8 +117,8 @@ export const List = styled.ul`
 
     &:nth-child(2) > ul > li {
       &::before {
-        width: 6px;
-        height: 6px;
+        width: 0.375rem;
+        height: 0.375rem;
         border-radius: initial;
         background-color: ${PALETTE.black60};
       }
@@ -240,7 +229,7 @@ export const Preformatted = styled.pre`
 
     // This is gross but gotta override
     & > span::before {
-      font-size: 12px;
+      font-size: 0.75rem;
       color: ${({ theme }) => theme.contrast};
     }
   }
@@ -268,5 +257,5 @@ export const Sup = styled(({ children, ...props }) => {
   font-size: 0.687rem;
   color: ${PALETTE.yellow};
   font-weight: ${FONT_WEIGHT.bold};
-  padding-left: 2px;
+  padding-left: 0.125rem;
 `;

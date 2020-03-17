@@ -10,9 +10,11 @@ import { MDXProvider } from "@mdx-js/react";
 import { CSS_TRANSITION_SPEED, FONT_WEIGHT, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 
-import { sortReference, normalizeMdx } from "helpers/sortReference";
+import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
+import { buildPathFromFile } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -20,7 +22,7 @@ import { Column } from "basics/Grid";
 import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
-import { DocsBase } from "components/layout/DocsBase";
+import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
 import { SideNav, SideNavBody } from "components/SideNav";
@@ -29,11 +31,11 @@ import {
   ApiReferenceRow,
   ApiReferenceWrapper,
   SideNavColumn,
-  SideNavBackground,
   NestedRow,
 } from "components/Documentation/SharedStyles";
+import { SideNavBackground } from "components/Navigation/SharedStyles";
 
-import { buildPathFromFile } from "../../buildHelpers/routes";
+import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -125,18 +127,29 @@ const componentMap = {
 };
 
 // eslint-disable-next-line react/no-multi-comp
-const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
+const SingleApiReference = React.memo(function ApiReference({
+  data,
+  pageContext,
+}) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
   const docsBySubCategory = groupByCategory(referenceDocs);
 
-  const { parent, frontmatter, body } = data.doc;
+  const { parent, frontmatter, body, mdxAST: mdxAst } = data.doc;
   const path = buildPathFromFile(parent.relativePath);
+  const description = React.useMemo(
+    () => frontmatter.description || getDescriptionFromAst(mdxAst),
+    [mdxAst, frontmatter.description],
+  );
 
   return (
     <MDXProvider components={componentMap}>
-      <DocsBase pageContext={pageContext}>
+      <LayoutBase
+        previewImage={DevelopersPreview}
+        description={description}
+        pageContext={pageContext}
+      >
         <Container>
           <ApiReferenceRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>
@@ -174,27 +187,46 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             <Column xs={4} xl={9} />
           </ApiReferenceRow>
         </Container>
-      </DocsBase>
+      </LayoutBase>
     </MDXProvider>
   );
 });
 
-ApiReference.propTypes = {
+SingleApiReference.propTypes = {
   data: PropTypes.object.isRequired,
   pageContext: PropTypes.object.isRequired,
 };
 
-export default ApiReference;
+export default SingleApiReference;
 
 export const pageQuery = graphql`
   query SingleApiReferenceQuery($ids: [String], $docId: String) {
     doc: mdx(id: { eq: $docId }) {
       ...ApiReferencePage
+      mdxAST
     }
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
         node {
-          ...ApiReferencePage
+          id
+          frontmatter {
+            title
+            order
+          }
+          parent {
+            ... on File {
+              relativePath
+              relativeDirectory
+              fields {
+                metadata {
+                  data {
+                    order
+                    title
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

@@ -8,7 +8,6 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
-import { PrismStyles } from "basics/Prism";
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 import { getCookie, extractStringChildren } from "utils";
@@ -19,8 +18,11 @@ import { DividerEl } from "components/Documentation/SharedStyles";
 const CODE_LANGS = {
   curl: "cURL",
   go: "Go",
-  javascript: "JAVASCRIPT",
+  javascript: "JavaScript",
+  ts: "TypeScript",
   java: "Java",
+  bash: "bash",
+  json: "json",
 };
 
 const LangSelect = styled(Select)`
@@ -33,13 +35,19 @@ const LangSelect = styled(Select)`
     border: none;
     background: transparent;
     color: ${PALETTE.white};
-    margin: calc(1rem - 1px);
-    padding: 0;
-    height: 1rem;
-    font-family: ${FONT_FAMILY.monospace};
+    margin: 0 calc(1rem - 1px);
     font-weight: 500;
     font-size: 0.75rem;
+    padding: 0;
   }
+`;
+
+const LangOptionEl = styled.div`
+  margin: calc(1rem - 1px) 0;
+  font-family: ${FONT_FAMILY.monospace};
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.15;
 `;
 
 const OptionsContainer = styled.div`
@@ -97,7 +105,8 @@ const CopyIconWrapper = styled.div`
 
 const TitleEl = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: ${(props) =>
+    props.hasTitle ? "space-between" : "flex-end"};
   position: relative;
   padding: 0 1rem;
   align-items: center;
@@ -181,22 +190,28 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
 
   return (
     <MethodContentEl>
-      <TitleEl>
+      <TitleEl hasTitle={title}>
         {title}
         <OptionsContainer>
-          <LangSelect
-            ref={SelectRef}
-            onChange={onChange}
-            name="langSelect"
-            label=""
-            value={activeLang}
-          >
-            {availableLangs.map((langValue) => (
-              <option key={langValue} value={langValue}>
-                {CODE_LANGS[langValue]}
-              </option>
-            ))}
-          </LangSelect>
+          <LangOptionEl>
+            {availableLangs.length > 1 ? (
+              <LangSelect
+                ref={SelectRef}
+                onChange={onChange}
+                name="langSelect"
+                label=""
+                value={activeLang}
+              >
+                {availableLangs.map((langValue) => (
+                  <option key={langValue} value={langValue}>
+                    {CODE_LANGS[langValue]}
+                  </option>
+                ))}
+              </LangSelect>
+            ) : (
+              CODE_LANGS[availableLangs[0]]
+            )}
+          </LangOptionEl>
           <DividerEl />
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
@@ -224,10 +239,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           )}
         </OptionsContainer>
       </TitleEl>
-      <ContentEl>
-        <PrismStyles isCodeSnippet />
-        {selectedSnippet}
-      </ContentEl>
+      <ContentEl>{selectedSnippet}</ContentEl>
       <Tooltip in={isHovered} isCopied={isCopied} parentDimension={dimension}>
         {isCopied ? "Copied" : "Click to copy"}
       </Tooltip>
@@ -237,7 +249,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
 
 CodeSnippet.propTypes = {
   codeSnippets: PropTypes.node.isRequired,
-  title: PropTypes.node.isRequired,
+  title: PropTypes.node,
   href: PropTypes.string,
 };
 
@@ -258,7 +270,7 @@ export const CodeExample = React.forwardRef(function CodeExample(
 });
 
 CodeExample.propTypes = {
-  title: PropTypes.node.isRequired,
+  title: PropTypes.node,
   children: PropTypes.node.isRequired,
   href: PropTypes.string,
 };
