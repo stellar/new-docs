@@ -91,12 +91,11 @@ const CustomList = styled.li`
   }
 `;
 
-const Article = ({ article = {}, activeItem, depth }) => {
-  const { id, title, url } = article;
+const Article = ({ title, url, activeItem, depth }) => {
   const isActive = url.includes(activeItem);
 
   return (
-    <CustomList key={id} isActive={isActive} depth={depth}>
+    <CustomList isActive={isActive} depth={depth}>
       <ArticleLink href={url}>{title}</ArticleLink>
     </CustomList>
   );
@@ -105,11 +104,12 @@ const Article = ({ article = {}, activeItem, depth }) => {
 Article.propTypes = {
   depth: PropTypes.number,
   activeItem: PropTypes.string,
+  title: PropTypes.string,
+  url: PropTypes.string,
 };
 
 const Articles = ({
   articles,
-  id,
   initialTopicsState,
   isNested,
   title,
@@ -160,22 +160,22 @@ const Articles = ({
               depth={depth + 1}
             />
           ) : (
-            <Article
-              key={`Article${article.id}`}
-              isCollapsed={isCollapsed}
-              article={article}
-              depth={depth + 1}
-              activeItem={activeItem}
-            />
           ),
         )}
+              <Article
+                key={article.id}
+                isCollapsed={isCollapsed}
+                title={article.title}
+                url={article.url}
+                depth={depth + 1}
+                activeItem={activeItem}
+              />
       </ArticleList>
     </li>
   );
 };
 
 Articles.propTypes = {
-  id: PropTypes.string,
   initialTopicsState: PropTypes.object,
   isNested: PropTypes.bool,
   articles: PropTypes.object,
@@ -183,10 +183,6 @@ Articles.propTypes = {
   topicPath: PropTypes.string,
   depth: PropTypes.number,
   activeItem: PropTypes.string,
-};
-
-Article.propTypes = {
-  article: PropTypes.object,
 };
 
 export default Articles;
