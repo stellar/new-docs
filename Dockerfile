@@ -1,6 +1,6 @@
 FROM ubuntu:16.04 as build
 
-MAINTAINER SDF Ops Team <ops@stellar.org>
+MAINTAINER Carl Vitullo <carl@stellar.org>
 
 RUN apt-get update && apt-get install -y curl wget git apt-transport-https && \
     curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
