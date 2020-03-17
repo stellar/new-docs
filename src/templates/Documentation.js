@@ -30,9 +30,10 @@ import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
-import { Link } from "basics/Links";
 import { Column, Container, Row } from "basics/Grid";
+import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
+import { ListItem } from "basics/Text";
 
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -57,11 +58,6 @@ const Topics = styled.ul`
   padding: 0;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   padding-bottom: 1rem;
-
-  li {
-    position: relative;
-    padding: 0.5rem 0;
-  }
 `;
 
 const RightNavEl = styled(StickyEl)`
@@ -92,8 +88,11 @@ const OutlineTitleEl = styled.div`
   padding: 0.75rem 0;
 `;
 
-const RootEl = styled(StyledLink)`
-  color: #333;
+const RootItemEl = styled(ListItem)`
+  padding: 0.5rem 0;
+`;
+const RootLinkEl = styled(StyledLink)`
+  color: ${PALETTE.black80};
   line-height: 1.75rem;
   text-decoration: none;
 `;
@@ -189,9 +188,9 @@ const Documentation = ({ data, pageContext, location }) => {
         const { articles, id, topicPath, title } = content;
         if (topicPath === buildRelPath(rootDir, rootDir)) {
           return Object.values(articles).map((rootArticle) => (
-            <li key={id}>
-              <RootEl href="/docs">{rootArticle.title}</RootEl>
-            </li>
+            <RootItemEl key={id}>
+              <RootLinkEl href="/docs">{rootArticle.title}</RootLinkEl>
+            </RootItemEl>
           ));
         }
         return (

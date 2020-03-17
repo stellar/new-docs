@@ -6,10 +6,11 @@ import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
 import { BasicButton } from "basics/Buttons";
 import { ArrowIcon } from "basics/Icons";
+import { ListItem, List } from "basics/Text";
 import { Link } from "basics/Links";
 
 const topLevelNavItem = `
-color: #666;
+color: ${PALETTE.black60};
 cursor: pointer;
 font-size: 0.875rem;
 font-weight: ${FONT_WEIGHT.light};
@@ -19,9 +20,11 @@ text-decoration: none;
 }
 `;
 
+const El = styled(ListItem)``;
 const ArticleLink = styled(Link)`
   ${topLevelNavItem}
   display: block;
+  padding: 0.5rem 0;
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
@@ -36,14 +39,14 @@ const NestedArticleTopicExpander = styled(BasicButton)`
   }
 `;
 
-const TopicExpander = styled.button`
+const TopicExpander = styled(BasicButton)`
   cursor: pointer;
   text-align: left;
   background: none;
+  padding: 0.5rem 0;
   border: 0;
-  color: #333;
+  color: ${PALETTE.black80};
   display: flex;
-  padding: 0;
   width: 100%;
   line-height: 1.5;
 
@@ -57,7 +60,7 @@ const TopicExpander = styled.button`
   }
 `;
 
-const ArticleList = styled.ul`
+const ArticleList = styled(List)`
   max-height: ${({ isCollapsed }) => (isCollapsed ? "62.5rem" : "0")};
   overflow: hidden;
   padding: 0;
@@ -80,7 +83,7 @@ const ArticleList = styled.ul`
   }
 `;
 
-const CustomList = styled.li`
+const CustomList = styled(ListItem)`
   ${ArticleLink} {
     font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
     color: ${(props) =>
@@ -142,7 +145,7 @@ const Articles = ({
   const indexArticle = articles.index;
 
   return (
-    <li key={id}>
+    <El>
       {/* eslint-disable-next-line */}
       {isNested ? (
         indexArticle ? (
@@ -200,7 +203,7 @@ const Articles = ({
             ),
           )}
       </ArticleList>
-    </li>
+    </El>
   );
 };
 
