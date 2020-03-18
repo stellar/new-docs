@@ -1,11 +1,12 @@
 # Stellar docs
 
+## Structure
+
 `yarn start` to start local development.
 
 `src/` contains all documentation, API reference sections, and web assets
 (images, videos, pdfs) needed for the docs. Each page is authored as an
-`index.mdx` document, with translations of those documents as
-`index.localeCode.mdx`.
+`index.mdx` document.
 
 Each folder must have a `metadata.json` file with 3 keys:
 
@@ -17,7 +18,7 @@ Each folder must have a `metadata.json` file with 3 keys:
 }
 ```
 
-folders may be nested, which means that a final URL may be stitched together
+Folders may be nested, which means that a final URL may be stitched together
 from multiple metadata files.
 
 ```
@@ -25,15 +26,26 @@ src/
 ├── documentation/
 │   ├── metadata.json
 │   ├── index.mdx
-│   ├── index.es.mdx
 │   └── walkthroughs/
 │       ├── metadata.json
 │       └── index.mdx
 └── reference/
     ├── metadata.json
     ├── index.mdx
-    ├── index.es.mdx
     └── horizon/
         ├── metadata.json
         └── index.mdx
+```
+
+## Local production build
+
+The build has been dockerized so we can host with nginx on Kubernetes, which can
+be compiled and run with `yarn` scripts. Make sure you have Docker set up on
+your machine.
+
+```sh
+yarn production
+# or
+yarn prod:build
+yarn prod:serve
 ```
