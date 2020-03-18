@@ -6,10 +6,11 @@ import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
 import { BasicButton } from "basics/Buttons";
 import { ArrowIcon } from "basics/Icons";
+import { ListItem, List } from "basics/Text";
 import { Link } from "basics/Links";
 
 const topLevelNavItem = `
-color: #666;
+color: ${PALETTE.black60};
 cursor: pointer;
 font-size: 0.875rem;
 font-weight: ${FONT_WEIGHT.light};
@@ -19,9 +20,11 @@ text-decoration: none;
 }
 `;
 
+const El = styled(ListItem)``;
 const ArticleLink = styled(Link)`
   ${topLevelNavItem}
   display: block;
+  padding: 0.5rem 0;
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
@@ -36,14 +39,14 @@ const NestedArticleTopicExpander = styled(BasicButton)`
   }
 `;
 
-const TopicExpander = styled.button`
+const TopicExpander = styled(BasicButton)`
   cursor: pointer;
   text-align: left;
   background: none;
+  padding: 0.5rem 0;
   border: 0;
-  color: #333;
+  color: ${PALETTE.black80};
   display: flex;
-  padding: 0;
   width: 100%;
   line-height: 1.5;
 
@@ -57,7 +60,7 @@ const TopicExpander = styled.button`
   }
 `;
 
-const ArticleList = styled.ul`
+const ArticleList = styled(List)`
   max-height: ${({ isCollapsed }) => (isCollapsed ? "62.5rem" : "0")};
   overflow: hidden;
   padding: 0;
@@ -80,7 +83,7 @@ const ArticleList = styled.ul`
   }
 `;
 
-const CustomList = styled.li`
+const CustomList = styled(ListItem)`
   ${ArticleLink} {
     font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
     color: ${(props) =>
@@ -90,26 +93,37 @@ const CustomList = styled.li`
       props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
   }
 `;
+const IndexArticleLink = styled(ArticleLink)``;
 
-const Article = ({ article = {}, activeItem, depth }) => {
-  const { id, title, url } = article;
+const Article = ({ title, url, activeItem, depth }) => {
   const isActive = url.includes(activeItem);
 
   return (
-    <CustomList key={id} isActive={isActive} depth={depth}>
+    <CustomList isActive={isActive} depth={depth}>
       <ArticleLink href={url}>{title}</ArticleLink>
     </CustomList>
+  );
+};
+const IndexArticle = ({ title, url, activeItem, depth }) => {
+  const isActive = url.includes(activeItem);
+
+  return (
+    <IndexArticleLink isActive={isActive} depth={depth} href={url}>
+      {title}
+    </IndexArticleLink>
   );
 };
 
 Article.propTypes = {
   depth: PropTypes.number,
   activeItem: PropTypes.string,
+  title: PropTypes.string,
+  url: PropTypes.string,
 };
+IndexArticle.propTypes = Article.propTypes;
 
 const Articles = ({
   articles,
-  id,
   initialTopicsState,
   isNested,
   title,
@@ -126,12 +140,27 @@ const Articles = ({
     });
   };
 
+  // `articles` is keyed by directory or file name.
+  // Directories have a leading `/`, "index" here represents the filename
+  const indexArticle = articles.index;
+
   return (
-    <li key={id}>
+    <El>
+      {/* eslint-disable-next-line */}
       {isNested ? (
-        <NestedArticleTopicExpander onClick={() => topicToggleHandler()}>
-          {title}
-        </NestedArticleTopicExpander>
+        indexArticle ? (
+          <IndexArticle
+            isCollapsed={false}
+            title={title}
+            url={indexArticle.url}
+            depth={depth}
+            activeItem={activeItem}
+          />
+        ) : (
+          <NestedArticleTopicExpander onClick={() => topicToggleHandler()}>
+            {title}
+          </NestedArticleTopicExpander>
+        )
       ) : (
         <TopicExpander
           isCollapsed={isCollapsed}
@@ -144,46 +173,41 @@ const Articles = ({
         </TopicExpander>
       )}
 
-      {Object.values(articles).map((article) =>
-        article.articles ? (
-          <ArticleList
-            key={`ArticleList${id}${article.id}`}
-            isCollapsed={isCollapsed}
-          >
-            <Articles
-              articles={article.articles}
-              initialTopicsState={initialTopicsState}
-              isNested
-              key={article.id}
-              title={article.title}
-              topicPath={article.topicPath}
-              topicState={topicState}
-              topicToggleHandler={topicToggleHandler}
-              activeItem={activeItem}
-              depth={depth + 1}
-            />
-          </ArticleList>
-        ) : (
-          <ArticleList
-            key={`ArticleList${id}${article.id}`}
-            isCollapsed={isCollapsed}
-          >
-            <Article
-              key={`Article${article.id}`}
-              isCollapsed={isCollapsed}
-              article={article}
-              depth={depth + 1}
-              activeItem={activeItem}
-            />
-          </ArticleList>
-        ),
-      )}
-    </li>
+      <ArticleList isCollapsed={isCollapsed}>
+        {Object.entries(articles)
+          .filter(([filename]) => filename !== "index")
+          // Only get second arg
+          .map(([, article]) =>
+            article.articles ? (
+              <Articles
+                articles={article.articles}
+                initialTopicsState={initialTopicsState}
+                isNested
+                key={article.id}
+                title={article.title}
+                topicPath={article.topicPath}
+                topicState={topicState}
+                topicToggleHandler={topicToggleHandler}
+                activeItem={activeItem}
+                depth={depth + 1}
+              />
+            ) : (
+              <Article
+                key={article.id}
+                isCollapsed={isCollapsed}
+                title={article.title}
+                url={article.url}
+                depth={depth + 1}
+                activeItem={activeItem}
+              />
+            ),
+          )}
+      </ArticleList>
+    </El>
   );
 };
 
 Articles.propTypes = {
-  id: PropTypes.string,
   initialTopicsState: PropTypes.object,
   isNested: PropTypes.bool,
   articles: PropTypes.object,
@@ -191,10 +215,6 @@ Articles.propTypes = {
   topicPath: PropTypes.string,
   depth: PropTypes.number,
   activeItem: PropTypes.string,
-};
-
-Article.propTypes = {
-  article: PropTypes.object,
 };
 
 export default Articles;

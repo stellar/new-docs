@@ -128,17 +128,17 @@ const insertPageData = (pagePath, contents, articles, rootPageData) => {
     }
     const levels = remainingPath.split("/");
 
+    /* eslint-disable no-param-reassign */
     if (!levels[1]) {
-      Object.assign(newNode, { "/": { articles: {} } });
+      newNode["/"] = { articles: {} };
     } else if (!newNode || !newNode[`/${levels[1]}`]) {
       if (isNested) {
-        Object.assign(newNode.articles, {
-          [`/${levels[1]}`]: { articles: {} },
-        });
+        newNode.articles[`/${levels[1]}`] = { articles: {} };
       } else {
-        Object.assign(newNode, { [`/${levels[1]}`]: { articles: {} } });
+        newNode[`/${levels[1]}`] = { articles: {} };
       }
     }
+    /* eslint-enable no-param-reassign */
     return enterDir(
       levels[2] ? `/${levels[2]}` : null,
       isNested ? newNode.articles[`/${levels[1]}`] : newNode[`/${levels[1]}`],
@@ -191,15 +191,11 @@ export const buildDocsContents = (data, rootDir) => {
       const { childMdx, modifiedTime, name, relativePath } = node;
       const mdxLink = relativePath && DOCS_CONTENT_URL + relativePath;
       const {
-        body,
-        headings,
         frontmatter: { title: articleTitle, description },
         id: articleId,
       } = childMdx;
       articles[name] = {
         id: articleId,
-        body,
-        headings,
         githubLink: mdxLink,
         modifiedTime,
         title: articleTitle || "{`title` Not Found}",
