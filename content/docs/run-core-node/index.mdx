@@ -3,21 +3,19 @@ title: "Overview"
 order: 10
 ---
 
-Stellar is a peer-to-peer network made up of nodes, which are computers that run a program called Stellar Core to communicate, validate transactions, and construct a chain of ledgers guaranteed to be in agreement across all participating nodes at all times.   
+Stellar is a peer-to-peer network made up of nodes, which are computers that keep a common distributed [ledger](link), and that communicate to validate and add [transactions](link) to it.  Nodes use a program called Stellar Core — an implementation of the [Stellar Consensus Protocol](link) — to stay in sync as they work to agree on the validity of transaction sets and to apply them to the ledger.  Generally, nodes reach consensus, apply a transaction set, and update the ledger every 3-5 seconds.
 
-It explains the technical and operational aspects of installing, configuring, and maintaining a Stellar core node. 
+You don’t need to run a node to build on Stellar: you can start developing with your [SDK of choice](link), and use public instances of Horizon to query the ledger and submit transactions right away.  In fact, the Stellar Development Foundation offers two public instances of Horizon — one for the public network and one for the testnet — which you can read more about in our [API reference docs](link).  [Lobstr](link) and [Satoshipay](link) also offer public Horizon instances.
 
-Generally, people run a node in conjunction with the Horizon API, which allows them to easily query the ledger and submit transactions.  
+If you’re serious about building on Stellar, have a production-level product or service that requires high-availability access network, or want to help increase network health and decentralization, then you probably *do* want to run a node, or even a trio of nodes (more on that in the [Tier 1 section](link)).  At that point, you have a choice: you can pay a service provider like [Blockdaemon](link) to set up and run your node for you, or you can do it yourself. 
 
-You don’t need to run a node to build on Stellar: you can start developing using your [SDK of choice](link), and use public instances of Horizon to query the ledger and submit transactions.  
+If you’re going the DIY route, this section of the docs is for you.  It explains the technical and operational aspects of installing, configuring, and maintaining a Stellar Core node, and should help you figure out the best way to set up your Stellar integration.
 
-The Stellar Development Foundation runs two Horizon servers, one for the public network and one for the test network, free for anyone's use at https://horizon.stellar.org and https://horizon-testnet.stellar.org.  These servers are good for development and small-scale projects — most businesses building on Stellar don’t need to worry about mastering the operational requirements of running a node until after their project is off the ground — but we don’t recommend using them for production services that need strong reliability.
-
-Basic flow:
+The basic flow, which you can navigate through using the menu on the left, goes like this:
 * Choose which type of node you want to run
+* Prepare Your Environment
 * Install Stellar Core
 * Configure Stellar Core
-* Prepare Your Environment
 * Join the network
 * Monitor and maintain your node
 * Join the validators channels to stay on top of critical upgrades and network votes
@@ -27,5 +25,5 @@ Basic flow:
 |**Watcher**   | :heavy_check_mark:              | :heavy_check_mark:                 |                    |              |
 |**Basic Validator**| :heavy_check_mark:         | :heavy_check_mark:                 | :heavy_check_mark:                   |                |
 |**Full Validator**| :heavy_check_mark:          | :heavy_check_mark:              | :heavy_check_mark:                | :heavy_check_mark:               |
-
+|**Archiver**| :heavy_check_mark: | :heavy_check_mark: | |:heavy_check_mark: |
 
