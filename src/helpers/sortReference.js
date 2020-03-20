@@ -1,8 +1,4 @@
-import { normalizeMdx } from "helpers/mdx";
-import { DOCS_CONTENT_URL } from "helpers/documentation";
-
 export const compareOrders = (a, b) => a.order - b.order;
-
 const compareNestedEntries = (a, b) => compareOrders(a[1], b[1]);
 const makeBlank = () => ({
   order: 0,
@@ -113,7 +109,7 @@ const flattenAndSort = (node) =>
         hasNestedItems.sections[0].directory.split("/").length > 2;
       let reorderedItems;
 
-      if (hasNestedItems && isDoubleNested) {
+      if (isDoubleNested) {
         reorderedItems = sortWithNestedOrder(
           nestedNode.sections,
           nestedNode.nested,

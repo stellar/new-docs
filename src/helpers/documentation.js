@@ -319,7 +319,9 @@ const createNestedItems = (totalCategories, currentCategoryItems) => ({
   directory: currentCategoryItems[0].directory,
   previousParent: totalCategories[totalCategories.length - 2],
   currentDirectory: currentCategoryItems[0].currentDirectory,
-  order: currentCategoryItems[0].frontmatter.order,
+  order: currentCategoryItems[0].folder
+    ? currentCategoryItems[0].folder.order
+    : currentCategoryItems[0].frontmatter.order,
   items: currentCategoryItems.map(useHrefAsId),
 });
 
@@ -349,9 +351,9 @@ export const groupByCategory = (referenceDocs) => {
         newItems.items.sort(compareOrders);
       } else {
         acc[categoryName].push(nestedItemsObj);
-        acc[categoryName].sort(compareOrders);
       }
     }
+
     return acc;
   }, {});
 };
