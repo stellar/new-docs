@@ -2,6 +2,7 @@ import { graphql } from "gatsby";
 
 import { groupBy } from "helpers/groupBy";
 import { buildPathFromFile } from "helpers/routes";
+import { compareOrders } from "helpers/sortReference";
 
 export const DOCS_CONTENT_URL =
   "https://github.com/stellar/new-docs/blob/master/content/";
@@ -314,12 +315,14 @@ const createNestedItems = (totalCategories, currentCategoryItems) => ({
   directory: currentCategoryItems[0].directory,
   previousParent: totalCategories[totalCategories.length - 2],
   currentDirectory: currentCategoryItems[0].currentDirectory,
+  order: currentCategoryItems[0].folder
+    ? currentCategoryItems[0].folder.order
+    : currentCategoryItems[0].frontmatter.order,
   items: currentCategoryItems.map(useHrefAsId),
 });
 
 export const groupByCategory = (referenceDocs) => {
   const groupByParentCategory = groupBy(referenceDocs, "directory");
-
   return Object.keys(groupByParentCategory).reduce((acc, category) => {
     const splitCategories = category.split("/");
     const numberOfCategories = splitCategories.length;
@@ -331,7 +334,6 @@ export const groupByCategory = (referenceDocs) => {
 
     if (numberOfCategories > 1) {
       const currentCategoryItems = groupByParentCategory[category];
-
       const nestedItemsObj = createNestedItems(
         splitCategories,
         currentCategoryItems,
@@ -342,10 +344,12 @@ export const groupByCategory = (referenceDocs) => {
           (el) => el.currentDirectory === nestedItemsObj.previousParent,
         );
         newItems.items.push(nestedItemsObj);
+        newItems.items.sort(compareOrders);
       } else {
         acc[categoryName].push(nestedItemsObj);
       }
     }
+
     return acc;
   }, {});
 };
