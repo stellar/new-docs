@@ -17,9 +17,11 @@ import { DividerEl } from "components/Documentation/SharedStyles";
 
 const CODE_LANGS = {
   curl: "cURL",
+  scss: "SCSS",
   go: "Go",
   javascript: "JavaScript",
   ts: "TypeScript",
+  tsx: "TSX",
   java: "Java",
   bash: "bash",
   json: "json",

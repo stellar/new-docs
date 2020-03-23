@@ -30,7 +30,7 @@ import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
-import { Column, Container, Row } from "basics/Grid";
+import { Column, Row } from "basics/Grid";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 import { ListItem } from "basics/Text";
@@ -38,7 +38,12 @@ import { ListItem } from "basics/Text";
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
-import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
+import {
+  Content,
+  SideNavColumn,
+  OneSizeRow,
+  Container,
+} from "components/Documentation/SharedStyles";
 import { Footer } from "components/Documentation/Footer";
 import {
   NavAbsoluteEl,
@@ -58,6 +63,7 @@ const Topics = styled.ul`
   padding: 0;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   padding-bottom: 1rem;
+  margin-right: 1rem;
 `;
 
 const RightNavEl = styled(StickyEl)`
@@ -256,8 +262,8 @@ const Documentation = ({ data, pageContext, location }) => {
       >
         <PrismStyles isDoc />
         <Container id={contentId}>
-          <Row>
-            <SideNavColumn md={3} lg={3}>
+          <OneSizeRow>
+            <SideNavColumn xs={3}>
               <SideNavBackground />
               <SideNav docType={docType.doc}>
                 <NavAbsoluteEl>{left}</NavAbsoluteEl>
@@ -266,16 +272,16 @@ const Documentation = ({ data, pageContext, location }) => {
                 </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
-            {/*
-              We want the right hand side to appear above content on mobile
-            */}
-            <Column md={{ hide: true }}>{right}</Column>
-            <Column md={7}>
+            <Column xs={9} md={7}>
               {center}
               <Footer />
             </Column>
-            <Column md={2}>{right}</Column>
-          </Row>
+            {headings.length > 0 && (
+              <Column xs={{ hide: true }} md={2}>
+                {right}
+              </Column>
+            )}
+          </OneSizeRow>
         </Container>
       </LayoutBase>
     </MDXProvider>
