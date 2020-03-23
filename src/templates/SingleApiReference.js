@@ -28,7 +28,7 @@ import { Expansion } from "components/Expansion";
 import { SideNav, SideNavBody } from "components/SideNav";
 import {
   Container,
-  ApiReferenceRow,
+  OneSizeRow,
   ApiReferenceWrapper,
   SideNavColumn,
   NestedRow,
@@ -151,7 +151,7 @@ const SingleApiReference = React.memo(function ApiReference({
         pageContext={pageContext}
       >
         <Container>
-          <ApiReferenceRow style={{ marginTop: "5rem" }}>
+          <OneSizeRow style={{ marginTop: "5rem" }}>
             <SideNavColumn xs={3} lg={3} xl={4}>
               <SideNavBackground />
               <SideNav>
@@ -185,7 +185,7 @@ const SingleApiReference = React.memo(function ApiReference({
               <Footer />
             </Column>
             <Column xs={4} xl={9} />
-          </ApiReferenceRow>
+          </OneSizeRow>
         </Container>
       </LayoutBase>
     </MDXProvider>

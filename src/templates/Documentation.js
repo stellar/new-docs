@@ -30,7 +30,7 @@ import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
-import { Column, Row } from "basics/Grid";
+import { Column } from "basics/Grid";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 import { ListItem } from "basics/Text";
