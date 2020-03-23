@@ -97,7 +97,7 @@ const sortWithNestedOrder = (sections, nestedNode) => {
  * @param {object} node The tree node to flatten.
  * @returns {array} A flat list of nodes.
  */
-const flattenAndSort = (node) =>
+export const flattenAndSort = (node) =>
   Object.entries(node)
     .sort(compareNestedEntries)
     .flatMap((entry) => {
