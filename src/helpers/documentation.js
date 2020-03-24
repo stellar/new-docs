@@ -2,7 +2,7 @@ import { graphql } from "gatsby";
 
 import { groupBy } from "helpers/groupBy";
 import { buildPathFromFile } from "helpers/routes";
-import { compareOrders } from "helpers/sortReference";
+import { compareNestedEntries, compareOrders } from "helpers/sortReference";
 
 export const DOCS_CONTENT_URL =
   "https://github.com/stellar/new-docs/blob/master/content/";
@@ -169,20 +169,13 @@ const insertPageData = (pagePath, contents, articles, rootPageData) => {
  */
 export const buildDocsContents = (data, rootDir) => {
   const contents = {};
-  const sortedDocs = [...data].sort((a, b) => {
-    const aFields = a.nodes[0].fields;
-    const bFields = b.nodes[0].fields;
-    return (
-      (aFields ? aFields.metadata.data.order : Infinity) -
-      (bFields ? bFields.metadata.data.order : Infinity)
-    );
-  });
 
-  sortedDocs.forEach((topic) => {
+  [...data].forEach((topic) => {
     const { fieldValue: topicPath } = topic;
     const firstTopic = topic.nodes[0];
     const relPath = buildRelPath(topicPath, rootDir);
     const topicId = firstTopic.id;
+    const topicOrder = firstTopic.fields.metadata.data.order;
     const topicTitle = firstTopic.fields
       ? firstTopic.fields.metadata.data.title
       : "MISSING METADATA.JSON";
@@ -208,6 +201,7 @@ export const buildDocsContents = (data, rootDir) => {
       id: topicId,
       topicPath: relPath,
       title: topicTitle,
+      order: topicOrder,
     };
     insertPageData(relPath, contents, articles, rootPageData);
   });
@@ -220,7 +214,14 @@ export const buildDocsContents = (data, rootDir) => {
 
     addNextUpToArticles(topicArticles, 0, nextTopic);
   });
-  return contents;
+
+  /* After its nested page data are sorted and added in,
+  sort its parent by topicOrder which is metadata.data.order */
+  const sortedDocs = Object.fromEntries(
+    Object.entries(contents).sort(compareNestedEntries),
+  );
+
+  return sortedDocs;
 };
 
 /**
