@@ -2,18 +2,39 @@
 title: Preparing Your Environment
 order:
 ---
-Stellar Core stores the ledger stores the state of the ledger in a SQL database, and stores a duplicate copy of the ledger in the form of flat XDR files  called "buckets."  After you've [installed](link) Stellar Core, but before you run it for the first time, you need to set up your instance to handle database and bucket storage.   
+Stellar Core stores the ledger stores the state of the ledger in a SQL database, and stores a duplicate copy of the ledger in the form of flat XDR files  called "buckets."  After you've [installed](link) Stellar Core, but before you run it for the first time, you need to set up your instance to handle database and bucket storage. 
+
+Stellar-core deals with data in 4 places
+1. XDR in flight (between replicas)
+2. SQL tables in a relational database
+3. XDR files on local disk
+4. XDR files in a "history archive"
+
+SQL tables in a relational database
+Consulted during consensus
+Modified during state-machine transition
+Modified atomicallyǿ Ledgern
+ Ledgern+1
+Random-access, fine-grained
+Fastǿ hundreds to thousands of updates per second
+
+XDR files on local disk
+So-called "buckets"
+Store the ledger in canonical form
+Duplicate of data stored in SQL tables
+Needed for 2 operations
+- Efficient, incremental cryptographic hashing
+- Efficient, incremental storage and transmission of differences
 
 ## Database
 Stellar-core stores the state of the ledger in a SQL database.
-https://github.com/stellar/stellar-core/blob/master/docs/db-schema.md
 
 This DB should either be a SQLite database or, for larger production instances, a separate PostgreSQL server.
 
 *Note: Horizon currently depends on using PostgreSQL.*
 
 For how to specify the database, 
-see the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg).
+see the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23).
 
 ## Cursors and automatic maintenance
 Some tables in the database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
@@ -33,7 +54,7 @@ This can be especially costly if run more than once. For instance, when bringing
 
 Some operators therefore prefer to shut down their stellar-core (and/or Horizon) processes and _take filesystem-level snapshots_ or _database-level dumps_ of the contents of stellar-core's database and bucket directory, and/or Horizon's database, after metadata generation has occurred the first time. Such snapshots can then be restored, putting stellar-core and/or Horizon in a state containing metadata without performing full replay.
 
-Any reasonably-recent state will do — if such a snapshot is a little old, stellar-core will replay ledgers from whenever the snapshot was taken to the current network state anyways — but this procedure can greatly accelerate restoring validator nodes, or cloning them to create new ones.
+Any reasonably recent state will do — if such a snapshot is a little old, stellar-core will replay ledgers from whenever the snapshot was taken to the current network state anyways — but this procedure can greatly accelerate restoring validator nodes, or cloning them to create new ones.
 
 
 ## Buckets
