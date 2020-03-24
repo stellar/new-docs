@@ -95,13 +95,19 @@ const CustomList = styled(ListItem)`
 `;
 const IndexArticleLink = styled(ArticleLink)``;
 
-const Article = ({ title, url, activeItem, depth }) => {
+const Article = ({ isIndexArticle, title, url, activeItem, depth }) => {
   const isActive = url.includes(activeItem);
 
+  /* If the article is the index.mdx file within subnavigation
+  skip since its <IndexArticle/> is linked to the article */
+  const isSubnavWithIndexFile = isIndexArticle === url && depth > 1;
+
   return (
-    <CustomList isActive={isActive} depth={depth}>
-      <ArticleLink href={url}>{title}</ArticleLink>
-    </CustomList>
+    !isSubnavWithIndexFile && (
+      <CustomList isActive={isActive} depth={depth}>
+        <ArticleLink href={url}>{title}</ArticleLink>
+      </CustomList>
+    )
   );
 };
 const IndexArticle = ({ title, url, activeItem, depth }) => {
@@ -115,6 +121,7 @@ const IndexArticle = ({ title, url, activeItem, depth }) => {
 };
 
 Article.propTypes = {
+  isIndexArticle: PropTypes.bool,
   depth: PropTypes.number,
   activeItem: PropTypes.string,
   title: PropTypes.string,
@@ -175,7 +182,6 @@ const Articles = ({
 
       <ArticleList isCollapsed={isCollapsed}>
         {Object.entries(articles)
-          .filter(([filename]) => filename !== "index")
           // Only get second arg
           .map(([, article]) =>
             article.articles ? (
@@ -193,6 +199,7 @@ const Articles = ({
               />
             ) : (
               <Article
+                isIndexArticle={indexArticle && indexArticle.url}
                 key={article.id}
                 isCollapsed={isCollapsed}
                 title={article.title}
