@@ -1,0 +1,52 @@
+---
+title: Preparing Your Environment
+order:
+---
+Stellar Core stores the ledger stores the state of the ledger in a SQL database, and stores a duplicate copy of the ledger in the form of flat XDR files  called "buckets."  After you've [installed](link) Stellar Core, but before you run it for the first time, you need to set up your instance to handle database and bucket storage.   
+
+## Database
+Stellar-core stores the state of the ledger in a SQL database.
+https://github.com/stellar/stellar-core/blob/master/docs/db-schema.md
+
+This DB should either be a SQLite database or, for larger production instances, a separate PostgreSQL server.
+
+*Note: Horizon currently depends on using PostgreSQL.*
+
+For how to specify the database, 
+see the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg).
+
+## Cursors and automatic maintenance
+Some tables in the database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
+
+If not managed properly those tables will grow without bounds. To avoid this, a built-in scheduler will delete data from old ledgers that are not used anymore by other parts of the system (external systems included).
+
+The settings that control the automatic maintenance behavior are: `AUTOMATIC_MAINTENANCE_PERIOD`,  `AUTOMATIC_MAINTENANCE_COUNT` and `KNOWN_CURSORS`.
+
+By default, stellar-core will perform this automatic maintenance, so be sure to disable it until you have done the appropriate data ingestion in downstream systems (Horizon for example sometimes needs to reingest data).
+
+If you need to regenerate the metadata, the simplest way is to replay ledgers for the range you're interested in after (optionally) clearing the database with `newdb`.
+
+## Metadata Snapshots and Restoration
+Some deployments of stellar-core and Horizon will want to retain metadata for the _entire history_ of the network. This metadata can be quite large and computationally expensive to regenerate anew by replaying ledgers in stellar-core from an empty initial database state, as described in the previous section.
+
+This can be especially costly if run more than once. For instance, when bringing a new node online. Or even if running a single node with Horizon, having already ingested the meta data _once_: a subsequent version of Horizon may have a schema change that entails re-ingesting it _again_.
+
+Some operators therefore prefer to shut down their stellar-core (and/or Horizon) processes and _take filesystem-level snapshots_ or _database-level dumps_ of the contents of stellar-core's database and bucket directory, and/or Horizon's database, after metadata generation has occurred the first time. Such snapshots can then be restored, putting stellar-core and/or Horizon in a state containing metadata without performing full replay.
+
+Any reasonably-recent state will do — if such a snapshot is a little old, stellar-core will replay ledgers from whenever the snapshot was taken to the current network state anyways — but this procedure can greatly accelerate restoring validator nodes, or cloning them to create new ones.
+
+
+## Buckets
+Stellar-core stores a duplicate copy of the ledger in the form of flat XDR files  called "buckets." These files are placed in a directory specified in the config file as `BUCKET_DIR_PATH`, which defaults to `buckets`. The bucket files are used for hashing and transmission of ledger differences to history archives. 
+
+Buckets should be stored on a fast local disk with sufficient space to store several times the size of the current ledger. 
+ 
+For the most part, the contents of both directories can be ignored as they are managed by stellar-core.
+
+After configuring your [database](#database) and [buckets](#buckets) settings, when running stellar-core for the first time, you must initialize the database:
+
+`$ stellar-core new-db`
+
+This command will initialize the database as well as the bucket directory and then exit. 
+
+You can also use this command if your DB gets corrupted and you want to restart it from scratch.
