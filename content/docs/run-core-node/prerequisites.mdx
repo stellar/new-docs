@@ -3,16 +3,14 @@ title: Prerequisites
 order: 20
 ---
 
-Before installing Stellar Core, you will need to configure the instance hosting it roughly the same way.
+Before installing Stellar Core, you will need to configure the instance hosting it.
 
 ## Compute Requirements
-We recently asked stellar-core operators what they needed…
+We recently asked Stellar Core operators about their setups, and should have some updated information soon based on their responses.  
 
-CPU, RAM, Disk and network depends on network activity. If you decide to collocate certain workloads, you will need to take this into account.
+In early 2018, stellar-core with PostgreSQL running on the same machine worked well on a [m5.large](https://aws.amazon.com/ec2/instance-types/m5/) in AWS (dual core 2.5 GHz Intel Xeon, 8 GB RAM).
 
-As of early 2018, stellar-core with PostgreSQL running on the same machine has no problem running on a [m5.large](https://aws.amazon.com/ec2/instance-types/m5/) in AWS (dual core 2.5 GHz Intel Xeon, 8 GB RAM).
-
-Storage wise, 20 GB seems to be an excellent working set as it leaves plenty of room for growth.
+Storage-wise, 20 GB was enough in 2018, but the ledger has grown a lot since then, and most people seem to have at least 1TB on hand.
 
 ## Network access
 Stellar Core interacts with the peer-to-peer network, which means that 
