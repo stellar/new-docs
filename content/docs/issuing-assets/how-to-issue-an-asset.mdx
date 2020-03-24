@@ -3,7 +3,10 @@ title: How to issue an asset
 order: 20
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 ## High-level view of the steps
+
 There is no dedicated operation to create an asset on Stellar.  Instead, assets are created with a payment operation: an issuing account makes a payment using the asset it’s issuing, and that payment actually creates the asset on the network.
 
 It’s a pretty simple process that requires four operations: one to create an issuing account, one to create a distribution account, one to establish a trustline, and one to make a payment. 
@@ -13,6 +16,7 @@ The code to create those operations and submit them as transactions is below.  H
 One caveat: if you are creating a token on the public network, there is one additional prerequisite.  You need a funded account to provide the XLM necessary to create the issuing and distribution accounts.
 
 ### Create the issuing and distribution accounts
+
 The issuing account is the origin of the asset, and will be forever linked to the asset’s identity. The distribution account is the first recipient of the asset.  In the final step of this process, you’ll create the asset by sending a payment from the issuing account to the distribution account.
 
 There are two steps to account creation:
@@ -26,6 +30,7 @@ If you’re issuing an asset on the testnet, you can fund your accounts by getti
 Rule of thumb for production: don’t skirt too close to the minimum network balance.  If you do, you may not have enough XLM to do what you need to do.  Since the network minimum balance and transaction fees are low, it doesn’t require much to get started.  5 XLM should be sufficient. 100 XLM is even better.   
 
 ### Create a trustline from the distribution account to the issuing account
+
 Stellar requires accounts to explicitly opt-in to holding an asset by creating a trustline, and in this step the distribution account submits a `change_trust` operation to do just that. 
 
 The distribution account specifies the issuer’s public key and the asset code in the `change_trust` operation, and since it’s the first time the asset code appears on the ledger, that means the _distribution_ account actually names the asset, not the issuing account. 
@@ -38,6 +43,7 @@ Currently, there are two supported formats for asset codes.
 Any asset code works provided it falls into one of those two buckets. That said, if you’re issuing a currency, you should use the appropriate [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) code, and if you’re issuing a stock or bond, the appropriate [ISIN number](https://en.wikipedia.org/wiki/International_Securities_Identification_Number).  Doing so makes it easier for Stellar interfaces to properly display and sort your token in their listings, and allows potential token holders to understand, at a glance, what your token represents.
   
 ### Make a payment from the issuing account to the distribution account
+
 This is the step where the magic happens.  The issuing account makes a payment to the distribution account using the newly named asset, and tokens exist where before there were none.  Presto!  
 
 As long as the issuing account remains unlocked, it can continue to create new tokens by making payments to the distribution account, or to any other account with the requisite trustline.  If you want to change that and put a hard limit on the number of tokens an issuing account can issue, check out our instructions on how to lock an account.
@@ -47,7 +53,8 @@ If you’re planning to do, really, anything with your asset, your next step is 
 Once you’ve done that, you can also create a sell offer to get your asset onto the Stellar decentralized exchange, and put some effort into market making to create liquidity for it.     
 
 ## Sample Code
-<code-example name="Issuing an Asset">
+
+<CodeExample title="Issuing an Asset">
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -190,4 +197,4 @@ _, err = horizon.DefaultTestNetClient.SubmitTransaction(paymentTxeB64)
 if err != nil { log.Fatal(err) }
 ```
 
-</code-example>
+</CodeExample>

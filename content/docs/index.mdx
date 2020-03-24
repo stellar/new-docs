@@ -4,6 +4,8 @@ description: The docs specimen page. This is a dummy description so that the `de
 order: -100
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 This is the docs specimen page. Ideally, it will help ensure we implement everything we need to implement.
 
 # Errant H1 Tag
@@ -74,7 +76,7 @@ Once you’ve chosen an asset code and someone else has created a trustline for 
 
 Here's a short code example:
 
-<code-example name="Representing Assets">
+<CodeExample title="Representing Assets">
 
 ```js
 var astroDollar = new StellarSdk.Asset(
@@ -89,12 +91,14 @@ KeyPair issuer = StellarSdk.Keypair.fromAccountId(
 Asset astroDollar = Asset.createNonNativeAsset("AstroDollar", issuer);
 ```
 
+</CodeExample>
+
 ### More on that: a longer code example
 
-</code-example>
+
 Here’s a longer example in Javascript, Java, and Go:
 
-<code-example name="Send Custom Assets">
+<CodeExample title="Send Custom Assets">
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -237,11 +241,13 @@ _, err = horizon.DefaultTestNetClient.SubmitTransaction(paymentTxeB64)
 if err != nil { log.Fatal(err) }
 ```
 
-</code-example>
+</CodeExample>
 
 ## This is the third point
 
 Another thing that will be fairly common: block quotes. Short stuff gets `this treatment`. Longer stuff will end up looking like this:
+
+<CodeExample>
 
 ```toml
 # stellar.toml example asset
@@ -254,6 +260,8 @@ desc="1 GOAT token entitles you to a share of revenue from Elkins Goat Farm."
 conditions="There will only ever be 10,000 GOAT tokens in existence. We will distribute the revenue share annually on Jan. 15th"
 image="https://pbs.twimg.com/profile_images/666921221410439168/iriHah4f.jpg"
 ```
+
+</CodeExample>
 
 ### Elaborating on the third point
 

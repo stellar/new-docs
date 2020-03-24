@@ -3,6 +3,8 @@ title: Setup for anchored assets
 order: 20
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 So how do we make use of SEP-0024 for the purpose of depositing and withdrawing these anchored assets? Well first let’s boot our project with what we have so far.
 
 [View trustline boilerplate code on GitHub][1]
@@ -10,6 +12,8 @@ So how do we make use of SEP-0024 for the purpose of depositing and withdrawing 
 Next we need to walk through what our goals are. Essentially what we’re attempting to do is connect with some other “lake” entity and deposit one of their assets  to the Stellar “lake”. From there we can interact with it just like we would any other Stellar asset. At any time though we can then withdraw that asset back to the original “lake” by following this flow in reverse. If you’re still a little lost it will all hopefully become clear as we get coding.
 
 This tutorial will consist of a few minor `./events/` updates and two new `./methods/`. Let’s start with the updates first. We actually need to update the core `wallet.ts` component.
+
+<CodeExample>
 
 ```ts
 import {
@@ -91,16 +95,24 @@ Wallet.prototype.componentWillLoad = componentWillLoad
 Wallet.prototype.render = render
 ```
 
+</CodeExample>
+
 You can see from the `// NEW` and `// UPDATE` comments what we are adding and updating. Nothing worth noting here other than near the bottom two new `@Prop`’s.
+
+<CodeExample>
 
 ```ts
 @Prop() homeDomain: String // NEW
 @Prop() toml: Object // NEW
 ```
 
+</CodeExample>
+
 We’ll talk more about home domain’s and toml files in a moment but take special note of these as they will play a critical roll in connecting with the world outside of Stellar.
 
 First let’s add a couple buttons for deposit and withdraw to the `./events/render.tsx`.
+
+<CodeExample>
 
 ```tsx
 import { h } from '@stencil/core'
@@ -138,16 +150,24 @@ export default function render() {
 }
 ```
 
+</CodeExample>
+
 Literally all we’re changing in this file from the previous tutorial is adding two buttons.
+
+<CodeExample>
 
 ```tsx
 <button class={this.loading.deposit ? 'loading' : null} type="button" onClick={(e) => this.depositAsset(e)}>{this.loading.deposit ? <stellar-loader /> : null} Deposit Asset</button>,
 <button class={this.loading.withdraw ? 'loading' : null} type="button" onClick={(e) => this.withdrawAsset(e)}>{this.loading.withdraw ? <stellar-loader /> : null} Withdraw Asset</button>,
 ```
 
+</CodeExample>
+
 “Deposit Asset” and “Withdraw Asset” connected to the `this.depositAsset` and `this.withdrawAsset` methods respectively. We’ll create those methods momentarily.
 
 Before that though let’s make a change to the `./events/componentWillLoad.ts` file.
+
+<CodeExample>
 
 ```ts
 import { Server, StellarTomlResolver } from 'stellar-sdk'
@@ -183,16 +203,24 @@ export default async function componentWillLoad() {
 }
 ```
 
+</CodeExample>
+
 Only changes here are the inclusion of the `StellarTomlResolver` from the `stellar-sdk` package and setting the values for `this.homeDomain` and `this.toml`.
+
+<CodeExample>
 
 ```ts
 this.homeDomain = 'stellar-anchor-server.herokuapp.com'
 this.toml = await StellarTomlResolver.resolve(this.homeDomain)
 ```
 
+</CodeExample>
+
 You know what, let’s just go ahead and cover TOML files. A `stellar.toml` file lives at `https://{homeDomain}/.well-known/stellar.toml`. The Stellar SDK `StellarTomlResolver.resolve` method pulls that file in and parses it. These files contain all sorts of identification information. For instances here’s [StellarX.com’s TOML file][2].
 
-```Toml
+<CodeExample>
+
+```toml
 FEDERATION_SERVER="https://federation.stellarx.com/federation"
 
 ACCOUNTS=[
@@ -209,9 +237,13 @@ ORG_PHYSICAL_ADDRESS="Hamilton, Bermuda"
 ORG_OFFICIAL_EMAIL="support@stellarx.com"
 ```
 
+</CodeExample>
+
 And another one by [AnchorUSD][3].
 
-```Toml
+<CodeExample>
+
+```toml
 # ----- AnchorUSD Stellar Anchor <www.anchorusd.com> -----
 
 NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
@@ -245,6 +277,8 @@ name="US Dollar"
 desc="Cryptocurrency backed one-for-one to the US dollar.  All dollar deposits are held in an audited, US-domiciled escrow account for the exclusive benefit of AnchorUSD token holders."
 image="https://www.anchorusd.com/img/usdx.png"
 ```
+
+</CodeExample>
 
 You can see the different various data provided by these companies to help identify who they are, what they do and the services they provide. For our purposes in this tutorial we’re interested in the `\[\[CURRENCIES\]\]` they issue as that’s what we’re trying to get ahold of. To identify an anchor though we aren’t just looking for currencies we’re looking for the `TRANSFER\_SERVER` keyword. That and the existence of `WEB\_AUTH\_ENDPOINT` are the tickets we need to deposit and withdraw from this entity. Find these three fields and you’ve found a “lake” you can interoperate with.
 
