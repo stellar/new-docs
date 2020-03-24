@@ -217,9 +217,10 @@ export const buildDocsContents = (data, rootDir) => {
 
   /* After its nested page data are sorted and added in,
   sort its parent by topicOrder which is metadata.data.order */
-  const sortedDocs = Object.fromEntries(
-    Object.entries(contents).sort(compareNestedEntries),
-  );
+  const sortedDocs = Object.entries(contents)
+    .sort(compareNestedEntries)
+    /* reverse it to object */
+    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
 
   return sortedDocs;
 };
