@@ -42,7 +42,7 @@ import {
 } from "components/ApiRefRouting/ScrollRouter";
 import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
 import {
-  ApiReferenceRow,
+  OneSizeRow,
   ApiReferenceWrapper,
   Container,
   NestedRow,
@@ -318,7 +318,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         >
           <PrismStyles />
           <Container>
-            <ApiReferenceRow>
+            <OneSizeRow>
               <SideNavColumn xs={3} lg={3} xl={4}>
                 <SideNavBackground />
                 <SideNav docType={docType.api}>
@@ -364,7 +364,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 <Footer />
               </Column>
               <Column xs={4} xl={9} />
-            </ApiReferenceRow>
+            </OneSizeRow>
           </Container>
         </LayoutBase>
       </MDXProvider>

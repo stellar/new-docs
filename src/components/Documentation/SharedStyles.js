@@ -69,7 +69,7 @@ ApiReferenceWrapper.propTypes = {
 
 const { getSizeGrid, COL_SIZES, COLUMNS } = gridHelpers;
 const { count, size, margin } = COLUMNS[COL_SIZES.md];
-export const ApiReferenceRow = styled.div`
+export const OneSizeRow = styled.div`
   // Treat md as smallest size
   display: grid;
   grid-template-columns: repeat(${count}, ${size}rem);
