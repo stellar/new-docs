@@ -3,12 +3,16 @@ title: Handle Custom Assets
 order: 20
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 > In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed the [Build a Basic Wallet](link) and [Make XLM Payments](link).
 
 [View pay boilerplate code on GitHub][1]
 
 ## Add Trustlines Button
 To enable custom asset handling, we need to modify three files and create one new one. Let’s start with our modifications. First up the `./events/render.tsx` file. We need to add a button for creating these new trustlines!
+
+<CodeExample>
 
 ```tsx
 import { h } from '@stencil/core'
@@ -43,9 +47,13 @@ export default function render() {
 }
 ```
 
+</CodeExample>
+
 If you look closely you’ll spot the Trust Asset button right below our `account-key` div. Nothing funky here, just a button that triggers `this.trustAsset` method which we’ll add in a moment.
 
 Next up, let’s update the `./methods/makePayment.ts` file.
+
+<CodeExample>
 
 ```ts
 import sjcl from '@tinyanvil/sjcl'
@@ -147,42 +155,48 @@ export default async function makePayment(e: Event) {
 }
 ```
 
+</CodeExample>
+
 This is a big file was covered in great detail in the [Make XLM Payments](link) tutorial, so we’ll just focus on the changes we need to make to support custom asset payments.
 
+<CodeExample>
+
 ```ts
-...
+let instructions = await this.setPrompt('{Amount} {Asset} {Destination}')
+    instructions = instructions.split(' ')
 
-    let instructions = await this.setPrompt('{Amount} {Asset} {Destination}')
-        instructions = instructions.split(' ')
-
-    if (!/xlm/gi.test(instructions[1]))
-      instructions[3] = await this.setPrompt(`Who issues the ${instructions[1]} asset?`, 'Enter ME to refer to yourself')
-
-...
+if (!/xlm/gi.test(instructions[1]))
+  instructions[3] = await this.setPrompt(`Who issues the ${instructions[1]} asset?`, 'Enter ME to refer to yourself')
 ```
+
+</CodeExample>
 
 This change allows us to indicate a specific asset code we’d like use to make a payment, and triggers an additional prompt to set the issuer for that asset if it’s not the native XLM.
 
+<CodeExample>
+
 ```ts
-...
-
-    if (/me/gi.test(instructions[3]))
-      instructions[3] = keypair.publicKey()
-
-...
+if (/me/gi.test(instructions[3]))
+  instructions[3] = keypair.publicKey()
 ```
+
+</CodeExample>
 
 This is just a nifty little helper shortcut to allow us to use the `ME` “issuer” to swap with our actual account publicKey. Niceties make the world go ‘round.
 
+<CodeExample>
+
 ```ts
-...
-        asset: instructions[3] ? new Asset(instructions[1], instructions[3]) : Asset.native(),
-...
+asset: instructions[3] ? new Asset(instructions[1], instructions[3]) : Asset.native(),
 ```
+
+</CodeExample>
 
 The final noteworthy change is a ternary operation that switches our payment asset between the native XLM and a custom asset based off of responses to our prompt. Essentially, if `instructions[3]` exists—meaning there is an issuer—use that issuer and custom token as the asset for the payment. Otherwise, just use the native `Asset`.
 
 The final changes are in the `wallet.ts` itself and tie together all the other updates as well as pull in the new `trustAsset` method.
+
+<CodeExample>
 
 ```ts
 import {
@@ -256,11 +270,15 @@ Wallet.prototype.componentWillLoad = componentWillLoad
 Wallet.prototype.render = render
 ```
 
+</CodeExample>
+
 Only thing worth seeing here besides the inclusion of the new `trustAsset` method is the addition of the `trust?: boolean,` in the `Loading` class.
 
 ## Adding Trustlines
 
 Alright so, finally we get to the `./methods/trustAsset.ts` file!
+
+<CodeExample>
 
 ```ts
 import sjcl from '@tinyanvil/sjcl'
@@ -343,7 +361,11 @@ export default async function trustAsset(
 }
 ```
 
+</CodeExample>
+
 This is similar to the `makePayment` method but there are a couple tiny tweaks worth noting:
+
+<CodeExample>
 
 ```ts
 export default async function trustAsset(
@@ -370,6 +392,8 @@ export default async function trustAsset(
 
     pincode = pincode || await this.setPrompt('Enter your keystore pincode')
 ```
+
+</CodeExample>
 
 We’re allowing the inclusion of several arguments in this function, namely `asset`, `issuer`, and `pincode`. We won’t be making use of them here, but transparently creating trustlines from within other functions will prove useful later.
 

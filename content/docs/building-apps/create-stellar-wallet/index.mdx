@@ -1,7 +1,8 @@
 ---
 title: Overview
-order: 10
+order: 0
 ---
+
 ## Key Management Basics
 
 Step one for any app is to sort out user onboarding.  Since a Stellar wallet is an interface that gives a user access to an account stored on the ledger, and since that access is controlled by the account's secret key, the first thing you have to decide is how to handle a user's secret key, and how to append the Stellar account it unlocks to a user object.
@@ -19,6 +20,7 @@ The non-custodial option poses some very real usability issues: your user has to
 Creating a keystore file and storing it locally in the browser allows a user to import or export it into other systems, and  works pretty well as long as the user's passphrase is secure enough. We don't recommend this approach for high-security production applications, but it's the best way to get started, and for this tutorial, which lays out the foundation for a basic Stellar wallet, it’ll work just fine.
 
 ## Third-party Key Management Applications
+
 There are also several apps and services that specialize in adding additional security layers to users' accounts.  Check them out if you're interested:
 
 - [Albedo][1]
@@ -28,8 +30,6 @@ There are also several apps and services that specialize in adding additional se
 - [Trezor][5]
 - [StellarGuard][6]
 - [LobstrVault][7]
-
-
 
 [1]:	https://albedo.link/
 [2]:	https://stellarauth.com/

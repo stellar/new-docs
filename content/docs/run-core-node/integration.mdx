@@ -1,6 +1,6 @@
 ---
 title: Integration With Other Services
-order: 
+order: 10
 ---
 
 stellar-core is at the bottom of the Stellar stack, many other services can be
@@ -95,6 +95,7 @@ In this example, let's say you want to build a service that:
 In this case, the data ingested from buckets is the balance, asset contained in each `TrustLine` ledger entry (and throw away everything else).
 
 The main process `process(bucket)` looks like this in pseudo code:
+
 ```
 foreach bucketEntry in bucket:
   if bucketEntry.type() == DEADENTRY

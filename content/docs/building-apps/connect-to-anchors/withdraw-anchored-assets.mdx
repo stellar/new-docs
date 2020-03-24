@@ -3,7 +3,11 @@ title: Withdraw anchored assets
 order: 40
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 After we’ve had some fun with our new asset at some point likely we’re going to want to perform this process in reverse, take an anchored asset and withdraw it out of Stellar to another blockchain or a bank account. For that we turn to `./methods/depositAsset.ts`. Create that file and pop this in.
+
+<CodeExample>
 
 ```ts
 import sjcl from '@tinyanvil/sjcl'
@@ -187,77 +191,79 @@ export default async function withdrawAsset(e: Event) {
 }
 ```
 
+</CodeExample>
+
 For this we’ll actually skip everything except the stuff which is significantly different than the deposit flow. Most of it is actually the same aside from a few withdraw vs deposit keywords. The main difference is in who’s submitting the Stellar transaction. In the deposit scenario the anchor is sending us a Stellar asset, in the withdraw scenario we the wallet are sending the asset back to the anchor so we’ll need to build and submit a payment transaction.
 
+<CodeExample>
+
 ```ts
-...
+  await new Promise((resolve, reject) => {
+    let submittedTxn
 
-    await new Promise((resolve, reject) => {
-      let submittedTxn
+    window.onmessage = ({data: {transaction}}) => {
+      console.log(transaction.status, transaction)
 
-      window.onmessage = ({data: {transaction}}) => {
-        console.log(transaction.status, transaction)
-
-        if (transaction.status === 'completed') {
-          this.updateAccount()
-          this.loading = {...this.loading, withdraw: false}
-          resolve()
-        }
-
-...
+      if (transaction.status === 'completed') {
+        this.updateAccount()
+        this.loading = {...this.loading, withdraw: false}
+        resolve()
+      }
 ```
+
+</CodeExample>
 
 First thing we’ll see is the use of a Promise. This allows us to respond to any errors in the transaction we’re about to build and submit. Inside the promise we have three if statement blocks, the first if statement is a response to a status of success. Once the withdraw has registered and everything is honky dory.
 
+<CodeExample>
+
 ```ts
-...
+  else if (
+    !submittedTxn
+    && transaction.status === 'pending_user_transfer_start'
+  ) {
+    this.server
+    .accounts()
+    .accountId(keypair.publicKey())
+    .call()
+    .then(({sequence}) => {
+      const account = new Account(keypair.publicKey(), sequence)
+      const txn = new TransactionBuilder(account, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.TESTNET
+      })
+      .addOperation(Operation.payment({
+        destination: transaction.withdraw_anchor_account,
+        asset: new Asset(currency[0], currency[1]),
+        amount: transaction.amount_in
+      }))
+      .addMemo(new Memo(MemoHash, transaction.withdraw_memo))
+      .setTimeout(0)
+      .build()
 
-        else if (
-          !submittedTxn
-          && transaction.status === 'pending_user_transfer_start'
-        ) {
-          this.server
-          .accounts()
-          .accountId(keypair.publicKey())
-          .call()
-          .then(({sequence}) => {
-            const account = new Account(keypair.publicKey(), sequence)
-            const txn = new TransactionBuilder(account, {
-              fee: BASE_FEE,
-              networkPassphrase: Networks.TESTNET
-            })
-            .addOperation(Operation.payment({
-              destination: transaction.withdraw_anchor_account,
-              asset: new Asset(currency[0], currency[1]),
-              amount: transaction.amount_in
-            }))
-            .addMemo(new Memo(MemoHash, transaction.withdraw_memo))
-            .setTimeout(0)
-            .build()
+      txn.sign(keypair)
+      return this.server.submitTransaction(txn)
+    })
+    .then((res) => {
+      console.log(res)
+      submittedTxn = res
 
-            txn.sign(keypair)
-            return this.server.submitTransaction(txn)
-          })
-          .then((res) => {
-            console.log(res)
-            submittedTxn = res
+      const urlBuilder = new URL(transaction.more_info_url)
+            urlBuilder.searchParams.set('callback', 'postMessage')
 
-            const urlBuilder = new URL(transaction.more_info_url)
-                  urlBuilder.searchParams.set('callback', 'postMessage')
-
-            popup.location.replace(urlBuilder.toString())
-          })
-          .catch((err) => reject(err))
-        }
-
-...
+      popup.location.replace(urlBuilder.toString())
+    })
+    .catch((err) => reject(err))
+  }
 ```
+
+</CodeExample>
 
 Otherwise if the transaction status is `pending_user_transfer_start` and we haven’t yet submitted a transaction to the anchor we attempt that. We load up our account to get the next valid sequence number and build out a Stellar payment transaction operation with all the details from the transaction object for what the anchor is expecting. Once we have a valid transaction built we’ll sign it with our keypair and submit the transaction to the network and await a response. If it’s successfully submitted we save that value to `submittedTxn` and reload the anchor popup to observe the pending status. Make sure to set the `submittedTxn` to a truthy value or else you run the risk of submitting the transaction multiple times as the anchor may take a moment to realize you’ve successfully submitted a transaction to them.
 
-```ts
-...
+<CodeExample>
 
+```ts
         else {
           setTimeout(() => {
             const urlBuilder = new URL(transaction.more_info_url)
@@ -276,6 +282,8 @@ Otherwise if the transaction status is `pending_user_transfer_start` and we have
   }
 }
 ```
+
+</CodeExample>
 
 The last if block is that if all else fails just keep reloading the anchor popup every second until we get a `'completed'` status.
 

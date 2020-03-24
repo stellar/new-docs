@@ -2,7 +2,11 @@
 title: Running Your Node
 order: 
 ---
+
+import { CodeExample } from "components/CodeExample";
+
 ## Starting stellar-core
+
 After having configured your node and its environment, you're ready to start stellar-core.
 
 This can be done with a command equivalent to
@@ -22,64 +26,99 @@ The endpoint is [not intended to be exposed to the public internet](#interaction
 See [commands](./commands.md) for a description of the available commands.
 
 ## Joining the network
+
 You can review the section on [general node information](#general-node-information); the node will go through the following phases as it joins the network:
 Establish connection to other peers
 You should see `authenticated_count` increase.
 
+<CodeExample>
+
 ```json
 "peers" : {
-         "authenticated_count" : 3,
-         "pending_count" : 4
-      },
+   "authenticated_count" : 3,
+   "pending_count" : 4
+},
 ```
+
+</CodeExample>
 
 ## Observing consensus
 
 Until the node sees a quorum, it will say
+
+<CodeExample>
+
 ```json
 "state" : "Joining SCP"
 ```
 
+</CodeExample>
+
 After observing consensus, a new field `quorum` will be set with information on what the network decided on, at this point the node will switch to "*Catching up*":
+
+<CodeExample>
+
 ```json
-      "quorum" : {
-         "qset" : {
-            "ledger" : 22267866,
-            "agree" : 5,
-            "delayed" : 0,
-            "disagree" : 0,
-            "fail_at" : 3,
-            "hash" : "980a24",
-            "missing" : 0,
-            "phase" : "EXTERNALIZE"
-         },
-         "transitive" : {
-            "intersection" : true,
-            "last_check_ledger" : 22267866,
-            "node_count" : 21
-         }
-      },
-      "state" : "Catching up",
+"quorum" : {
+   "qset" : {
+      "ledger" : 22267866,
+      "agree" : 5,
+      "delayed" : 0,
+      "disagree" : 0,
+      "fail_at" : 3,
+      "hash" : "980a24",
+      "missing" : 0,
+      "phase" : "EXTERNALIZE"
+   },
+   "transitive" : {
+      "intersection" : true,
+      "last_check_ledger" : 22267866,
+      "node_count" : 21
+   }
+},
+"state" : "Catching up",
 ```
+
+</CodeExample>
+
 ## Catching up
+
 This is a phase where the node downloads data from archives. The state will start with something like:
+
+<CodeExample>
+
 ```json
-      "state" : "Catching up",
-      "status" : [ "Catching up: Awaiting checkpoint (ETA: 35 seconds)" ]
+"state" : "Catching up",
+"status" : [ "Catching up: Awaiting checkpoint (ETA: 35 seconds)" ]
 ```
+
+</CodeExample>
 
 and then go through the various phases of downloading and applying state such as
+
+<CodeExample>
+
 ```json
-      "state" : "Catching up",
-      "status" : [ "Catching up: downloading ledger files 20094/119803 (16%)" ]
-```
-## Synced
-When the node is done catching up, its state will change to
-```json
-      "state" : "Synced!"
+"state" : "Catching up",
+"status" : [ "Catching up: downloading ledger files 20094/119803 (16%)" ]
 ```
 
+</CodeExample>
+
+## Synced
+
+When the node is done catching up, its state will change to
+
+<CodeExample>
+
+```json
+"state" : "Synced!"
+```
+
+</CodeExample>
+
 ## Logging
+
 Stellar-core sends logs to standard output and `stellar-core.log` by default, 
 configurable as `LOG_FILE_PATH`.
 
@@ -103,7 +142,7 @@ against a running system.
  The default log level is `INFO`, which is moderately verbose and should emit 
  progress messages every few seconds under normal operation.
  
- ## Validator maintenance
+## Validator maintenance
 
 Maintenance here refers to anything involving taking your validator temporarily out of the network (to apply security patches, system upgrade, etc).
 

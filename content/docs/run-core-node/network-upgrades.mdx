@@ -3,6 +3,8 @@ title: Upgrading the Network
 order:
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 The network itself has network wide settings that can be updated.
 
 This is performed by validators voting for and agreeing to new values the same way that consensus is reached for transaction sets, etc.
@@ -49,8 +51,13 @@ Example here is to upgrade the protocol version to version 9 on January-31-2018.
   2. `$ stellar-core http-command info`
 
 At this point `info` will tell you that the node is setup to vote for this upgrade:
+
+<CodeExample>
+
 ```json
-      "status" : [
-         "Armed with network upgrades: upgradetime=2018-01-31T20:00:00Z, protocolversion=9"
-      ]
+"status" : [
+    "Armed with network upgrades: upgradetime=2018-01-31T20:00:00Z, protocolversion=9"
+]
 ```
+
+</CodeExample>

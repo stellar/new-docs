@@ -3,16 +3,25 @@ title: Project Setup
 order: 20
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 Throughout this tutorial we'll be making use of a little toolchain called StencilJs. It takes the best of modern frontend frameworks and pares everything back to small, blazing fast, 100% standards-based Web Components that run in every browser. Don’t worry if you've never heard of it: it's just TS (JS), SCSS (CSS) and JSX (HTML). You should be able to follow along just fine if you've ever built something with modern web dev tools.
 
 We chose Stencil so you can learn by doing: it’s an easy way to create a web-based application, which means you can see the ins and outs of building a Stellar wallet start to finish.  Stellar also has a [suite of SDKs][1] in various programming languages, so if Javascript isn’t your thing, you can follow along, and recreate the steps below using one of them. 
 
 To start the setup, open your terminal and initialize a new project.
 
+<CodeExample>
+
 ```bash
 npm init stencil
 ```
+
+</CodeExample>
+
 After running `init` you will be provided with a prompt to choose the type of project to start. While Stencil can be used to create entire apps, we’ll choose the component as we’ll just be dealing with modular components rather than building an entire application
+
+<CodeExample>
 
 ```bash
 ? Pick a starter › - Use arrow-keys. Return to submit.
@@ -22,7 +31,11 @@ After running `init` you will be provided with a prompt to choose the type of pr
 ❯  component     Collection of web components that can be used anywhere
 ```
 
+</CodeExample>
+
 We’ll walk through the prompt, `cd` into the project and run `npm i ; npm start`
+
+<CodeExample>
 
 ```bash
 ✔ Pick a starter › component
@@ -52,16 +65,25 @@ We’ll walk through the prompt, `cd` into the project and run `npm i ; npm star
   Happy coding! 🎈
 ```
 
+</CodeExample>
+
 Now that our project is initialized, let’s take a look at the directory structure and familiarize ourselves with where things are and what roles they play.
 
 ![][image-1]
 
 We’re mostly interested in the `src/` directory. The `dist/` and `www/` directories are outputs for compiled code. In the `src/components/` directory you’ll see a `my-component/` folder. We’re about to generate our own component, so go ahead and delete that folder. You can also nuke the `utils/` directory as we won’t be covering tests in this tutorial. Now run:
 
+<CodeExample>
+
 ```bash
 $ npm run generate
 ```
+
+</CodeExample>
+
 This will initialize a component generation script. Enter a name of `stellar-wallet`. Disable Spec Test and E2E Test as we’re not interested in those Stencil features today. Press Return and your component will generate and wire up.
+
+<CodeExample>
 
 ```bash
 % npm run generate
@@ -79,12 +101,21 @@ The following files have been generated:
   - src/components/wallet/wallet.css
 ```
 
+</CodeExample>
+
 Amazing! Just a few more setup bits and we can get coding. I don’t know about you but I prefer to style in SCSS rather than CSS so let’s get some modern CSS dev tools setup.
+
+<CodeExample>
 
 ```bash
 npm i -D @stencil/postcss @stencil/sass autoprefixer @types/autoprefixer rollup-plugin-node-polyfills
 ```
+
+</CodeExample>
+
 Once those packages have successfully installed, hop over to the `stencil.config.ts` file at the root of the project and modify it to this:
+
+<CodeExample>
 
 ```js
 import { Config } from '@stencil/core'
@@ -129,7 +160,11 @@ export const config: Config = {
 }
 ```
 
+</CodeExample>
+
 With that file saved, pop over to the `src/components/wallet/` and rename the `wallet.css` to `wallet.scss`. While we’re here let’s go ahead and modify this new style file with some basic styling to put our project in a pretty place.
+
+<CodeExample>
 
 ```scss
 @import '../../global/style.scss';
@@ -187,12 +222,13 @@ With that file saved, pop over to the `src/components/wallet/` and rename the `w
 }
 ```
 
+</CodeExample>
+
 Before we update our `wallet.tsx` with this new stylesheet, note that we’re also importing a global stylesheet.  Go ahead and create that file at the root of the `src/` directory. So `src/global/style.scss`.
 
-```scss
-$font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
-$font-mono: monospace;
+<CodeExample>
 
+```scss
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -281,7 +317,11 @@ button {
 }
 ```
 
+</CodeExample>
+
 Save those style files and update the `wallet.tsx` to point to our new styles like so:
+
+<CodeExample>
 
 ```tsx
 import { Component, h } from '@stencil/core'
@@ -307,11 +347,18 @@ export class Wallet {
 }
 ```
 
+</CodeExample>
+
 You’ll notice we also include a few extra setup lines to get the StellarSdk loaded in and ready to use. Let’s ensure all those dependencies are loaded and ready to rock.
+
+<CodeExample>
 
 ```bash
 npm i -D stellar-sdk js-xdr
 ```
+
+</CodeExample>
+
 The last mod: point the `src/index.html` file to use this brand new component. Modify that file to match this.
 
 ```html
@@ -336,15 +383,18 @@ The last mod: point the `src/index.html` file to use this brand new component. M
   <stellar-wallet />
 </body>
 </html>
-
 ```
 
 You should be all set up now.  Restart the server and let’s get coding.
+
+<CodeExample>
 
 ```bash
 # Stop any current server and rerun
 $ npm start
 ```
+
+</CodeExample>
 
 ![][image-2]
 

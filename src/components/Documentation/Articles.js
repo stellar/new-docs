@@ -100,7 +100,7 @@ const Article = ({ isIndexArticle, title, url, activeItem, depth }) => {
 
   /* If the article is the index.mdx file within subnavigation
   skip since its <IndexArticle/> is linked to the article */
-  const isSubnavWithIndexFile = isIndexArticle === url && depth > 1;
+  const isSubnavWithIndexFile = isIndexArticle && depth > 1;
 
   return (
     !isSubnavWithIndexFile && (
@@ -121,7 +121,7 @@ const IndexArticle = ({ title, url, activeItem, depth }) => {
 };
 
 Article.propTypes = {
-  isIndexArticle: PropTypes.bool,
+  isIndexArticle: PropTypes.string,
   depth: PropTypes.number,
   activeItem: PropTypes.string,
   title: PropTypes.string,
