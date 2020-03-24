@@ -1,0 +1,142 @@
+---
+title: Running Your Node
+order: 
+---
+## Starting stellar-core
+After having configured your node and its environment, you're ready to start stellar-core.
+
+This can be done with a command equivalent to
+
+`$ stellar-core run`
+
+At this point you're ready to observe core's activity as it joins the network.
+
+Review the [logging](#logging) section to get yourself familiar with the output of stellar-core.
+Interacting with your instance
+While running, interaction with stellar-core is done via an administrative HTTP endpoint. Commands can be submitted using command-line HTTP tools such as `curl`, or by running a command such as
+
+`$ stellar-core http-command <http-command>`
+
+The endpoint is [not intended to be exposed to the public internet](#interaction-with-other-internal-systems). It's typically accessed by administrators, or by a mid-tier application to submit transactions to the Stellar network. 
+
+See [commands](./commands.md) for a description of the available commands.
+
+## Joining the network
+You can review the section on [general node information](#general-node-information); the node will go through the following phases as it joins the network:
+Establish connection to other peers
+You should see `authenticated_count` increase.
+
+```json
+"peers" : {
+         "authenticated_count" : 3,
+         "pending_count" : 4
+      },
+```
+
+## Observing consensus
+
+Until the node sees a quorum, it will say
+```json
+"state" : "Joining SCP"
+```
+
+After observing consensus, a new field `quorum` will be set with information on what the network decided on, at this point the node will switch to "*Catching up*":
+```json
+      "quorum" : {
+         "qset" : {
+            "ledger" : 22267866,
+            "agree" : 5,
+            "delayed" : 0,
+            "disagree" : 0,
+            "fail_at" : 3,
+            "hash" : "980a24",
+            "missing" : 0,
+            "phase" : "EXTERNALIZE"
+         },
+         "transitive" : {
+            "intersection" : true,
+            "last_check_ledger" : 22267866,
+            "node_count" : 21
+         }
+      },
+      "state" : "Catching up",
+```
+## Catching up
+This is a phase where the node downloads data from archives. The state will start with something like:
+```json
+      "state" : "Catching up",
+      "status" : [ "Catching up: Awaiting checkpoint (ETA: 35 seconds)" ]
+```
+
+and then go through the various phases of downloading and applying state such as
+```json
+      "state" : "Catching up",
+      "status" : [ "Catching up: downloading ledger files 20094/119803 (16%)" ]
+```
+## Synced
+When the node is done catching up, its state will change to
+```json
+      "state" : "Synced!"
+```
+
+## Logging
+Stellar-core sends logs to standard output and `stellar-core.log` by default, 
+configurable as `LOG_FILE_PATH`.
+
+ Log messages are classified by progressive _priority levels_:
+  `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR` and `FATAL`.
+   The logging system only emits those messages at or above its configured logging level. 
+
+The log level can be controlled by configuration, the `-ll` command-line flag 
+or adjusted dynamically by administrative (HTTP) commands. Run:
+
+`$ stellar-core http-command "ll?level=debug"`
+
+against a running system.
+Log levels can also be adjusted on a partition-by-partition basis through the 
+administrative interface.
+ For example the history system can be set to DEBUG-level logging by running:
+
+`$ stellar-core http-command "ll?level=debug&partition=history"` 
+
+against a running system.
+ The default log level is `INFO`, which is moderately verbose and should emit 
+ progress messages every few seconds under normal operation.
+ 
+ ## Validator maintenance
+
+Maintenance here refers to anything involving taking your validator temporarily out of the network (to apply security patches, system upgrade, etc).
+
+As an administrator of a validator, you must ensure that the maintenance you are about to apply to the validator is safe for the overall network and for your validator.
+
+Safe means that the other validators that depend on yours will not be affected too much when you turn off your validator for maintenance and that your validator will continue to operate as part of the network when it comes back up.
+
+If you are changing some settings that may impact network wide settings such as protocol version, review [the section on network configuration](#network-configuration).
+
+If you're changing your quorum set configuration, also read the [section on what to do](#special-considerations-during-quorum-set-updates).
+
+### Recommended steps to perform as part of a maintenance
+
+We recommend performing the following steps in order (repeat sequentially as needed if you run multiple nodes).
+
+  1. Advertise your intention to others that may depend on you. Some coordination is required to avoid situations where too many nodes go down at the same time.
+  2. Dependencies should assess the health of their quorum, refer to the section
+     "Understanding quorum and reliability".
+  3. If there is no objection, take your instance down
+  4. When done, start your instance that should rejoin the network
+  5. The instance will be completely caught up when it's both `Synced` and *there is no backlog in uploading history*.
+
+#### Special considerations during quorum set updates
+
+Sometimes an organization needs to make changes that impact other's quorum sets:
+
+  * taking a validator down for long period of time
+  * adding new validators to their pool
+
+In both cases, it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
+
+  * removing too many nodes from your quorum set *before* the nodes are taken down : if different people remove different sets the remaining sets may not overlap between nodes and may cause network splits
+  * adding too many nodes in your quorum set at the same time : if not done carefully can cause those nodes to overpower your configuration
+
+Recommended steps are for the entity that adds/removes nodes to do so first between their own nodes, and then have people reflect those changes gradually (over several rounds) in their quorum configuration.
+
