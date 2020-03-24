@@ -3,8 +3,6 @@ title: Integration With Other Services
 order: 10
 ---
 
-import { CodeExample } from "components/CodeExample";
-
 stellar-core is at the bottom of the Stellar stack, many other services can be
  built on top of it.
 
@@ -98,8 +96,6 @@ In this case, the data ingested from buckets is the balance, asset contained in 
 
 The main process `process(bucket)` looks like this in pseudo code:
 
-<CodeExample>
-
 ```
 foreach bucketEntry in bucket:
   if bucketEntry.type() == DEADENTRY
@@ -116,8 +112,6 @@ foreach bucketEntry in bucket:
       updateAsset(oldValue.trustLine().asset, delta);
       db.upsertTrustLine(bucketEntry.liveEntry())
 ```
-
-</CodeExample>
 
 Running every hour means that it will need to process around 3600/5=720 worth of ledgers, which is contained within the top 10 buckets in the bucket list. 
 
