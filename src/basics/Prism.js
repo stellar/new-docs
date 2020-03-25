@@ -102,7 +102,7 @@ pre[class*="language-"] {
 .token.constant,	
 .token.symbol,	
 .token.deleted {	
-  color: ${PALETTE.black60};	
+  color: rgba(255,255,255,0.6);
 }	
 .token.boolean {	
     color: #e5c687;	
