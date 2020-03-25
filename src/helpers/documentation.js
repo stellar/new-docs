@@ -2,7 +2,11 @@ import { graphql } from "gatsby";
 
 import { groupBy } from "helpers/groupBy";
 import { buildPathFromFile } from "helpers/routes";
-import { compareNestedEntries, compareOrders } from "helpers/sortReference";
+import {
+  compareNestedEntries,
+  compareOrders,
+  compareName,
+} from "helpers/sortReference";
 
 export const DOCS_CONTENT_URL =
   "https://github.com/stellar/new-docs/blob/master/content/";
@@ -180,6 +184,13 @@ export const buildDocsContents = (data, rootDir) => {
       ? firstTopic.fields.metadata.data.title
       : "MISSING METADATA.JSON";
     const articles = {};
+
+    /* if the nodes are coming from /glossary
+    which doesn't have an order specificed in .mdx file
+    sort the nodes alphabetically */
+    if (topic.nodes[0].relativePath.includes("docs/glossary/")) {
+      topic.nodes.sort(compareName);
+    }
 
     topic.nodes.forEach((node) => {
       const { childMdx, modifiedTime, name, relativePath } = node;

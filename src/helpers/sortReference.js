@@ -1,5 +1,15 @@
 export const compareOrders = (a, b) => a.order - b.order;
 export const compareNestedEntries = (a, b) => compareOrders(a[1], b[1]);
+export const compareName = (a, b) => {
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+};
+
 const makeBlank = () => ({
   order: 0,
   sections: [],
