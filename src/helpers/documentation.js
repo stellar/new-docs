@@ -2,7 +2,11 @@ import { graphql } from "gatsby";
 
 import { groupBy } from "helpers/groupBy";
 import { buildPathFromFile } from "helpers/routes";
-import { compareNestedEntries, compareOrders } from "helpers/sortReference";
+import {
+  compareNestedEntries,
+  compareOrders,
+  compareName,
+} from "helpers/sortReference";
 
 export const DOCS_CONTENT_URL =
   "https://github.com/stellar/new-docs/blob/master/content/";
@@ -24,6 +28,7 @@ export const query = graphql`
             data {
               order
               title
+              sortMethod
             }
           }
         }
@@ -181,6 +186,15 @@ export const buildDocsContents = (data, rootDir) => {
       : "MISSING METADATA.JSON";
     const articles = {};
 
+    const isAlphabeticalOrder =
+      firstTopic.fields?.metadata.data.sortMethod === "alphabetical";
+
+    /* if the nodes' parent has a metadata.json with sortMethod === "alphabetical"
+    sort the nodes alphabetically */
+    if (isAlphabeticalOrder) {
+      topic.nodes.sort(compareName);
+    }
+
     topic.nodes.forEach((node) => {
       const { childMdx, modifiedTime, name, relativePath } = node;
       const mdxLink = relativePath && DOCS_CONTENT_URL + relativePath;
@@ -206,21 +220,27 @@ export const buildDocsContents = (data, rootDir) => {
     insertPageData(relPath, contents, articles, rootPageData);
   });
 
+  /* After its nested page data are sorted and added in,
+  sort its parent by topicOrder which is metadata.data.order */
+  const sortedDocs = Object.entries(contents)
+    .sort(compareNestedEntries)
+    /* reverse it to object */
+    .reduce(
+      (acc, [k, v]) => ({
+        ...acc,
+        [k]: v,
+      }),
+      {},
+    );
+
   // Now that content is in proper order, travel through tree and add Next Up link to each article
-  const contentsList = Object.values(contents);
+  const contentsList = Object.values(sortedDocs);
   contentsList.forEach((topicData, topicIndex) => {
     const topicArticles = Object.values(topicData.articles);
     const nextTopic = contentsList[topicIndex + 1];
 
     addNextUpToArticles(topicArticles, 0, nextTopic);
   });
-
-  /* After its nested page data are sorted and added in,
-  sort its parent by topicOrder which is metadata.data.order */
-  const sortedDocs = Object.entries(contents)
-    .sort(compareNestedEntries)
-    /* reverse it to object */
-    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
 
   return sortedDocs;
 };

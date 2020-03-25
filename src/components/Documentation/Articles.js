@@ -25,6 +25,8 @@ const ArticleLink = styled(Link)`
   ${topLevelNavItem}
   display: block;
   padding: 0.5rem 0;
+  font-weight: ${(props) =>
+    props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
 `;
 const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
@@ -96,7 +98,7 @@ const CustomList = styled(ListItem)`
 const IndexArticleLink = styled(ArticleLink)``;
 
 const Article = ({ isIndexArticle, title, url, activeItem, depth }) => {
-  const isActive = url.includes(activeItem);
+  const isActive = url === activeItem;
 
   /* If the article is the index.mdx file within subnavigation
   skip since its <IndexArticle/> is linked to the article */
@@ -111,7 +113,7 @@ const Article = ({ isIndexArticle, title, url, activeItem, depth }) => {
   );
 };
 const IndexArticle = ({ title, url, activeItem, depth }) => {
-  const isActive = url.includes(activeItem);
+  const isActive = url === activeItem;
 
   return (
     <IndexArticleLink isActive={isActive} depth={depth} href={url}>

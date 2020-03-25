@@ -176,6 +176,7 @@ const Documentation = ({ data, pageContext, location }) => {
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
+    url,
   } = findArticle(pagePath, docsContents)[name];
 
   const description = React.useMemo(
@@ -207,7 +208,7 @@ const Documentation = ({ data, pageContext, location }) => {
             initialTopicsState={initialTopicsState}
             title={title}
             topicPath={topicPath}
-            activeItem={name}
+            activeItem={url}
           />
         );
       })}
@@ -341,6 +342,7 @@ export const pageQuery = graphql`
               data {
                 order
                 title
+                sortMethod
               }
             }
           }
