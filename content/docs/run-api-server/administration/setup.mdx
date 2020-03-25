@@ -7,26 +7,29 @@ import { CodeExample } from "components/CodeExample";
 
 Horizon is responsible for providing an HTTP API to data in the Stellar network. It ingests and re-serves the data produced by the stellar network in a form that is easier to consume than the performance-oriented data representations used by stellar-core.
 
-This document describes how to administer a **production** Horizon instance. If you are just starting with Horizon and want to try it out, consider the [Quickstart Guide](quickstart.md) instead. For information about developing on the Horizon codebase, check out the [Development Guide](developing.md).
+This document describes how to administer a **production** Horizon instance. If you are just starting with Horizon and want to deploy it quickly to test it out, consider the [Quickstart Guide](quickstart.md) instead. For information about developing on the Horizon codebase, check out the [Development Guide](developing.md).
 
-## Why run Horizon?
+## Why Run Horizon?
 
-The Stellar Development Foundation runs two Horizon servers, one for the public network and one for the test network, free for anyone's use at https://horizon.stellar.org and https://horizon-testnet.stellar.org.  These servers should be fine for development and small scale projects, but it is not recommended that you use them for production services that need strong reliability.  By running Horizon within your own infrastructure provides a number of benefits:
+You don't need to run your own Horizon instance to build on Stellar: the Stellar Development Foundation runs two Horizon servers, one for the public network and one for the test network: https://horizon.stellar.org and https://horizon-testnet.stellar.org.  These servers are free for anyone to use, and should be fine for development and small-scale projects.  They are, however, rate limited, and we don't recommended using them for production services that need strong reliability.  
 
-  - Multiple instances can be run for redundancy and scalability.
-  - Request rate limiting can be disabled.
-  - Full operational control without dependency on the Stellar Development Foundations operations.
+Running Horizon within your own infrastructure provides a number of benefits.  You can:
+
+  - Disable request rate limiting for guaranteed network access
+  - Have full operational control without dependency on the Stellar Development Foundation
+  - Run multiple instances for redundancy and scalability
 
 ## Prerequisites
 
-Horizon is dependent upon a stellar-core server.  Horizon needs access to both the SQL database and the HTTP API that is published by stellar-core. See [the administration guide](https://www.stellar.org/developers/stellar-core/learn/admin.html
-) to learn how to set up and administer a stellar-core server.  Secondly, Horizon is dependent upon a postgres server, which it uses to store processed core data for ease of use. Horizon requires postgres version >= 9.5.
+Currently, Horizon is dependent on a Stellar Core server.  While we are working to reduce that dependence, at the moment it still needs access to both the SQL database and the HTTP API published by Stelar Core. See [Run a Core Node](link) to learn how to set up and administer a Stellar Core node.  
+
+Horizon is also dependent upon a postgres server, which it uses to store processed Core data for ease of use. Horizon requires postgres version >= 9.5.
 
 In addition to the two prerequisites above, you may optionally install a redis server to be used for rate limiting requests.
 
 ## Installing
 
-To install Horizon, you have a choice: either downloading a [prebuilt release for your target architecture](https://github.com/stellar/go/releases) and operation system, or [building Horizon yourself](#Building).  When either approach is complete, you will find yourself with a directory containing a file named `horizon`.  This file is a native binary.
+To install Horizon, you have a choice: you can download a [prebuilt release for your target architecture](https://github.com/stellar/go/releases) and operation system or you can [build Horizon yourself](#Building).  When either approach is complete, you will find yourself with a directory containing a file named `horizon`.  This file is a native binary.
 
 After building or unpacking Horizon, you simply need to copy the native binary into a directory that is part of your PATH.  Most unix-like systems have `/usr/local/bin` in PATH by default, so unless you have a preference or know better, we recommend you copy the binary there.
 
@@ -57,7 +60,7 @@ Horizon is configured using command line flags or environment variables.  To see
 
 `horizon --help`
 
-As you will see if you run the command above, Horizon defines a large number of flags, however only three are required:
+When you run the command above, you'll see that Horizon defines a large number of flags; however, only three are required:
 
 | flag                    | envvar                      | example                              |
 |-------------------------|-----------------------------|--------------------------------------|
@@ -65,23 +68,23 @@ As you will see if you run the command above, Horizon defines a large number of 
 | `--stellar-core-db-url` | `STELLAR_CORE_DATABASE_URL` | postgres://localhost/core_testnet    |
 | `--stellar-core-url`    | `STELLAR_CORE_URL`          | http://localhost:11626               |
 
-`--db-url` specifies the Horizon database, and its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.2/static/libpq-connect.html#AEN38419).  `--stellar-core-db-url` specifies a stellar-core database which will be used to load data about the stellar ledger.  Finally, `--stellar-core-url` specifies the HTTP control port for an instance of stellar-core.  This URL should be associated with the stellar-core that is writing to the database at `--stellar-core-db-url`.
+`--db-url` specifies the Horizon database, and its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.2/static/libpq-connect.html#AEN38419).  `--stellar-core-db-url` specifies a Stellar Core database which will be used to load data from the Stellar ledger.  Finally, `--stellar-core-url` specifies the HTTP control port for an instance of Stellar Core.  This URL should be associated with the Stellar Core server that is writing to the database at `--stellar-core-db-url`.
 
 Specifying command line flags every time you invoke Horizon can be cumbersome, and so we recommend using environment variables.  There are many tools you can use to manage environment variables:  we recommend either [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).  A template configuration that is compatible with dotenv can be found in the [Horizon git repo](https://github.com/stellar/go/blob/master/services/horizon/.env.template).
 
-## Preparing the database
+## Preparing the Database
 
-Before the Horizon server can be run, we must first prepare the Horizon database.  This database will be used for all of the information produced by Horizon, notably historical information about successful transactions that have occurred on the stellar network.
+Before running the Horizon server, you must first prepare the Horizon database.  This database will be used for all of the information produced by Horizon, notably historical information about successful transactions that have occurred on the stellar network.
 
-To prepare a database for Horizon's use, first you must ensure the database is blank.  It's easiest to simply create a new database on your postgres server specifically for Horizon's use.  Next you must install the schema by running `horizon db init`.  Remember to use the appropriate command line flags or environment variables to configure Horizon as explained in [Configuring ](#Configuring).  This command will log any errors that occur.
+To prepare a database for Horizon's use, you must first ensure the database is blank.  It's easiest to simply create a new database on your postgres server specifically for Horizon's use.  Next you must install the schema by running `horizon db init`.  Remember to use the appropriate command line flags or environment variables to configure Horizon as explained in [Configuring ](#Configuring).  This command will log any errors that occur.
 
-### Postgres configuration
+### Postgres Configuration
 
-It is recommended to set `random_page_cost=1` in Postgres configuration if you are using SSD storage. With this setting Query Planner will make a better use of indexes, expecially for `JOIN` queries. We have noticed a huge speed improvement for some queries.
+It is recommended to set `random_page_cost=1` in Postgres configuration if you are using SSD storage. With this setting Query Planner will make a better use of indexes, expecially for `JOIN` queries. We've noticed a huge speed improvement for some queries.
 
 ## Running
 
-Once your Horizon database is configured, you're ready to run Horizon.  To run Horizon you simply run `horizon` or `horizon serve`, both of which start the HTTP server and start logging to standard out.  When run, you should see some output that similar to:
+Once your Horizon database is configured, you're ready to run Horizon.  To run Horizon you simply run `horizon` or `horizon serve`, both of which start the HTTP server and start logging to standard out.  When run, you should see output similar to:
 
 <CodeExample>
 
@@ -91,9 +94,9 @@ INFO[0000] Starting horizon on :8000                     pid=29013
 
 </CodeExample>
 
-The log line above announces that Horizon is ready to serve client requests. Note: the numbers shown above may be different for your installation.  Next we can confirm that Horizon is responding correctly by loading the root resource.  In the example above, that URL would be [http://127.0.0.1:8000/] and simply running `curl http://127.0.0.1:8000/` shows you that the root resource can be loaded correctly.
+The log line above announces that Horizon is ready to serve client requests. Note: the numbers shown above may be different for your installation.  Next you can confirm that Horizon is responding correctly by loading the root resource.  In the example above, that URL would be [http://127.0.0.1:8000/], and simply running `curl http://127.0.0.1:8000/` shows you that the root resource can be loaded correctly.
 
-If you didn't set up a stellar-core yet, you may see an error like this:
+If you didn't set up a Stellar Core node yet, you may see an error like this:
 
 <CodeExample>
 
@@ -103,24 +106,22 @@ ERRO[2019-05-06T16:21:14.126+08:00] Error getting core latest ledger err="get fa
 
 </CodeExample>
 
-Horizon requires a functional stellar-core. Go back and set up stellar-core as described in the admin guide. In particular, you need to initialise the database as [described here](https://www.stellar.org/developers/stellar-core/software/admin.html#database-and-local-state).
+Horizon requires a functional Stellar Core node. Go back and set up Stellar Core as described in the [Run a Core Node guide](link). In particular, you need to initialise the database as [described here](link).
 
-## Ingesting live stellar-core data
+## Ingesting Live Stellar Core Data
 
-Horizon provides most of its utility through ingested data.  Your Horizon server can be configured to listen for and ingest transaction results from the connected stellar-core.
+Horizon provides most of its utility through ingested data.  Your Horizon server can be configured to listen for and ingest transaction results from the connected Stellar Core instance.
 
 To enable ingestion, you must either pass `--ingest=true` on the command line or set the `INGEST`
-environment variable to "true". Since version 1.0.0 you can start multiple ingesting machines in your cluster.
+environment variable to "true". As of Horizon 1.0.0, you can start multiple ingesting machines in your cluster.
 
-### Ingesting historical data
+### Ingesting Historical Data
 
-To enable ingestion of historical data from stellar-core you need to run `horizon db backfill NUM_LEDGERS`. If you're running a full validator with published history archive, for example, you might want to ingest all of history. In this case your `NUM_LEDGERS` should be slightly higher than the current ledger id on the network. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your /metrics endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
+To enable ingestion of historical data from Stellar Core, you need to run `horizon db backfill NUM_LEDGERS`. If you're running a [full validator](link) with published history archive, for example, you might want to ingest all of the network's history. In this case your `NUM_LEDGERS` should be slightly higher than the current ledger id on the network. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your /metrics endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
 
-### Ingesting historical data and reingesting Ledgers
+### Ingesting Historical Data and Reingesting Ledgers
 
-To reingest older ledgers (due to a version upgrade) or to ingest ledgers closed by the network before you
-started Horizon. This is done through the `horizon db range [START_LEDGER] [END_LEDGER]` command, which could
-be run as follows:
+To reingest older ledgers — which you may need to do after a version upgrade — or to ingest ledgers closed by the network before you started Horizon use the `horizon db range [START_LEDGER] [END_LEDGER]` command:
 
 <CodeExample>
 
@@ -135,23 +136,23 @@ horizon3> horizon db reingest range 20001 30000
 
 This allows reingestion to be split up and done in parallel by multiple Horizon processes.
 
-### Managing storage for historical data
+### Managing Storage for Historical Data
 
-Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon expands the data ingested from stellar-core and needs sufficient disk space. Unless you need to maintain a history archive you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data.  Alternatively, you may execute the command `horizon db reap` to force a collection.
+Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](link), you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data.  Alternatively, you may execute the command `horizon db reap` to force a collection.
 
-### Surviving stellar-core downtime
+### Surviving Stellar Core Downtime
 
-Horizon tries to maintain a gap-free window into the history of the stellar-network.  This reduces the number of edge cases that Horizon-dependent software must deal with, aiming to make the integration process simpler.  To maintain a gap-free history, Horizon needs access to all of the metadata produced by stellar-core in the process of closing a ledger, and there are instances when this metadata can be lost.  Usually, this loss of metadata occurs because the stellar-core node went offline and performed a catchup operation when restarted.
+Horizon tries to maintain a gap-free window into the history of the Stellar network.  This reduces the number of edge cases that Horizon-dependent software must deal with in an attempt to make the integration process simpler.  To maintain a gap-free history, Horizon needs access to all of the metadata produced by Stellar Core in the process of closing a ledger, and there are instances when this metadata can be lost.  Usually, this loss of metadata occurs because the Stellar Core node went offline and performed a catchup operation when restarted.
 
-To ensure that the metadata required by Horizon is maintained, you have several options: You may either set the `CATCHUP_COMPLETE` stellar-core configuration option to `true` or configure `CATCHUP_RECENT` to determine the amount of time your stellar-core can be offline without having to rebuild your Horizon database.
+To ensure that the metadata required by Horizon is maintained, you have several options: You may either set the `CATCHUP_COMPLETE` Stellar Core configuration option to `true` or configure `CATCHUP_RECENT` to determine the amount of time your Stellar Core can be offline without having to rebuild your Horizon database.
 
-Unless your node is a full validator and archive publisher we _do not_ recommend using the `CATCHUP_COMPLETE` method, as this will force stellar-core to apply every transaction from the beginning of the ledger, which will take an ever increasing amount of time. Instead, we recommend you set the `CATCHUP_RECENT` config value. To do this, determine how long of a downtime you would like to survive (expressed in seconds) and divide by ten.  This roughly equates to the number of ledgers that occur within your desired grace period (ledgers roughly close at a rate of one every ten seconds).  With this value set, stellar-core will replay transactions for ledgers that are recent enough, ensuring that the metadata needed by Horizon is present.
+Unless your node is a [Full Validator which publishes an archive](link) we _do not_ recommend using the `CATCHUP_COMPLETE` method, as this will force Stellar Core to apply every transaction from the beginning of the ledger, which will take an ever increasing amount of time. Instead, we recommend you set the `CATCHUP_RECENT` config value. To do this, determine how long of a downtime you would like to survive (expressed in seconds) and divide by ten.  This roughly equates to the number of ledgers that occur within your desired grace period  since ledgers roughly close at a rate of one every ten seconds.  With this value set, Stellar Core will replay transactions for ledgers that are recent enough, ensuring that the metadata needed by Horizon is present.
 
-### Correcting gaps in historical data
+### Correcting Gaps in Historical Data
 
-In the section above, we mentioned that Horizon _tries_ to maintain a gap-free window.  Unfortunately, it cannot directly control the state of stellar-core and [so gaps may form](https://www.stellar.org/developers/software/known-issues.html#gaps-detected) due to extended down time.  When a gap is encountered, Horizon will stop ingesting historical data and complain loudly in the log with error messages (log lines will include "ledger gap detected").  To resolve this situation, you must re-establish the expected state of the stellar-core database and purge historical data from Horizon's database.  We leave the details of this process up to the reader as it is dependent upon your operating needs and configuration, but we offer one potential solution:
+In the section above, we mentioned that Horizon _tries_ to maintain a gap-free window.  Unfortunately, it cannot directly control the state of stellar-core and [so gaps may form](https://www.stellar.org/developers/software/known-issues.html#gaps-detected) due to extended down time.  When a gap is encountered, Horizon will stop ingesting historical data and complain loudly in the log with error messages (log lines will include "ledger gap detected").  To resolve this situation, you must re-establish the expected state of the Stellar Core database and purge historical data from Horizon's database.  We leave the details of this process up to the reader as it is dependent upon your operating needs and configuration, but we offer one potential solution:
 
-We recommend you configure the HISTORY_RETENTION_COUNT in Horizon to a value less than or equal to the configured value for CATCHUP_RECENT in stellar-core.  Given this situation any downtime that would cause a ledger gap will require a downtime greater than the amount of historical data retained by Horizon.  To re-establish continuity:
+We recommend you configure the HISTORY_RETENTION_COUNT in Horizon to a value less than or equal to the configured value for CATCHUP_RECENT in Stellar Core.  Given this situation, any downtime that would cause a ledger gap will require a downtime greater than the amount of historical data retained by Horizon.  To re-establish continuity:
 
 1.  Stop Horizon.
 2.  Run `horizon db reap` to clear the historical database.
@@ -170,14 +171,14 @@ State ingestion shouldn't take more than a couple of minutes on an AWS `c5.xlarg
 It's possible that the progress logs (see below) will not show anything new for a longer period of time or print a lot of progress entries every few seconds. This happens because of the way history archives are designed. The ingestion is still working but it's processing entries of type `DEADENTRY`'. If there is a lot of them in the bucket, there are no _active_ entries to process. We plan to improve the progress logs to display actual percentage progress so it's easier to estimate ETA.
 
 If you see that ingestion is not proceeding for a very long period of time:
-1. Check the RAM usage on the machine. It's possible that system run out of RAM and it using swap memory that is extremely slow.
-2. If above is not the case, file a new issue in this repository.
+1. Check the RAM usage on the machine. It's possible that system ran out of RAM and it using swap memory that is extremely slow.
+2. If above is not the case, file a new issue in [the Horizon repository](link).
 
 ### CPU usage goes high every few minutes
 
-This is _by design_. Horizon runs a state verifier routine that compares state in local storage to history archives every 64 ledgers to ensure data changes are applied correctly. If data corruption is detected Horizon will block access to endpoints serving invalid data.
+This is _by design_. Horizon runs a state verifier routine that compares state in local storage to history archives every 64 ledgers to ensure data changes are applied correctly. If data corruption is detected, Horizon will block access to endpoints serving invalid data.
 
-We recommend to keep this security feature turned on however if it's causing problems (due to CPU usage) this can be disabled by `--ingest-disable-state-verification` CLI param or `INGEST-DISABLE-STATE-VERIFICATION` env variable.
+We recommend keeping this security feature turned on; however, if it's causing problems (due to CPU usage) this can be disabled by `--ingest-disable-state-verification` CLI param or `INGEST-DISABLE-STATE-VERIFICATION` env variable.
 
 ### I see `Waiting for the next checkpoint...` messages
 
@@ -212,7 +213,7 @@ INFO[2019-08-29T13:05:00.306+02:00] Processing entries from History Archive Snap
 
 </CodeExample>
 
-When state ingestion is finished it will proceed to ledger ingestion starting from the next ledger after checkpoint ledger (25565887+1 in this example) to update the state using transaction meta:
+When state ingestion is finished, it will proceed to ledger ingestion starting from the next ledger after checkpoint ledger (25565887+1 in this example) to update the state using transaction meta:
 
 <CodeExample>
 
@@ -240,19 +241,19 @@ INFO[2019-08-29T13:40:00.972+02:00] Finished processing ledger                  
 
 ## Managing Stale Historical Data
 
-Horizon ingests ledger data from a connected instance of stellar-core.  In the event that stellar-core stops running (or if Horizon stops ingesting data for any other reason), the view provided by Horizon will start to lag behind reality.  For simpler applications, this may be fine, but in many cases this lag is unacceptable and the application should not continue operating until the lag is resolved.
+Horizon ingests ledger data from a connected instance of Stellar Core.  In the event that Stellar Core stops running (or if Horizon stops ingesting data for any other reason), the view provided by Horizon will start to lag behind reality.  For simpler applications, this may be fine, but in many cases this lag is unacceptable and the application should not continue operating until the lag is resolved.
 
 To help applications that cannot tolerate lag, Horizon provides a configurable "staleness" threshold.  Given that enough lag has accumulated to surpass this threshold (expressed in number of ledgers), Horizon will only respond with an error: [`stale_history`](./errors/stale-history.md).  To configure this option, use either the `--history-stale-threshold` command line flag or the `HISTORY_STALE_THRESHOLD` environment variable.  NOTE:  non-historical requests (such as submitting transactions or finding payment paths) will not error out when the staleness threshold is surpassed.
 
 ## Monitoring
 
-To ensure that your instance of Horizon is performing correctly we encourage you to monitor it, and provide both logs and metrics to do so.
+To ensure that your instance of Horizon is performing correctly, we encourage you to monitor it, and provide both logs and metrics to do so.
 
 Horizon will output logs to standard out.  Information about what requests are coming in will be reported, but more importantly, warnings or errors will also be emitted by default.  A correctly running Horizon instance will not output any warning or error log entries.
 
 Metrics are collected while a Horizon process is running and they are exposed at the `/metrics` path.  You can see an example at (https://horizon-testnet.stellar.org/metrics).
 
-Below we present a few standard log entries with associated fields. You can use them to build metrics and alerts. We present below some examples. Please note that this represents Horizon app metrics only. You should also monitor your hardware metrics like CPU or RAM Utilization.
+Below we present a few standard log entries with associated fields. You can use them to build metrics and alerts. Please note that these represent Horizon app metrics only. You should also monitor your hardware metrics like CPU or RAM Utilization.
 
 ### Starting HTTP request
 
@@ -298,7 +299,7 @@ Below we present a few standard log entries with associated fields. You can use 
 
 ### Metrics
 
-Using the entries above you can build metrics that will help understand performance of a given Horizon node, some examples below:
+Using the entries above you can build metrics that will help understand performance of a given Horizon node.  For example:
 * Number of requests per minute.
 * Number of requests per route (the most popular routes).
 * Average response time per route.
@@ -313,7 +314,7 @@ Using the entries above you can build metrics that will help understand performa
 
 ### Alerts
 
-Below we present example alerts with potential cause and solution. Feel free to add more alerts using your metrics.
+Below are example alerts with potential causes and solutions. Feel free to add more alerts using your metrics:
 
 Alert | Cause | Solution
 -|-|-
@@ -325,7 +326,7 @@ Spike in average response time of a single route | Possible bug in a code respon
 ## I'm Stuck! Help!
 
 If any of the above steps don't work or you are otherwise prevented from correctly setting up
-Horizon, please come to our community and tell us. Either
+Horizon, please join our community and let us know. Either
 [post a question at our Stack Exchange](https://stellar.stackexchange.com/) or
 [chat with us on Keybase in #dev_discussion](https://keybase.io/team/stellar.public) to ask for
 help.
