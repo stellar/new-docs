@@ -12,9 +12,21 @@ Each folder must have a `metadata.json` file with 3 keys:
 
 ```json
 {
-  "url": "url-segment",
   "order": 0,
   "title": "Display Name in Nav"
+}
+```
+
+If we want to sort pages in an alphabetical order, add the following in the main
+folder's `metadata.json`. The below example is for
+[/glossary](https://github.com/stellar/new-docs/blob/master/content/docs/glossary/metadata.json)
+page
+
+```json
+{
+  "order": 60,
+  "title": "Glossary",
+  "sortMethod": "alphabetical"
 }
 ```
 
