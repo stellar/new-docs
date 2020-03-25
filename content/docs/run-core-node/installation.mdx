@@ -12,7 +12,8 @@ The version number scheme that we follow is `protocol_version.release_number.pat
 `protocol_version` is the maximum protocol version supported by that release (all versions are 100% backward compatible),
  `release_number` is bumped when a set of new features or bug fixes not impacting the protocol are included in the release,
 `patch_number` is used when a critical fix has to be deployed
-Container-based installation
+
+## Container-based installation
 Docker images are maintained in a few places, good starting points are:
 
 the [quickstart image](https://github.com/stellar/docker-stellar-core-horizon)
@@ -24,6 +25,8 @@ See the [INSTALL](https://github.com/stellar/stellar-core/blob/master/INSTALL.md
 
 ## Package-based Installation
 
-If you are using Ubuntu 16.04 LTS we provide the latest stable releases of [stellar-core](https://github.com/stellar/stellar-core) and [stellar-horizon](https://github.com/stellar/go/tree/master/services/horizon) in Debian binary package format.
+If you are using Ubuntu 16.04 LTS, we provide the latest stable releases of [stellar-core](https://github.com/stellar/stellar-core) and [stellar-horizon](https://github.com/stellar/go/tree/master/services/horizon) in Debian binary package format.
 
-See [detailed installation instructions](https://github.com/stellar/packages#sdf---packages)
+You may choose to install these packages individually, which offers the greatest flexibility but requires **manual** creation of the relevant configuration files and configuration of a **PostgreSQL** database.
+
+Alternatively you may choose to install the **stellar-quickstart** package which configures a **Testnet** `stellar-core` and `stellar-horizon` both backed by a local PostgreSQL database.
