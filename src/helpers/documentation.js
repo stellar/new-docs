@@ -175,7 +175,8 @@ export const buildDocsContents = (data, rootDir) => {
     const firstTopic = topic.nodes[0];
     const relPath = buildRelPath(topicPath, rootDir);
     const topicId = firstTopic.id;
-    const topicOrder = firstTopic.fields.metadata.data.order;
+    const topicOrder =
+      firstTopic.fields && firstTopic.fields.metadata.data.order;
     const topicTitle = firstTopic.fields
       ? firstTopic.fields.metadata.data.title
       : "MISSING METADATA.JSON";

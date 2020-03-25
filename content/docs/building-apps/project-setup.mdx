@@ -361,21 +361,16 @@ npm i -D stellar-sdk js-xdr
 
 The last mod: point the `src/index.html` file to use this brand new component. Modify that file to match this.
 
+<CodeExample>
+
 ```html
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
   <title>Stellar Wallet</title>
-
   <link rel="stylesheet" href="https://unpkg.com/reset-css/reset.css">
-  <style>
-    body {
-      padding: 10px;
-    }
-  </style>
-
   <script type="module" src="/build/stellar-wallet.esm.js"></script>
   <script nomodule src="/build/stellar-wallet.js"></script>
 </head>
@@ -384,6 +379,8 @@ The last mod: point the `src/index.html` file to use this brand new component. M
 </body>
 </html>
 ```
+
+</CodeExample>
 
 You should be all set up now.  Restart the server and let’s get coding.
 

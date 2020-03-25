@@ -28,6 +28,7 @@ const CODE_LANGS = {
   java: "Java",
   bash: "bash",
   json: "json",
+  cpp: "C++",
 };
 
 const LangSelect = styled(Select)`

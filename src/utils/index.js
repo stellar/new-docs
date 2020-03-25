@@ -126,10 +126,12 @@ export const extractStringChildren = (codeSnippet, finalString = "") => {
   } else {
     if (typeof codeSnippet.props.children === "string") {
       finalString += codeSnippet.props.children;
-    } else {
+    } else if (codeSnippet.props.children) {
       codeSnippet.props.children.map((nestedCodeSnippet) => {
         finalString += extractStringChildren(nestedCodeSnippet);
       });
+    } else {
+      finalString += "";
     }
   }
   return finalString;
