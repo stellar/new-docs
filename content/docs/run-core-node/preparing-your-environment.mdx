@@ -36,7 +36,7 @@ This DB should either be a SQLite database or, for larger production instances, 
 For how to specify the database, 
 see the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23).
 
-## Cursors and automatic maintenance
+### Cursors and automatic maintenance
 Some tables in the database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
 
 If not managed properly those tables will grow without bounds. To avoid this, a built-in scheduler will delete data from old ledgers that are not used anymore by other parts of the system (external systems included).
@@ -47,7 +47,7 @@ By default, stellar-core will perform this automatic maintenance, so be sure to 
 
 If you need to regenerate the metadata, the simplest way is to replay ledgers for the range you're interested in after (optionally) clearing the database with `newdb`.
 
-## Metadata Snapshots and Restoration
+### Metadata Snapshots and Restoration
 Some deployments of stellar-core and Horizon will want to retain metadata for the _entire history_ of the network. This metadata can be quite large and computationally expensive to regenerate anew by replaying ledgers in stellar-core from an empty initial database state, as described in the previous section.
 
 This can be especially costly if run more than once. For instance, when bringing a new node online. Or even if running a single node with Horizon, having already ingested the meta data _once_: a subsequent version of Horizon may have a schema change that entails re-ingesting it _again_.
