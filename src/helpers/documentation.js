@@ -175,8 +175,7 @@ export const buildDocsContents = (data, rootDir) => {
     const firstTopic = topic.nodes[0];
     const relPath = buildRelPath(topicPath, rootDir);
     const topicId = firstTopic.id;
-    const topicOrder =
-      firstTopic.fields && firstTopic.fields.metadata.data.order;
+    const topicOrder = firstTopic.fields?.metadata.data.order;
     const topicTitle = firstTopic.fields
       ? firstTopic.fields.metadata.data.title
       : "MISSING METADATA.JSON";
@@ -236,7 +235,7 @@ export const buildDocsContents = (data, rootDir) => {
 const addNextUpToArticles = (articles, articleIndex, nextTopic) => {
   if (articles.length === articleIndex) return;
   const articleData = articles[articleIndex];
-  if (articleData && articleData.articles) {
+  if (articleData?.articles) {
     addNextUpToArticles(Object.values(articleData.articles), 0, nextTopic);
   } else {
     Object.assign(articleData, {
