@@ -206,21 +206,27 @@ export const buildDocsContents = (data, rootDir) => {
     insertPageData(relPath, contents, articles, rootPageData);
   });
 
+  /* After its nested page data are sorted and added in,
+  sort its parent by topicOrder which is metadata.data.order */
+  const sortedDocs = Object.entries(contents)
+    .sort(compareNestedEntries)
+    /* reverse it to object */
+    .reduce(
+      (acc, [k, v]) => ({
+        ...acc,
+        [k]: v,
+      }),
+      {},
+    );
+
   // Now that content is in proper order, travel through tree and add Next Up link to each article
-  const contentsList = Object.values(contents);
+  const contentsList = Object.values(sortedDocs);
   contentsList.forEach((topicData, topicIndex) => {
     const topicArticles = Object.values(topicData.articles);
     const nextTopic = contentsList[topicIndex + 1];
 
     addNextUpToArticles(topicArticles, 0, nextTopic);
   });
-
-  /* After its nested page data are sorted and added in,
-  sort its parent by topicOrder which is metadata.data.order */
-  const sortedDocs = Object.entries(contents)
-    .sort(compareNestedEntries)
-    /* reverse it to object */
-    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
 
   return sortedDocs;
 };
