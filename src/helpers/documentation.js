@@ -28,6 +28,7 @@ export const query = graphql`
             data {
               order
               title
+              sortMethod
             }
           }
         }
@@ -185,10 +186,12 @@ export const buildDocsContents = (data, rootDir) => {
       : "MISSING METADATA.JSON";
     const articles = {};
 
-    /* if the nodes are coming from /glossary
-    which doesn't have an order specificed in .mdx file
+    const isAlphabeticalOrder =
+      firstTopic.fields?.metadata.data.sortMethod === "alphabetical";
+
+    /* if the nodes' parent has a metadata.json with sortMethod === "alphabetical"
     sort the nodes alphabetically */
-    if (topic.nodes[0].relativePath.includes("docs/glossary/")) {
+    if (isAlphabeticalOrder) {
       topic.nodes.sort(compareName);
     }
 

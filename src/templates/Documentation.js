@@ -342,6 +342,7 @@ export const pageQuery = graphql`
               data {
                 order
                 title
+                sortMethod
               }
             }
           }
