@@ -10,7 +10,6 @@ import { Location } from "@reach/router";
 import {
   FONT_WEIGHT,
   THEME,
-  REDESIGN_PALETTE,
   DEFAULT_COLUMN_WIDTH,
   PALETTE,
 } from "constants/styles";
@@ -33,7 +32,7 @@ import { EditIcon } from "basics/Icons";
 import { Column } from "basics/Grid";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
-import { ListItem } from "basics/Text";
+import { ListItem, Text } from "basics/Text";
 
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -104,15 +103,28 @@ const RootLinkEl = styled(StyledLink)`
 `;
 
 const NextUpEl = styled.div`
-  background-color: ${REDESIGN_PALETTE.grey[0]};
+  font-weight: ${FONT_WEIGHT.bold};
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  background-color: rgba(62, 27, 219, 0.02);
   padding: 1em;
 `;
 
 const ModifiedEl = styled.div`
   color: ${THEME.lightGrey};
+  font-size: 0.875rem;
+  padding: 1rem 0;
 
   svg {
     margin-right: 0.5em;
+    vertical-align: middle;
+  }
+
+  ${Text} {
+    display: inline-block;
+    vertical-align: middle;
+    color: ${PALETTE.lightGrey};
+    margin: 0;
   }
 `;
 
@@ -225,7 +237,7 @@ const Documentation = ({ data, pageContext, location }) => {
       <MDXRenderer>{body}</MDXRenderer>
       <ModifiedEl>
         <Clock />
-        Last updated {modifiedTime}
+        <Text>Last updated {modifiedTime}</Text>
       </ModifiedEl>
       {articleNextUp && (
         <NextUpEl>
