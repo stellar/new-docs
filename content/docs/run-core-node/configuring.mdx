@@ -3,6 +3,8 @@ title: Configuring Your Node
 order: 
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 ## Basics
 
 All configuration for stellar-core is done with a TOML file. 
@@ -23,6 +25,7 @@ The examples in this file don't specify `--conf betterfile.cfg` for brevity.
 Auditing of the P2P network is enabled by default, see the [overlay topology](#overlay-topology-survey) section for more detail if you'd like to disable it
 
 ### Validating node
+
 Nodes are considered **validating** if they take part in SCP and sign messages 
 pledging that the network agreed to a particular transaction set.
 
@@ -35,10 +38,15 @@ Generate a key pair like this:
 
 `$ stellar-core gen-seed`
 the output will look something like
+
+<CodeExample>
+
 ```
 Secret seed: SBAAOHEU4WSWX6GBZ3VOXEGQGWRBJ72ZN3B3MFAJZWXRYGDIWHQO37SY
 Public: GDMTUTQRCP6L3JQKX3OOKYIGZC6LG2O6K2BSUCI6WNGLL4XXCIB3OK2P
 ```
+
+</CodeExample>
 
 Place the seed in your config:
 
@@ -57,6 +65,7 @@ Doing so will allow your nodes to be grouped correctly during [quorum set genera
 If you want other validators to add your node to their quorum sets, you should also share your public key (GDMTUTQ... ) by publishing a stellar.toml file on your homedomain following specs laid out in [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md). 
 
 ### Choosing your quorum set
+
 A good quorum set:
 * aligns with your organization’s priorities 
 * has enough redundancy to handle arbitrary node failures
@@ -72,6 +81,7 @@ To generate a quorum set, stellar core:
 While this does not absolve you of all responsibility — you still need to pick trustworthy validators and keep an eye on them to ensure that they’re consistent and reliable — it does make your life easier, and reduces the chances for human error.
 
 #### Validator discovery
+
 When you add a validating node to your quorum set, it’s generally because you trust the *organization* running the node: you trust SDF, not some anonymous Stellar public key. 
 
 In order to create a self-verified link between a node and the organization that runs it, a validator declares a home domain on-chain using a `set_options` operation, and publishes organizational information in a stellar.toml file hosted on that domain.  To find out how that works, take a look at [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md).  
@@ -95,6 +105,9 @@ HOME_DOMAIN | string | URL of home domain linked to a group of validators
 QUALITY | string | Rating for organization's nodes: `HIGH`, `MEDIUM`, or `LOW`
 
 Here’s an example:
+
+<CodeExample>
+
 ```
 [[HOME_DOMAINS]]
 HOME_DOMAIN="testnet.stellar.org"
@@ -105,7 +118,10 @@ HOME_DOMAIN="some-other-domain"
 QUALITY="LOW"
 ```
 
+</CodeExample>
+
 #### Validators array
+
 For each node you would like to add to your quorum set, complete a `[[VALIDATORS]]` table with the following fields:  
 
 Field | Requirements | Description
@@ -120,6 +136,9 @@ HISTORY | string | archive GET command associated with validator (optional)
 If the node's `HOME_DOMAIN` aligns with an organization defined in the `[[HOME_DOMAINS]]` array, the quality rating specified there will apply to the node.  If you’re adding an individual node that is *not* covered in that array, you’ll need to specify the `QUALITY` here.
 
 Here’s an example:
+
+<CodeExample>
+
 ```
 [[VALIDATORS]]
 NAME="sdftest1"
@@ -143,7 +162,10 @@ PUBLIC_KEY="GC2V2EFSXN6SQTWVYA5EPJPBWWIMSD2XQNKUOHGEKB535AQE2I6IXV2Z"
 ADDRESS="core.rando.com"
 ```
 
+</CodeExample>
+
 #### Validator quality
+
 `QUALITY` is a required field for each node you add to your quorum set.  Whether you specify it for a suite of nodes in `[[HOME_DOMAINS]]` or for a single node in `[[VALIDATORS]]`, it means the same thing, and you have the same three rating options: HIGH, MEDIUM, or LOW.
 
 **HIGH** quality validators are given the most weight in automatic quorum set configuration.  Before assigning a high quality rating to a node, make sure it has low latency and good uptime, and that the organization running the node is reliable and trustworthy.  

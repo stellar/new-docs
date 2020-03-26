@@ -4,9 +4,11 @@ order:
 ---
 
 ## Running a Full Validator
+
 When deciding to run a Full Validator it is important to understand the requirements and benefits of doing so, it is also worth noting that to become a **Tier 1 validator operator** one must run at least 3 full validators in geographically distinct zones and have a demonstrable [high validator uptime](https://www.stellarbeat.io/nodes).
 
 ### Benefits
+
 Running a full validator is not only beneficial to the operator but is also a great way to contribute to the general health of the Stellar network. Full validators are the true measure of how decentralized and redundant the network is as they are the only type of validators that perform all functions on the network. Listed below are some of the operator level benefits.
 
 * Enables deeper integrations by clients and business partners
@@ -16,6 +18,7 @@ Running a full validator is not only beneficial to the operator but is also a gr
   * Validator can halt and/or signal that for example (in the case of an issuer) that it does not agree to something
 
 ### Requirements
+
 Running a full validator is a fairly straightforward process and depending on your capacity requirements needs very little computing resources.
 
 * server/instance to run the stellar-core application and corresponding postgres database
@@ -32,6 +35,7 @@ For more in-depth requirements please see the main [admin guide](https://www.ste
 3. publish history
 
 ### Installing stellar-core
+
 For this guide we will be documenting the process of installing the `stellar-core-postgres` Debian package. As described in more detail [here](quickstart.md#moving-on-from-quickstart), the `stellar-core-postgres` package pulls in the `stellar-core` package and configures a local PostgreSQL database server ready for use by stellar-core, please note that by default this package connects `stellar-core` to the **Testnet** as a simple watcher node.
 
 Install stellar-core and a local postgres database using PostgreSQL's `peer authentication method` for authentication/security:
@@ -53,6 +57,7 @@ As mentioned previously, the configuration installed by the `stellar-core-postgr
 If you want to create a **Pubnet** validator, you can use the [**Pubnet Watcher**](stellar-core_pubnet_watcher.cfg) config.
 
 #### Validation
+
 Configuring a node to participate in SCP and sign messages is a 3 step process consisting of securely generating a `seed`, adding this seed to your configuration file and finally setting the `NODE_IS_VALIDATOR=true` parameter.
 
 * create a keypair `stellar-core gen-seed`
@@ -64,9 +69,11 @@ You will most likely want to share the public portion of your keypair to other v
 Storing your node seed securely is essential, if someone else has access to it they can send messages to the network and these will appear to originate from your node.
 
 #### Quorum Set
+
 The quorum set is used by stellar-core to define which nodes on the network you trust as well as to configure stellar-core's behaviour during arbitrary node failures. More information can be found in the [quorum set](https://www.stellar.org/developers/stellar-core/software/admin.html#crafting-a-quorum-set) section of the main admin guide.
 
 ### Publishing History
+
 Full validators participate in consensus and publish their history data either to a blob store such S3, Spaces or Azure Blob. This aspect of the full validator is incredibly important as it enables other network users to connect and sync to the network using your validator thus increasing network resiliency and decentralisation.
 
 The process of publishing `stellar-core` history is described in detail [here](publishing-a-history-archive.md)

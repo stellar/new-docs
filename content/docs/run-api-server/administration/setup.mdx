@@ -3,6 +3,8 @@ title: Horizon Administration Guide
 order: 
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 Horizon is responsible for providing an HTTP API to data in the Stellar network. It ingests and re-serves the data produced by the stellar network in a form that is easier to consume than the performance-oriented data representations used by stellar-core.
 
 This document describes how to administer a **production** Horizon instance. If you are just starting with Horizon and want to try it out, consider the [Quickstart Guide](quickstart.md) instead. For information about developing on the Horizon codebase, check out the [Development Guide](developing.md).
@@ -67,8 +69,6 @@ As you will see if you run the command above, Horizon defines a large number of 
 
 Specifying command line flags every time you invoke Horizon can be cumbersome, and so we recommend using environment variables.  There are many tools you can use to manage environment variables:  we recommend either [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).  A template configuration that is compatible with dotenv can be found in the [Horizon git repo](https://github.com/stellar/go/blob/master/services/horizon/.env.template).
 
-
-
 ## Preparing the database
 
 Before the Horizon server can be run, we must first prepare the Horizon database.  This database will be used for all of the information produced by Horizon, notably historical information about successful transactions that have occurred on the stellar network.
@@ -83,16 +83,26 @@ It is recommended to set `random_page_cost=1` in Postgres configuration if you a
 
 Once your Horizon database is configured, you're ready to run Horizon.  To run Horizon you simply run `horizon` or `horizon serve`, both of which start the HTTP server and start logging to standard out.  When run, you should see some output that similar to:
 
+<CodeExample>
+
 ```
 INFO[0000] Starting horizon on :8000                     pid=29013
 ```
 
+</CodeExample>
+
 The log line above announces that Horizon is ready to serve client requests. Note: the numbers shown above may be different for your installation.  Next we can confirm that Horizon is responding correctly by loading the root resource.  In the example above, that URL would be [http://127.0.0.1:8000/] and simply running `curl http://127.0.0.1:8000/` shows you that the root resource can be loaded correctly.
 
 If you didn't set up a stellar-core yet, you may see an error like this:
+
+<CodeExample>
+
 ```
 ERRO[2019-05-06T16:21:14.126+08:00] Error getting core latest ledger err="get failed: pq: relation \"ledgerheaders\" does not exist"
 ```
+
+</CodeExample>
+
 Horizon requires a functional stellar-core. Go back and set up stellar-core as described in the admin guide. In particular, you need to initialise the database as [described here](https://www.stellar.org/developers/stellar-core/software/admin.html#database-and-local-state).
 
 ## Ingesting live stellar-core data
@@ -112,12 +122,16 @@ To reingest older ledgers (due to a version upgrade) or to ingest ledgers closed
 started Horizon. This is done through the `horizon db range [START_LEDGER] [END_LEDGER]` command, which could
 be run as follows:
 
+<CodeExample>
+
 ```
 horizon1> horizon db reingest range 1 10000
 horizon2> horizon db reingest range 10001 20000
 horizon3> horizon db reingest range 20001 30000
 # ... etc.
 ```
+
+</CodeExample>
 
 This allows reingestion to be split up and done in parallel by multiple Horizon processes.
 
@@ -174,11 +188,20 @@ If you were running the new system in the past during experimental stage (`ENABL
 In order to check the progress and the status of experimental ingestion you should check the logs. All logs connected to experimental ingestion are tagged with `service=expingest`.
 
 It starts with informing you about state ingestion:
+
+<CodeExample>
+
 ```
 INFO[2019-08-29T13:04:13.473+02:00] Starting ingestion system from empty state...  pid=5965 service=expingest temp_set="*io.MemoryTempSet"
 INFO[2019-08-29T13:04:15.263+02:00] Reading from History Archive Snapshot         ledger=25565887 pid=5965 service=expingest
 ```
+
+</CodeExample>
+
 During state ingestion, Horizon will log number of processed entries every 100,000 entries (there are currently around 7M entries in the public network):
+
+<CodeExample>
+
 ```
 INFO[2019-08-29T13:04:34.652+02:00] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=100000 pid=5965 service=expingest
 INFO[2019-08-29T13:04:38.487+02:00] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=200000 pid=5965 service=expingest
@@ -186,7 +209,13 @@ INFO[2019-08-29T13:04:41.322+02:00] Processing entries from History Archive Snap
 INFO[2019-08-29T13:04:48.429+02:00] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=400000 pid=5965 service=expingest
 INFO[2019-08-29T13:05:00.306+02:00] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=500000 pid=5965 service=expingest
 ```
+
+</CodeExample>
+
 When state ingestion is finished it will proceed to ledger ingestion starting from the next ledger after checkpoint ledger (25565887+1 in this example) to update the state using transaction meta:
+
+<CodeExample>
+
 ```
 INFO[2019-08-29T13:39:41.590+02:00] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=5300000 pid=5965 service=expingest
 INFO[2019-08-29T13:39:44.518+02:00] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=5400000 pid=5965 service=expingest
@@ -207,6 +236,7 @@ INFO[2019-08-29T13:40:00.972+02:00] Processed ledger                            
 INFO[2019-08-29T13:40:00.972+02:00] Finished processing ledger                    duration=0.071039012 ledger=25565890 pid=5965 service=expingest shutdown=false transactions=20
 ```
 
+</CodeExample>
 
 ## Managing Stale Historical Data
 

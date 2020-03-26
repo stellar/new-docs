@@ -49,7 +49,7 @@ const LangSelect = styled(Select)`
 `;
 
 const LangOptionEl = styled.div`
-  margin: calc(1rem - 1px) 0;
+  margin: calc(0.5rem - 1px) 0;
   font-family: ${FONT_FAMILY.monospace};
   font-weight: 500;
   font-size: 0.75rem;
@@ -114,7 +114,7 @@ const TitleEl = styled.div`
   justify-content: ${(props) =>
     props.hasTitle ? "space-between" : "flex-end"};
   position: relative;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
   align-items: center;
   color: ${PALETTE.white};
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -128,11 +128,14 @@ const mdxJsxToString = (jsx) => {
   let str;
 
   if (children.props.children.length > 0) {
+    if (typeof children.props.children[0].props.children === "string") {
+      str = children.props.children[0].props.children;
+      return str;
+    }
     str = children.props.children[0].props.children.map((codeSnippet) =>
       extractStringChildren(codeSnippet),
     );
   }
-
   return str.join("");
 };
 

@@ -14,6 +14,7 @@ The sequence number of a ledger is defined recursively:
 * The ledger directly following a ledger with sequence number n has sequence number n+1
 
 ## Ledger header
+
 Every ledger has a **ledger header**. This header has references to the actual data within the ledger as well as a reference to the previous ledger. References here are cryptographic hashes of the content being referenced — the hashes behave like pointers in typical data structures but with added security guarantees.
 
 You can think of the historical ledger chain as a linked list of ledger headers:
@@ -57,22 +58,27 @@ Every ledger header has the following fields:
 - **Skip list**: Hashes of ledgers in the past. Allows you to jump back in time in the ledger chain without walking back ledger by ledger. There are 4 ledger hashes stored in the skip list. Each slot contains the oldest ledger that is mod of either 50  5000  50000 or 500000 depending on index skipList[0] mod(50), skipList[1] mod(5000), etc.
 
 ## Ledger Entries
+
 The ledger is a collection of **entries**. Currently there are 4 types of ledger entries. They're specified in
 [`src/xdr/Stellar-ledger-entries.x`](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-ledger-entries.x).
 
 ### Account entry
+
 This entry represents an account. In Stellar, everything is built around accounts: transactions are performed by accounts, and accounts control the access rights to balances.
 
 Other entries are add-ons, owned by a main account entry. With every new entry
 attached to the account, the minimum balance in XLM goes up for the account. For details, the docs on minimum balance.
 
 ### Trustline entry
+
 Trustlines are lines of credit the account has given a particular issuer in a specific asset.
 
 Trustline entries define the rules around the use of this currency. Rules can be defined by the user — who can set a maximum balance limit to limit risk — or by the issuer — who can set a  flag to control access to the asset.
 
 ### Offer entry
+
 Offers are entries that an account creates in the orderbook. They are a way to automate simple trading inside the Stellar network. For more on offers, refer to the distributed exchange documentation.
 
 ### Data entry
+
 Data entries are key/value pairs attached to an account. They allow account controllers to attach arbitrary data to their account, and provide a flexible extension point to add application specific data to the ledger.
