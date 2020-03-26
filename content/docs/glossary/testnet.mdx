@@ -13,6 +13,7 @@ You can connect a node to the testnet by configuring [stellar-core](https://gith
 There is also a [Horizon instance](https://horizon-testnet.stellar.org/) that can directly interact with the testnet.
 
 ## What is the Stellar testnet good for?
+
 * [Creating test accounts](../get-started/create-account.md) (with funding thanks to Friendbot).
 * Developing applications and exploring tutorials on Stellar without the
   potential to lose any valuable [assets](assets.md).
@@ -21,6 +22,7 @@ There is also a [Horizon instance](https://horizon-testnet.stellar.org/) that ca
 * Performing data analysis on a smaller, non-trivial data set compared to the public network.
 
 ## What is the Stellar testnet not good for?
+
 * Load and stress testing.
   * If you want to test for performance, a good place to
     start is
@@ -36,11 +38,15 @@ There is also a [Horizon instance](https://horizon-testnet.stellar.org/) that ca
 Keep in mind that you can always run your own test network for use cases that don't work well with SDF's testnet.
 
 ## Best Practices For Using Testnet
+
 ### Surge Pricing on the Testnet
+
 The testnet has a capacity limit of **100 operations per ledger**.  When more than 100 operations are submitted to a given ledger, the network enters surge pricing mode, which uses market dynamics to decide which submissions are included.  It works exactly the same way as surge pricing on the public network.
 
 If you are having trouble submitting transactions to the testnet, you may need to offer a higher fee.  You can also take the opportunity to develop a fee strategy, which may prove useful when you move your project into production.
+
 ### Periodic Reset of Testnet Data
+
 In order to preserve a good experience for developers, the SDF testnet is periodically reset to the genesis (initial) ledger. Resets declutter the network, remove spam, minimize the time required to catch up to the latest ledger, and help maintain the system over time.
 
 A reset clears all ledger entries (such as accounts, trustlines, offers, etc), transactions, and historical data from both Stellar Core and\ Horizon, which is why developers should not rely on the persistence of any accounts or on the state of any balances when using testnet.
@@ -59,6 +65,7 @@ The testnet resets once per quarter (every three months).  The 2020 dates:
 The testnet will always restart on the announced reset date at 0900 UTC.  
 
 ### Test Data Automation
+
 Since most applications rely on data being present to do anything useful, it is
 highly recommended that you have testing infrastructure that can repopulate testnet with useful data after a reset. Not only will this make testing more reliable, but it will also help you scale out your testing infrastructure to a private test network if you choose to do so.
 

@@ -6,6 +6,7 @@ order: 20
 These docs walk through the steps necessary to set up and launch both a test server and a production server to handle deposits and withdrawals, but before you get any deeper, it's worth noting: you don't have to start from scratch.  SDF offers some tools that make it easy to implement those servers, and test them from the client side.   
 
 ## Anchor Server Reference Implementation
+
 To help with server setup, SDF created [Polaris](link), an extendable django reusable-app that comes with fully-implemented endpoints, templates, and database models. It's built in Python using the community-supported [Stellar Python SDK](link), and is compliant with the Stellar Ecosystem Protocols mentioned in the previous section.
  
 In the Polaris repo, you can also find a [Reference Implementation Project](link), a WIP example of an anchor server.
@@ -17,6 +18,7 @@ Polaris modularizes the parts of the codebase that interface with the Stellar ne
 If you choose to use Polaris, you can jumpstart your deployment, and connect local rails to Stellar in weeks instead of months. 
 
 ## Demo Client & Deployed Example
+
 Once you have a server set up, SDF also maintains a [Demo Client Project](link) that makes it easy to test your implementation on both the testnet and the pubnet. 
 
 The public [Deployed Demo Client](link) allows you to run those tests without needing to set up a new hosting infrastructure for that project.

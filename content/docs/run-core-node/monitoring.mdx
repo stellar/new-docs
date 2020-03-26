@@ -3,11 +3,16 @@ title: Monitoring and diagnostics
 order: 
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 Information provided here can be used for both human operators and programmatic access.
 
 ### General node information
+
 Run `$ stellar-core http-command 'info'`
 The output will look something like
+
+<CodeExample>
 
 ```json
 {
@@ -54,6 +59,8 @@ The output will look something like
 }
 ```
 
+</CodeExample>
+
 Some notable fields in `info` are:
 
   * `build` is the build number for this stellar-core instance
@@ -76,6 +83,8 @@ The `peers` command returns information on the peers the instance is connected t
 This list is the result of both inbound connections from other peers and outbound connections from this node to other peers.
 
 `$ stellar-core http-command 'peers'`
+
+<CodeExample>
 
 ```json
 {
@@ -113,9 +122,12 @@ This list is the result of both inbound connections from other peers and outboun
 }
 ```
 
+</CodeExample>
+
 ### Quorum Health
 
 #### Quorum set diagnostics
+
 The `quorum` command allows to diagnose problems with the quorum set of the local node.
 
 Run
@@ -123,6 +135,8 @@ Run
 `$ stellar-core http-command 'quorum'`
 
 The output looks something like:
+
+<CodeExample>
 
 ```json
 {
@@ -160,6 +174,8 @@ The output looks something like:
    }
 }
 ```
+
+</CodeExample>
 
 This output has two main sections: `qset` and `transitive`. The former describes the node and its quorum set. The latter describes the transitive closure of the node's quorum set.
 
@@ -217,6 +233,8 @@ This is an easier to process format than what `scp` returns as it doesn't contai
 `$ stellar-core http-command 'quorum?transitive=true'`
 
 The output looks something like:
+
+<CodeExample>
 
 ```json
 {
@@ -276,6 +294,8 @@ The output looks something like:
    ]
 }
 ```
+
+</CodeExample>
 
 The output begins with the same summary information as in the `transitive` block
 of the non-transitive query (if queried for the local node), but also includes
