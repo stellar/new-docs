@@ -206,9 +206,9 @@ Additionally, configuring `PREFERRED_PEER_KEYS` with the keys from your quorum s
 
 Without those settings, your validator depends on other nodes on the network to forward you the right messages, which is typically done as a best effort.
 
-### Updating Your Quorum Set and Communicating
+### Updating and Coordinating Your Quorum Set
 
-When you join the ranks of node operators, it's also important to join the conversation.  The best way to do that: get on the #validators channel on the [Stellar Keybase](link) and sign up for the [validators google group].  That way, you can and coordinate changes with the rest of the network.
+When you join the ranks of node operators, it's also important to join the conversation.  The best way to do that: get on the #validators channel on the [Stellar Keybase](link) and sign up for the [validators google group](link).  That way, you can and coordinate changes with the rest of the network.
 
 When you need to make changes to your validator or to your quorum set — say you take a validator down for maintenance or add new validators to your node's quorum set — it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
 
@@ -218,23 +218,23 @@ When you need to make changes to your validator or to your quorum set — say yo
 
 When you want to add or remove nodes, start with by making changes to your own nodes' quorum sets, and then coordinate work with others to reflect those changes gradually.
 
-### Cursors and automatic maintenance
-Some tables in the database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
+## Automatic Maintencance
+Some tables in Stellar Core's database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
 
 If not managed properly those tables will grow without bounds. To avoid this, a built-in scheduler will delete data from old ledgers that are not used anymore by other parts of the system (external systems included).
 
 The settings that control the automatic maintenance behavior are: `AUTOMATIC_MAINTENANCE_PERIOD`,  `AUTOMATIC_MAINTENANCE_COUNT` and `KNOWN_CURSORS`.
 
-By default, stellar-core will perform this automatic maintenance, so be sure to disable it until you have done the appropriate data ingestion in downstream systems (Horizon for example sometimes needs to reingest data).
+By default, Stellar Core will perform this automatic maintenance, so be sure to disable it until you have done the appropriate data ingestion in downstream systems (Horizon for example sometimes needs to reingest data).
 
 If you need to regenerate the metadata, the simplest way is to replay ledgers for the range you're interested in after (optionally) clearing the database with `newdb`.
 
-### Metadata Snapshots and Restoration
-Some deployments of stellar-core and Horizon will want to retain metadata for the _entire history_ of the network. This metadata can be quite large and computationally expensive to regenerate anew by replaying ledgers in stellar-core from an empty initial database state, as described in the previous section.
+## Metadata Snapshots and Restoration
+Some deployments of Stellar Core and Horizon will want to retain metadata for the _entire history_ of the network. This metadata can be quite large and computationally expensive to regenerate anew by replaying ledgers in stellar-core from an empty initial database state, as described in the previous section.
 
 This can be especially costly if run more than once. For instance, when bringing a new node online. Or even if running a single node with Horizon, having already ingested the meta data _once_: a subsequent version of Horizon may have a schema change that entails re-ingesting it _again_.
 
-Some operators therefore prefer to shut down their stellar-core (and/or Horizon) processes and _take filesystem-level snapshots_ or _database-level dumps_ of the contents of stellar-core's database and bucket directory, and/or Horizon's database, after metadata generation has occurred the first time. Such snapshots can then be restored, putting stellar-core and/or Horizon in a state containing metadata without performing full replay.
+Some operators therefore prefer to shut down their stellar-core (and/or Horizon) processes and _take filesystem-level snapshots_ or _database-level dumps_ of the contents of Stellar Core's database and bucket directory, and/or Horizon's database, after metadata generation has occurred the first time. Such snapshots can then be restored, putting stellar-core and/or Horizon in a state containing metadata without performing full replay.
 
 Any reasonably recent state will do — if such a snapshot is a little old, stellar-core will replay ledgers from whenever the snapshot was taken to the current network state anyways — but this procedure can greatly accelerate restoring validator nodes, or cloning them to create new ones.
 
