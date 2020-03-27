@@ -5,7 +5,11 @@ order: 70
 
 import { CodeExample } from "components/CodeExample";
 
-Stellar Core exposes vital information about the status of your node and the network that you can use to monitor and maintain a healthy setup.  It's suitable for both human consumption and programmatic access.  This section will detail the commands and outputs, and walk you through what everything
+Once your node is up and running, it's important to keep an eye on it to make sure it stays afloat and continues to contribute to the health of the overall network.  To help with that, Stellar Core exposes vital information that you can use to monitor your node and diagnose potential problems.  
+
+You can access this information using commands and inspecting Stellar Core's output, which is what the first half of this doc covers.  You can also connect [Prometheus](link) to make monitoring easier, combine it with [Alertmanager](link) to automate notification, and use pre-built [Grafana dashboards](link) to create visual representations of your node's well-being.  
+
+However you decide to monitor, the most important thing is that you have a system in place to ensure that your integration keeps ticking.
 
 ## General Node Information
 
@@ -178,14 +182,14 @@ The output will look something like:
 
 </CodeExample>
 
-This output has two main sections: `qset` and `transitive`. The former describes the node and its quorum set; te latter describes the transitive closure of the node's quorum set.
+This output has two main sections: `qset` and `transitive`. The former describes the node and its quorum set; the latter describes the transitive closure of the node's quorum set.
 
 ### Per-node Quorum-set Information
 
 Entries to watch for in the `qset` section — which describe the node and its quorum set — are:
 
   * `agree` : the number of nodes in the quorum set that agree with this instance.
-  * `delayed` : the nodes that are participating to consensus but seem to be behind.
+  * `delayed` : the nodes that are participating in consensus but seem to be behind.
   * `disagree`: the nodes that are participating but disagreed with this instance.
   * `fail_at` : the number of failed nodes that *would* cause this instance to halt.
   * `fail_with`: an example of such potential failure.
@@ -293,7 +297,7 @@ The output looks something like:
 
 </CodeExample>
 
-The output begins with the same summary information as in the `transitive` block of the non-transitive query (if queried for the local node), but also includes a `nodes` array that represents a walk of the transitive quorum centered onthe query node.
+The output begins with the same summary information as in the `transitive` block of the non-transitive query (if queried for the local node), but also includes a `nodes` array that represents a walk of the transitive quorum centered on the query node.
 
 Fields are:
 
@@ -310,7 +314,7 @@ Monitoring `stellar-core` using Prometheus is by far the simplest solution, espe
 
 In order for Prometheus to scrape `stellar-core` application metrics, you will need to install the stellar-core-prometheus-exporter (`apt-get install stellar-core-prometheus-exporter`) and configure your Prometheus server to scrape this exporter (default port: `9473`). On top of that grafana can be used to visualize metrics.
 
-![Stellar Core Monitoring Reference Architecture](../images/stellar-core-monitoring-reference-architecture.png)
+[IMAGE](link)
 
 ### Install a Prometheus server within your infrastructure
 Installing and configuring a Prometheus server is out of scope of this document, however it is a fairly simple process: Prometheus is a single Go binary which you can download from https://prometheus.io/docs/prometheus/latest/installation/.
