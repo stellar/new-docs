@@ -5,7 +5,7 @@ order: 50
 
 import { CodeExample } from "components/CodeExample";
 
-If you want to run a [Full Validator](link) or an [Archiver](link), you need to set up your node to publish a history archive. You can host an archive using a blob store such as Amazon's s3 or Digital Dcean's spaces, or you can simply serve a local archive directly via an HTTP server such as Nginx or Apache.  If you're setting up a [Watcher](link) or a [Basic Validator](link), you can skip this section.  No matter what kind of node you're planning to run, make sure to set it up to `get` history, which is covered in [Configuration](link). 
+If you want to run a [Full Validator](link) or an [Archiver](link), you need to set up your node to publish a history archive. You can host an archive using a blob store such as Amazon's s3 or Digital Ocean's spaces, or you can simply serve a local archive directly via an HTTP server such as Nginx or Apache.  If you're setting up a [Watcher](link) or a [Basic Validator](link), you can skip this section.  No matter what kind of node you're planning to run, make sure to set it up to `get` history, which is covered in [Configuration](link). 
 
 ## Caching and History Archives
 
@@ -177,7 +177,7 @@ server {
 
 ## Backfilling a history archive
 
-Given the choice, it's best to configure you history archive prior to your node's initial synch to the network.  That way your validator's history publishes as you join/synch to the network.
+Given the choice, it's best to configure your history archive prior to your node's initial synch to the network.  That way your validator's history publishes as you join/synch to the network.
 
 However, if you have *not* published an archive during the node's initial synch, it's still possible to use the [stellar-archivist](https://github.com/stellar/go/tree/master/tools/stellar-archivist) command line tool to mirror, scan, and repair existing archives.
 
