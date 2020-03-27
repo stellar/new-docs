@@ -16,19 +16,20 @@ import { Tooltip } from "components/Tooltip";
 import { DividerEl } from "components/Documentation/SharedStyles";
 
 const CODE_LANGS = {
+  bash: "bash",
   curl: "cURL",
-  scss: "SCSS",
+  cpp: "C++",
   go: "Go",
+  java: "Java",
   javascript: "JavaScript",
-  toml: "toml",
-  html: "html",
   js: "JavaScript",
+  json: "json",
+  html: "html",
+  scss: "SCSS",
+  toml: "TOML",
   ts: "TypeScript",
   tsx: "TSX",
-  java: "Java",
-  bash: "bash",
-  json: "json",
-  cpp: "C++",
+  yaml: "YAML",
 };
 
 const LangSelect = styled(Select)`

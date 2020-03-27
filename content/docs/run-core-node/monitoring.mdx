@@ -310,6 +310,7 @@ Fields are:
 * `value` : what the node is voting for
 
 ## Using Prometheus
+
 Monitoring `stellar-core` using Prometheus is by far the simplest solution, especially if you already have a Prometheus server within your infrastructure. Prometheus is a free and open source time-series database with a simple yet incredibly powerful query language `PromQL`. Prometheus is also tightly integrated with Grafana, so you can render complex visualisations with ease.
 
 In order for Prometheus to scrape `stellar-core` application metrics, you will need to install the stellar-core-prometheus-exporter (`apt-get install stellar-core-prometheus-exporter`) and configure your Prometheus server to scrape this exporter (default port: `9473`). On top of that grafana can be used to visualize metrics.
@@ -317,9 +318,11 @@ In order for Prometheus to scrape `stellar-core` application metrics, you will n
 [IMAGE](link)
 
 ### Install a Prometheus server within your infrastructure
+
 Installing and configuring a Prometheus server is out of scope of this document, however it is a fairly simple process: Prometheus is a single Go binary which you can download from https://prometheus.io/docs/prometheus/latest/installation/.
 
 ### Install the stellar-core-prometheus-exporter
+
 The stellar-core-prometheus-exporter is an exporter that scrapes the `stellar-core` metrics endpoint (`http://localhost:11626/metrics`) and renders these metrics in the Prometheus text-based format available for Prometheus to scrape and store in its timeseries database.
 
 The exporter needs to be installed on every Stellar Core node you wish to monitor.
@@ -329,9 +332,13 @@ The exporter needs to be installed on every Stellar Core node you wish to monito
 You will need to open up port `9473` between your Prometheus server and all your Stellar Core nodes for your Prometheus server to be able to scrape metrics.
 
 ### Point Prometheus to stellar-core-prometheus-exporter
+
 Pointing your Prometheus instance to the exporter can be achieved by manually configuring a scrape job; however, depending on the number of hosts you need to monitor this can quickly become unwieldy. Luckily, the process can also be automated using Prometheus' various "service discovery" plugins. For example with AWS hosted instance you can use the `ec2_sd_config` plugin.
 
 #### Manual
+
+<CodeExample>
+
 ```yaml
 - job_name: 'stellar-core'
   scrape_interval: 10s
@@ -342,7 +349,12 @@ Pointing your Prometheus instance to the exporter can be achieved by manually co
       application: 'stellar-core'
 ```
 
+</CodeExample>
+
 #### Using Service Discovery (EC2)
+
+<CodeExample>
+
 ```yaml
 - job_name: stellar-core
   scrape_interval: 10s
@@ -373,13 +385,20 @@ Pointing your Prometheus instance to the exporter can be achieved by manually co
     target_label: application
 ```
 
+</CodeExample>
+
 ### Create Alerting Rules
 
 Once Prometheus scrapes metrics we can add alerting rules. Recommended rules are [**here**](stellar-core-alerting.rules) (require Prometheus 2.0 or later). Copy rules to */etc/prometheus/stellar-core-alerting.rules* on the Prometheus server and add the following to the prometheus configuration file to include the file:
+
+<CodeExample>
+
 ```yaml
 rule_files:
 - "/etc/prometheus/stellar-core-alerting.rules"
 ```
+
+</CodeExample>
 
 Rules are documented in-line,and we strongly recommend that you review and verify all of them as every environment is different.
 
@@ -392,6 +411,8 @@ All recommended alerting rules have "severity" label:
 * **warning** normally can wait until working hours. Warnings indicate problems that likely do not have production impact but may lead to critical alerts or outages if left unhandled
 
 The following example alertmanager configuration demonstrates how to send notifications using different methods based on severity label:
+
+<CodeExample>
 
 ```yaml
 global:
@@ -421,6 +442,8 @@ receivers:
   email_configs:
   - to: alerts-fallback@example.com
 ```
+
+</CodeExample>
 
 In the above examples alerts with severity "critical" are sent to pagerduty and warnings are sent to slack.
 
