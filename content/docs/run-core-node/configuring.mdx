@@ -12,6 +12,7 @@ After you've [installed](link) Stellar Core, your next step is to complete a con
 This section of the docs will walk you through the key fields you'll need to include in your config file to get your node up and runninig.
 
 ## Example Configurations
+
 This doc works best in conjunction with concrete config examples, so as you read through it, you may want to check out the following:
 
 * The [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) documents all possible configuration elements, as well as their default values.  It's got every knob you can twiddle and every setting you can tweak along wiith detailed explanations of how to twiddle and tweak them.  You don't need to put everything from the complete example config into your config file — fields you omit will assume the default setting, and the default setting will generally serve you well — but there are a few required fields, and this doc will explain what they are.     
@@ -50,7 +51,7 @@ For more about the Network Passphrase and how it works, check out the [glossary 
 
 ## Validating
 
-By default, Stellar Core isn't set up to validate.  If you're setting your node up to be a [Basic Validator](link) or a [Full Validator](liink), you need to configure it to do so, which means preparing it to take part in [SCP](link) and sign messages pledging that the network agrees to a particular transaction set.  
+By default, Stellar Core isn't set up to validate.  If you want your node to be a [Basic Validator](link) or a [Full Validator](liink), you need to configure it to do so, which means preparing it to take part in [SCP](link) and sign messages pledging that the network agrees to a particular transaction set.  
 
 Configuring a node to participate in SCP and sign messages is a three step process:
 
@@ -218,18 +219,14 @@ When you need to make changes to your validator or to your quorum set — say yo
 When you want to add or remove nodes, start with by making changes to your own nodes' quorum sets, and then coordinate work with others to reflect those changes gradually.
 
 ## History
-Stellar Core normally interacts with one or more history archive, which are configurable facilities for storing and retrieving flat files containing history checkpoints: bucket files and history logs. History archives are usually off-site commodity storage services such as Amazon S3, Google Cloud Storage, Azure Blob Storage, or custom SCP/SFTP/HTTP servers. https://github.com/stellar/stellar-core/blob/master/docs/history.md
+Stellar Core normally interacts with one or more history archive, which are configurable facilities where [Full Validators](link) and [Archivers](link) store flat files containing history checkpoints: bucket files and history logs. History archives are usually off-site commodity storage services such as Amazon S3, Google Cloud Storage, Azure Blob Storage, or custom SCP/SFTP/HTTP servers.  To find out how to *publish* a history archive, consult [Publishing History Archives](link).
 
-Use command templates in the config file to give the specifics of which services you will use and how to access them. The [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) 
+No matter what kind of node you're running, you should configure it to `get` history from one or more public archives.  You can configure any number of archives to download from: Stellar Core will automatically round-robin between them.
+
+When you're [choosing your quorum set](link), you should include [high-quality](link) nodes — which, by defintion, publish archives — and add the location for each node's archive in the `HISTORY` field in the [validators array](#validators-array).   
+
+You can also use command templates in the config file to specify additional archives you'd like to use and how to access them. The [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) 
 shows how to configure a history archive through command templates. 
-
-While it is possible to run a stellar-core node with no configured history archives, it will be _severely limited_, unable to participate fully in a network, and likely unable to acquire synchronization at all. At the very least, if you are joining an existing network in a read-only capacity, you will still need to configure a `get` command to access that network's history 
-archives.
-
-## Configuring to get data from an archive
-You can configure any number of archives to download from: stellar-core will automatically round-robin between them.
-
-At a minimum you should configure `get` archives for each full validator referenced from your quorum set (see the `HISTORY` field in [validators array](#validators-array) for more detail).
 
 Note: if you notice a lot of errors related to downloading archives, you should check that all archives in your configuration are up to date.
 
