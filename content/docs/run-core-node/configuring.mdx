@@ -218,7 +218,7 @@ When you need to make changes to your validator or to your quorum set — say yo
 
 When you want to add or remove nodes, start with by making changes to your own nodes' quorum sets, and then coordinate work with others to reflect those changes gradually.
 
-## Automatic Maintencance
+## Automatic Maintenance
 Some tables in Stellar Core's database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
 
 If not managed properly those tables will grow without bounds. To avoid this, a built-in scheduler will delete data from old ledgers that are not used anymore by other parts of the system (external systems included).
