@@ -1,16 +1,15 @@
 ---
-title: Monitoring and diagnostics
-order: 
+title: Monitoring and Diagnostics
+order: 70
 ---
 
 import { CodeExample } from "components/CodeExample";
 
-Information provided here can be used for both human operators and programmatic access.
+Stellar Core exposes vital information about the status of your node and the network that you can use to monitor and maintain a healthy setup.  It would for both human operators and for programmatic access.
 
-### General node information
+## General Node Information
 
-Run `$ stellar-core http-command 'info'`
-The output will look something like
+If you run `$ stellar-core http-command 'info'`, the output will look something like this:
 
 <CodeExample>
 
@@ -63,22 +62,22 @@ The output will look something like
 
 Some notable fields in `info` are:
 
-  * `build` is the build number for this stellar-core instance
-  * `ledger` represents the local state of your node, it may be different from the network state if your node was disconnected from the network for example. Some important sub-fields:
-    * `age` : time elapsed since this ledger closed (during normal operation less than 10 seconds)
-    * `num` : ledger number
-    * `version` : protocol version supported by this ledger
-  * `network` is the network passphrase that this core instance is connecting to
-  * `peers` gives information on the connectivity to the network
-    * `authenticated_count` are live connections
-    * `pending_count` are connections that are not fully established yet
-  * `protocol_version` is the maximum version of the protocol that this instance recognizes
-  * `state` : indicates the node's synchronization status relative to the network.
-  * `quorum` : summarizes the state of the SCP protocol participants, the same as the information returned by the `quorum` command (see below).
+  * `build`: the build number for this Stellar Core instance
+  * `ledger`: the local state of your node, which may be different from the network state if your node was disconnected from the network. Some important sub-fields:
+    * `age`: time elapsed since this ledger closed (during normal operation less than 10 seconds)
+    * `num`: ledger number
+    * `version`: protocol version supported by this ledger
+  * `network` is the [network passphrase](link) that this core instance is using to decide whether to connect to the testnet or the public network
+  * `peers`: information on the connectivity to the network
+    * `authenticated_count`: the number of live connections
+    * `pending_count`: the number of connections that are not fully established yet
+  * `protocol_version`: the maximum version of the protocol that this instance recognizes
+  * `state`: the node's synchronization status relative to the network
+  * `quorum`: summarizes the state of the SCP protocol participants, the same as the information returned by the `quorum` command ([see below](link)).
 
-### Overlay information
+## Overlay information
 
-The `peers` command returns information on the peers the instance is connected to.
+The `peers` command returns information on the peers your node is connected to.
 
 This list is the result of both inbound connections from other peers and outbound connections from this node to other peers.
 
@@ -124,17 +123,19 @@ This list is the result of both inbound connections from other peers and outboun
 
 </CodeExample>
 
-### Quorum Health
+## Quorum Health
 
-#### Quorum set diagnostics
+To help node operators monitor their quorum sets and maintain the health of the overall network, Stellar Core also provides metrics on other nodes in your quorum set.  You should monitor them to make sure they're up and running, and that your quorum set is maintaining good overlap with the rest of the network. 
+
+### Quorum set diagnostics
 
 The `quorum` command allows to diagnose problems with the quorum set of the local node.
 
-Run
+If you run:
 
 `$ stellar-core http-command 'quorum'`
 
-The output looks something like:
+The output will look something like:
 
 <CodeExample>
 
@@ -177,58 +178,53 @@ The output looks something like:
 
 </CodeExample>
 
-This output has two main sections: `qset` and `transitive`. The former describes the node and its quorum set. The latter describes the transitive closure of the node's quorum set.
+This output has two main sections: `qset` and `transitive`. The former describes the node and its quorum set; te latter describes the transitive closure of the node's quorum set.
 
-##### Per-node quorum-set information
+### Per-node Quorum-set Information
 
-Entries to watch for in the `qset` section -- describing the node and its quorum set -- are:
+Entries to watch for in the `qset` section — which describe the node and its quorum set — are:
 
   * `agree` : the number of nodes in the quorum set that agree with this instance.
   * `delayed` : the nodes that are participating to consensus but seem to be behind.
-  * `disagree`: the nodes that were participating but disagreed with this instance.
+  * `disagree`: the nodes that are participating but disagreed with this instance.
   * `fail_at` : the number of failed nodes that *would* cause this instance to halt.
   * `fail_with`: an example of such potential failure.
   * `missing` : the nodes that were missing during this consensus round.
   * `value` : the quorum set used by this node (`t` is the threshold expressed as a number of nodes).
 
-In the example above, 6 nodes are functioning properly, one is down (`stronghold1`), and
- the instance will fail if any two nodes still working (or one node and one inner-quorum-set) fail as well.
+In the example above, 6 nodes are functioning properly, one is down (`stronghold1`), and the instance will fail if any two nodes still working (or one node and one inner-quorum-set) fail as well.
 
 If a node is stuck in state `Joining SCP`, this command allows to quickly find the reason:
 
   * too many validators missing (down or without a good connectivity), solutions are:
-    * [adjust quorum set](#crafting-a-quorum-set) (thresholds, grouping, etc) based on the nodes that are not missing
+    * [adjust your quorum set](#crafting-a-quorum-set) based on the nodes that are not missing
     * try to get a [better connectivity path](#quorum-and-overlay-network) to the missing validators
-  * network split would cause SCP to be stuck because of nodes that disagree. This would happen if either there is a bug in SCP, the network does not have quorum intersection or the disagreeing nodes are misbehaving (compromised, etc)
+  * network split would cause SCP to stick because of nodes that disagree. This would happen if either there is a bug in SCP, the network does not have quorum intersection, or the disagreeing nodes are misbehaving (compromised, etc).
 
-Note that the node not being able to reach consensus does not mean that the network
-as a whole will not be able to reach consensus (and the opposite is true, the network
-may fail because of a different set of validators failing).
+Note that the node not being able to reach consensus does not mean that the network as a whole will not be able to reach consensus (and the opposite is true: the network may fail because of a different set of validators failing).
 
-You can get a sense of the quorum set health of a different node by doing
+You can get a sense of the quorum set health of a different node using using:
 `$ stellar-core http-command 'quorum?node=$sdf1` or `$ stellar-core http-command 'quorum?node=@GABCDE` 
 
-Overall network health can be evaluated by walking through all nodes and looking at their health. Note that this is only an approximation as remote nodes may not have received the same messages (in particular: `missing` for 
+Overall network health can be evaluated by walking through all nodes and looking at their health. Note that this is only an approximation, as remote nodes may not have received the same messages (in particular: `missing` for 
 other nodes is not reliable).
 
-##### Transitive closure summary information
+### Transitive Closure Summary Information
 
-When showing quorum-set information about the local node rather than some other
-node, a summary of the transitive closure of the quorum set is also provided in
-the `transitive` field. This has several important sub-fields:
+When showing quorum-set information about the local node, a summary of the transitive closure of the quorum set is also provided in the `transitive` field. This has several important sub-fields:
 
   * `last_check_ledger` : the last ledger in which the transitive closure was checked for quorum intersection. This will reset when the node boots and whenever a node in the transitive quorum changes its quorum set. It may lag behind the last-closed ledger by a few ledgers depending on the computational cost of checking quorum intersection.
   * `node_count` : the number of nodes in the transitive closure, which are considered when calculating quorum intersection.
   * `intersection` : whether or not the transitive closure enjoyed quorum intersection at the most recent check. This is of **utmost importance** in preventing network splits. It should always be true. If it is ever false, one or more nodes in the transitive closure of the quorum set is _currently_ misconfigured, and the network is at risk of splitting. Corrective action should be taken immediately, for which two additional sub-fields will be present to help suggest remedies:
     * `last_good_ledger` : this will note the last ledger for which the `intersection` field was evaluated as true; if some node reconfigured at or around that ledger, reverting that configuration change is the easiest corrective action to take.
-    * `potential_split` : this will contain a pair of lists of validator IDs, which is a potential pair of disjoint quorums that allowed by the current configuration. In other words, a possible split in consensus allowed by the current configuration. This may help narrow down the cause of the misconfiguration: likely the misconfiguration involves too-low a consensus threshold in one of the two potential quorums, and/or the absence of a mandatory trust relationship that would bridge the two.
+    * `potential_split` : this will contain a pair of lists of validator IDs, which is a potential pair of disjoint quorums allowed by the current configuration. In other words, a possible split in consensus allowed by the current configuration. This may help narrow down the cause of the misconfiguration: likely it involves too-low a consensus threshold in one of the two potential quorums, and/or the absence of a mandatory trust relationship that would bridge the two.
   * `critical`: an "advance warning" field that lists nodes that _could cause_ the network to fail to enjoy quorum intersection, if they were misconfigured sufficiently badly. In a healthy transitive network configuration, this field will be `null`. If it is non-`null` then the network is essentially "one misconfiguration" (of the quorum sets of the listed nodes) away from no longer enjoying quorum intersection, and again, corrective action should be taken: careful adjustment to the quorum sets of _nodes that depend on_ the listed nodes, typically to strengthen quorums that depend on them.
 
-#### Detailed transitive quorum analysis
+### Detailed transitive quorum analysis
 
 The quorum endpoint can also retrieve detailed information for the transitive quorum.
 
-This is an easier to process format than what `scp` returns as it doesn't contain all SCP messages.
+This is a format that's easier to process than what `scp` returns as it doesn't contain all SCP messages.
 
 `$ stellar-core http-command 'quorum?transitive=true'`
 
@@ -297,16 +293,13 @@ The output looks something like:
 
 </CodeExample>
 
-The output begins with the same summary information as in the `transitive` block
-of the non-transitive query (if queried for the local node), but also includes
-a `nodes` array that represents a walk of the transitive quorum centered on
-the query node.
+The output begins with the same summary information as in the `transitive` block of the non-transitive query (if queried for the local node), but also includes a `nodes` array that represents a walk of the transitive quorum centered onthe query node.
 
 Fields are:
 
 * `node` : the identity of the validator
 * `distance` : how far that node is from the root node (ie. how many quorum set hops)
-* `heard` : the latest ledger sequence number that this node voted at
+* `heard` : the latest ledger sequence number that this node voted on
 * `qset` : the node's quorum set
 * `status` : one of `behind|tracking|ahead` (compared to the root node) or `missing|unknown` (when there are no recent SCP messages for that node)
 * `value_id` : a unique ID for what the node is voting for (allows to quickly tell if nodes are voting for the same thing)
