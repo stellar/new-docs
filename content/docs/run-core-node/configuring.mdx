@@ -28,14 +28,14 @@ Stellar Core stores two copies of the ledger: one in a SQL database and one in X
 
 While a SQLite database works with Stellar Core, we generally recommend using a separate PostgreSQL server.  Horizon, for instance, requires PostgreSQL.  A Postgres database is the bread and butter of Stellar Core.
 
-You specify your node's database in the aptly named `DATABASE` field of your config file, which you can can read more about in the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23).  It defaulats to an in-memory databse, but you can specify a path as per the example config.
+You specify your node's database in the aptly named `DATABASE` field of your config file, which you can can read more about in the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23).  It defaults to an in-memory database, but you can specify a path as per the example config.
 
 ## Buckets
 Stellar-core also stores a duplicate copy of the ledger in the form of flat XDR files  called "buckets." These files are placed in a directory specified in the config file as `BUCKET_DIR_PATH`, which defaults to `buckets`. The bucket files are used for hashing and transmission of ledger differences to history archives. 
 
 Buckets should be stored on a fast local disk with sufficient space to store several times the size of the current ledger. 
  
-For the most part, the contents of both the database and buckets directories can be ignored as they are managed by Stellar Core.  However, when running Stellar Core for the first time, you must initialize both with the follwing command:
+For the most part, the contents of both the database and buckets directories can be ignored as they are managed by Stellar Core.  However, when running Stellar Core for the first time, you must initialize both with the following command:
 
 `$ stellar-core new-db`
 
@@ -98,7 +98,7 @@ One important thing to note: you need to either depend on exactly one entity OR 
 
 ### Home domains array
 
-To create your quorum set, stellar cores relies on two arrays of tables: `[[HOME_DOMAINS]]` and `[[VALIDATORS]]`.  Check out the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L372) to see those arrays in action.
+To create your quorum set, Stellar Core relies on two arrays of tables: `[[HOME_DOMAINS]]` and `[[VALIDATORS]]`.  Check out the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L372) to see those arrays in action.
 
 `[[HOME_DOMAINS]]` defines a superset of validators: when you add nodes hosted by the same organization to your configuration, they share a home domain, and the information in the `[[HOME_DOMAINS]]` table, specifically the quality rating, will automatically apply to every one of those validators. 
 
@@ -216,7 +216,7 @@ When you need to make changes to your validator or to your quorum set — say yo
   
   * Don't add too many nodes in your quorum set at the same time.  If not done carefully, the new nodes could overpower your configuration
 
-When you want to add or remove nodes, start with by making changes to your own nodes' quorum sets, and then coordinate work with others to reflect those changes gradually.
+When you want to add or remove nodes, start by making changes to your own nodes' quorum sets, and then coordinate work with others to reflect those changes gradually.
 
 ## History
 Stellar Core normally interacts with one or more history archive, which are configurable facilities where [Full Validators](link) and [Archivers](link) store flat files containing history checkpoints: bucket files and history logs. History archives are usually off-site commodity storage services such as Amazon S3, Google Cloud Storage, Azure Blob Storage, or custom SCP/SFTP/HTTP servers.  To find out how to *publish* a history archive, consult [Publishing History Archives](link).
