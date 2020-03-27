@@ -1,34 +1,37 @@
 ---
 title: Running Your Node
-order: 
+order: 40
 ---
 
 import { CodeExample } from "components/CodeExample";
 
-## Starting stellar-core
+## Starting Stellar Core
 
-After having configured your node and its environment, you're ready to start stellar-core.
+Once you've [set up your environment](link), [configured your node](link), set up your [quorum set](link), and selected archives to `get` [history from](link),  you're ready to start Stellar Core.
 
-This can be done with a command equivalent to
+Use a command equivalent to:
 
 `$ stellar-core run`
 
-At this point you're ready to observe core's activity as it joins the network.
+At this point, you're ready to observe your node's activity as it joins the network.
 
-Review the [logging](#logging) section to get yourself familiar with the output of stellar-core.
-Interacting with your instance
-While running, interaction with stellar-core is done via an administrative HTTP endpoint. Commands can be submitted using command-line HTTP tools such as `curl`, or by running a command such as
+You may want to skip ahead and review the [logging](#logging) section to familiarize yourself wiith Stellar Core's output.
+
+## Interacting With Your Instance
+When your node is running, you can interact with Stellar Core via an administrative HTTP endpoint. Commands can be submitted using command-line HTTP tools such as `curl`, or by running a command such as
 
 `$ stellar-core http-command <http-command>`
 
-The endpoint is [not intended to be exposed to the public internet](#interaction-with-other-internal-systems). It's typically accessed by administrators, or by a mid-tier application to submit transactions to the Stellar network. 
+That HTTP endpoint is [not intended to be exposed to the public internet](#interaction-with-other-internal-systems). It's typically accessed by administrators, or by a mid-tier application to submit transactions to the Stellar network. 
 
 See [commands](./commands.md) for a description of the available commands.
 
-## Joining the network
+## Joining the Network
 
-You can review the section on [general node information](#general-node-information); the node will go through the following phases as it joins the network:
-Establish connection to other peers
+Your node will go through the following phases as it joins the network:
+
+### Establishing Connection to Other Peers.  
+
 You should see `authenticated_count` increase.
 
 <CodeExample>
@@ -42,9 +45,9 @@ You should see `authenticated_count` increase.
 
 </CodeExample>
 
-## Observing consensus
+### Observing Consensus
 
-Until the node sees a quorum, it will say
+Until the node sees a quorum, it will say:
 
 <CodeExample>
 
@@ -54,7 +57,7 @@ Until the node sees a quorum, it will say
 
 </CodeExample>
 
-After observing consensus, a new field `quorum` will be set with information on what the network decided on, at this point the node will switch to "*Catching up*":
+After observing consensus, a new field `quorum` will display information about network decisions.  At this point the node will switch to "*Catching up*":
 
 <CodeExample>
 
@@ -81,7 +84,7 @@ After observing consensus, a new field `quorum` will be set with information on 
 
 </CodeExample>
 
-## Catching up
+### Catching up
 
 This is a phase where the node downloads data from archives. The state will start with something like:
 
@@ -94,7 +97,7 @@ This is a phase where the node downloads data from archives. The state will star
 
 </CodeExample>
 
-and then go through the various phases of downloading and applying state such as
+And then go through the various phases of downloading and applying state such as
 
 <CodeExample>
 
@@ -105,9 +108,11 @@ and then go through the various phases of downloading and applying state such as
 
 </CodeExample>
 
-## Synced
+You can specify how far back your node goes to catch up in your config file.  If you set`CATCHUP_COMPLETE` to `true`, your node will replay the entire history of the network, which can take a long time.  Weeks.  Satoshipay offers a [parallel catchup script](https://github.com/satoshipay/stellar-core-parallel-catchup) to speed up the process, but you only need to replay the complete network history if you're setting up a Full Validator.  Otherwise, you can specify a starting point for catchup using `CATCHUP_RECENT`.  See the [complete example configuration](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) for more details. 
 
-When the node is done catching up, its state will change to
+### Synced
+
+When the node is done catching up, its state will change to:
 
 <CodeExample>
 
@@ -119,29 +124,25 @@ When the node is done catching up, its state will change to
 
 ## Logging
 
-Stellar-core sends logs to standard output and `stellar-core.log` by default, 
-configurable as `LOG_FILE_PATH`.
+Stellar Core sends logs to standard output and `stellar-core.log` by default, configurable as `LOG_FILE_PATH`.
 
- Log messages are classified by progressive _priority levels_:
-  `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR` and `FATAL`.
-   The logging system only emits those messages at or above its configured logging level. 
+Log messages are classified by progressive _priority levels_:`TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR` and `FATAL`. The logging system only emits those messages at or above its configured logging level. 
 
-The log level can be controlled by configuration, the `-ll` command-line flag 
-or adjusted dynamically by administrative (HTTP) commands. Run:
+The log level can be controlled by configuration, the `-ll` command-line flag, or adjusted dynamically by administrative (HTTP) commands. To do so, run:
 
 `$ stellar-core http-command "ll?level=debug"`
 
-against a running system.
+while your system is running.
+
 Log levels can also be adjusted on a partition-by-partition basis through the 
-administrative interface.
- For example the history system can be set to DEBUG-level logging by running:
+administrative interface. For example the history system can be set to DEBUG-level logging by running:
 
 `$ stellar-core http-command "ll?level=debug&partition=history"` 
 
-against a running system.
- The default log level is `INFO`, which is moderately verbose and should emit 
- progress messages every few seconds under normal operation.
- 
+Against a running system.
+
+The default log level is `INFO`, which is moderately verbose and should emit progress messages every few seconds under normal operation.
+
 ## Validator maintenance
 
 Maintenance here refers to anything involving taking your validator temporarily out of the network (to apply security patches, system upgrade, etc).
