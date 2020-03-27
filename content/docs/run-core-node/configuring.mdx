@@ -20,6 +20,8 @@ This doc works best in conjunction with concrete config examples, so as you read
 
 * If you want to connet to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg).  It includes a properly crafted quorum set with all the current [Tier 1 validators](link), which is a good place to start for most configurations.  This node is set up to both [validate](link) and write history to a [public archive](link), but you can disable either feature to adjust this config so it's a little lighter.
 
+* Here's a config for a [pubnet watcher](https://github.com/stellar/packages/blob/master/docs/stellar-core_pubnet_watcher.cfg).  It's a little out of date — it still uses the old method for quorum set generation — but we'll fix it soon.  
+
 ## Database
 Stellar Core stores two copies of the ledger: one in a SQL database and one in XDR files on local disk called [buckets](link).  The database is consulted during consensus, and modified atomically when a transaction set is applied to the ledger.  It's random access, fine-grained, and fast. 
 
