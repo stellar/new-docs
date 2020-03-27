@@ -1,70 +1,74 @@
 ---
 title: Configuring Your Node
-order: 
+order: 40
 ---
 
 import { CodeExample } from "components/CodeExample";
 
-## Basics
-
-All configuration for stellar-core is done with a TOML file. 
-
-By default 
-stellar-core loads `./stellar-core.cfg`, but you can specify a different file to load on the command line:
+After you've [installed](link) Stellar Core, your next step is to complete a configuration file that specifies crucial things about your node — like whether it connects to the testnet or the public network, what database it writes to, and which other nodes are in its [quorum set](link).  You do that using a [TOML](link), and by default Stellar Core loads that file from `./stellar-core.cfg`.  You can specify a different file to load using the command line:
 
 `$ stellar-core --conf betterfile.cfg <COMMAND>`
 
-The [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) is not a real configuration, but documents all possible configuration elements as well as their default values.
+This section of the docs will walk you through the key fields you'll need to include in your config file to get your node up and runninig.
 
-Here is an [example test network config](https://github.com/stellar/docker-stellar-core-horizon/blob/master/testnet/core/etc/stellar-core.cfg) for connecting to the test network.
+## Example Configurations
 
-Here is an [example public network config](https://github.com/stellar/docs/blob/master/other/stellar-core-validator-example.cfg) for connecting to the public network.
+This doc works best in conjunction with concrete config examples, so as you read through it, you may want to check out the following:
 
-The examples in this file don't specify `--conf betterfile.cfg` for brevity.
+* The [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) documents all possible configuration elements, as well as their default values.  It's got every knob you can twiddle and every setting you can tweak along wiith detailed explanations of how to twiddle and tweak them.  You don't need to put everything from the complete example config into your config file — fields you omit will assume the default setting, and the default setting will generally serve you well — but there are a few required fields, and this doc will explain what they are.     
 
-Auditing of the P2P network is enabled by default, see the [overlay topology](#overlay-topology-survey) section for more detail if you'd like to disable it
+* If you want to connect to the tesnet, check out the [example test network config](https://github.com/stellar/docker-stellar-core-horizon/blob/master/testnet/core/etc/stellar-core.cfg).  As you can see, most of the fields from the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) are omitted since the default settings work fine.  You can easily tailor this config to meet your testnet needs.  
 
-### Validating node
+* If you want to connet to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg).  It includes a properly crafted quorum set with all the current [Tier 1 validators](link), which is a good place to start for most configurations.  This node is set up to both [validate](link) and write history to a [public archive](link), but you can disable either feature to adjust this config so it's a little lighter.
 
-Nodes are considered **validating** if they take part in SCP and sign messages 
-pledging that the network agreed to a particular transaction set.
+* Here's a config for a [pubnet watcher](https://github.com/stellar/packages/blob/master/docs/stellar-core_pubnet_watcher.cfg).  It's a little out of date — it still uses the old method for quorum set generation — but we'll fix it soon.  
 
-If you want to validate, you must generate a public/private key for your node.
- Nodes shouldn't share keys. You should carefully *secure your private key*. 
-If it is compromised, someone can send false messages to the network and those 
-messages will look like they came from you.
+## Database
+Stellar Core stores two copies of the ledger: one in a SQL database and one in XDR files on local disk called [buckets](link).  The database is consulted during consensus, and modified atomically when a transaction set is applied to the ledger.  It's random access, fine-grained, and fast. 
 
-Generate a key pair like this:
+While a SQLite database works with Stellar Core, we generally recommend using a separate PostgreSQL server.  Horizon, for instance, requires PostgreSQL.  A Postgres database is the bread and butter of Stellar Core.
 
-`$ stellar-core gen-seed`
-the output will look something like
+You specify your node's database in the aptly named `DATABASE` field of your config file, which you can can read more about in the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23).  It defaults to an in-memory database, but you can specify a path as per the example config.
 
-<CodeExample>
+## Buckets
+Stellar-core also stores a duplicate copy of the ledger in the form of flat XDR files  called "buckets." These files are placed in a directory specified in the config file as `BUCKET_DIR_PATH`, which defaults to `buckets`. The bucket files are used for hashing and transmission of ledger differences to history archives. 
 
-```
-Secret seed: SBAAOHEU4WSWX6GBZ3VOXEGQGWRBJ72ZN3B3MFAJZWXRYGDIWHQO37SY
-Public: GDMTUTQRCP6L3JQKX3OOKYIGZC6LG2O6K2BSUCI6WNGLL4XXCIB3OK2P
-```
+Buckets should be stored on a fast local disk with sufficient space to store several times the size of the current ledger. 
+ 
+For the most part, the contents of both the database and buckets directories can be ignored as they are managed by Stellar Core.  However, when running Stellar Core for the first time, you must initialize both with the following command:
 
-</CodeExample>
+`$ stellar-core new-db`
 
-Place the seed in your config:
+This command initializes the database and bucket directories, and then exits.  You can also use this command if your DB gets corrupted and you want to restart it from scratch.
 
-`NODE_SEED="SBAAOHEU4WSWX6GBZ3VOXEGQGWRBJ72ZN3B3MFAJZWXRYGDIWHQO37SY"`
+## Network Passphrase
 
-and set the following value in your config:
+Use the `NETWORK_PASSPHRASE` field to specify whether your node connects to the [testnet](liink) or the public network.  Your choices:
+* `NETWORK_PASSPHRASE="Test SDF Network ; September 2015"` 
+* `NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"`  
 
-`NODE_IS_VALIDATOR=true`
+For more about the Network Passphrase and how it works, check out the [glossary entry](link).
 
-If you don't include a `NODE_SEED` or set `NODE_IS_VALIDATOR=true`, you will still
-watch SCP and see all the data in the network but will not send validation messages.
+## Validating
 
-NB: if you run more than one node, set the `HOME_DOMAIN` common to those nodes using the `NODE_HOME_DOMAIN` property.
-Doing so will allow your nodes to be grouped correctly during [quorum set generation](#home-domains-array).
+By default, Stellar Core isn't set up to validate.  If you want your node to be a [Basic Validator](link) or a [Full Validator](liink), you need to configure it to do so, which means preparing it to take part in [SCP](link) and sign messages pledging that the network agrees to a particular transaction set.  
+
+Configuring a node to participate in SCP and sign messages is a three step process:
+
+* Create a keypair `stellar-core gen-seed`
+* Add `NODE_SEED="SD7DN..."` to your configuration file, where `SD7DN...` is the secret key from the keypair
+* Add `NODE_IS_VALIDATOR=true` to your configuration file
 
 If you want other validators to add your node to their quorum sets, you should also share your public key (GDMTUTQ... ) by publishing a stellar.toml file on your homedomain following specs laid out in [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md). 
 
-### Choosing your quorum set
+It's essential to store and safeguard your node's secret key: if someone else has access to it, they can send messages to the network and they will appear to originate from your node.  Each node you run should have its own secret key.
+
+If you run more than one node, set the `HOME_DOMAIN` common to those nodes using the `NODE_HOME_DOMAIN` property.
+Doing so will allow your nodes to be grouped correctly during [quorum set generation](#home-domains-array).
+
+## Choosing Your Quorum Set
+
+No matter what kind of node you run — Watcher, Basic Validator, Full Validator, or Archiver — you need to select a quorum set, which consists of validators (grouped by organization) that your node checks with to determine whether to apply a transaction set to a ledger.  If you want to know more about how qorum sets work, check this article about [how Stellar approaches quorums](https://www.stellar.org/developers-blog/why-quorums-matter-and-how-stellar-approaches-them).  If you want to see what a quorum set consisting of all the Tier 1 validators looks like — at tried and true setup — check out the [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg)  
 
 A good quorum set:
 * aligns with your organization’s priorities 
@@ -80,7 +84,7 @@ To generate a quorum set, stellar core:
 
 While this does not absolve you of all responsibility — you still need to pick trustworthy validators and keep an eye on them to ensure that they’re consistent and reliable — it does make your life easier, and reduces the chances for human error.
 
-#### Validator discovery
+### Validator discovery
 
 When you add a validating node to your quorum set, it’s generally because you trust the *organization* running the node: you trust SDF, not some anonymous Stellar public key. 
 
@@ -92,8 +96,9 @@ When you look at that list, you will discover that the most reliable organizatio
 
 One important thing to note: you need to either depend on exactly one entity OR have **at least 4 entities** for automatic quorum set configuration to work properly.  At least 4 is the better option.
 
-#### Home domains array
-To create your quorum set, stellar cores relies on two arrays of tables: `[[HOME_DOMAINS]]` and `[[VALIDATORS]]`.  Check out the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L372) to see those arrays in action.
+### Home domains array
+
+To create your quorum set, Stellar Core relies on two arrays of tables: `[[HOME_DOMAINS]]` and `[[VALIDATORS]]`.  Check out the [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L372) to see those arrays in action.
 
 `[[HOME_DOMAINS]]` defines a superset of validators: when you add nodes hosted by the same organization to your configuration, they share a home domain, and the information in the `[[HOME_DOMAINS]]` table, specifically the quality rating, will automatically apply to every one of those validators. 
 
@@ -120,7 +125,7 @@ QUALITY="LOW"
 
 </CodeExample>
 
-#### Validators array
+### Validators array
 
 For each node you would like to add to your quorum set, complete a `[[VALIDATORS]]` table with the following fields:  
 
@@ -164,7 +169,7 @@ ADDRESS="core.rando.com"
 
 </CodeExample>
 
-#### Validator quality
+### Validator quality
 
 `QUALITY` is a required field for each node you add to your quorum set.  Whether you specify it for a suite of nodes in `[[HOME_DOMAINS]]` or for a single node in `[[VALIDATORS]]`, it means the same thing, and you have the same three rating options: HIGH, MEDIUM, or LOW.
 
@@ -180,7 +185,7 @@ Choosing redundant nodes is good practice.  The archive requirement is programma
 
 **LOW** quality validators are nested below medium quality validators, and their combined weight is equivalent to a *single medium quality entity*.    Should they prove reliable over time, you can upgrade their rating to medium to give them a bigger role in your quorum set configuration. 
  
-#### Automatic quorum set generation
+### Automatic quorum set generation
 Once you add validators to your configuration, stellar core automatically generates a quorum set using the following rules:
 * Validators with the same home domain are automatically grouped together and given a threshold requiring a simple majority (2f+1)
 * Heterogeneous groups of validators are given a threshold assuming byzantine failure (3f+1)
@@ -191,27 +196,58 @@ Once you add validators to your configuration, stellar core automatically genera
 
 Here's a diagram depicting the nested quality levels and how they interact:
 
-![Diagram Automatic Quorum Set Generation](https://raw.githubusercontent.com/stellar/docs/master/guides/walkthroughs/assets/validator_complete.png)
+[IMAGE](link)
 
-
-#### Quorum and overlay network
+### Quorum and Overlay Network
 
 It is generally a good idea to give information to your validator on other validators that you rely on. This is achieved by configuring `KNOWN_PEERS` and `PREFERRED_PEERS` with the addresses of your dependencies.
 
-Additionally, configuring `PREFERRED_PEER_KEYS` with the keys from your quorum set might be a good idea to give priority to the nodes that allows you to reach consensus.
+Additionally, configuring `PREFERRED_PEER_KEYS` with the keys from your quorum set might be a good idea to give priority to the nodes that allow you to reach consensus.
 
 Without those settings, your validator depends on other nodes on the network to forward you the right messages, which is typically done as a best effort.
 
-#### Special considerations during quorum set updates
+### Updating and Coordinating Your Quorum Set
 
-Sometimes an organization needs to make changes that impact other's quorum sets:
+When you join the ranks of node operators, it's also important to join the conversation.  The best way to do that: get on the #validators channel on the [Stellar Keybase](link) and sign up for the [validators google group](link).  That way, you can and coordinate changes with the rest of the network.
 
-  * taking a validator down for long period of time
-  * adding new validators to their pool
+When you need to make changes to your validator or to your quorum set — say you take a validator down for maintenance or add new validators to your node's quorum set — it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
 
-In both cases, it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
+  * Don't remove too many nodes from your quorum set *before* the nodes are taken down.  If different validators remove different sets, the remaining sets may not overlap, which could cause network splits
+  
+  * Don't add too many nodes in your quorum set at the same time.  If not done carefully, the new nodes could overpower your configuration
 
-  * removing too many nodes from your quorum set *before* the nodes are taken down : if different people remove different sets the remaining sets may not overlap between nodes and may cause network splits
-  * adding too many nodes in your quorum set at the same time : if not done carefully can cause those nodes to overpower your configuration
+When you want to add or remove nodes, start by making changes to your own nodes' quorum sets, and then coordinate work with others to reflect those changes gradually.
 
-Recommended steps are for the entity that adds/removes nodes to do so first between their own nodes, and then have people reflect those changes gradually (over several rounds) in their quorum configuration.
+## History
+Stellar Core normally interacts with one or more history archive, which are configurable facilities where [Full Validators](link) and [Archivers](link) store flat files containing history checkpoints: bucket files and history logs. History archives are usually off-site commodity storage services such as Amazon S3, Google Cloud Storage, Azure Blob Storage, or custom SCP/SFTP/HTTP servers.  To find out how to *publish* a history archive, consult [Publishing History Archives](link).
+
+No matter what kind of node you're running, you should configure it to `get` history from one or more public archives.  You can configure any number of archives to download from: Stellar Core will automatically round-robin between them.
+
+When you're [choosing your quorum set](link), you should include [high-quality](link) nodes — which, by defintion, publish archives — and add the location for each node's archive in the `HISTORY` field in the [validators array](#validators-array).   
+
+You can also use command templates in the config file to specify additional archives you'd like to use and how to access them. The [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) 
+shows how to configure a history archive through command templates. 
+
+Note: if you notice a lot of errors related to downloading archives, you should check that all archives in your configuration are up to date.
+
+
+## Automatic Maintenance
+Some tables in Stellar Core's database act as a publishing queue for external systems such as Horizon and generate **meta data** for changes happening to the distributed ledger.
+
+If not managed properly those tables will grow without bounds. To avoid this, a built-in scheduler will delete data from old ledgers that are not used anymore by other parts of the system (external systems included).
+
+The settings that control the automatic maintenance behavior are: `AUTOMATIC_MAINTENANCE_PERIOD`,  `AUTOMATIC_MAINTENANCE_COUNT` and `KNOWN_CURSORS`.
+
+By default, Stellar Core will perform this automatic maintenance, so be sure to disable it until you have done the appropriate data ingestion in downstream systems (Horizon for example sometimes needs to reingest data).
+
+If you need to regenerate the metadata, the simplest way is to replay ledgers for the range you're interested in after (optionally) clearing the database with `newdb`.
+
+## Metadata Snapshots and Restoration
+Some deployments of Stellar Core and Horizon will want to retain metadata for the _entire history_ of the network. This metadata can be quite large and computationally expensive to regenerate anew by replaying ledgers in stellar-core from an empty initial database state, as described in the previous section.
+
+This can be especially costly if run more than once. For instance, when bringing a new node online. Or even if running a single node with Horizon, having already ingested the meta data _once_: a subsequent version of Horizon may have a schema change that entails re-ingesting it _again_.
+
+Some operators therefore prefer to shut down their stellar-core (and/or Horizon) processes and _take filesystem-level snapshots_ or _database-level dumps_ of the contents of Stellar Core's database and bucket directory, and/or Horizon's database, after metadata generation has occurred the first time. Such snapshots can then be restored, putting stellar-core and/or Horizon in a state containing metadata without performing full replay.
+
+Any reasonably recent state will do — if such a snapshot is a little old, stellar-core will replay ledgers from whenever the snapshot was taken to the current network state anyways — but this procedure can greatly accelerate restoring validator nodes, or cloning them to create new ones.
+
