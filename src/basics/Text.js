@@ -19,6 +19,9 @@ const textStyles = css`
 export const Text = styled.p`
   ${textStyles}
 `;
+export const MonoText = styled(Text).attrs({ as: "span" })`
+  font-family: ${FONT_FAMILY.monospace};
+`;
 
 export const Colored = styled.span`
   color: ${(props) => props.color};
