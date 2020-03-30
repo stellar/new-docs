@@ -5,6 +5,7 @@ import styled, { css } from "styled-components";
 import url from "url";
 import { Location } from "@reach/router";
 
+import { IS_PRODUCTION } from "constants/env";
 import { FONT_WEIGHT } from "constants/styles";
 
 const basicLinkStyles = css`
@@ -29,7 +30,7 @@ export const Link = ({ href, newTab, ...props }) => {
     ...props,
     ...(newTab && { rel: "noreferrer", target: "_blank" }),
   };
-  if (!href && process.env.NODE_ENV !== "production") {
+  if (!href && !IS_PRODUCTION) {
     // dev-only warning so links don't asplode
     // eslint-disable-next-line no-console
     console.warn(`A link was made with no href. Children is ${props.children}`);

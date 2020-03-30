@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import qs from "qs";
 import React, { createContext } from "react";
 
-import { FEATURE_FLAGS } from "constants/featureFlags";
+import { FEATURE_FLAGS } from "constants/env";
 
 export const FeatureFlagsContext = createContext({});
 
