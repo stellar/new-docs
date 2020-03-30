@@ -356,37 +356,66 @@ export const groupByCategory = (referenceDocs) => {
 
 const ensureArray = (maybeArray) =>
   Array.isArray(maybeArray) ? maybeArray : [maybeArray];
+const combineAdjacentStrings = (list) =>
+  list.reduce((accum, item) => {
+    const lastIndex = accum.length - 1;
+    if (typeof accum[lastIndex] === "string" && typeof item === "string") {
+      // eslint-disable-next-line no-param-reassign
+      accum[lastIndex] = `${accum[lastIndex]}${item}`;
+    } else {
+      accum.push(item);
+    }
+    return accum;
+  }, []);
 
 export const buildAttributesList = (mdxElements) => {
   const nodes = ensureArray(mdxElements);
-  console.assert(
-    nodes.length === 1,
-    "[NestedTable] There must only be 1 markdown list within <NestedTable>",
-  );
+  if (process.env.NODE_ENV !== "production") {
+    console.assert(
+      nodes.length === 1,
+      "[NestedTable] There must only be 1 markdown list within <NestedTable>",
+    );
+  }
   const list = nodes[0];
-  console.assert(
-    list.props.mdxType === "ul",
-    "[NestedTable] The markdown within <NestedTable> must be an unordered list",
-  );
+  if (process.env.NODE_ENV !== "production") {
+    console.assert(
+      list.props.mdxType === "ul",
+      "[NestedTable] The markdown within <NestedTable> must be an unordered list",
+    );
+  }
   const listItems = getListItems(list);
 
   return listItems.map(getAttributes);
 };
 
 const getListItems = (listElement) => {
-  const listChildren = listElement?.props.children || [];
+  const listChildren = ensureArray(listElement?.props.children || []);
   // Might need to recurse?
   return listChildren.filter((c) => c.props.mdxType === "li");
 };
 
 const getAttributes = (listItemElement) => {
-  const children = ensureArray(listItemElement.props.children);
-  console.assert(
-    children.length === 2,
-    `[NestedTable] Expected attribute list item to have 2 children, a string and 2 list items. Found ${children.length} instead.`,
+  // Some text elements parse weirdly, like `\_links`, and produce multiple
+  // strings. Make sure any string values are merged into a single string.
+  const children = combineAdjacentStrings(
+    ensureArray(listItemElement.props.children),
   );
-  const [name, subList] = listItemElement.props.children;
+  if (process.env.NODE_ENV !== "production") {
+    console.assert(
+      children.length === 2,
+      `[NestedTable] Expected attribute list item to have 2 children, a string and 2 list items. Found ${children.length} instead.`,
+    );
+  }
+  const [name, subList] = children;
   const [typeElement, descriptionElement] = getListItems(subList);
+  if (process.env.NODE_ENV !== "production" && !descriptionElement) {
+    // If we have an empty list item (i.e. a `-` with no trailing space), that
+    // appears to get obliterated and cause rendering to blow up. Blow up with a
+    // descrptive message instead. This was a pain in the ass to figure out.
+    throw new Error(
+      "No description found. This can happen if the type field (the first list item below an attribute) is left blank and trailing whitespace gets removed. Make sure your editor isn't removing whitespace on save.",
+    );
+  }
   const { description, childAttributes } = getDescriptionAndChildAttributes(
     descriptionElement,
   );
