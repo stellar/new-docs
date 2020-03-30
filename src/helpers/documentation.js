@@ -353,3 +353,70 @@ export const groupByCategory = (referenceDocs) => {
     return acc;
   }, {});
 };
+
+const ensureArray = (maybeArray) =>
+  Array.isArray(maybeArray) ? maybeArray : [maybeArray];
+
+export const buildAttributesList = (mdxElements) => {
+  const nodes = ensureArray(mdxElements);
+  console.assert(
+    nodes.length === 1,
+    "[NestedTable] There must only be 1 markdown list within <NestedTable>",
+  );
+  const list = nodes[0];
+  console.assert(
+    list.props.mdxType === "ul",
+    "[NestedTable] The markdown within <NestedTable> must be an unordered list",
+  );
+  const listItems = getListItems(list);
+
+  return listItems.map(getAttributes);
+};
+
+const getListItems = (listElement) => {
+  const listChildren = listElement?.props.children || [];
+  // Might need to recurse?
+  return listChildren.filter((c) => c.props.mdxType === "li");
+};
+
+const getAttributes = (listItemElement) => {
+  const children = ensureArray(listItemElement.props.children);
+  console.assert(
+    children.length === 2,
+    `[NestedTable] Expected attribute list item to have 2 children, a string and 2 list items. Found ${children.length} instead.`,
+  );
+  const [name, subList] = listItemElement.props.children;
+  const [typeElement, descriptionElement] = getListItems(subList);
+  const { description, childAttributes } = getDescriptionAndChildAttributes(
+    descriptionElement,
+  );
+
+  return {
+    name,
+    type: typeElement.props.children,
+    description,
+    childAttributes,
+  };
+};
+
+const getDescriptionAndChildAttributes = (descriptionElement) => {
+  const children = ensureArray(descriptionElement.props.children);
+
+  // If there's a ul at the end, those are the child attributes. Everything else
+  // is description. Description will be an array of multiple children if there's
+  // formatting, for example.
+  const childAttributesListElement =
+    children[children.length - 1]?.props?.mdxType === "ul"
+      ? children[children.length - 1]
+      : null;
+  const description = children.filter((x) => x !== childAttributesListElement);
+
+  const childAttributes = getListItems(childAttributesListElement).map(
+    getAttributes,
+  );
+
+  return {
+    description: description.length === 1 ? description[0] : description,
+    childAttributes: childAttributes.length > 0 ? childAttributes : null,
+  };
+};
