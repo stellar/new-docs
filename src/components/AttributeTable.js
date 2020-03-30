@@ -64,32 +64,37 @@ const SubAttributesEl = styled.ul`
   }
 `;
 
-const SubAttributes = ({ attributes }) => (
-  <Expansion
-    title="Show child attributes"
-    expandedModeTitle="Hide child attributes"
-    hasBorder
-    collapseIcon={<MinusIcon />}
-    expandIcon={<PlusIcon />}
-    style={{ marginTop: "1rem" }}
-  >
-    <SubAttributesEl>
-      {attributes.map(({ name, type, description, childAttributes }) => (
-        <ListItemEl key={name}>
-          <AttributeNameEl>{name}</AttributeNameEl>
-          <DataTypeTextEl>{type}</DataTypeTextEl>
-          <DescriptionEl>{description}</DescriptionEl>
-          {childAttributes && <SubAttributes attributes={childAttributes} />}
-        </ListItemEl>
-      ))}
-    </SubAttributesEl>
-  </Expansion>
+const AttributeList = ({ attributes }) => (
+  <>
+    {attributes.map(({ name, type, description, childAttributes }) => (
+      <ListItemEl key={name}>
+        <AttributeNameEl>{name}</AttributeNameEl>
+        <DataTypeTextEl>{type}</DataTypeTextEl>
+        <DescriptionEl>{description}</DescriptionEl>
+        {childAttributes && (
+          <Expansion
+            title="Show child attributes"
+            expandedModeTitle="Hide child attributes"
+            hasBorder
+            collapseIcon={<MinusIcon />}
+            expandIcon={<PlusIcon />}
+            style={{ marginTop: "1rem" }}
+          >
+            <SubAttributesEl>
+              <AttributeList attributes={childAttributes} />
+            </SubAttributesEl>
+          </Expansion>
+        )}
+      </ListItemEl>
+    ))}
+  </>
 );
-SubAttributes.propTypes = {
+
+AttributeList.propTypes = {
   attributes: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.node.isRequired,
-      type: PropTypes.node.isRequired,
+      type: PropTypes.node,
       description: PropTypes.node.isRequired,
       childAttributes: PropTypes.array,
     }),
@@ -104,14 +109,7 @@ export const AttributeTable = React.forwardRef(function AttributeTable(
 
   return (
     <El ref={ref} {...props}>
-      {attributes.map(({ name, type, description, childAttributes }) => (
-        <ListItemEl key={name}>
-          <AttributeNameEl>{name}</AttributeNameEl>
-          <DataTypeTextEl>{type}</DataTypeTextEl>
-          <DescriptionEl>{description}</DescriptionEl>
-          {childAttributes && <SubAttributes attributes={childAttributes} />}
-        </ListItemEl>
-      ))}
+      <AttributeList attributes={attributes} />
     </El>
   );
 });
