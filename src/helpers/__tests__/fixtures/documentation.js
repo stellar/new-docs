@@ -429,7 +429,7 @@ export const output = {
   },
 };
 
-// These were grabbed from running code by setting a breakpoint in NestedTable
+// These were grabbed from running code by setting a breakpoint in AttributeTable
 // before `buildAttributesList` and running:
 //
 //     stringifyChildren = x => {

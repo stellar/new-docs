@@ -6,7 +6,7 @@ order: 60
 import { Endpoint } from "components/Endpoint";
 import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 This endpoint returns the effects of a specific account and can be used in streaming mode.
 
@@ -20,7 +20,7 @@ Streaming mode allows you to listen for new effects for this account as they are
 
 </Endpoint>
 
-<NestedTable>
+<AttributeTable>
 
 - ARGUMENT
   - REQUIRED
@@ -38,7 +38,7 @@ Streaming mode allows you to listen for new effects for this account as they are
   - optional
   - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 
-</NestedTable>
+</AttributeTable>
 
 <CodeExample title="Example Request">
 

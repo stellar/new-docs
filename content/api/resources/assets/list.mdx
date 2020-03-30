@@ -6,7 +6,7 @@ order: 20
 import { Endpoint } from "components/Endpoint";
 import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 This endpoint lists all assets.
 
@@ -18,7 +18,7 @@ This endpoint lists all assets.
 
 </Endpoint>
 
-<NestedTable>
+<AttributeTable>
 
 - ARGUMENT
   - REQUIRED
@@ -39,7 +39,7 @@ This endpoint lists all assets.
   - optional
   - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 
-</NestedTable>
+</AttributeTable>
 
 <CodeExample title="Example Request">
 

@@ -373,14 +373,14 @@ export const buildAttributesList = (mdxElements) => {
   if (process.env.NODE_ENV !== "production") {
     console.assert(
       nodes.length === 1,
-      "[NestedTable] There must only be 1 markdown list within <NestedTable>",
+      "[AttributeTable] There must only be 1 markdown list within <AttributeTable>",
     );
   }
   const list = nodes[0];
   if (process.env.NODE_ENV !== "production") {
     console.assert(
       list.props.mdxType === "ul",
-      "[NestedTable] The markdown within <NestedTable> must be an unordered list",
+      "[AttributeTable] The markdown within <AttributeTable> must be an unordered list",
     );
   }
   const listItems = getListItems(list);
@@ -403,7 +403,7 @@ const getAttributes = (listItemElement) => {
   if (process.env.NODE_ENV !== "production") {
     console.assert(
       children.length === 2,
-      `[NestedTable] Expected attribute list item to have 2 children, a string and 2 list items. Found ${children.length} instead.`,
+      `[AttributeTable] Expected attribute list item to have 2 children, a string and 2 list items. Found ${children.length} instead.`,
     );
   }
   const [name, subList] = children;

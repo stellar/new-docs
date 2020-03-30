@@ -4,11 +4,11 @@ order: 20
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 These responses are specific to how a Horizon server is set up and how transactions should be formed.
 
-<NestedTable>
+<AttributeTable>
 
 - STATUS CODE
   - VALUE
@@ -29,7 +29,7 @@ These responses are specific to how a Horizon server is set up and how transacti
   - 406
   - If you are encountering this error it means that either: 1) Horizon has not received a confirmation from the Stellar Core server that the transaction you are trying to submit to the network was included in a ledger in a timely manner, or 2) Horizon has not sent a response to a reverse-proxy before a specified amount of time has elapsed. The former case may happen because there was no room for your transaction for 3 consecutive ledgers. This is because Stellar Core removes each submitted transaction from a queue. To solve this you can: 1) keep resubmitting the same transaction (with the same sequence number) and wait until it finally is added to a new ledger, or 2) increase the fee in order to prioritize the transaction.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse title="Example Response for a 'Transaction Malformed' Status Code">
 

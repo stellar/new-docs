@@ -4,11 +4,11 @@ order: 10
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 When Horizon returns information about a ledger, it uses the following format:
 
-<NestedTable>
+<AttributeTable>
 
 - ATTRIBUTE
   - DATA TYPE
@@ -62,7 +62,7 @@ When Horizon returns information about a ledger, it uses the following format:
   - string
   - A base64 encoded string of the raw `LedgerHeader` xdr struct for this ledger.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse>
 

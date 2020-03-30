@@ -4,11 +4,11 @@ order: 30
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 These are Result Codes that communicate success (200) or failure (400) at the operation level: no source account, too many subentries, etc.
 
-<NestedTable>
+<AttributeTable>
 
 - RESULT CODE
   - STELLAR PROTOCOL CODE
@@ -26,7 +26,7 @@ These are Result Codes that communicate success (200) or failure (400) at the op
   - opNOT_SUPPORTED
   - The operation is not supported at this time.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse title="Example Response for an 'op_no_source_account' Result Code">
 

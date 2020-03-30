@@ -96,7 +96,7 @@ SubAttributes.propTypes = {
   ).isRequired,
 };
 
-export const NestedTable = React.forwardRef(function NestedTable(
+export const AttributeTable = React.forwardRef(function AttributeTable(
   { children, ...props },
   ref,
 ) {
@@ -116,6 +116,6 @@ export const NestedTable = React.forwardRef(function NestedTable(
   );
 });
 
-NestedTable.propTypes = {
+AttributeTable.propTypes = {
   children: PropTypes.node.isRequired,
 };
