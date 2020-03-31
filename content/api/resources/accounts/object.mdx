@@ -4,11 +4,11 @@ order: 10
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 When Horizon returns information about an account, it uses the following format:
 
-<NestedTable>
+<AttributeTable>
 
 - ATTRIBUTE
   - DATA TYPE
@@ -84,7 +84,7 @@ When Horizon returns information about an account, it uses the following format:
   - The public keys and associated weights that can be used to authorize transactions for this account. Used for multi-sig.
     - public_key
       - string
-      - **REMOVED in 0.17.0: USE** `key` **INSTEAD.**
+      - **REMOVED in 0.17.0: USE `key` INSTEAD.**
     - weight
       - number
       - The numerical weight of a signer. Used to determine if a transaction meets the `threshold` requirements.
@@ -107,7 +107,7 @@ When Horizon returns information about an account, it uses the following format:
   - object
   - An array of account data fields.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse>
 

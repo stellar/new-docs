@@ -4,7 +4,7 @@ order: 50
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 In the Stellar network, transactions are encoded using a standardized protocol called [External Data Representation](https://en.wikipedia.org/wiki/External_Data_Representation) (XDR).
 
@@ -16,7 +16,7 @@ When you request a transaction, Horizon returns some data about the transaction 
 
 You can decode this XDR in the Stellar Laboratory’s [XDR Viewer](https://www.stellar.org/laboratory#xdr-viewer).
 
-<NestedTable>
+<AttributeTable>
 
 - ATTRIBUTE
   - TYPE
@@ -34,7 +34,7 @@ You can decode this XDR in the Stellar Laboratory’s [XDR Viewer](https://www.s
   - string
   - The fees associated with the transaction encoded in XDR.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse title="Example Transaction Response with XDR">
 

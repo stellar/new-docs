@@ -6,7 +6,7 @@ order: 40
 import { Endpoint } from "components/Endpoint";
 import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 This endpoint returns successful operations in a specific ledger.
 
@@ -18,7 +18,7 @@ This endpoint returns successful operations in a specific ledger.
 
 </Endpoint>
 
-<NestedTable>
+<AttributeTable>
 
 - ARGUMENT
   - REQUIRED
@@ -42,7 +42,7 @@ This endpoint returns successful operations in a specific ledger.
   - optional
   - Set to `transactions` to include the transactions which created each of the operations in the response.
 
-</NestedTable>
+</AttributeTable>
 
 <CodeExample title="Example Request">
 

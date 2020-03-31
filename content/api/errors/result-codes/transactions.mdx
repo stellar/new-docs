@@ -4,11 +4,11 @@ order: 10
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 These are Result Codes that communicate success (200) or failure (400) at the transaction level: bad sequence numbers, insufficient balances, insufficient fees, etc.
 
-<NestedTable>
+<AttributeTable>
 
 - RESULT CODE
   - STELLAR PROTOCOL CODE
@@ -26,7 +26,7 @@ These are Result Codes that communicate success (200) or failure (400) at the tr
   - txTOO_LATE
   - The ledger closeTime was after the maxTime.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse title="Example Response for a 'tx_bad_seq' Result Code">
 

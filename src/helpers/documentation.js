@@ -375,3 +375,104 @@ export const groupByCategory = (referenceDocs) => {
     return acc;
   }, {});
 };
+
+const ensureArray = (maybeArray) =>
+  Array.isArray(maybeArray) ? maybeArray : [maybeArray];
+const combineAdjacentStrings = (list) =>
+  list.reduce((accum, item) => {
+    const lastIndex = accum.length - 1;
+    if (typeof accum[lastIndex] === "string" && typeof item === "string") {
+      // eslint-disable-next-line no-param-reassign
+      accum[lastIndex] = `${accum[lastIndex]}${item}`;
+    } else {
+      accum.push(item);
+    }
+    return accum;
+  }, []);
+
+/**
+ * buildAttributesList accepts React children and returns an attributes object.
+ * @param {array} mdxElements An array of React elements. It expects to find an
+ * unordered list parsed from MDX in the format of:
+ * - ATTRIBUTES
+ *   - DATA TYPE
+ *   - DESCRIPTION
+ *     - SUB ATTRIBUTES
+ *       - DATA TYPE
+ *       - DESCRIPTION
+ * This can nest to an arbitrary depth. If a slot should be left empty, make sure
+ * to put some whitespace, or the list item gets dropped completely
+ * @returns {array} An array of objects with keys { name, type, description,
+ * childAttributes }. `childAttributes` recurses, and is also an array of objects
+ * with the same keys.
+ */
+export const buildAttributesList = (mdxElements) => {
+  const nodes = ensureArray(mdxElements);
+  if (process.env.NODE_ENV !== "production") {
+    console.assert(
+      nodes.length === 1,
+      "[AttributeTable] There must only be 1 markdown list within <AttributeTable>",
+    );
+  }
+  const list = nodes[0];
+  if (process.env.NODE_ENV !== "production") {
+    console.assert(
+      list.props.mdxType === "ul",
+      "[AttributeTable] The markdown within <AttributeTable> must be an unordered list",
+    );
+  }
+  const listItems = getListItems(list);
+
+  return listItems.map(getAttributes);
+};
+
+const getListItems = (listElement) => {
+  const listChildren = ensureArray(listElement?.props.children || []);
+  // Might need to recurse?
+  return listChildren.filter((c) => c.props.mdxType === "li");
+};
+
+const getAttributes = (listItemElement) => {
+  // Some text elements parse weirdly, like `\_links`, and produce multiple
+  // strings. Make sure any string values are merged into a single string.
+  const children = combineAdjacentStrings(
+    ensureArray(listItemElement.props.children),
+  );
+  if (process.env.NODE_ENV !== "production") {
+    console.assert(
+      children.length === 2,
+      `[AttributeTable] Expected attribute list item to have 2 children, a string and 2 list items. Found ${children.length} instead.`,
+    );
+  }
+  const [name, subList] = children;
+  const [typeElement, descriptionElement] = getListItems(subList);
+  if (process.env.NODE_ENV !== "production" && !descriptionElement) {
+    // If we have an empty list item (i.e. a `-` with no trailing space), that
+    // appears to get obliterated and cause rendering to blow up. Blow up with a
+    // descriptive message instead. This was a pain in the ass to figure out.
+    throw new Error(
+      "No description found. This can happen if the type field (the first list item below an attribute) is left blank and trailing whitespace gets removed. Make sure your editor isn't removing whitespace on save.",
+    );
+  }
+
+  const descChildren = ensureArray(descriptionElement.props.children);
+  const lastIndex = descChildren.length - 1;
+
+  // If there's a ul at the end, those are the child attributes. Everything else
+  // is description. Description will be an array of multiple children if there's
+  // formatting, for example.
+  const childAttributesList =
+    descChildren[lastIndex]?.props?.mdxType === "ul"
+      ? descChildren[lastIndex]
+      : null;
+  const description = descChildren.filter((x) => x !== childAttributesList);
+
+  const childAttributes = getListItems(childAttributesList).map(getAttributes);
+
+  return {
+    name,
+    type: typeElement.props.children,
+    description: description.length === 1 ? description[0] : description,
+    childAttributes: childAttributes.length > 0 ? childAttributes : null,
+  };
+};

@@ -6,7 +6,7 @@ order: 20
 import { Endpoint } from "components/Endpoint";
 import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 The strict receive payment path endpoint lists the paths a payment can take based on the amount of an asset you want the recipient to receive. The destination asset amount stays constant, and the type and amount of an asset sent varies based on offers in the order books.
 
@@ -20,7 +20,7 @@ For this search, Horizon loads a list of assets available to the sender (based o
 
 </Endpoint>
 
-<NestedTable>
+<AttributeTable>
 
 - ARGUMENT
   - REQUIRED
@@ -44,7 +44,7 @@ For this search, Horizon loads a list of assets available to the sender (based o
   - required
   - The amount of the destination asset that should be received.
 
-</NestedTable>
+</AttributeTable>
 
 <CodeExample title="Example Request">
 

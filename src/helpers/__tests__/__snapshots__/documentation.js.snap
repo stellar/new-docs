@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`buildAttributesList Handles empty type fields 1`] = `
+Array [
+  Object {
+    "childAttributes": null,
+    "description": "DESCRIPTION",
+    "name": "ATTRIBUTE",
+    "type": "DATA TYPE",
+  },
+  Object {
+    "childAttributes": null,
+    "description": "a string description",
+    "name": "base attr 1",
+    "type": "string",
+  },
+  Object {
+    "childAttributes": Array [
+      Object {
+        "childAttributes": null,
+        "description": "The weight required for a valid transaction including the Allow Trust and Bump Sequence operations.",
+        "name": "low_threshold",
+        "type": "number",
+      },
+    ],
+    "description": "this one has more attributes",
+    "name": "base attr 2",
+    "type": "object",
+  },
+  Object {
+    "childAttributes": Array [
+      Object {
+        "childAttributes": null,
+        "description": Object {
+          "props": Object {
+            "children": Array [
+              "top level bold ",
+              Object {
+                "props": Object {
+                  "children": "with code",
+                  "mdxType": "inlineCode",
+                  "originalType": "inlineCode",
+                  "parentName": "strong",
+                },
+              },
+              " in the middle",
+            ],
+            "mdxType": "strong",
+            "originalType": "strong",
+            "parentName": "li",
+          },
+        },
+        "name": "attr 1",
+        "type": "string",
+      },
+      Object {
+        "childAttributes": null,
+        "description": "A hash of characters dependent on the signer type.",
+        "name": "attr 2",
+        "type": "string",
+      },
+      Object {
+        "childAttributes": Array [
+          Object {
+            "childAttributes": null,
+            "description": "A normal Stellar public key.",
+            "name": "child attr 1",
+            "type": undefined,
+          },
+          Object {
+            "childAttributes": null,
+            "description": Array [
+              "some nonsense ",
+              Object {
+                "props": Object {
+                  "children": "with boldness",
+                  "mdxType": "em",
+                  "originalType": "em",
+                  "parentName": "li",
+                },
+              },
+            ],
+            "name": "child attr 2",
+            "type": undefined,
+          },
+          Object {
+            "childAttributes": null,
+            "description": Object {
+              "props": Object {
+                "children": Array [
+                  "top level bold ",
+                  Object {
+                    "props": Object {
+                      "children": "with code",
+                      "mdxType": "inlineCode",
+                      "originalType": "inlineCode",
+                      "parentName": "strong",
+                    },
+                  },
+                  " in the middle",
+                ],
+                "mdxType": "strong",
+                "originalType": "strong",
+                "parentName": "li",
+              },
+            },
+            "name": "child attr 3",
+            "type": undefined,
+          },
+        ],
+        "description": "this has child attributes",
+        "name": "attr 3",
+        "type": "string",
+      },
+    ],
+    "description": "some description",
+    "name": "base attr 3",
+    "type": "array of objects",
+  },
+]
+`;
+
+exports[`buildAttributesList parses _links correctly 1`] = `
+Array [
+  Object {
+    "childAttributes": null,
+    "description": "DESCRIPTION",
+    "name": "ATTRIBUTES",
+    "type": Array [
+      "DATA TYPE",
+    ],
+  },
+  Object {
+    "childAttributes": null,
+    "description": "Provides links for navigating to other pages or to parents and children.",
+    "name": "_links",
+    "type": Array [
+      "array",
+    ],
+  },
+  Object {
+    "childAttributes": null,
+    "description": "Present when querying an endpoint that responds with a collection of records.",
+    "name": "_embedded",
+    "type": Array [
+      "array",
+    ],
+  },
+]
+`;
