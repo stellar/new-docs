@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { throttle } from "lodash";
+
+import { DOM_TARGETS } from "constants/domNodes";
+
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
 
 export const Context = React.createContext();
@@ -29,7 +32,7 @@ export const ScrollRouter = ({ children }) => {
 
   // Scroll listener
   React.useEffect(() => {
-    const contentDom = document.querySelector("#content-column");
+    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
     const handler = throttle(() => {
       // If we haven't scrolled at least 20 pixels, just bail.
       if (Math.abs(contentDom.scrollY - lastScrollPosition) < 20) {

@@ -15,6 +15,7 @@ import {
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
+import { DOM_TARGETS } from "constants/domNodes";
 
 import { slugify } from "helpers/slugify";
 import { smoothScrollTo } from "helpers/dom";
@@ -287,7 +288,12 @@ const Documentation = ({ data, pageContext, location }) => {
                 </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
-            <Column xs={9} md={7} isIndependentScroll id="content-column">
+            <Column
+              xs={9}
+              md={7}
+              isIndependentScroll
+              id={`${DOM_TARGETS.contentColumn}`}
+            >
               {center}
               <Footer />
             </Column>

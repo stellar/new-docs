@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import { DOM_TARGETS } from "constants/domNodes";
+
 import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
@@ -24,7 +26,7 @@ export const Provider = ({ children }) => {
   );
 
   React.useEffect(() => {
-    const contentDom = document.querySelector("#content-column");
+    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
 
     const handler = () => {
       // If we haven't scrolled at least 20 pixels, just bail.
