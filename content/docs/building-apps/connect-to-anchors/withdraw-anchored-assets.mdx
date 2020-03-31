@@ -1,11 +1,16 @@
 ---
-title: Withdraw anchored assets
-order: 40
+title: Withdraw Anchored Assets
+order: 30
 ---
 
 import { CodeExample } from "components/CodeExample";
 
-After we’ve had some fun with our new asset at some point likely we’re going to want to perform this process in reverse, take an anchored asset and withdraw it out of Stellar to another blockchain or a bank account. For that we turn to `./methods/depositAsset.ts`. Create that file and pop this in.
+At this point, you should have a [basic wallet](link) that can handle [custom assets](link), and you should have [enabled deposits](link) and used the SDF-maintained testnet [Anchor Reference Implementation](link) to get some test tokens into your wallet.  After you’ve had some fun with your new asset, it's time to learn to perform this process in reverse, and that's what we'll do here: set your wallet up to handle withdrawals.
+
+In a live situation, this is the step when a user takes a Stellar-based token and redeems it with an Anchor for the underlying asset it represents.  It's how they'd move money off the network and back into their bank account, for instance. 
+
+## Create Withdraw Method
+For that we turn to `./methods/withdrawAsset.ts`. Create that file and pop this in.
 
 <CodeExample>
 
