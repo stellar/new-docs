@@ -287,7 +287,7 @@ const Documentation = ({ data, pageContext, location }) => {
                 </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
-            <Column xs={9} md={7} isIndependentScroll>
+            <Column xs={9} md={7} isIndependentScroll id="content-column">
               {center}
               <Footer />
             </Column>
