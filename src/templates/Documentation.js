@@ -68,7 +68,9 @@ const Topics = styled.ul`
 const RightNavEl = styled(StickyEl)`
   font-size: 0.875rem;
   line-height: 1rem;
-  margin: 1em 0;
+  padding-top: 4.25rem;
+  overflow-y: hidden;
+  margin: 0;
 
   li:before {
     display: none;
@@ -285,7 +287,7 @@ const Documentation = ({ data, pageContext, location }) => {
                 </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
-            <Column xs={9} md={7}>
+            <Column xs={9} md={7} isIndependentScroll>
               {center}
               <Footer />
             </Column>

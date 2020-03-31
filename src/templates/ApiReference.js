@@ -349,7 +349,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   </AbsoluteNavFooterEl>
                 </SideNav>
               </SideNavColumn>
-              <Column xs={9} xl={18}>
+              <Column xs={9} xl={18} isIndependentScroll>
                 {referenceDocs.map(
                   ({ body, id, parent, title, githubLink }) => (
                     <ReferenceSection
@@ -363,7 +363,6 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 )}
                 <Footer />
               </Column>
-              <Column xs={4} xl={9} />
             </OneSizeRow>
           </Container>
         </LayoutBase>

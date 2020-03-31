@@ -140,6 +140,7 @@ export const NavItem = styled.div`
 export const StickyEl = styled.div`
   width: 100%;
   height: 100vh;
+  overflow-y: scroll;
   position: sticky;
   top: 0;
   z-index: 3;

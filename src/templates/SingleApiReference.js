@@ -174,7 +174,7 @@ const SingleApiReference = React.memo(function ApiReference({
                 ))}
               </SideNav>
             </SideNavColumn>
-            <Column xs={9} xl={18}>
+            <Column xs={9} xl={18} isIndependentScroll>
               <section>
                 <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
                 <NestedRow>
@@ -184,7 +184,6 @@ const SingleApiReference = React.memo(function ApiReference({
               </section>
               <Footer />
             </Column>
-            <Column xs={4} xl={9} />
           </OneSizeRow>
         </Container>
       </LayoutBase>

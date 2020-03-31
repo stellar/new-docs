@@ -107,6 +107,13 @@ const ColumnEl = styled.div`
   ${({ md }) => getColStyle(COL_SIZES.md, md)};
   ${({ lg }) => getColStyle(COL_SIZES.lg, lg)};
   ${({ xl }) => (xl ? getColStyle(COL_SIZES.xl, xl) : "")};
+
+  ${({ isIndependentScroll }) =>
+    isIndependentScroll &&
+    css`
+      overflow-y: scroll;
+      height: 100vh;
+    `}
 `;
 
 export const Column = (props) => {
