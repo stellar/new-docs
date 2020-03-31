@@ -1,13 +1,19 @@
 ---
 title: Handle Custom Assets
-order: 20
+order: 60
 ---
 
 import { CodeExample } from "components/CodeExample";
 
-> In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed the [Build a Basic Wallet](link) and [Make XLM Payments](link).
+> In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed [Build a Basic Wallet](link) and [Make XLM Payments](link).
 
 [View pay boilerplate code on GitHub][1]
+
+## What's a Custom Asset?
+Stellar allows anyone to easily issue an asset, and all assets can be held, transferred, and traded just like XLM, the network token.  Every asset *other* than XLM exists on the network in the form of [trustlines](link): an asset holder explicitly agrees to allow a balance of a specific token issued by a specific issuing account by creating a persistent ledger entry tied to the holding account.  You can find out more in the guide to [creating custom assets](link).
+
+Each trustline increases the user's [base reserve](link) by 0.5 XLM, and in this tutorial, we'll go over how to set up your wallet to create trustlines and manage the base reserve on behalf of a user. 
+
 
 ## Add Trustlines Button
 To enable custom asset handling, we need to modify three files and create one new one. Let’s start with our modifications. First up the `./events/render.tsx` file. We need to add a button for creating these new trustlines!
@@ -171,7 +177,7 @@ if (!/xlm/gi.test(instructions[1]))
 
 </CodeExample>
 
-This change allows us to indicate a specific asset code we’d like use to make a payment, and triggers an additional prompt to set the issuer for that asset if it’s not the native XLM.
+This change allows us to indicate a specific asset code we’d like use to make a payment and triggers an additional prompt to set the issuer for that asset if it’s not the native XLM.
 
 <CodeExample>
 
@@ -192,7 +198,7 @@ asset: instructions[3] ? new Asset(instructions[1], instructions[3]) : Asset.nat
 
 </CodeExample>
 
-The final noteworthy change is a ternary operation that switches our payment asset between the native XLM and a custom asset based off of responses to our prompt. Essentially, if `instructions[3]` exists—meaning there is an issuer—use that issuer and custom token as the asset for the payment. Otherwise, just use the native `Asset`.
+The final noteworthy change is a ternary operation that switches our payment asset between the native XLM and a custom asset based off of responses to our prompt. Essentially, if `instructions[3]` exists — meaning there is an issuer — use that issuer and custom token as the asset for the payment. Otherwise, just use the native `Asset`.
 
 The final changes are in the `wallet.ts` itself and tie together all the other updates as well as pull in the new `trustAsset` method.
 
@@ -404,5 +410,4 @@ So there we have it! The ability to accept and pay with custom assets on Stellar
 
 [1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/pay
 [3]:	https://github.com/tyvdh/stellar-demo-wallet/tree/trustline
-[4]:	/3%20Make%20Use%20of%20Trustlines/1%20Trustlines.md
-[5]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/0%20Intro.md
+
