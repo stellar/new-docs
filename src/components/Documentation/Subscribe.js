@@ -65,8 +65,7 @@ const EmailInput = styled.input.attrs({
   name: "EMAIL",
   "aria-label": "mce-EMAIL",
 })`
-  width: 100%;
-  max-width: 18.18rem;
+  width: 20rem;
   transition: border ${CSS_TRANSITION_SPEED.default} ease;
   color: ${PALETTE.black80};
   background: none;
