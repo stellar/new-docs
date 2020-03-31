@@ -193,6 +193,11 @@ export const Code = styled.code`
   border: solid 0.5px ${PALETTE.white60};
   background-color: ${PALETTE.white80};
   padding: 0 0.25rem;
+
+  ${H2},${H3} & {
+    font-size: 1rem;
+    vertical-align: middle;
+  }
 `;
 export const Preformatted = styled.pre`
   &&& {
