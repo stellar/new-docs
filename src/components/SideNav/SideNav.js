@@ -128,7 +128,7 @@ const NestedNav = ({
               key={index}
               items={subnavItem.items}
               title={subnavItem.title}
-              relativePath={subnavItem.parent && subnavItem.parent.relativePath}
+              relativePath={subnavItem.parent?.relativePath}
               isFirstItem={
                 subnavItem.order === 0 &&
                 subnavItem.parent &&

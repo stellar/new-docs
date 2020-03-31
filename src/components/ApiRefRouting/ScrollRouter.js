@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { throttle } from "lodash";
+
+import { DOM_TARGETS } from "constants/domNodes";
+
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
 
 export const Context = React.createContext();
@@ -27,35 +30,36 @@ export const ScrollRouter = ({ children }) => {
     smoothScrollTo(elementMap.get(route).current, { duration: 0 });
   }, []);
 
-  const handler = throttle(() => {
-    // If we haven't scrolled at least 20 pixels, just bail.
-    if (Math.abs(window.scrollY - lastScrollPosition) < 20) {
-      return;
-    }
-    isScrollingDown.current = window.scrollY > lastScrollPosition;
-    lastScrollPosition = window.scrollY;
-
-    const newActiveNode = findActiveNode(
-      trackedElementsRef.current,
-      isScrollingDown.current,
-    );
-    // If we've found an active node and it's not the same one as we had
-    // before, update the route.
-    if (newActiveNode && newActiveNode !== activeNodeRef.current) {
-      activeNodeRef.current = newActiveNode;
-      window.history.replaceState(null, null, routeMap.get(newActiveNode));
-    }
-  }, 60);
-
   // Scroll listener
   React.useEffect(() => {
-    window.addEventListener("scroll", handler);
+    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
+    const handler = throttle(() => {
+      // If we haven't scrolled at least 20 pixels, just bail.
+      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 20) {
+        return;
+      }
+      isScrollingDown.current = contentDom.scrollY > lastScrollPosition;
+      lastScrollPosition = contentDom.scrollY;
+
+      const newActiveNode = findActiveNode(
+        trackedElementsRef.current,
+        isScrollingDown.current,
+      );
+      // If we've found an active node and it's not the same one as we had
+      // before, update the route.
+      if (newActiveNode && newActiveNode !== activeNodeRef.current) {
+        activeNodeRef.current = newActiveNode;
+        window.history.replaceState(null, null, routeMap.get(newActiveNode));
+      }
+    }, 60);
+
+    contentDom.addEventListener("scroll", handler);
     handler();
 
     return () => {
-      window.removeEventListener("scroll", handler);
+      contentDom.removeEventListener("scroll", handler);
     };
-  }, [handler]);
+  }, []);
 
   // Tracked sections
   const trackElement = React.useCallback((ref, route) => {

@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import { DOM_TARGETS } from "constants/domNodes";
+
 import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
@@ -24,9 +26,11 @@ export const Provider = ({ children }) => {
   );
 
   React.useEffect(() => {
+    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
+
     const handler = () => {
       // If we haven't scrolled at least 20 pixels, just bail.
-      if (Math.abs(window.scrollY - lastScrollPosition) < 20) {
+      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 20) {
         return;
       }
       // A tracked element becomes "active" if it enters the part of the screen
@@ -34,18 +38,19 @@ export const Provider = ({ children }) => {
       // offset from the top enough that it's definitely in view.
       // If we're scrolling up, then we're watching for elements to come down
       // from the top. If scrolling down, watching about the midpoint.
-      const isScrollingDown = window.scrollY > lastScrollPosition;
-      lastScrollPosition = window.scrollY;
+      const isScrollingDown = contentDom.scrollY > lastScrollPosition;
+      lastScrollPosition = contentDom.scrollY;
 
       const newActiveNode = findActiveNode(trackedElements, isScrollingDown);
       if (newActiveNode && newActiveNode !== activeNode) {
         setActiveNode(newActiveNode);
       }
     };
-    window.addEventListener("scroll", handler);
+
+    contentDom.addEventListener("scroll", handler);
     handler();
     return () => {
-      window.removeEventListener("scroll", handler);
+      contentDom.removeEventListener("scroll", handler);
     };
   }, [activeNode, backwardsElements, trackedElements]);
 

@@ -9,6 +9,7 @@ import { MDXProvider } from "@mdx-js/react";
 
 import { CSS_TRANSITION_SPEED, FONT_WEIGHT, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
+import { DOM_TARGETS } from "constants/domNodes";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
@@ -174,7 +175,12 @@ const SingleApiReference = React.memo(function ApiReference({
                 ))}
               </SideNav>
             </SideNavColumn>
-            <Column xs={9} xl={18}>
+            <Column
+              xs={9}
+              xl={18}
+              isIndependentScroll
+              id={`${DOM_TARGETS.contentColumn}`}
+            >
               <section>
                 <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
                 <NestedRow>
@@ -184,7 +190,6 @@ const SingleApiReference = React.memo(function ApiReference({
               </section>
               <Footer />
             </Column>
-            <Column xs={4} xl={9} />
           </OneSizeRow>
         </Container>
       </LayoutBase>
