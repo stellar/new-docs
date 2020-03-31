@@ -1,12 +1,14 @@
 ---
 title: Deposit anchored assets
-order: 30
+order: 20
 ---
+
 
 import { CodeExample } from "components/CodeExample";
 
-Alright, with our entity in hand, the TOML file loaded into a `@Prop` on our component, we’re ready to begin the initial deposit of their asset into our wallet. Let’s create `./methods/depositAsset.ts`.
+This section of the tutorial takes the [basic wallet](link) with [trustlines](link) and [anchor connections](link) enabled and adds the ability to initiate in-app deposits with an Anchor.  If you have all that ready, and the stellar.toml file is loaded into a `@Prop` on your component, you’re ready to begin the initial deposit of their asset into our wallet. Let’s create `./methods/depositAsset.ts`.
 
+## Create Deposit Method
 <CodeExample>
 
 ```ts
@@ -141,8 +143,9 @@ export default async function depositAsset(e: Event) {
 
 </CodeExample>
 
-It’s a lot of code but keep in mind this is all we need to completely interoperate with financial infrastructure completely foreign to the Stellar ecosystem. That’s a big ask and in \~130 lines of code it’s a modern day miracle!
+It’s a lot of code, but keep in mind this is everything we need to completely interoperate with financial infrastructure foreign to the Stellar ecosystem, which is a big ask and in \~130 lines of code.  It’s a modern day miracle!
 
+## Currency Code and Issuer Prompt
 First things first install the missing `axios` package.
 
 <CodeExample>
@@ -153,7 +156,7 @@ npm i -D axios
 
 </CodeExample>
 
-We’ll skip the rest of the top import stuff as you’re well aware of what those are and we’ve installed and walked through anything noteworthy here already.
+We’ll skip the rest of the top import stuff as you’re well aware of what that is, and we’ve installed and walked through anything noteworthy here already.
 
 <CodeExample>
 
@@ -177,12 +180,13 @@ export default async function depositAsset(e: Event) {
 
 </CodeExample>
 
-Only thing here we haven’t seen before is the prompt selection of the currency code and issuer we’d like to deposit. To get this we send the `this.setPrompt` a final options array argument, in this case the values from `this.toml.CURRENCIES`. This will open the prompt with a select\<\>options input field rather than a text input field.
+Only thing here we haven’t seen before is the prompt selection of the currency code and issuer we’d like to deposit. To get this, we send the `this.setPrompt` a final options array argument, in this case the values from `this.toml.CURRENCIES`. This will open the prompt with a select\<\>options input field rather than a text input field.
 
 ![][image-1]
 
 That selection will come back as a string in the form of `{code}:{issuer}` so we split that by the `:` so we’ll have a nice tidy array of `[{code}, {issuer}]` to use later.
 
+## Check Trustline
 <CodeExample>
 
 ```ts
@@ -200,6 +204,7 @@ if (hasCurrency === -1)
 
 Once we’ve got the currency we’re dealing with we need to check if we have a trustline for that asset setup for our account. The anchor won’t be able to deposit their token into our account if we don’t have a trustline set for it first. So we get the balance from the `this.account.state` and then inspect the `balances` to see if that currency exists. If it doesn’t we trigger the `this.trustAsset` method with the arguments set to automatically add that trustline to our account.
 
+## Get Info
 <CodeExample>
 
 ```ts
@@ -211,8 +216,9 @@ console.log(info)
 
 </CodeExample>
 
-Once our account is setup it’s time to start asking the anchor some questions about itself and the features it supports. We get at that info by calling a GET on the `TRANSFER_SERVER/info` url from the anchor’s TOML file. Easy enough, for our purposes today we won’t make use of any of this data but in here will be fee and feature information which you display to the UI for your wallet user.
+Once our account is setup, it’s time to start asking the Anchor some questions about itself and the features it supports. We get at that info by calling a GET on the `TRANSFER_SERVER/info` url from the anchor’s TOML file. We won’t make use of any of this data right now, but this is where you'd find fee and feature information which to display in you UI for your wallet user to review.
 
+## Create Authenticated User Session
 <CodeExample>
 
 ```ts
@@ -238,10 +244,11 @@ console.log(auth)
 
 </CodeExample>
 
-This next call is actually a part of SEP-0010 which allows us to verify ownership of our public key for use in the actual deposit to ensure the request is coming from a valid entity. You don’t want me issuing deposit requests on your account so to get around that you sign a dummy authentication transaction and send it to the server which will respond with a JWT token which will be used to verify all further API calls to the anchor.
+This call is actually a part of [SEP-0010](link), which allows us to verify ownership of a user's public key so the Anchor knows the deposit request is coming from a valid entity. You don’t want someone else issuing deposit requests on your account, so to prove you control the Stellar account request the deposit, you sign a dummy authentication transaction and send it to the Anchor's web auth server.  The server responds with a JWT token, which will be used to verify all further API calls to the anchor.  For more info on how this works, check out the user authetication from an [Anchor's point of view](link).
 
-The endpoint for this JWT endpoint is noted by the `WEB_AUTH_ENDPOINT` on the TOML file. The first request is a GET request with a public `account` param which will send back an unsigned transaction for that account. In response you’ll sign that transaction and POST it back. If the signature checks out the success response will contain an Authorization Bearer header JWT which you’ll want to store and use for all future interactions with the anchor.
+The endpoint for creating an authenticated user session is specified the `WEB_AUTH_ENDPOINT` on an Anchor's stellar.toml file. The first thing our wallet does is make a GET request with a public `account` param which will send back an unsigned Stellar transaction for that account that has in invalide sequence number, so it doesn't actually *do* anything when submitted to the network. In response you’ll sign that transaction on behalf of the user and POST it back. If the signature checks out, the success response will contain an Authorization Bearer header JWT which you’ll want to store and use for all future interactions with the Anchor.
 
+## Initiate Deposit
 <CodeExample>
 
 ```ts
@@ -265,7 +272,7 @@ console.log(interactive)
 
 </CodeExample>
 
-This call is our first little bit of magic. Once we setup our `multipart/form-data` entry values we can POST them to the `${this.toml.TRANSFER_SERVER}/transactions/withdraw/interactive` endpoint along with our `auth` Authorization Bearer `auth` token we acquired earlier. The response to this call will contain a special url for interacting directly with the anchor providing the data they need to accept our deposit asset.
+This call is our first little bit of magic. Once we setup our `multipart/form-data` entry values we can POST them to the `${this.toml.TRANSFER_SERVER}/transactions/withdraw/interactive` endpoint along with our `auth` Authorization Bearer `auth` token we acquired earlier. The response to this call will contain a special url that allows a usder to interact directly with the Anchor to provide the data required for a deposit.
 
 <CodeExample>
 
@@ -279,8 +286,9 @@ This call is our first little bit of magic. Once we setup our `multipart/form-da
 
 </CodeExample>
 
-In a moment we’ll open that `url` in an iframe, popup or new tab. Once we’ve sent that request there will be a pending transaction request we can inspect at the `${this.toml.TRANSFER_SERVER}/transactions` route.
+In a moment we’ll open that `url` in an iframe, popup, or new tab. Once we’ve sent that request, there will be a pending transaction request we can inspect at the `${this.toml.TRANSFER_SERVER}/transactions` route.
 
+## Check Transaction Status
 <CodeExample>
 
 ```ts
@@ -334,8 +342,9 @@ This request should return the deposit status for the request we just made.
 
 </CodeExample>
 
-Once we’re certain we’ve got a `"status": "incomplete",` ready for interacting with we can go back to the `interactive.url` route and open that to begin filling out the deposit requirements.
+Once we’re certain we’ve got a `"status": "incomplete",` which is the correct response since we haven't served the user the URL that allows them to initiate a deposit, we know everything's working, so we can go back to the `interactive.url` route and open that to begin filling out the deposit requirements.
 
+## Serve the Anchor Webapp
 <CodeExample>
 
 ```ts
@@ -351,9 +360,11 @@ Once we’re certain we’ve got a `"status": "incomplete",` ready for interacti
 
 </CodeExample>
 
-We’ll opt for a popup. When you first open that url it’s likely the anchor will ask for some level of KYC data; Name, email, address, verification docs, (bank statements, passport/license, etc). Our demo server will ask for name and email. After passing that screen you’ll enter the amount of asset you’re looking to deposit on the next screen. So for instance if you enter $500, once that deposit clears (on this demo it will clear automatically) 500 of the anchor token **less any fees** will be deposited to our wallet. In our case 498.95, (1.05 is taken out in fees for a $500 deposit).
+We’ll opt for a popup. When you first open that url, it’s likely the anchor will ask for some level of KYC data from the user: name, email, address, verification docs like bank statements, passport, or license, etc. The SDF demo server we're using — which is hooked up to the testnet — will ask for name and email. 
 
-If popups are disabled we should kill the loader and show that error in the UI.
+After passing that screen your user enters the amount of an asset they'd like to deposit on the next screen. If, for instance, a user enters $500, once that deposit clears — and on this demo it clears automatically — the Anchor will credit the user's wallet with 500 of the token **less any fees**. In our case, the user ends up with 498.95: 1.05 is taken out in fees for a $500 deposit.
+
+If popups are disabled, we should kill the loader and show that error in the UI.
 
 <CodeExample>
 
@@ -386,17 +397,13 @@ If popups are disabled we should kill the loader and show that error in the UI.
 
 </CodeExample>
 
-SEP-0024 allows for two methods of communicating between the anchor window and the wallet. A POST JSON message and postMessage, one for when you have a server and the other when you’re dealing with a client side service. We don’t have a server so we opt for the `urlBuilder.searchParams.set('callback', 'postMessage')`. With that set we can setup a window `'message'` event listener which will fire whenever the anchor popup window sends a `postMessage` to our popup `window`. From there we just listen to the popup message until `transaction.status` equals `'completed'` at which point our deposit has succeeded and we can `this.updateAccount()` and kill the loader. Otherwise if the transaction is still in a pending status we’ll wait 1 second before reloading the anchor popup window and checking again.
+## Checking Deposit Status
+SEP-0024 allows specifies two methods for further communication between the anchor window and the wallet: a POST JSON for when you have a server, message and postMessage for when you have a client-side service. We don’t have a server, so we opt for the `urlBuilder.searchParams.set('callback', 'postMessage')`. With that set, we can setup a window `'message'` event listener which will fire whenever the anchor popup window sends a `postMessage` to our popup `window`. From there we just listen to the popup message until `transaction.status` equals `'completed'`.  At that point our deposit has succeeded, and we can `this.updateAccount()` and kill the loader. If the transaction is still in a pending status we’ll wait 1 second before reloading the anchor popup window and checking again.
 
 If at any point during this flow there’s an error we should catch that, kill the loader, and display the error to the user.
 
 Whew!
 \*wipes sweat from brow then hands on sleeves
 Nice work! “Just like that” we’ve deposited an anchored asset into our wallet! We can now make payments with that asset to anyone else who has a trustline enabled for this asset.
-
-[Prev][1] — [Next][2]
-
-[1]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/2%20Setup%20for%20Anchored%20Assets.md
-[2]:	/4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/4%20Withdraw%20Anchored%20Asset.md
 
 [image-1]:	https://tyler.link/y419zR+
