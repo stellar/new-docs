@@ -368,6 +368,22 @@ const combineAdjacentStrings = (list) =>
     return accum;
   }, []);
 
+/**
+ * buildAttributesList accepts React children and returns an attributes object.
+ * @param {array} mdxElements An array of React elements. It expects to find an
+ * unordered list parsed from MDX in the format of:
+ * - ATTRIBUTES
+ *   - DATA TYPE
+ *   - DESCRIPTION
+ *     - SUB ATTRIBUTES
+ *       - DATA TYPE
+ *       - DESCRIPTION
+ * This can nest to an arbitrary depth. If a slot should be left empty, make sure
+ * to put some whitespace, or the list item gets dropped completely
+ * @returns {array} An array of objects with keys { name, type, description,
+ * childAttributes }. `childAttributes` recurses, and is also an array of objects
+ * with the same keys.
+ */
 export const buildAttributesList = (mdxElements) => {
   const nodes = ensureArray(mdxElements);
   if (process.env.NODE_ENV !== "production") {
@@ -411,40 +427,29 @@ const getAttributes = (listItemElement) => {
   if (process.env.NODE_ENV !== "production" && !descriptionElement) {
     // If we have an empty list item (i.e. a `-` with no trailing space), that
     // appears to get obliterated and cause rendering to blow up. Blow up with a
-    // descrptive message instead. This was a pain in the ass to figure out.
+    // descriptive message instead. This was a pain in the ass to figure out.
     throw new Error(
       "No description found. This can happen if the type field (the first list item below an attribute) is left blank and trailing whitespace gets removed. Make sure your editor isn't removing whitespace on save.",
     );
   }
-  const { description, childAttributes } = getDescriptionAndChildAttributes(
-    descriptionElement,
-  );
 
-  return {
-    name,
-    type: typeElement.props.children,
-    description,
-    childAttributes,
-  };
-};
-
-const getDescriptionAndChildAttributes = (descriptionElement) => {
-  const children = ensureArray(descriptionElement.props.children);
+  const descChildren = ensureArray(descriptionElement.props.children);
+  const lastIndex = descChildren.length - 1;
 
   // If there's a ul at the end, those are the child attributes. Everything else
   // is description. Description will be an array of multiple children if there's
   // formatting, for example.
-  const childAttributesListElement =
-    children[children.length - 1]?.props?.mdxType === "ul"
-      ? children[children.length - 1]
+  const childAttributesList =
+    descChildren[lastIndex]?.props?.mdxType === "ul"
+      ? descChildren[lastIndex]
       : null;
-  const description = children.filter((x) => x !== childAttributesListElement);
+  const description = descChildren.filter((x) => x !== childAttributesList);
 
-  const childAttributes = getListItems(childAttributesListElement).map(
-    getAttributes,
-  );
+  const childAttributes = getListItems(childAttributesList).map(getAttributes);
 
   return {
+    name,
+    type: typeElement.props.children,
     description: description.length === 1 ? description[0] : description,
     childAttributes: childAttributes.length > 0 ? childAttributes : null,
   };
