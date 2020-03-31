@@ -106,7 +106,8 @@ const NextUpEl = styled.div`
   font-weight: ${FONT_WEIGHT.bold};
   font-size: 0.875rem;
   text-transform: uppercase;
-  background-color: rgba(62, 27, 219, 0.02);
+  border-radius: 2px;
+  background-color: rgba(62, 27, 219, 0.04);
   padding: 1em;
 `;
 
