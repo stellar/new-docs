@@ -2,6 +2,8 @@ import memoize from "memoize-one";
 import { TweenLite } from "gsap/TweenLite";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
+import { DOM_TARGETS } from "constants/domNodes";
+
 // We have to include this so that Webpack doesn't tree-shake the plugin out of
 // the production bundle.
 // eslint-disable-next-line
@@ -9,8 +11,9 @@ const scrollPlugin = ScrollToPlugin;
 
 export const smoothScrollTo = (node, options = {}) => {
   const { offset = 0, duration = 0.55 } = options;
+  const targetDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
 
-  TweenLite.to(window, duration, {
+  TweenLite.to(targetDom, duration, {
     scrollTo: {
       y: node.offsetTop + offset,
     },
