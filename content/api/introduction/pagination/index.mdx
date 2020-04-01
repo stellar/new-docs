@@ -4,6 +4,7 @@ order: 20
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
 To make it possible to explore the millions of records for resources like transactions and operations, Horizon paginates the data it returns for collection-based endpoints.
@@ -37,6 +38,31 @@ To move between pages of a collection of records, use the links in the `next` an
       - Returns an array of records.
 
 </AttributeTable>
+
+<CodeExample title="Example Request">
+
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+server
+.transactions()
+.call()
+.then(function(resp) {
+  // page 1
+  console.log(resp)
+  return resp.next()
+})
+.then(function(resp) {
+  // page 2
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
+```
+
+</CodeExample>
 
 <ExampleResponse title="Example Paginated Response">
 

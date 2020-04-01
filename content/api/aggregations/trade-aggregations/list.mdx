@@ -75,24 +75,32 @@ curl "https://horizon.stellar.org/trade_aggregations?base_asset_type=native&coun
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var base = new StellarSdk.Asset.native();
-var counter = new StellarSdk.Asset("EURT", "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S");
-var startTime = 1582156800000;
-var endTime = 1582178400000;
-var resolution = 3600000;
-var offset = 0;
+var base = new StellarSdk.Asset.native()
+var counter = new StellarSdk.Asset("EURT", "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S")
+var startTime = 1582156800000
+var endTime = 1582178400000
+var resolution = 3600000
+var offset = 0
 
-server.tradeAggregation(base, counter, startTime, endTime, resolution, offset)
-  .call()
-  .then(function (tradeAggregation) {
-    console.log(tradeAggregation);
-  })
-  .catch(function (err) {
-    console.log(err);
-  })
+server
+.tradeAggregation(
+  base,
+  counter,
+  startTime,
+  endTime,
+  resolution,
+  offset,
+)
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

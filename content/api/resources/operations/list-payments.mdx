@@ -54,17 +54,18 @@ curl "https://horizon.stellar.org/payments?limit=3"
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.payments()
-  .call()
-  .then(function (paymentResults) {
-    console.log(paymentResults.records)
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.payments()
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

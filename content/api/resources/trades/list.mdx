@@ -67,17 +67,22 @@ curl "https://horizon.stellar.org/trades?base_asset_type=credit_alphanum4&base_a
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.trades()
-  .call()
-  .then(function (tradesResult) {
-    console.log(tradesResult.records);
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.trades()
+.forAssetPair(
+  new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'),
+  new StellarSdk.Asset.native(),
+)
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

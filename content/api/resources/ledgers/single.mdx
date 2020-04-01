@@ -32,22 +32,23 @@ The single ledger endpoint provides information on a specific ledger.
 <CodeExample title="Example Request">
 
 ```curl
-curl "https://horizon-testnet.stellar.org/ledgers/69859"
+curl "https://horizon.stellar.org/ledgers/69859"
 ```
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.ledgers()
-  .ledger('69858')
-  .call()
-  .then(function(ledgerResult) {
-    console.log(ledgerResult)
-  })
-  .catch(function(err) {
-    console.error(err)
-  })
+server
+.ledgers()
+.ledger('69858')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

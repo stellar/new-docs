@@ -52,6 +52,27 @@ For this search, Horizon loads a list of assets available to the sender (based o
 curl "https://horizon.stellar.org/paths/strict-receive?source_assets=CNY:GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX&destination_asset_type=credit_alphanum4&destination_asset_code=BB1&destination_asset_issuer=GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN&destination_amount=5"
 ```
 
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+server
+.strictReceivePaths(
+  [
+    new StellarSdk.Asset('CNY', 'GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX')
+  ],
+  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
+  '5',
+)
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">

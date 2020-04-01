@@ -48,17 +48,19 @@ curl "https://horizon.stellar.org/assets?asset_code=CNY&limit=3"
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.assets()
-  .call()
-  .then(function (result) {
-    console.log(result.records);
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.assets()
+.forCode('CNY')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

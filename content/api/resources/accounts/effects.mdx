@@ -47,19 +47,19 @@ curl "https://horizon.stellar.org/accounts/GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPN
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.effects()
-  .forAccount("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE")
-  .call()
-  .then(function (effectResults) {
-    // page 1
-    console.log(effectResults.records)
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.effects()
+.forAccount('GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

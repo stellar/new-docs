@@ -45,22 +45,18 @@ curl "https://horizon.stellar.org/transactions?limit=3"
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.transactions()
-  .call()
-  .then(function (transactionResult) {
-    //page 1
-    console.log(transactionResult.records);
-    return transactionResult.next();
-  })
-  .then(function (transactionResult) {
-    console.log(transactionResult.records);
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.transactions()
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>
