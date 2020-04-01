@@ -252,18 +252,17 @@ server
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var paymentHandler = function (paymentResponse) {
-  console.log(paymentResponse);
-};
+var paymentHandler = function(resp) {
+  console.log(resp)
+}
 
-var es = server.payments()
-  .forAccount("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE")
-  .cursor('now')
-  .stream({
-    onmessage: paymentHandler
-  })
+var es = server
+.payments()
+.forAccount('GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE')
+.cursor('now')
+.stream({onmessage: paymentHandler})
 ```
 
 </CodeExample>

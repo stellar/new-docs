@@ -220,17 +220,16 @@ server
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var tradesHandler = function (tradeResponse) {
-  console.log(tradeResponse);
-};
+var tradesHandler = function(resp) {
+  console.log(resp)
+}
 
-var es = server.trades()
-  .cursor('now')
-  .stream({
-  onmessage: tradesHandler
-})
+var es = server
+.trades()
+.cursor('now')
+.stream({onmessage: tradesHandler})
 ```
 
 </CodeExample>

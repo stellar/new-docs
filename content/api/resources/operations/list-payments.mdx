@@ -189,17 +189,16 @@ server
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var paymentHandler = function (paymentResponse) {
-  console.log(paymentResponse);
-};
+var paymentHandler = function(resp) {
+  console.log(resp)
+}
 
-var es = server.payments()
-  .cursor('now')
-  .stream({
-    onmessage: paymentHandler
-  })
+var es = server
+.payments()
+.cursor('now')
+.stream({onmessage: paymentHandler})
 ```
 
 </CodeExample>

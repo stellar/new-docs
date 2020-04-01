@@ -149,17 +149,16 @@ server
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var offerHandler = function (offerResponse) {
-  console.log(offerResponse);
-};
+var offerHandler = function(resp) {
+  console.log(resp)
+}
 
-var es = server.offers('accounts', 'GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K')
-  .cursor('now')
-  .stream({
-    onmessage: offerHandler
-  })
+var es = server
+.offers('accounts', 'GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K')
+.cursor('now')
+.stream({onmessage: offerHandler})
 ```
 
 </CodeExample>
