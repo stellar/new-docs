@@ -50,7 +50,8 @@ export const H3 = styled.h3`
   ${headingBase};
   font-size: 1.5rem;
   padding: 0;
-  margin: 1.22rem 0 0;
+  margin: 1.5rem 0 0;
+  line-height: 1.5;
 `;
 export const H4 = styled.h4`
   ${headingBase};
@@ -256,6 +257,7 @@ export const HorizontalRule = styled.hr`
   margin: 2rem 0;
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border};
+  color: ${PALETTE.white60};
 `;
 
 export const Sup = styled(({ children, ...props }) => {
