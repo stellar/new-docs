@@ -173,7 +173,7 @@ export const TableHeadCell = styled.th`
   color: ${({ theme }) => theme.text};
   padding: 0;
   min-width: 10rem;
-  line-height: 3;
+  line-height: 1.5;
   vertical-align: middle;
 `;
 export const TableBody = styled.tbody`

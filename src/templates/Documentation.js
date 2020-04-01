@@ -29,7 +29,7 @@ import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
-import { EditIcon } from "basics/Icons";
+import { EditIcon, CheckmarkIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
@@ -51,7 +51,7 @@ import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const contentId = "content";
-const { h1: H1, h2: H2, a: StyledLink } = components;
+const { h1: H1, h2: H2, a: StyledLink, td: TD } = components;
 
 const Topics = styled.ul`
   list-style-type: none;
@@ -162,6 +162,17 @@ const componentMapping = {
       <H2>{children}</H2>
     </TrackedContent>
   ),
+  // eslint-disable-next-line react/prop-types
+  td: ({ children }) => {
+    if (children === ":heavy_check_mark:") {
+      return (
+        <TD>
+          <CheckmarkIcon />
+        </TD>
+      );
+    }
+    return <TD>{children}</TD>;
+  },
 };
 
 const Documentation = ({ data, pageContext, location }) => {
