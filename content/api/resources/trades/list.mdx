@@ -228,6 +228,10 @@ var tradesHandler = function(resp) {
 
 var es = server
 .trades()
+.forAssetPair(
+  new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'),
+  new StellarSdk.Asset.native(),
+)
 .cursor('now')
 .stream({onmessage: tradesHandler})
 ```

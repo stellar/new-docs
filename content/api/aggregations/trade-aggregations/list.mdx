@@ -182,3 +182,35 @@ server
 ```
 
 </ExampleResponse>
+
+<CodeExample title="JavaScript Streaming Example">
+
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+var callback = function(resp) {
+  console.log(resp)
+}
+
+var base = new StellarSdk.Asset.native()
+var counter = new StellarSdk.Asset("EURT", "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S")
+var startTime = 1582156800000
+var endTime = 1582178400000
+var resolution = 3600000
+var offset = 0
+
+var es = server
+.tradeAggregation(
+  base,
+  counter,
+  startTime,
+  endTime,
+  resolution,
+  offset,
+)
+.cursor('now')
+.stream({onmessage: callback})
+```
+
+</CodeExample>

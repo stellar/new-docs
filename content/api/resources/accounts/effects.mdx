@@ -194,7 +194,7 @@ server
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var effectHandler = function(resp) {
+var callback = function(resp) {
   console.log(resp)
 }
 
@@ -202,7 +202,7 @@ var es = server
 .effects()
 .forAccount('GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE')
 .cursor('now')
-.stream({onmessage: effectHandler})
+.stream({onmessage: callback})
 ```
 
 </CodeExample>

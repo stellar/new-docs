@@ -183,14 +183,14 @@ server
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var operationHandler = function(resp) {
+var callback = function(resp) {
   console.log(resp)
 }
 
 var es = server
 .operations()
 .cursor('now')
-.stream({onmessage: operationHandler})
+.stream({onmessage: callback})
 ```
 
 </CodeExample>

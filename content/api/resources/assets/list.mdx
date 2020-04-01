@@ -1,5 +1,5 @@
 ---
-title: List All Trades
+title: List All Assets
 order: 20
 ---
 
@@ -142,3 +142,22 @@ server
 ```
 
 </ExampleResponse>
+
+<CodeExample title="JavaScript Streaming Example">
+
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+var callback = function(resp) {
+  console.log(resp)
+}
+
+var es = server
+.assets()
+.forCode('CNY')
+.cursor('now')
+.stream({onmessage: callback})
+```
+
+</CodeExample>

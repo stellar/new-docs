@@ -235,14 +235,14 @@ server
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var txHandler = function(resp) {
+var tradesHandler = function(resp) {
   console.log(resp)
 }
 
 var es = server
 .transactions()
 .cursor('now')
-.stream({onmessage: txHandler})
+.stream({onmessage: tradesHandler})
 ```
 
 </CodeExample>

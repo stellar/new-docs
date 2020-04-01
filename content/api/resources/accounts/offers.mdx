@@ -51,7 +51,8 @@ var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
 server
-.offers('accounts', 'GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K')
+.offers()
+.forAccount('GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K')
 .call()
 .then(function(resp) {
   console.log(resp)
@@ -151,14 +152,15 @@ server
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var offerHandler = function(resp) {
+var callback = function(resp) {
   console.log(resp)
 }
 
 var es = server
-.offers('accounts', 'GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K')
+.offers()
+.forAccount('GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K')
 .cursor('now')
-.stream({onmessage: offerHandler})
+.stream({onmessage: callback})
 ```
 
 </CodeExample>
