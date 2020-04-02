@@ -248,31 +248,31 @@ except (BadRequestError, BadResponseError) as err:
 What exactly happened there? Let’s break it down.
 
 1. Confirm that the account ID you are sending to actually exists by loading the associated account
-   data from the Stellar network. Everything will actually be OK if you skip this step, but
-   it gives you an opportunity to avoid making a transaction that will inevitably fail. 
+data from the Stellar network. Everything will actually be OK if you skip this step, but
+it gives you an opportunity to avoid making a transaction that will inevitably fail. 
     
     <CodeExample>
 
-    ```js
-    server.loadAccount(destinationId)
-      .then(function(account) { /* validate the account */ })
-    ```
+  ```js
+  server.loadAccount(destinationId)
+    .then(function(account) { /* validate the account */ })
+  ```
 
-    ```java
-    server.accounts().account(destination);
-    ```
+  ```java
+  server.accounts().account(destination);
+  ```
 
-    ```go
-        if _, err := horizon.DefaultTestNetClient.LoadAccount(destination); err != nil {
-            panic(err)
-        }
-    ```
+  ```go
+      if _, err := horizon.DefaultTestNetClient.LoadAccount(destination); err != nil {
+          panic(err)
+      }
+  ```
 
-    ```python
-    server.load_account(destination_id)
-    ```
+  ```python
+  server.load_account(destination_id)
+  ```
 
-    </CodeExample>
+  </CodeExample>
 
 2. Load data for the account you are sending from. An account can only perform one transaction at a
    time and has something called a [**sequence
@@ -280,7 +280,7 @@ What exactly happened there? Let’s break it down.
    transactions. A transaction’s sequence number needs to match the account’s sequence number, so
    you need to get the account’s current sequence number from the network.
 
-    <CodeExample>
+<CodeExample>
 
     ```js
     .then(function() {
@@ -305,7 +305,10 @@ What exactly happened there? Let’s break it down.
 3. Start building a transaction. This requires an account object, not just an account ID, because
    it will increment the account’s sequence number.
 
-    <CodeExample>
+   
+   
+   
+   <CodeExample>
 
     ```js
     var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
