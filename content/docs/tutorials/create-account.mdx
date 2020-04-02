@@ -3,6 +3,8 @@ title: Create an Account
 order: 10
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 _Before we get started with working with Stellar in code, consider going through the following
 examples using the [Stellar Laboratory](https://www.stellar.org/laboratory/). The lab allows you
 create accounts, fund accounts on the Stellar test network, build transactions, run any operation,
@@ -15,7 +17,7 @@ Stellar uses public key cryptography to ensure that every transaction is secure:
 
 Before creating an account, you need to generate your own keypair:
 
-<code-example name="Generate Keypair">
+<CodeExample>
 
 ```js
 // create a completely new and unique pair of keys
@@ -75,7 +77,7 @@ print(f"Public Key: {pair.public_key}")
 # Public Key: GAG7SXULMNWCW6LX42JKZOZRA2JJXQT23LYY32OXA6XECUQG7RZTQJHO
 ```
 
-</code-example>
+</CodeExample>
 
 ## Create Account
 A valid keypair, however, does not an account make: in order to prevent unused accounts from bloating the ledger, Stellar requires accounts to hold a [minumum balance](link) of 1 XLM before they actually exist.  Until it gets a bit of funding, your keypair doesn't warrant space on the ledger.
@@ -85,7 +87,7 @@ On the [public network](link), where live users make live transactions, your nex
 To do that, send Friendbot the public key you created. It’ll create and fund a new
 account using that public key as the account ID.
 
-<code-example name="Create a Test Account">
+<CodeExample>
 
 ```js
 // The SDK does not have tools for creating test accounts, so you'll have to
@@ -166,12 +168,12 @@ else:
     print(f"ERROR! Response: \n{response.text}")
 ```
 
-</code-example>
+</CodeExample>
 
 Now for the last step: Getting the account’s details and checking its balance. Accounts can carry
 multiple balances — one for each type of currency they hold.
 
-<code-example name="Getting account details">
+<CodeExample>
 
 ```js
 const server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
@@ -234,7 +236,7 @@ for balance in account['balances']:
     print(f"Type: {balance['asset_type']}, Balance: {balance['balance']}")
 ```
 
-</code-example>
+</CodeExample>
 
 Now that you’ve got an account, you can [start sending and receiving payments](transactions.md).
 
