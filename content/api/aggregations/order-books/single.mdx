@@ -56,17 +56,21 @@ curl "https://horizon.stellar.org/order_book?selling_asset_type=native&buying_as
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.orderbook(new StellarSdk.Asset.native(), new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'))
-  .call()
-  .then(function(resp) {
-    console.log(resp);
-  })
-  .catch(function(err) {
-    console.log(err);
-  })
+server
+.orderbook(
+  new StellarSdk.Asset.native(),
+  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
+)
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>
@@ -160,17 +164,19 @@ server.orderbook(new StellarSdk.Asset.native(), new StellarSdk.Asset('BB1', 'GD5
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var orderbookHandler = function (orderbookResponse) {
-  console.log(orderbookResponse);
-};
+var callback = function(resp) {
+  console.log(resp)
+}
 
-var es = server.orderbook(new StellarSdk.Asset.native(), new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'))
-  .cursor('now')
-  .stream({
-    onmessage: orderbookHandler
-  })
+var es = server
+.orderbook(
+  new StellarSdk.Asset.native(),
+  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
+)
+.cursor('now')
+.stream({onmessage: callback})
 ```
 
 </CodeExample>

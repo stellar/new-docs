@@ -48,19 +48,19 @@ curl "https://horizon.stellar.org/ledgers/27147222/transactions?limit=2"
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.transactions()
-  .forLedger("27147222")
-  .limit("2")
-  .call()
-  .then(function (accountResults) {
-    console.log(accountResults.records)
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.transactions()
+.forLedger('27147222')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

@@ -45,19 +45,19 @@ curl "https://horizon.stellar.org/operations/121693057904021505/effects"
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.effects()
-  .forOperation("121693057904021505")
-  .call()
-  .then(function (effectResults) {
-    // page 1
-    console.log(effectResults.records)
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.effects()
+.forOperation('121693057904021505')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>

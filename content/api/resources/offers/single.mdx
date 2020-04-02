@@ -35,6 +35,22 @@ The single offer endpoint provides information on a specific offer.
 curl "https://horizon.stellar.org/offers/165563085"
 ```
 
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+server
+.offers()
+.offer('165563085')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">

@@ -45,22 +45,18 @@ curl "https://horizon.stellar.org/transactions?limit=3"
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.transactions()
-  .call()
-  .then(function (transactionResult) {
-    //page 1
-    console.log(transactionResult.records);
-    return transactionResult.next();
-  })
-  .then(function (transactionResult) {
-    console.log(transactionResult.records);
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.transactions()
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>
@@ -237,17 +233,16 @@ server.transactions()
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var txHandler = function (txResponse) {
-  console.log(txResponse);
-};
+var tradesHandler = function(resp) {
+  console.log(resp)
+}
 
-var es = server.transactions()
-  .cursor('now')
-  .stream({
-      onmessage: txHandler
-  })
+var es = server
+.transactions()
+.cursor('now')
+.stream({onmessage: tradesHandler})
 ```
 
 </CodeExample>

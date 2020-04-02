@@ -66,6 +66,22 @@ When filtering by buying or selling arguments, you must use a combination of `se
 curl "https://horizon.stellar.org/offers?selling_asset_type=credit_alphanum4&selling_asset_issuer=GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX&selling_asset_code=USD&limit=3"
 ```
 
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+server
+.offers()
+.selling(new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'))
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">
@@ -184,3 +200,22 @@ curl "https://horizon.stellar.org/offers?selling_asset_type=credit_alphanum4&sel
 ```
 
 </ExampleResponse>
+
+<CodeExample title="JavaScript Streaming Example">
+
+```JavaScript
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
+
+var callback = function(resp) {
+  console.log(resp)
+}
+
+var es = server
+.offers()
+.selling(new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'))
+.cursor('now')
+.stream({onmessage: callback})
+```
+
+</CodeExample>

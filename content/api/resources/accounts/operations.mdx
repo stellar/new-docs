@@ -53,18 +53,19 @@ curl "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW3
 ```
 
 ```JavaScript
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require('stellar-sdk')
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-server.operations()
-  .forAccount("GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA")
-  .call()
-  .then(function (operationsResult) {
-    console.log(operationsResult.records)
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+server
+.operations()
+.forAccount('GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA')
+.call()
+.then(function(resp) {
+  console.log(resp)
+})
+.catch(function(err) {
+  console.error(err)
+})
 ```
 
 </CodeExample>
@@ -191,18 +192,17 @@ server.operations()
 
 ```JavaScript
 var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var server = new StellarSdk.Server('https://horizon.stellar.org')
 
-var operationHandler = function (operationResponse) {
-    console.log(operationResponse);
-};
+var callback = function(resp) {
+  console.log(resp)
+}
 
-var es = server.operations()
-    .forAccount("GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA")
-    .cursor('now')
-    .stream({
-        onmessage: operationHandler
-    })
+var es = server
+.operations()
+.forAccount('GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA')
+.cursor('now')
+.stream({onmessage: callback})
 ```
 
 </CodeExample>
