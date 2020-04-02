@@ -251,7 +251,7 @@ What exactly happened there? Let’s break it down.
 data from the Stellar network. Everything will actually be OK if you skip this step, but
 it gives you an opportunity to avoid making a transaction that will inevitably fail. 
     
-    <CodeExample>
+<CodeExample>
 
   ```js
   server.loadAccount(destinationId)
@@ -272,7 +272,7 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
   server.load_account(destination_id)
   ```
 
-  </CodeExample>
+</CodeExample>
 
 2. Load data for the account you are sending from. An account can only perform one transaction at a
    time and has something called a [**sequence
@@ -296,7 +296,7 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
     source_account = server.load_account(source_key.public_key)
     ```
 
-    </CodeExample>
+</CodeExample>
 
     The SDK will automatically increment the account’s sequence number when you build a
     transaction, so you won’t need to retrieve this information again if you want to perform a
@@ -305,10 +305,7 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 3. Start building a transaction. This requires an account object, not just an account ID, because
    it will increment the account’s sequence number.
 
-   
-   
-   
-   <CodeExample>
+<CodeExample>
 
     ```js
     var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -332,13 +329,13 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
     )
     ```
 
-    </CodeExample>
+</CodeExample>
 
 4. Add the payment operation to the account. Note that you need to specify the type of asset you
    are sending: Stellar’s network currency is the [lumen](link), but you can send any asset issued on the network.  We'll cover sending non-lumen assets [below](#transacting-in-other-currencies). For now, though, we’ll stick to
    lumens, which are called “native” assets in the SDK:
 
-    <CodeExample>
+<CodeExample>
 
     ```js
     .addOperation(StellarSdk.Operation.payment({
@@ -369,7 +366,7 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
     .append_payment_op(destination=destination_id, amount="10", asset_code="XLM")
     ```
 
-    </CodeExample>
+</CodeExample>
 
     You should also note that the amount is a string rather than a number. When working with
     extremely small fractions or large values, [floating point math can introduce small
@@ -381,7 +378,7 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
    [**memo,**](../concepts/transactions.md#memo) to a transaction. Stellar doesn’t do anything with
    this data, but you can use it for any purpose you’d like.  Many exchanges require memos for incoming transactions because they use a single Stellar account for all their users, and rely on the memo to differentiate between internal user accounts.
 
-    <CodeExample name="Add a Memo">
+<CodeExample title="Add a Memo">
 
     ```js
     .addMemo(StellarSdk.Memo.text('Test Transaction'))
@@ -399,13 +396,13 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
     .add_text_memo("Test Transaction")
     ```
 
-    </CodeExample>
+</CodeExample>
 
 6. Now that the transaction has all the data it needs, you have to cryptographically sign it using
    your secret key. This proves that the data actually came from you and not someone impersonating
    you.
 
-    <CodeExample>
+<CodeExample>
 
     ```js
     transaction.sign(sourceKeys);
@@ -424,11 +421,11 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
     transaction.sign(source_key)
     ```
 
-    </CodeExample>
+</CodeExample>
 
 7. And finally, submit it to the Stellar network!
 
-    <CodeExample>
+<CodeExample>
 
     ```js
     server.submitTransaction(transaction);
@@ -445,7 +442,7 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
     ``` python
     server.submit_transaction(transaction)
     ```
-    </CodeExample>
+</CodeExample>
 
 In this example, we're submitting the transaction to the SDF-maintained public testnet instance of Horizon, the Stellar API.  When submitting transactions to a Horizon server — which is what most people do — it's possible that you will not receive a response from due to a bug, network conditions, etc. In such a situation it's impossible to determine the status of your
 transaction. That's why you should always save a built transaction (or transaction encoded in XDR
@@ -463,7 +460,7 @@ account.
 
 However, you may want keep an eye out for incoming payments.  A simple program that watches the network for payments and prints each one might look like:
 
-<CodeExample name="Receive Payments">
+<CodeExample title="Receive Payments">
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -576,7 +573,7 @@ paymentsRequest.stream(new EventListener<OperationResponse>() {
 
   }
 });
-````
+```
 
 ```go
 package main
@@ -762,7 +759,6 @@ payments_next = payments.next()
 ```
 
 </CodeExample>
-
 
 ## Transacting in Other Currencies
 
