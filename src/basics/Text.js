@@ -50,7 +50,8 @@ export const H3 = styled.h3`
   ${headingBase};
   font-size: 1.5rem;
   padding: 0;
-  margin: 1.22rem 0 0;
+  margin: 1.5rem 0 0;
+  line-height: 1.5;
 `;
 export const H4 = styled.h4`
   ${headingBase};
@@ -172,7 +173,7 @@ export const TableHeadCell = styled.th`
   color: ${({ theme }) => theme.text};
   padding: 0;
   min-width: 10rem;
-  line-height: 3;
+  line-height: 1.5;
   vertical-align: middle;
 `;
 export const TableBody = styled.tbody`
@@ -256,6 +257,7 @@ export const HorizontalRule = styled.hr`
   margin: 2rem 0;
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border};
+  color: ${PALETTE.white60};
 `;
 
 export const Sup = styled(({ children, ...props }) => {

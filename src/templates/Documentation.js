@@ -29,8 +29,8 @@ import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
-import { EditIcon } from "basics/Icons";
-import { Column } from "basics/Grid";
+import { EditIcon, CheckmarkIcon } from "basics/Icons";
+import { Column, Container, Row } from "basics/Grid";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 import { ListItem, Text } from "basics/Text";
@@ -38,12 +38,7 @@ import { ListItem, Text } from "basics/Text";
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
-import {
-  Content,
-  SideNavColumn,
-  OneSizeRow,
-  Container,
-} from "components/Documentation/SharedStyles";
+import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { Footer } from "components/Documentation/Footer";
 import {
   NavAbsoluteEl,
@@ -56,7 +51,7 @@ import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const contentId = "content";
-const { h1: H1, h2: H2, a: StyledLink } = components;
+const { h1: H1, h2: H2, a: StyledLink, td: TD } = components;
 
 const Topics = styled.ul`
   list-style-type: none;
@@ -167,6 +162,17 @@ const componentMapping = {
       <H2>{children}</H2>
     </TrackedContent>
   ),
+  // eslint-disable-next-line react/prop-types
+  td: ({ children }) => {
+    if (children === ":heavy_check_mark:") {
+      return (
+        <TD>
+          <CheckmarkIcon />
+        </TD>
+      );
+    }
+    return <TD>{children}</TD>;
+  },
 };
 
 const Documentation = ({ data, pageContext, location }) => {
@@ -279,8 +285,8 @@ const Documentation = ({ data, pageContext, location }) => {
       >
         <PrismStyles isDoc />
         <Container id={contentId}>
-          <OneSizeRow>
-            <SideNavColumn xs={3}>
+          <Row>
+            <SideNavColumn md={3} lg={3}>
               <SideNavBackground />
               <SideNav docType={docType.doc}>
                 <NavAbsoluteEl>{left}</NavAbsoluteEl>
@@ -289,8 +295,11 @@ const Documentation = ({ data, pageContext, location }) => {
                 </AbsoluteNavFooterEl>
               </SideNav>
             </SideNavColumn>
+            {/*
+              We want the right hand side to appear above content on mobile
+            */}
+            <Column md={{ hide: true }}>{right}</Column>
             <Column
-              xs={9}
               md={7}
               isIndependentScroll
               id={`${DOM_TARGETS.contentColumn}`}
@@ -298,12 +307,8 @@ const Documentation = ({ data, pageContext, location }) => {
               {center}
               <Footer />
             </Column>
-            {headings.length > 0 && (
-              <Column xs={{ hide: true }} md={2}>
-                {right}
-              </Column>
-            )}
-          </OneSizeRow>
+            <Column md={2}>{right}</Column>
+          </Row>
         </Container>
       </LayoutBase>
     </MDXProvider>
