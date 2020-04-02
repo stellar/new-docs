@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import CloseSVG from "assets/icons/icon-close.svg";
 import ChevronSVG from "assets/icons/icon-chevron.svg";
+import CheckmarkSVG from "assets/icons/icon-checkmark.svg";
 import EditSVG from "assets/icons/icon-edit.svg";
 
 const EditEl = styled.div`
@@ -35,6 +36,36 @@ export const EditIcon = ({ color }) => (
 );
 
 EditIcon.propTypes = {
+  color: PropTypes.string.isRequired,
+};
+
+const CheckmarkEl = styled.div`
+  display: inline-block;
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+
+  svg {
+    position: absolute;
+    width: 1.56rem;
+    height: 1.125rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    path {
+      fill: ${(props) => props.color};
+    }
+  }
+`;
+
+export const CheckmarkIcon = ({ color }) => (
+  <CheckmarkEl color={color}>
+    <CheckmarkSVG />
+  </CheckmarkEl>
+);
+
+CheckmarkIcon.propTypes = {
   color: PropTypes.string.isRequired,
 };
 

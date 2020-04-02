@@ -63,7 +63,7 @@ export const components = {
       }
     }
   `,
-  h3: styled(TextComponents.LinkedH3)`
+  h3: styled(TextComponents.H3)`
     a {
       color: ${({ theme }) => theme.text};
       @media (${MEDIA_QUERIES.canHover}) {
@@ -73,9 +73,9 @@ export const components = {
       }
     }
   `,
-  h4: TextComponents.LinkedH4,
-  h5: TextComponents.LinkedH5,
-  h6: TextComponents.LinkedH6,
+  h4: TextComponents.H4,
+  h5: TextComponents.H5,
+  h6: TextComponents.H6,
   blockquote: TextComponents.Quote,
   ul: TextComponents.List,
   ol: TextComponents.OrderedList,
