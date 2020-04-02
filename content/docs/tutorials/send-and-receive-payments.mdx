@@ -3,6 +3,8 @@ title: Send and Receive Payments
 order: 20
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 Most of the time, you’ll be sending money to someone else who has their own account. For this
 tutorial, however, you'll need a second account to transact with.  So before proceeding, follow the steps outlined in [Create an Account](./create-account.md) to make a both sending account and a recipient account.
 
@@ -29,7 +31,7 @@ very small — 100 stroops per operation where a stroop equals 1 * 10 ^-7 XLM �
 Stellar stores and communicates transaction data in a binary format called [XDR](link), which is optimized for network performance but unreadable to the human eye. Luckily, [Horizon](link), the Stellar API, and the
 Stellar SDKs convert XDRs into friendlier formats. Here’s how you might send 10 lumens to an account:
 
-<code-example name="Send a Payment">
+<CodeExample>
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -241,14 +243,15 @@ except (BadRequestError, BadResponseError) as err:
     print(f"Something went wrong!\n{err}")
 ```
 
-</code-example>
+</CodeExample>
 
 What exactly happened there? Let’s break it down.
 
 1. Confirm that the account ID you are sending to actually exists by loading the associated account
    data from the Stellar network. Everything will actually be OK if you skip this step, but
    it gives you an opportunity to avoid making a transaction that will inevitably fail. 
-    <code-example name="Load an Account">
+    
+    <CodeExample>
 
     ```js
     server.loadAccount(destinationId)
@@ -269,7 +272,7 @@ What exactly happened there? Let’s break it down.
     server.load_account(destination_id)
     ```
 
-    </code-example>
+    </CodeExample>
 
 2. Load data for the account you are sending from. An account can only perform one transaction at a
    time and has something called a [**sequence
@@ -277,7 +280,7 @@ What exactly happened there? Let’s break it down.
    transactions. A transaction’s sequence number needs to match the account’s sequence number, so
    you need to get the account’s current sequence number from the network.
 
-    <code-example name="Load Source Account">
+    <CodeExample>
 
     ```js
     .then(function() {
@@ -293,7 +296,7 @@ What exactly happened there? Let’s break it down.
     source_account = server.load_account(source_key.public_key)
     ```
 
-    </code-example>
+    </CodeExample>
 
     The SDK will automatically increment the account’s sequence number when you build a
     transaction, so you won’t need to retrieve this information again if you want to perform a
@@ -302,7 +305,7 @@ What exactly happened there? Let’s break it down.
 3. Start building a transaction. This requires an account object, not just an account ID, because
    it will increment the account’s sequence number.
 
-    <code-example name="Build a Transaction">
+    <CodeExample>
 
     ```js
     var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -326,13 +329,13 @@ What exactly happened there? Let’s break it down.
     )
     ```
 
-    </code-example>
+    </CodeExample>
 
 4. Add the payment operation to the account. Note that you need to specify the type of asset you
    are sending: Stellar’s network currency is the [lumen](link), but you can send any asset issued on the network.  We'll cover sending non-lumen assets [below](#transacting-in-other-currencies). For now, though, we’ll stick to
    lumens, which are called “native” assets in the SDK:
 
-    <code-example name="Add an Operation">
+    <CodeExample>
 
     ```js
     .addOperation(StellarSdk.Operation.payment({
@@ -363,7 +366,7 @@ What exactly happened there? Let’s break it down.
     .append_payment_op(destination=destination_id, amount="10", asset_code="XLM")
     ```
 
-    </code-example>
+    </CodeExample>
 
     You should also note that the amount is a string rather than a number. When working with
     extremely small fractions or large values, [floating point math can introduce small
@@ -375,7 +378,7 @@ What exactly happened there? Let’s break it down.
    [**memo,**](../concepts/transactions.md#memo) to a transaction. Stellar doesn’t do anything with
    this data, but you can use it for any purpose you’d like.  Many exchanges require memos for incoming transactions because they use a single Stellar account for all their users, and rely on the memo to differentiate between internal user accounts.
 
-    <code-example name="Add a Memo">
+    <CodeExample name="Add a Memo">
 
     ```js
     .addMemo(StellarSdk.Memo.text('Test Transaction'))
@@ -393,13 +396,13 @@ What exactly happened there? Let’s break it down.
     .add_text_memo("Test Transaction")
     ```
 
-    </code-example>
+    </CodeExample>
 
 6. Now that the transaction has all the data it needs, you have to cryptographically sign it using
    your secret key. This proves that the data actually came from you and not someone impersonating
    you.
 
-    <code-example name="Sign the Transaction">
+    <CodeExample>
 
     ```js
     transaction.sign(sourceKeys);
@@ -418,11 +421,11 @@ What exactly happened there? Let’s break it down.
     transaction.sign(source_key)
     ```
 
-    </code-example>
+    </CodeExample>
 
 7. And finally, submit it to the Stellar network!
 
-    <code-example name="Submit the Transaction">
+    <CodeExample>
 
     ```js
     server.submitTransaction(transaction);
@@ -439,10 +442,9 @@ What exactly happened there? Let’s break it down.
     ``` python
     server.submit_transaction(transaction)
     ```
-    </code-example>
+    </CodeExample>
 
-In this example, we're submitting the transaction to the SDF-maintained public testnet instance of Horizon, the Stellar API.  When submitting transactions to a Horizon server — which is what most people do — it's possible that you will not receive a response from due to a
-bug, network conditions, etc. In such a situation it's impossible to determine the status of your
+In this example, we're submitting the transaction to the SDF-maintained public testnet instance of Horizon, the Stellar API.  When submitting transactions to a Horizon server — which is what most people do — it's possible that you will not receive a response from due to a bug, network conditions, etc. In such a situation it's impossible to determine the status of your
 transaction. That's why you should always save a built transaction (or transaction encoded in XDR
 format) in a variable or a database and resubmit it if you don't know its status. If the
 transaction has already been successfully applied to the ledger, Horizon will simply return the
@@ -458,7 +460,7 @@ account.
 
 However, you may want keep an eye out for incoming payments.  A simple program that watches the network for payments and prints each one might look like:
 
-<code-example name="Receive Payments">
+<CodeExample name="Receive Payments">
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -658,7 +660,7 @@ for payment in payments.stream():
     print(f"{payment['amount']} {asset} from {payment['from']}")
 ```
 
-</code-example>
+</CodeExample>
 
 There are two main parts to this program. First, you create a query for payments involving a given
 account. Like most queries in Stellar, this could return a huge number of items, so the API returns
@@ -667,7 +669,7 @@ left off. In the example above, the functions to save and load paging tokens are
 a real application, you’d want to save the paging tokens to a file or database so you can pick up
 where you left off in case the program crashes or the user closes it.
 
-<code-example name="Create a Payments Query">
+<CodeExample>
 
 ```js
 var payments = server.payments().forAccount(accountId);
@@ -692,7 +694,7 @@ if last_token:
     payments.cursor(last_token)
 ```
 
-</code-example>
+</CodeExample>
 
 Second, the results of the query are streamed. This is the easiest way to watch for payments or
 other transactions. Each existing payment is sent through the stream, one by one. Once all existing
@@ -701,7 +703,7 @@ payments have been sent, the stream stays open and new payments are sent as they
 Try it out: Run this program, and then, in another window, create and submit a payment. You should
 see this program log the payment.
 
-<code-example name="Stream Payments">
+<CodeExample>
 
 ```js
 payments.stream({
@@ -725,12 +727,12 @@ for payment in payments.stream():
     # handle a payment
 ```
 
-</code-example>
+</CodeExample>
 
 You can also request payments in groups or pages. Once you’ve processed each page of payments,
 you’ll need to request the next one until there are none left.
 
-<code-example name="Paged Payments">
+<CodeExample>
 
 ```js
 payments.call().then(function handlePage(paymentsPage) {
@@ -756,7 +758,7 @@ payments_current = payments.call()
 payments_next = payments.next()
 ```
 
-</code-example>
+</CodeExample>
 
 
 ## Transacting in Other Currencies
