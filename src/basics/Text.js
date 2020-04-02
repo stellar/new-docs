@@ -159,7 +159,7 @@ export const Table = styled.table`
   position: relative;
   word-break: normal;
   width: 100%;
-  padding: 0;
+  padding: 0 1px;
   margin: 0;
   border-collapse: collapse;
 `;
@@ -167,12 +167,15 @@ export const TableHead = styled.thead``;
 export const TableHeadCell = styled.th`
   text-transform: uppercase;
   font-size: 0.875rem;
-  font-weight: ${FONT_WEIGHT.medium};
+  font-weight: ${FONT_WEIGHT.bold};
   text-align: left;
   border-bottom: none;
   color: ${({ theme }) => theme.text};
   padding: 0;
-  min-width: 10rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  min-width: 8.5rem;
   line-height: 1.5;
   vertical-align: middle;
 `;
