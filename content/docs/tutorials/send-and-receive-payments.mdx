@@ -282,52 +282,52 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 
 <CodeExample>
 
-    ```js
-    .then(function() {
-    return server.loadAccount(sourceKeys.publicKey());
-    })
-    ```
+```js
+.then(function() {
+return server.loadAccount(sourceKeys.publicKey());
+})
+```
 
-    ```java
-    AccountResponse sourceAccount = server.accounts().account(source);
-    ```
+```java
+AccountResponse sourceAccount = server.accounts().account(source);
+```
 
-    ```python
-    source_account = server.load_account(source_key.public_key)
-    ```
+```python
+source_account = server.load_account(source_key.public_key)
+```
 
 </CodeExample>
 
-    The SDK will automatically increment the account’s sequence number when you build a
-    transaction, so you won’t need to retrieve this information again if you want to perform a
-    second transaction.
+The SDK will automatically increment the account’s sequence number when you build a
+transaction, so you won’t need to retrieve this information again if you want to perform a
+second transaction.
 
 3. Start building a transaction. This requires an account object, not just an account ID, because
    it will increment the account’s sequence number.
 
 <CodeExample>
 
-    ```js
-    var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-    ```
+```js
+var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+```
 
-    ```java
-    Transaction transaction = new Transaction.Builder(sourceAccount)
-    ```
+```java
+Transaction transaction = new Transaction.Builder(sourceAccount)
+```
 
-    ```go
-        tx, err := build.Transaction(
-        // ...
-        )
-    ```
-
-    ```python
-    transaction = TransactionBuilder(
-        source_account=source_account,
-        network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
-        base_fee=base_fee
+```go
+    tx, err := build.Transaction(
+    // ...
     )
-    ```
+```
+
+```python
+transaction = TransactionBuilder(
+    source_account=source_account,
+    network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+    base_fee=base_fee
+)
+```
 
 </CodeExample>
 
@@ -337,42 +337,42 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 
 <CodeExample>
 
-    ```js
-    .addOperation(StellarSdk.Operation.payment({
-      destination: destinationId,
-      asset: StellarSdk.Asset.native(),
-      amount: "10"
-    }))
-    ```
+```js
+.addOperation(StellarSdk.Operation.payment({
+  destination: destinationId,
+  asset: StellarSdk.Asset.native(),
+  amount: "10"
+}))
+```
 
-    ```java
-    .addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), "10").build())
-    ```
+```java
+.addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), "10").build())
+```
 
-    ```go
-    tx, err := build.Transaction(
-        build.TestNetwork,
-        build.SourceAccount{source},
-        build.AutoSequence{horizon.DefaultTestNetClient},
-        build.MemoText{"Test Transaction"},
-        build.Payment(
-            build.Destination{destination},
-            build.NativeAmount{"10"},
-        ),
-    )
-    ```
+```go
+tx, err := build.Transaction(
+    build.TestNetwork,
+    build.SourceAccount{source},
+    build.AutoSequence{horizon.DefaultTestNetClient},
+    build.MemoText{"Test Transaction"},
+    build.Payment(
+        build.Destination{destination},
+        build.NativeAmount{"10"},
+    ),
+)
+```
 
-    ```python
-    .append_payment_op(destination=destination_id, amount="10", asset_code="XLM")
-    ```
+```python
+.append_payment_op(destination=destination_id, amount="10", asset_code="XLM")
+```
 
 </CodeExample>
 
-    You should also note that the amount is a string rather than a number. When working with
-    extremely small fractions or large values, [floating point math can introduce small
-    inaccuracies](https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems). Since not all
-    systems have a native way to accurately represent extremely small or large decimals, Stellar
-    uses strings as a reliable way to represent the exact amount across any system.
+You should also note that the amount is a string rather than a number. When working with
+extremely small fractions or large values, [floating point math can introduce small
+inaccuracies](https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems). Since not all
+systems have a native way to accurately represent extremely small or large decimals, Stellar
+uses strings as a reliable way to represent the exact amount across any system.
 
 5. Optionally, you can add your own metadata, called a
    [**memo,**](../concepts/transactions.md#memo) to a transaction. Stellar doesn’t do anything with
@@ -380,21 +380,21 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 
 <CodeExample title="Add a Memo">
 
-    ```js
-    .addMemo(StellarSdk.Memo.text('Test Transaction'))
-    ```
+```js
+.addMemo(StellarSdk.Memo.text('Test Transaction'))
+```
 
-    ```java
-    .addMemo(Memo.text("Test Transaction"));
-    ```
+```java
+.addMemo(Memo.text("Test Transaction"));
+```
 
-    ```go
-    build.MemoText{"Test Transaction"},
-    ```
+```go
+build.MemoText{"Test Transaction"},
+```
 
-    ```python
-    .add_text_memo("Test Transaction")
-    ```
+```python
+.add_text_memo("Test Transaction")
+```
 
 </CodeExample>
 
@@ -404,22 +404,22 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 
 <CodeExample>
 
-    ```js
-    transaction.sign(sourceKeys);
-    ```
+```js
+transaction.sign(sourceKeys);
+```
 
-    ```java
-    transaction.sign(source);
-    ```
+```java
+transaction.sign(source);
+```
 
-    ```go
-    txe, err := tx.Sign(source)
-    txeB64, err := txe.Base64()
-    ```
+```go
+txe, err := tx.Sign(source)
+txeB64, err := txe.Base64()
+```
 
-    ```python
-    transaction.sign(source_key)
-    ```
+```python
+transaction.sign(source_key)
+```
 
 </CodeExample>
 
@@ -427,21 +427,22 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 
 <CodeExample>
 
-    ```js
-    server.submitTransaction(transaction);
-    ```
+```js
+server.submitTransaction(transaction);
+```
 
-    ```java
-    server.submitTransaction(transaction);
-    ```
+```java
+server.submitTransaction(transaction);
+```
 
-    ```go
-    resp, err := horizon.DefaultTestNetClient.SubmitTransaction(txeB64)
-    ```
+```go
+resp, err := horizon.DefaultTestNetClient.SubmitTransaction(txeB64)
+```
 
-    ``` python
-    server.submit_transaction(transaction)
-    ```
+``` python
+server.submit_transaction(transaction)
+```
+
 </CodeExample>
 
 In this example, we're submitting the transaction to the SDF-maintained public testnet instance of Horizon, the Stellar API.  When submitting transactions to a Horizon server — which is what most people do — it's possible that you will not receive a response from due to a bug, network conditions, etc. In such a situation it's impossible to determine the status of your
