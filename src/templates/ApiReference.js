@@ -1,6 +1,7 @@
 import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
+import { throttle } from "lodash";
 import { graphql } from "gatsby";
 import styled, { css } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
@@ -12,6 +13,7 @@ import {
   FONT_WEIGHT,
   DEFAULT_COLUMN_WIDTH,
   PALETTE,
+  MEDIA_QUERIES,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
@@ -22,6 +24,7 @@ import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
+import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -63,7 +66,6 @@ const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
 const TrackedEl = styled.div``;
-
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
@@ -157,9 +159,10 @@ const NavItem = ({ isActive, forwardedRef, children, depth }) => {
   const itemRef = React.useRef();
   const parentDom = forwardedRef;
   const { isScrollingDown } = React.useContext(ScrollRouterContext);
+  const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
 
   React.useLayoutEffect(() => {
-    if (isActive && parentDom) {
+    if (isActive && parentDom && !isMobile) {
       const activeItemSize = itemRef.current.getBoundingClientRect();
 
       /* If the active navigation is not in view
@@ -194,7 +197,7 @@ const NavItem = ({ isActive, forwardedRef, children, depth }) => {
         }
       }
     }
-  }, [isActive, parentDom, isScrollingDown]);
+  }, [isActive, parentDom, isScrollingDown, isMobile]);
 
   return (
     <NavItemEl isActive={isActive} depth={depth} ref={itemRef}>
@@ -301,6 +304,29 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   );
   const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
+
+  React.useLayoutEffect(() => {
+    /* setViewportHeight() is used to set the custom vh css to be set to the value of 
+      window.innerHeight to be the full height of the window screen. For example, 
+      API Ref Page uses its desktop design on mobile. On an iPhone (375 x 667) if users want
+      to see the entire page they would have to zoom out completely to see it.
+      Without this function, when users zoom out they would see cutoff page because
+      its page's layout height is based on 375 x 667 (height: 100vh) not its window.innerHeight
+    */
+    const setViewportHeight = throttle(() => {
+      const vh = window.innerHeight * 0.01;
+      // Sets the value in the --vh custom property to the root of the document
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+
+    setViewportHeight();
+    window.addEventListener("resize", setViewportHeight);
+
+    return () => {
+      window.removeEventListener("scroll", setViewportHeight);
+    };
+  }, []);
+
   return (
     <ScrollRouter>
       <Helmet>

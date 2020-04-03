@@ -2,7 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+import { MEDIA_QUERIES } from "constants/styles";
+
 import { slugify } from "helpers/slugify";
+import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { List, ListItem } from "basics/Text";
 
@@ -96,7 +99,12 @@ const NestedNav = ({
     childOptions: items,
     id: uniqueId,
   });
-  const isOpen = isChildActive || isActive;
+  const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
+
+  /* On Mobile, SideNav's stay sticky and highlight as you scroll is disabled
+  Therefore, SideNav is displaying all of its sub navigation items by default on mobile
+  Its example can be seen in /api */
+  const isOpen = isMobile ? true : isChildActive || isActive;
 
   /* Nested navigation's default index.mdx has the same title as 
     its folder's metadata.json's title which causes redundancy. 
