@@ -211,55 +211,68 @@ const Documentation = ({ data, pageContext, location }) => {
   }));
 
   const left = (
-    <Topics>
-      {Object.values(docsContents).map((content) => {
-        const { articles, id, topicPath, title } = content;
-        if (topicPath === buildRelPath(rootDir, rootDir)) {
-          return Object.values(articles).map((rootArticle) => (
-            <RootItemEl key={id}>
-              <RootLinkEl href="/docs">{rootArticle.title}</RootLinkEl>
-            </RootItemEl>
-          ));
-        }
-        return (
-          <Articles
-            articles={articles}
-            key={id}
-            id={id}
-            initialTopicsState={initialTopicsState}
-            title={title}
-            topicPath={topicPath}
-            activeItem={url}
-          />
-        );
-      })}
-    </Topics>
+    <>
+      <SideNavBackground />
+      <SideNav docType={docType.doc}>
+        <NavAbsoluteEl>
+          <Topics>
+            {Object.values(docsContents).map((content) => {
+              const { articles, id, topicPath, title } = content;
+              if (topicPath === buildRelPath(rootDir, rootDir)) {
+                return Object.values(articles).map((rootArticle) => (
+                  <RootItemEl key={id}>
+                    <RootLinkEl href="/docs">{rootArticle.title}</RootLinkEl>
+                  </RootItemEl>
+                ));
+              }
+              return (
+                <Articles
+                  articles={articles}
+                  key={id}
+                  id={id}
+                  initialTopicsState={initialTopicsState}
+                  title={title}
+                  topicPath={topicPath}
+                  activeItem={url}
+                />
+              );
+            })}
+          </Topics>
+        </NavAbsoluteEl>
+        <AbsoluteNavFooterEl>
+          <StyledLink href="/api">API Reference</StyledLink>
+        </AbsoluteNavFooterEl>
+      </SideNav>
+    </>
   );
   const center = (
-    <Content>
-      <H1>{header}</H1>
-      {githubLink && (
-        <Link href={githubLink} newTab>
-          <EditIcon color={PALETTE.purpleBlue} />
-        </Link>
-      )}
-      <MDXRenderer>{body}</MDXRenderer>
-      <ModifiedEl>
-        <Clock />
-        <Text>Last updated {modifiedTime}</Text>
-      </ModifiedEl>
-      {articleNextUp && (
-        <NextUpEl>
-          Next Up:{" "}
-          <StyledLink
-            href={articleNextUp.url}
-            state={{ compiledDocsContents: docsContents }}
-          >
-            {articleNextUp.title}
-          </StyledLink>
-        </NextUpEl>
-      )}
-    </Content>
+    <>
+      <Content>
+        <H1>{header}</H1>
+        {githubLink && (
+          <Link href={githubLink} newTab>
+            <EditIcon color={PALETTE.purpleBlue} />
+          </Link>
+        )}
+        <MDXRenderer>{body}</MDXRenderer>
+        <ModifiedEl>
+          <Clock />
+          <Text>Last updated {modifiedTime}</Text>
+        </ModifiedEl>
+        {articleNextUp && (
+          <NextUpEl>
+            Next Up:{" "}
+            <StyledLink
+              href={articleNextUp.url}
+              state={{ compiledDocsContents: docsContents }}
+            >
+              {articleNextUp.title}
+            </StyledLink>
+          </NextUpEl>
+        )}
+      </Content>
+      <Footer />
+    </>
   );
   const right = (
     <RightNavEl>
@@ -284,13 +297,7 @@ const Documentation = ({ data, pageContext, location }) => {
         <Container id={contentId}>
           <Row>
             <SideNavColumn md={3} lg={3}>
-              <SideNavBackground />
-              <SideNav docType={docType.doc}>
-                <NavAbsoluteEl>{left}</NavAbsoluteEl>
-                <AbsoluteNavFooterEl>
-                  <StyledLink href="/api">API Reference</StyledLink>
-                </AbsoluteNavFooterEl>
-              </SideNav>
+              {left}
             </SideNavColumn>
             {/*
               We want the right hand side to appear above content on mobile
@@ -302,7 +309,6 @@ const Documentation = ({ data, pageContext, location }) => {
               id={`${DOM_TARGETS.contentColumn}`}
             >
               {center}
-              <Footer />
             </Column>
             <Column xs={{ hide: true }} md={2}>
               {right}
