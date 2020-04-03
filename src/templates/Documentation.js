@@ -43,7 +43,6 @@ import { Footer } from "components/Documentation/Footer";
 import {
   NavAbsoluteEl,
   AbsoluteNavFooterEl,
-  StickyEl,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
 
@@ -61,7 +60,7 @@ const Topics = styled.ul`
   margin-right: 1rem;
 `;
 
-const RightNavEl = styled(StickyEl)`
+const RightNavEl = styled.div`
   font-size: 0.875rem;
   line-height: 1rem;
   padding-top: 4.25rem;
@@ -265,9 +264,7 @@ const Documentation = ({ data, pageContext, location }) => {
   const right = (
     <RightNavEl>
       <OutlineTitleEl>Page Outline</OutlineTitleEl>
-      <SideNav>
-        <SideNavBody items={pageOutline} renderItem={PageOutlineItem} />
-      </SideNav>
+      <SideNavBody items={pageOutline} renderItem={PageOutlineItem} />
     </RightNavEl>
   );
 
