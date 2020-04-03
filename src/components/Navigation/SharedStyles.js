@@ -16,14 +16,17 @@ export const H2 = styled(BasicH2)`
 `;
 export const NavAbsoluteEl = styled.div`
   position: absolute;
-  overflow: hidden;
   height: calc(100% - 8.31rem);
   width: 100%;
   top: 4rem;
   bottom: 4.31rem;
+  overflow-y: scroll;
 
-  &:hover {
-    overflow-y: scroll;
+  @media (${MEDIA_QUERIES.canHover}) {
+    overflow: hidden;
+    &:hover {
+      overflow-y: scroll;
+    }
   }
 
   &::before {
