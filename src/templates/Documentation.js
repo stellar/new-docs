@@ -304,7 +304,9 @@ const Documentation = ({ data, pageContext, location }) => {
               {center}
               <Footer />
             </Column>
-            <Column md={2}>{right}</Column>
+            <Column xs={{ hide: true }} md={2}>
+              {right}
+            </Column>
           </Row>
         </Container>
       </LayoutBase>
