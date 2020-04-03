@@ -111,8 +111,10 @@ const ColumnEl = styled.div`
   ${({ isIndependentScroll }) =>
     isIndependentScroll &&
     css`
-      overflow-y: scroll;
-      height: 100vh;
+      @media (${MEDIA_QUERIES.gtTablet}) {
+        overflow-y: scroll;
+        height: 100vh;
+      }
     `}
 `;
 
