@@ -22,6 +22,11 @@ export const NavAbsoluteEl = styled.div`
   top: 4rem;
   bottom: 4.31rem;
 
+  /* <SideNav/> does not have mobile friendly design (API REF) */
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    overflow-y: scroll;
+  }
+
   &:hover {
     overflow-y: scroll;
   }
@@ -140,6 +145,8 @@ export const NavItem = styled.div`
 export const StickyEl = styled.div`
   width: 100%;
   height: 100vh;
+  /* --vh will be set via setViewportHeight() ApiReference.js */
+  height: calc(var(--vh, 1vh) * 100);
   overflow-y: scroll;
   position: sticky;
   top: 0;

@@ -307,7 +307,7 @@ const Documentation = ({ data, pageContext, location }) => {
               {center}
               <Footer />
             </Column>
-            <Column md={2}>{right}</Column>
+            {pageOutline.length > 0 && <Column md={2}>{right}</Column>}
           </Row>
         </Container>
       </LayoutBase>

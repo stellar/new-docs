@@ -113,6 +113,8 @@ const ColumnEl = styled.div`
     css`
       overflow-y: scroll;
       height: 100vh;
+      /* --vh will be set via setViewportHeight() ApiReference.js */
+      height: calc(var(--vh, 1vh) * 100);
     `}
 `;
 
