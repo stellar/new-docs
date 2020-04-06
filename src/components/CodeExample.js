@@ -8,9 +8,12 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
+
+import { getCookie } from "helpers/getCookie";
+import { extractStringChildren } from "helpers/extractStringChildren";
+
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
-import { getCookie, extractStringChildren } from "utils";
 
 import { Tooltip } from "components/Tooltip";
 import { DividerEl } from "components/Documentation/SharedStyles";

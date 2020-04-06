@@ -46,6 +46,12 @@ export const LayoutBase = ({
         href: font.src[0].url,
         as: "font",
       }))}
+      meta={[
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
+      ]}
     />
     <Seo
       title={title}

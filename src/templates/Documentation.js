@@ -27,6 +27,7 @@ import {
 } from "helpers/documentation";
 import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
+import { loopAndExtractString } from "helpers/extractStringChildren";
 
 import { BasicButton } from "basics/Buttons";
 import { EditIcon, CheckmarkIcon } from "basics/Icons";
@@ -156,11 +157,26 @@ const componentMapping = {
     );
   }),
   // eslint-disable-next-line react/prop-types
-  h2: ({ children }) => (
-    <TrackedContent>
-      <H2>{children}</H2>
-    </TrackedContent>
-  ),
+  h2: ({ children }) => {
+    /* For cases when <H2/> has an element besides strings.
+    For example, "Implementing the /info Endpoint" from
+    '/docs/enabling-deposit-and-withdrawal/setting-up-test-server/
+    has a <Code/> to highlight "/info" */
+    if (typeof children !== "string") {
+      // eslint-disable-next-line react/prop-types
+      const stringifyChildren = loopAndExtractString(children);
+      return (
+        <TrackedContent>
+          <H2 id={slugify(stringifyChildren)}>{children}</H2>
+        </TrackedContent>
+      );
+    }
+    return (
+      <TrackedContent>
+        <H2>{children}</H2>
+      </TrackedContent>
+    );
+  },
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
     if (children === ":heavy_check_mark:") {
@@ -310,9 +326,11 @@ const Documentation = ({ data, pageContext, location }) => {
             >
               {center}
             </Column>
-            <Column xs={{ hide: true }} md={2}>
-              {right}
-            </Column>
+            {pageOutline.length > 0 && (
+              <Column xs={{ hide: true }} md={2}>
+                {right}
+              </Column>
+            )}
           </Row>
         </Container>
       </LayoutBase>
