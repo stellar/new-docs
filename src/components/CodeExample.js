@@ -85,6 +85,7 @@ const ContentEl = styled.div`
 const CodeExampleEl = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 0.5rem;
   margin-bottom: 2rem;
 
   div {

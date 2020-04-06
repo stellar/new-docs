@@ -37,6 +37,8 @@ export const Code = styled.code`
 const headingBase = ({ theme }) => `
   color: ${theme.text};
   font-weight: ${FONT_WEIGHT.normal};
+  padding: 0;
+  margin: 0;
 
   ${Code} {
     font-size: 1rem;
@@ -46,22 +48,24 @@ const headingBase = ({ theme }) => `
 export const H1 = styled.h1`
   ${headingBase};
   display: inline-block;
-  font-size: 2.5rem;
-  margin: 4rem 0 0.5em;
-  letter-spacing: -1.2px;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  margin-top: 5.25rem;
+  line-height: 1.25;
+  letter-spacing: normal;
 `;
 export const H2 = styled.h2`
   ${headingBase};
   display: inline-block;
-  font-size: 2rem;
-  margin: 3.125rem 0 0.5rem;
-  letter-spacing: -1.2px;
+  font-size: 1.5rem;
+  padding-top: 2rem;
+  line-height: 1.5;
+  letter-spacing: normal;
 `;
 export const H3 = styled.h3`
   ${headingBase};
-  font-size: 1.5rem;
-  padding: 0;
-  margin: 1.5rem 0 0;
+  font-size: 1.125rem;
+  padding-top: 0.5rem;
   line-height: 1.5;
 `;
 export const H4 = styled.h4`
@@ -73,12 +77,8 @@ export const H5 = styled.h5`
 export const H6 = styled.h6`
   ${headingBase};
 `;
-export const LinkedH1 = makeLinkedHeader(H1);
+
 export const LinkedH2 = makeLinkedHeader(H2);
-export const LinkedH3 = makeLinkedHeader(H3);
-export const LinkedH4 = makeLinkedHeader(H4);
-export const LinkedH5 = makeLinkedHeader(H5);
-export const LinkedH6 = makeLinkedHeader(H6);
 
 export const Quote = styled.blockquote`
   margin: 1rem 0;
