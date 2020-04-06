@@ -22,15 +22,26 @@ export const Text = styled.p`
 export const MonoText = styled(Text).attrs({ as: "span" })`
   font-family: ${FONT_FAMILY.monospace};
 `;
-
 export const Colored = styled.span`
   color: ${(props) => props.color};
   font-size: ${(props) => (props.fontSize ? props.fontSize : "default")};
 `;
-
+export const Code = styled.code`
+  color: ${PALETTE.purple};
+  font-family: ${FONT_FAMILY.monospace};
+  border-radius: 3px;
+  border: solid 0.5px ${PALETTE.white60};
+  background-color: ${PALETTE.white80};
+  padding: 0 0.25rem;
+`;
 const headingBase = ({ theme }) => `
   color: ${theme.text};
   font-weight: ${FONT_WEIGHT.normal};
+
+  ${Code} {
+    font-size: 1rem;
+    vertical-align: middle;
+  }
 `;
 export const H1 = styled.h1`
   ${headingBase};
@@ -159,7 +170,7 @@ export const Table = styled.table`
   position: relative;
   word-break: normal;
   width: 100%;
-  padding: 0;
+  padding: 0 1px;
   margin: 0;
   border-collapse: collapse;
 `;
@@ -167,12 +178,15 @@ export const TableHead = styled.thead``;
 export const TableHeadCell = styled.th`
   text-transform: uppercase;
   font-size: 0.875rem;
-  font-weight: ${FONT_WEIGHT.medium};
+  font-weight: ${FONT_WEIGHT.bold};
   text-align: left;
   border-bottom: none;
   color: ${({ theme }) => theme.text};
   padding: 0;
-  min-width: 10rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  min-width: 8.5rem;
   line-height: 1.5;
   vertical-align: middle;
 `;
@@ -189,19 +203,6 @@ export const TableCell = styled.td`
   padding: 0.75rem;
   vertical-align: top;
   border: solid 1px ${PALETTE.white60};
-`;
-export const Code = styled.code`
-  color: ${PALETTE.purple};
-  font-family: ${FONT_FAMILY.monospace};
-  border-radius: 3px;
-  border: solid 0.5px ${PALETTE.white60};
-  background-color: ${PALETTE.white80};
-  padding: 0 0.25rem;
-
-  ${H2},${H3} & {
-    font-size: 1rem;
-    vertical-align: middle;
-  }
 `;
 export const Preformatted = styled.pre`
   &&& {

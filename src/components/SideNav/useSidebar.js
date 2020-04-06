@@ -6,8 +6,7 @@ const flatten = (ary) =>
     (a, b) => a.concat(Array.isArray(b.items) ? flatten(b.items).concat(b) : b),
     [],
   );
-const isNodeActive = (ref, id) =>
-  ref && document.getElementById(id) === ref.current;
+const isNodeActive = (ref, id) => ref && id === ref.current.id;
 
 export const useSidebar = ({ childOptions, id }) => {
   const { activeNode } = React.useContext(SideNavProgressContext);
