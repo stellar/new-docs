@@ -323,7 +323,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
     window.addEventListener("resize", setViewportHeight);
 
     return () => {
-      window.removeEventListener("scroll", setViewportHeight);
+      window.removeEventListener("resize", setViewportHeight);
     };
   }, []);
 
