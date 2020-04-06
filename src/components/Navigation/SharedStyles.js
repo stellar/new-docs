@@ -15,13 +15,10 @@ export const H2 = styled(BasicH2)`
   color: ${({ theme }) => theme.medium};
 `;
 export const NavAbsoluteEl = styled.div`
-  position: absolute;
-  height: calc(100% - 8.31rem);
-  width: 100%;
-  top: 4rem;
-  bottom: 4.31rem;
   overflow-y: scroll;
+  flex-grow: 1;
 
+  // Suppress scrollbar on nav
   @media (${MEDIA_QUERIES.canHover}) {
     overflow: hidden;
     &:hover {
@@ -74,6 +71,7 @@ export const SideNavBackground = styled.div`
   right: 0;
   top: -10rem;
   bottom: 0rem;
+  z-index: -10;
 `;
 export const NavImage = styled(Image)`
   width: 100%;
@@ -87,9 +85,6 @@ export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
   border-top: 1px solid ${PALETTE.white60};
   padding: 0.75rem 0 2rem;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
 `;
 export const Block = styled.div`
   max-width: 23rem;
@@ -141,10 +136,8 @@ export const NavItem = styled.div`
 `;
 
 export const StickyEl = styled.div`
-  width: 100%;
   height: 100vh;
   overflow-y: scroll;
-  position: sticky;
-  top: 0;
-  z-index: 3;
+  display: flex;
+  flex-direction: column;
 `;
