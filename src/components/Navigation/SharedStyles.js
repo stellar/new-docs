@@ -126,8 +126,6 @@ export const NavItem = styled.div`
 
 export const StickyEl = styled.div`
   height: 100vh;
-  /* --vh will be set via setViewportHeight() ApiReference.js */
-  height: calc(var(--vh, 1vh) * 100);
   overflow-y: scroll;
   display: flex;
   flex-direction: column;

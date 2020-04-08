@@ -38,6 +38,7 @@ export const LayoutBase = ({
   description = "",
   previewImage,
   children,
+  viewport = "width=device-width, initial-scale=1",
 }) => (
   <>
     <Helmet
@@ -49,7 +50,7 @@ export const LayoutBase = ({
       meta={[
         {
           name: "viewport",
-          content: "width=device-width, initial-scale=1",
+          content: viewport,
         },
       ]}
     />
@@ -70,6 +71,7 @@ LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,
   title: PropTypes.node,
   previewImage: PropTypes.string,
+  viewport: PropTypes.string,
   description: PropTypes.node,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,
