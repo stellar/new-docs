@@ -126,7 +126,6 @@ export const NavItem = styled.div`
 
 export const StickyEl = styled.div`
   height: 100vh;
-  overflow-y: scroll;
   display: flex;
   flex-direction: column;
 `;
