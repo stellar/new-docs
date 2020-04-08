@@ -38,6 +38,7 @@ export const LayoutBase = ({
   description = "",
   previewImage,
   children,
+  viewport = "width=device-width, initial-scale=1",
 }) => (
   <>
     <Helmet
@@ -46,6 +47,12 @@ export const LayoutBase = ({
         href: font.src[0].url,
         as: "font",
       }))}
+      meta={[
+        {
+          name: "viewport",
+          content: viewport,
+        },
+      ]}
     />
     <Seo
       title={title}
@@ -64,6 +71,7 @@ LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,
   title: PropTypes.node,
   previewImage: PropTypes.string,
+  viewport: PropTypes.string,
   description: PropTypes.node,
   pageContext: PropTypes.shape({
     locale: PropTypes.string.isRequired,

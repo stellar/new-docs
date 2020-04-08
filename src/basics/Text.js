@@ -170,6 +170,7 @@ export const Table = styled.table`
   position: relative;
   word-break: normal;
   width: 100%;
+  overflow: auto;
   padding: 0 1px;
   margin: 0;
   border-collapse: collapse;
