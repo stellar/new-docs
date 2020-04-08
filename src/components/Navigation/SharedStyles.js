@@ -14,13 +14,6 @@ export const H2 = styled(BasicH2)`
   font-weight: ${FONT_WEIGHT.normal};
   color: ${({ theme }) => theme.medium};
 `;
-
-const BACKDROP_COLOR = "rgba(250, 250, 250, 1)";
-const BACKDROP_FADE = "rgba(250, 250, 250, 0)";
-const SHADOW_COLOR = "rgba(0, 0, 0, 0.05)";
-const SHADOW_FADE = "rgba(0, 0, 0, 0)";
-const SHADOW_SIZE = "1.5rem";
-
 export const NavAbsoluteEl = styled.div`
   overflow-y: scroll;
   flex-grow: 1;
@@ -37,21 +30,43 @@ export const NavAbsoluteEl = styled.div`
     overflow-y: scroll;
   }
 
-  // Edge gradients for scrolling. This is a little more robust than fixed
-  // positioning, which gets weird when the element is offscreen (on mobile or
-  // narrow laptops). See http://lea.verou.me/2012/04/background-attachment-local/
+  &::before {
+    content: "";
+    z-index: 2;
+    position: fixed;
+    top: 2.68rem;
+    left: 2.5rem;
+    width: 15.62rem;
+    height: 3.125rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      180deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
 
-  // Shadow covers
-  background: linear-gradient(${BACKDROP_COLOR} 30%, ${BACKDROP_FADE}),
-    linear-gradient(${BACKDROP_FADE}, ${BACKDROP_COLOR} 70%) 0 100%,
-    // Shadows
-      linear-gradient(${SHADOW_COLOR}, ${SHADOW_FADE} 100%),
-    linear-gradient(${SHADOW_FADE}, ${SHADOW_COLOR}) 0 100%;
-  background-repeat: no-repeat;
-  background-size: 100% 3rem, 100% 3rem, 100% ${SHADOW_SIZE},
-    100% ${SHADOW_SIZE};
-  // Opera doesn't support this in the shorthand
-  background-attachment: local, local, scroll, scroll;
+  &::after {
+    content: "";
+    z-index: 2;
+    position: fixed;
+    bottom: 4.312rem;
+    left: 2.5rem;
+    width: 15.625rem;
+    height: 3.125rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      0deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
 `;
 export const SideNavBackground = styled.div`
   position: absolute;
