@@ -4,13 +4,13 @@ order: 40
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
-import { NestedTable } from "components/NestedTable";
+import { AttributeTable } from "components/AttributeTable";
 
 Sends a payment from one account to another in a path through the order books, starting as one asset and ending as another. Path payments that are `Strict Send` designate the payment amount in the asset sent.
 
 See the [`Path Payment Strict Send` errors](../../../errors/result-codes/operation-specific/path-payment-strict-send.mdx).
 
-<NestedTable>
+<AttributeTable>
 
 - ATTRIBUTE
   - DATA TYPE
@@ -69,7 +69,7 @@ See the [`Path Payment Strict Send` errors](../../../errors/result-codes/operati
   - string
   - The Stellar address of the source asset’s issuer. Appears if the `asset_type` is not `native`.
 
-</NestedTable>
+</AttributeTable>
 
 <ExampleResponse>
 
