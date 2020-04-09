@@ -1,17 +1,17 @@
 import React from "react";
+import { Location } from "@reach/router";
 import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
-import Helmet from "react-helmet";
 
 import {
   CSS_TRANSITION_SPEED,
   FONT_WEIGHT,
-  DEFAULT_COLUMN_WIDTH,
   PALETTE,
+  DEFAULT_COLUMN_WIDTH,
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
@@ -20,41 +20,29 @@ import { DOM_TARGETS } from "constants/domNodes";
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
-import { normalizeMdx } from "helpers/mdx";
+import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
 
-import { Column } from "basics/Grid";
+import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
-import { ArrowIcon, EditIcon } from "basics/Icons";
-import { Link } from "basics/Links";
-import { PrismStyles } from "basics/Prism";
+import { Column } from "basics/Grid";
+import { ArrowIcon } from "basics/Icons";
 
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
-import {
-  AbsoluteNavFooterEl,
-  NavAbsoluteEl,
-  SideNavBackground,
-} from "components/Navigation/SharedStyles";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
-import {
-  ScrollRouter,
-  Context as ScrollRouterContext,
-} from "components/ApiRefRouting/ScrollRouter";
-import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
-import {
-  ApiReferenceRow,
-  ApiReferenceWrapper,
-  Container,
-  NestedRow,
-  SideNavColumn,
-} from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
-import DevelopersPreview from "assets/images/og_developers.jpg";
+import { SideNav, SideNavBody } from "components/SideNav";
+import {
+  Container,
+  ApiReferenceRow,
+  ApiReferenceWrapper,
+  SideNavColumn,
+  NestedRow,
+} from "components/Documentation/SharedStyles";
+import { SideNavBackground } from "components/Navigation/SharedStyles";
 
-const NAV_BAR_HEIGHT = 89;
-const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
+import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -62,8 +50,6 @@ const GreenTableCell = styled.td`
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
-const TrackedEl = styled.div``;
-
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
@@ -78,30 +64,17 @@ const NavTitleEl = styled(H5)`
   font-weight: ${FONT_WEIGHT.bold};
   text-transform: uppercase;
 `;
-const activeStyles = `
-  color: ${PALETTE.purpleBlue};
-  background: rgba(0,0,0,0.04);
-  border-radius: 2px;
-  padding-left: 0.75rem;
-  font-weight: ${FONT_WEIGHT.bold};
-`;
-const NavItemEl = styled.div`
-  display: block;
+const NavItemEl = styled(BasicButton)`
   text-align: left;
   white-space: nowrap;
-  font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
-  color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
+  font-size: 1rem;
+  color: #333;
   padding: 0.375rem 0;
-  padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
+  padding-left: ${(props) => props.depth}rem;
+  line-height: 1.25;
   transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${FONT_WEIGHT.normal};
-
-  ${(props) =>
-    props.isActive
-      ? css`
-          ${activeStyles}
-        `
-      : ""}
+  font-weight: ${({ isActive }) =>
+    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
 
   &:hover {
     color: ${PALETTE.lightGrey};
@@ -110,121 +83,33 @@ const NavItemEl = styled.div`
 
 const StyledLink = components.a;
 // eslint-disable-next-line react/prop-types
-const DocsLink = ({ href, ...props }) => {
-  const originalPath = React.useContext(SectionPathContext);
-  const { onLinkClick } = React.useContext(ScrollRouterContext);
-
-  let url = href;
-
-  // Resolve relative links
-  if (url.startsWith(".")) {
-    url = buildPathFromFile(
-      pathLib.resolve(pathLib.dirname(originalPath), url),
-    );
-  }
-  return (
-    <StyledLink
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onLinkClick(url);
-      }}
-      href={url}
-      {...props}
-    />
-  );
-};
+const DocsLink = ({ href, ...props }) => (
+  <Location>
+    {({ location }) => {
+      // eslint-disable-next-line react/prop-types
+      let url = href.split(".mdx")[0].replace("index", "");
+      if (url.startsWith(".")) {
+        url = pathLib.resolve(location.pathname, url);
+      }
+      if (/no-js/.test(url)) {
+        url = `${url.replace("no-js/", "")}?javascript=false`;
+      }
+      return <StyledLink href={url} {...props} />;
+    }}
+  </Location>
+);
 const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
-  display: block;
 `;
 
-const isInViewport = (elem) => {
-  const bounding = elem.getBoundingClientRect();
-  return (
-    bounding.top >= 0 &&
-    bounding.left >= 0 &&
-    bounding.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    bounding.right <=
-      (window.innerWidth || document.documentElement.clientWidth)
-  );
-};
-
-// eslint-disable-next-line react/prop-types
-const NavItem = ({ isActive, forwardedRef, children, depth }) => {
-  const itemRef = React.useRef();
-  const parentDom = forwardedRef;
-  const { isScrollingDown } = React.useContext(ScrollRouterContext);
-
-  React.useLayoutEffect(() => {
-    if (isActive && parentDom) {
-      const activeItemSize = itemRef.current.getBoundingClientRect();
-
-      /* If the active navigation is not in view
-      For cases when a user scrolled the nav to the point
-      the active nav is out of viewport */
-      if (!isInViewport(itemRef.current)) {
-        itemRef.current.scrollIntoView();
-      }
-
-      /* If scroll direction is down and its active item's top value
-       is bigger than FIXED_NAV_DISTANCE (229px), subtract that amount
-       from scrollTop to keep the consistent top value
-       Its top value gets inconsistent when it hits the separate dropdown category
-      */
-      if (isScrollingDown.current && activeItemSize.top > FIXED_NAV_DISTANCE) {
-        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
-          /* Reset the distance between the active nav and its offset top */
-          parentDom.current.scrollTop +=
-            activeItemSize.top - FIXED_NAV_DISTANCE;
-        } else {
-          parentDom.current.scrollTop += activeItemSize.height;
-        }
-      } else if (
-        !isScrollingDown.current &&
-        activeItemSize.top < FIXED_NAV_DISTANCE
-      ) {
-        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
-          parentDom.current.scrollTop -=
-            activeItemSize.top - FIXED_NAV_DISTANCE;
-        } else {
-          parentDom.current.scrollTop -= activeItemSize.height;
-        }
-      }
-    }
-  }, [isActive, parentDom, isScrollingDown]);
-
-  return (
-    <NavItemEl isActive={isActive} depth={depth} ref={itemRef}>
-      {children}
-    </NavItemEl>
-  );
-};
-
 // This is a function, not a component
-const renderItem = ({
-  /* eslint-disable react/prop-types */
-  depth,
-  id,
-  isActive,
-  title,
-  forwardedRef,
-  isFirstItem,
-  /* eslint-disable react/prop-types */
-}) => {
-  /* There are cases when folder's index.mdx shares the same title as
-    its metadata.json's title. We are preventing redundancy by replacing
-    its sub navigation's title to "Overview" if its title is the same
-    as its metadata.json's */
-  const navTitle = isFirstItem ? "Overview" : title;
-  return (
-    <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
-      <NavLinkEl href={id}>{navTitle}</NavLinkEl>
-    </NavItem>
-  );
-};
+// eslint-disable-next-line react/prop-types
+const renderItem = ({ depth, id, isActive, title }) => (
+  <NavItemEl depth={depth} isActive={isActive}>
+    <NavLinkEl href={`/no-js/${id}`}>{title}</NavLinkEl>
+  </NavItemEl>
+);
 
 const headerOptions = {
   treatIdAsHref: true,
@@ -259,137 +144,110 @@ const componentMap = {
   },
 };
 
-const ReferenceSection = React.memo(
-  ({ body, relativePath, title, githubLink }) => {
-    const path = buildPathFromFile(relativePath);
-
-    return (
-      <Route originalFilePath={relativePath} path={path}>
-        <section>
-          <TrackedContent>
-            <TrackedEl id={path}>
-              <ApiRefH1 id={path}>{title}</ApiRefH1>
-              {githubLink && (
-                <Link href={githubLink} newTab>
-                  <EditIcon color={PALETTE.purpleBlue} />
-                </Link>
-              )}
-            </TrackedEl>
-          </TrackedContent>
-
-          <NestedRow>
-            <MDXRenderer>{body}</MDXRenderer>
-          </NestedRow>
-          <HorizontalRule />
-        </section>
-      </Route>
-    );
-  },
-);
-
-ReferenceSection.propTypes = {
-  body: PropTypes.node.isRequired,
-  relativePath: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  githubLink: PropTypes.string,
-};
-
 // eslint-disable-next-line react/no-multi-comp
-const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
+const SingleApiReference = React.memo(function ApiReference({
+  data,
+  pageContext,
+}) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
-  const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
+
+  const { parent, frontmatter, body, mdxAST: mdxAst } = data.doc;
+  const path = buildPathFromFile(parent.relativePath);
+  const description = React.useMemo(
+    () => frontmatter.description || getDescriptionFromAst(mdxAst),
+    [mdxAst, frontmatter.description],
+  );
+
   return (
-    <ScrollRouter>
-      <Helmet>
-        {/* SEO optimization. For js-less visitors (i.e. some crawlers), redirect
-        to the same URL but with only the relevant content. */}
-        <noscript>
-          {`<meta http-equiv="refresh" content="0;url=?javascript=false" />`}
-        </noscript>
-      </Helmet>
-      <MDXProvider components={componentMap}>
-        <LayoutBase
-          previewImage={DevelopersPreview}
-          title="Stellar API Reference"
-          description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
-          pageContext={pageContext}
-        >
-          <PrismStyles />
-          <Container>
-            <ApiReferenceRow>
-              <SideNavColumn xs={3} lg={3} xl={4}>
-                <SideNavBackground />
-                <SideNav docType={docType.api}>
-                  <NavAbsoluteEl ref={sideNavRef}>
-                    {Object.entries(docsBySubCategory).map((nav, i) => (
-                      <ExpansionContainerEl
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={i}
-                      >
-                        <Expansion
-                          title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                          expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                          collapseIcon={<ArrowIcon direction="up" />}
-                          expandIcon={<ArrowIcon direction="down" />}
-                          isDefaultExpanded={true}
-                        >
-                          <SideNavBody
-                            items={nav[1]}
-                            renderItem={renderItem}
-                            forwardedRef={sideNavRef}
-                          />
-                        </Expansion>
-                      </ExpansionContainerEl>
-                    ))}
-                  </NavAbsoluteEl>
-                  <AbsoluteNavFooterEl>
-                    <StyledLink href="/docs">Documentation</StyledLink>
-                  </AbsoluteNavFooterEl>
-                </SideNav>
-              </SideNavColumn>
-              <Column
-                xs={9}
-                xl={18}
-                isIndependentScroll
-                id={`${DOM_TARGETS.contentColumn}`}
-              >
-                {referenceDocs.map(
-                  ({ body, id, parent, title, githubLink }) => (
-                    <ReferenceSection
-                      relativePath={parent.relativePath}
-                      key={id}
-                      title={title}
-                      githubLink={githubLink}
-                      body={body}
-                    />
-                  ),
-                )}
-                <Footer />
-              </Column>
-            </ApiReferenceRow>
-          </Container>
-        </LayoutBase>
-      </MDXProvider>
-    </ScrollRouter>
+    <MDXProvider components={componentMap}>
+      <LayoutBase
+        previewImage={DevelopersPreview}
+        description={description}
+        pageContext={pageContext}
+      >
+        <Container>
+          <ApiReferenceRow>
+            <SideNavColumn xs={3} lg={3} xl={4}>
+              <SideNavBackground />
+              <SideNav docType={docType.api}>
+                {Object.entries(docsBySubCategory).map((nav, i) => (
+                  <ExpansionContainerEl
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={i}
+                  >
+                    <Expansion
+                      title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                      expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                      collapseIcon={<ArrowIcon direction="up" />}
+                      expandIcon={<ArrowIcon direction="down" />}
+                      isDefaultExpanded={true}
+                    >
+                      <SideNavBody items={nav[1]} renderItem={renderItem} />
+                    </Expansion>
+                  </ExpansionContainerEl>
+                ))}
+              </SideNav>
+            </SideNavColumn>
+            <Column
+              xs={9}
+              xl={18}
+              isIndependentScroll
+              id={`${DOM_TARGETS.contentColumn}`}
+            >
+              <section>
+                <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
+                <NestedRow>
+                  <MDXRenderer>{body}</MDXRenderer>
+                </NestedRow>
+                <HorizontalRule />
+              </section>
+              <Footer />
+            </Column>
+          </ApiReferenceRow>
+        </Container>
+      </LayoutBase>
+    </MDXProvider>
   );
 });
 
-ApiReference.propTypes = {
+SingleApiReference.propTypes = {
   data: PropTypes.object.isRequired,
   pageContext: PropTypes.object.isRequired,
 };
 
-export default ApiReference;
+export default SingleApiReference;
 
 export const pageQuery = graphql`
-  query SingleApiReferenceQuery($ids: [String]) {
+  query SingleApiReferenceQuery($ids: [String], $docId: String) {
+    doc: mdx(id: { eq: $docId }) {
+      ...ApiReferencePage
+      mdxAST
+    }
     referenceDocs: allMdx(filter: { id: { in: $ids } }) {
       edges {
         node {
-          ...ApiReferencePage
+          id
+          frontmatter {
+            title
+            order
+          }
+          parent {
+            ... on File {
+              relativePath
+              relativeDirectory
+              fields {
+                metadata {
+                  data {
+                    order
+                    title
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
