@@ -6,15 +6,9 @@ order: 100
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-Updates the “authorized” flag of an existing trust line this is called by the issuer of the asset.
+Updates the “authorized” flag of an existing trust line. This must be called by the issuer of the asset.
 
-Heads up! Unless the issuing account has AUTH_REVOCABLE_FLAG set than the “authorized” flag can only be set and never cleared.
-
-
-
-Creates, updates, or deletes a trust line from the source account to another account's issued asset. 
-
-See the [`Change Trust` errors](../../../errors/result-codes/operation-specific/change-trust.mdx).
+See the [`Allow Trust` errors](../../../errors/result-codes/operation-specific/allow-trust.mdx).
 
 <AttributeTable>
 

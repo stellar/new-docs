@@ -8,22 +8,13 @@ import { AttributeTable } from "components/AttributeTable";
 
 Creates, updates, or deletes a buy offer to trade assets. A buy offer specifies a certain amount of the buying asset that should be sold in exchange for the minimum quantity of the selling asset.
 
-See the [`Manage BUy Offer` errors](../../../errors/result-codes/operation-specific/buy-offer.mdx).
+See the [`Manage Buy Offer` errors](../../../errors/result-codes/operation-specific/buy-offer.mdx).
 
 <AttributeTable>
 
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
-- source_account
-  - string
-  - This is the account that originates the transaction. 
-- created_at
-  - string
-  - The date this path payment was created.
-- transaction_hash
-  - string
-  - A unique identifier for the transaction this operation belongs to.
 - amount
   - string
   - The amount of `buying_asset` that the account making this offer is willing to buy.

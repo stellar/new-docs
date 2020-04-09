@@ -8,22 +8,13 @@ import { AttributeTable } from "components/AttributeTable";
 
 Creates an offer that will not consume a counter offer that exactly matches this offer. This is useful for offers meant to be 1:1 exchanges for path payments. Use Manage Sell Offer to manage this offer after using this operation to create it.
 
-See the [`Manage Passive Sell Offer` errors](../../../errors/result-codes/operation-specific/passive-sell-offer.mdx).
+See the [`Create Passive Sell Offer` errors](../../../errors/result-codes/operation-specific/passive-sell-offer.mdx).
 
 <AttributeTable>
 
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
-- source_account
-  - string
-  - This is the account that originates the transaction. 
-- created_at
-  - string
-  - The date this path payment was created.
-- transaction_hash
-  - string
-  - A unique identifier for the transaction this operation belongs to.
 - amount
   - string
   - The amount of `selling_asset` that the account making this offer is willing to sell.

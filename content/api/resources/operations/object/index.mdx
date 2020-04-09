@@ -6,7 +6,7 @@ order: 0
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-Each of Stellar’s operations have unique response shapes. Below are the attributes that are consistent across each operation object.
+Each of Stellar’s operations have unique response shapes. Below are the attributes that are common across individual operation objects.
 
 See the [generic Operation errors](../../errors/result-codes/operations.mdx).
 
@@ -27,9 +27,18 @@ See the [generic Operation errors](../../errors/result-codes/operations.mdx).
 - type
   - string
   - The name of the operation type.
+- transaction_hash
+  - string
+  - A unique identifier for the transaction this operation belongs to.
 - transaction_successful
   - boolean
   - Indicates if this operation was part of a successful transaction.
+- source_account
+  - string
+  - This is the account that originates the operation's parent transaction. 
+- created_at
+  - string
+  - The date this operation was created.
 
 </AttributeTable>
 
