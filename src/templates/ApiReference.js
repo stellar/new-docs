@@ -66,7 +66,7 @@ const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
 const TrackedEl = styled.div``;
-const SectionEl = styled.div`
+const SectionEl = styled.section`
   &:first-child {
     margin-top: 5rem;
   }
@@ -278,7 +278,7 @@ const ReferenceSection = React.memo(
     return (
       <SectionEl>
         <Route originalFilePath={relativePath} path={path}>
-          <section>
+          <>
             <TrackedContent>
               <TrackedEl id={path}>
                 <ApiRefLinkedH1 id={path}>{title}</ApiRefLinkedH1>
@@ -294,7 +294,7 @@ const ReferenceSection = React.memo(
               <MDXRenderer>{body}</MDXRenderer>
             </NestedRow>
             <HorizontalRule />
-          </section>
+          </>
         </Route>
       </SectionEl>
     );
