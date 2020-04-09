@@ -209,17 +209,15 @@ const Documentation = ({ data, pageContext, location }) => {
   const { body, headings, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
-    description: contentDescription,
     modifiedTime,
     githubLink,
     nextUp: articleNextUp,
     url,
   } = findArticle(pagePath, docsContents)[name];
 
-  const description = React.useMemo(
-    () => contentDescription || getDescriptionFromAst(mdxAst),
-    [mdxAst, contentDescription],
-  );
+  const description = React.useMemo(() => getDescriptionFromAst(mdxAst), [
+    mdxAst,
+  ]);
 
   const pageOutline = headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
@@ -382,7 +380,6 @@ export const pageQuery = graphql`
             id
             frontmatter {
               title
-              description
               order
             }
           }
