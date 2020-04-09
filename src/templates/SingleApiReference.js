@@ -167,19 +167,18 @@ const SingleApiReference = React.memo(function ApiReference({
         description={description}
         pageContext={pageContext}
       >
-        <ApiReferenceRow style={{ marginTop: "5rem" }}>
+        <ApiReferenceRow>
           <SideNavColumn xs={3} lg={3} xl={4}>
             <SideNavBackground />
-            <SideNav>
+            <SideNav docType={docType.api}>
               {Object.entries(docsBySubCategory).map((nav, i) => (
                 <ExpansionContainerEl
                   // eslint-disable-next-line react/no-array-index-key
                   key={i}
                 >
                   <Expansion
-                    title={nav[0]}
-                    expandedModeTitle={nav[0]}
-                    hasBorder
+                    title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                    expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
                     collapseIcon={<ArrowIcon direction="up" />}
                     expandIcon={<ArrowIcon direction="down" />}
                     isDefaultExpanded={true}
