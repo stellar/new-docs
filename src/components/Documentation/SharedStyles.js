@@ -27,7 +27,11 @@ export const Content = styled.article`
   position: relative;
   margin: 0 auto;
 `;
-
+const CustomColumn = styled(Column)`
+  @media (${MEDIA_QUERIES.gtXlDesktop}) {
+    grid-column: ${(props) => (props.xlColumn ? props.xlColumn : "inherit")};
+  }
+`;
 const RIGHT_COLUMN_COMPONENTS_NAME = {
   CodeExample: "CodeExample",
   EndpointsTable: "EndpointsTable",
@@ -54,12 +58,20 @@ export const ApiReferenceWrapper = ({ children, ...props }) => {
 
   return (
     <React.Fragment>
-      <Column xs={5} xl={9}>
+      {/* Hack to make it look appear as if we had a column-gap
+      4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
+      skip the 1st column to use it as column-gap, start at the 2nd column and
+      span through then next 8 columns (ends at column 9) */}
+      <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
         <Content {...props}>{MiddleColumnContent}</Content>
-      </Column>
-      <Column xs={4} xl={9}>
+      </CustomColumn>
+      {/* Hack to make it look appear as if we had a column-gap
+      4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
+      skip the 10th column to use it as column-gap, start at the 11th column and
+      span through the next 8 columns (ends at column 18) */}
+      <CustomColumn xs={4} xl={9} xlColumn="11 / span 8">
         {rightColumnContent}
-      </Column>
+      </CustomColumn>
     </React.Fragment>
   );
 };
