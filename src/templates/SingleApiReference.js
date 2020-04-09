@@ -7,8 +7,14 @@ import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
-import { CSS_TRANSITION_SPEED, FONT_WEIGHT, PALETTE } from "constants/styles";
+import {
+  CSS_TRANSITION_SPEED,
+  FONT_WEIGHT,
+  PALETTE,
+  DEFAULT_COLUMN_WIDTH,
+} from "constants/styles";
 import { components } from "constants/docsComponentMapping";
+import { docType } from "constants/docType";
 import { DOM_TARGETS } from "constants/domNodes";
 
 import { sortReference } from "helpers/sortReference";
@@ -46,6 +52,17 @@ const OrangeTableCell = styled.td`
 `;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+
+  &:last-child {
+    padding-bottom: 2.25rem;
+  }
+`;
+const NavTitleEl = styled(H5)`
+  margin: 0;
+  line-height: normal;
+  font-weight: ${FONT_WEIGHT.bold};
+  text-transform: uppercase;
 `;
 const NavItemEl = styled(BasicButton)`
   text-align: left;
@@ -152,19 +169,18 @@ const SingleApiReference = React.memo(function ApiReference({
         pageContext={pageContext}
       >
         <Container>
-          <ApiReferenceRow style={{ marginTop: "5rem" }}>
+          <ApiReferenceRow>
             <SideNavColumn xs={3} lg={3} xl={4}>
               <SideNavBackground />
-              <SideNav>
+              <SideNav docType={docType.api}>
                 {Object.entries(docsBySubCategory).map((nav, i) => (
                   <ExpansionContainerEl
                     // eslint-disable-next-line react/no-array-index-key
                     key={i}
                   >
                     <Expansion
-                      title={nav[0]}
-                      expandedModeTitle={nav[0]}
-                      hasBorder
+                      title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                      expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
                       collapseIcon={<ArrowIcon direction="up" />}
                       expandIcon={<ArrowIcon direction="down" />}
                       isDefaultExpanded={true}

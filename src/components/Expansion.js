@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import PropTypes from "prop-types";
 
 import { PALETTE, CSS_TRANSITION_SPEED } from "constants/styles";
@@ -23,16 +23,30 @@ const ExpansionEl = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 4px;
-  border: ${(props) =>
-    props.hasBorder ? `solid 1px ${PALETTE.white60}` : "none"};
+  border: none;
+
   ${ExpansionHeaderEl} {
-    border-bottom: ${(props) =>
-      props.hasBorder ? `solid 1px ${PALETTE.white60}` : "none"};
-    padding: ${(props) => (props.hasBorder ? `1rem` : `1rem 0`)};
+    padding: 1rem 0;
   }
   ${ExpandedSectionEl} {
-    padding: ${(props) => (props.hasBorder ? `1rem` : `0`)};
+    padding: 0;
   }
+
+  ${({ hasBorder }) =>
+    hasBorder &&
+    css`
+      ${ExpansionHeaderEl} {
+        border: solid 1px ${PALETTE.white60};
+        padding: 1rem;
+      }
+      ${ExpandedSectionEl} {
+        padding: 1rem;
+        border-top: none;
+        border-right: solid 1px ${PALETTE.white60};
+        border-left: solid 1px ${PALETTE.white60};
+        border-bottom: solid 1px ${PALETTE.white60};
+      }
+    `}
 `;
 
 const ExpansionIconEl = styled.div`

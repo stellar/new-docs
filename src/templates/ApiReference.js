@@ -65,6 +65,11 @@ const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
 const TrackedEl = styled.div``;
+const SectionEl = styled.section`
+  &:first-child {
+    margin-top: 5rem;
+  }
+`;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
@@ -85,6 +90,10 @@ const activeStyles = `
   border-radius: 2px;
   padding-left: 0.75rem;
   font-weight: ${FONT_WEIGHT.bold};
+`;
+const ApiRefH1 = styled(H1)`
+  margin-top: 0.25rem;
+  margin-bottom: 0;
 `;
 const NavItemEl = styled.div`
   display: block;
@@ -232,23 +241,23 @@ const headerOptions = {
   treatIdAsHref: true,
   LinkComponent: DocsLink,
 };
-const ApiRefH1 = makeLinkedHeader(H1, headerOptions);
-const ApiRefH2 = makeLinkedHeader(H2, headerOptions);
-const ApiRefH3 = makeLinkedHeader(H3, headerOptions);
-const ApiRefH4 = makeLinkedHeader(H4, headerOptions);
-const ApiRefH5 = makeLinkedHeader(H5, headerOptions);
-const ApiRefH6 = makeLinkedHeader(H6, headerOptions);
+const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
+const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
+const ApiRefLinkedH3 = makeLinkedHeader(H3, headerOptions);
+const ApiRefLinkedH4 = makeLinkedHeader(H4, headerOptions);
+const ApiRefLinkedH5 = makeLinkedHeader(H5, headerOptions);
+const ApiRefLinkedH6 = makeLinkedHeader(H6, headerOptions);
 
 const componentMap = {
   ...components,
   a: DocsLink,
   wrapper: ApiReferenceWrapper,
-  h1: styled(components.h1).attrs({ as: ApiRefH1 }),
-  h2: styled(components.h2).attrs({ as: ApiRefH2 }),
-  h3: styled(components.h3).attrs({ as: ApiRefH3 }),
-  h4: styled(components.h4).attrs({ as: ApiRefH4 }),
-  h5: styled(components.h5).attrs({ as: ApiRefH5 }),
-  h6: styled(components.h6).attrs({ as: ApiRefH6 }),
+  h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
+  h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
+  h3: styled(components.h3).attrs({ as: ApiRefLinkedH3 }),
+  h4: styled(components.h4).attrs({ as: ApiRefLinkedH4 }),
+  h5: styled(components.h5).attrs({ as: ApiRefLinkedH5 }),
+  h6: styled(components.h6).attrs({ as: ApiRefLinkedH6 }),
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
     if (children === "GET") {
@@ -266,25 +275,27 @@ const ReferenceSection = React.memo(
     const path = buildPathFromFile(relativePath);
 
     return (
-      <Route originalFilePath={relativePath} path={path}>
-        <section>
-          <TrackedContent>
-            <TrackedEl id={path}>
-              <ApiRefH1 id={path}>{title}</ApiRefH1>
-              {githubLink && (
-                <Link href={githubLink} newTab>
-                  <EditIcon color={PALETTE.purpleBlue} />
-                </Link>
-              )}
-            </TrackedEl>
-          </TrackedContent>
+      <SectionEl>
+        <Route originalFilePath={relativePath} path={path}>
+          <>
+            <TrackedContent>
+              <TrackedEl id={path}>
+                <ApiRefLinkedH1 id={path}>{title}</ApiRefLinkedH1>
+                {githubLink && (
+                  <Link href={githubLink} newTab>
+                    <EditIcon color={PALETTE.purpleBlue} />
+                  </Link>
+                )}
+              </TrackedEl>
+            </TrackedContent>
 
-          <NestedRow>
-            <MDXRenderer>{body}</MDXRenderer>
-          </NestedRow>
-          <HorizontalRule />
-        </section>
-      </Route>
+            <NestedRow>
+              <MDXRenderer>{body}</MDXRenderer>
+            </NestedRow>
+            <HorizontalRule />
+          </>
+        </Route>
+      </SectionEl>
     );
   },
 );

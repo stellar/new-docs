@@ -52,7 +52,7 @@ export const components = {
   sup: styled(TextComponents.Sup)`
     top: -0.375rem;
   `,
-  h1: styled(TextComponents.LinkedH1)``,
+  h1: styled(TextComponents.H1)``,
   h2: styled(TextComponents.LinkedH2)`
     a {
       color: ${({ theme }) => theme.text};
