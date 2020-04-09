@@ -3,7 +3,12 @@ import "whatwg-fetch";
 import fetchJsonp from "fetch-jsonp";
 import styled from "styled-components";
 
-import { PALETTE, FONT_WEIGHT, CSS_TRANSITION_SPEED } from "constants/styles";
+import {
+  PALETTE,
+  FONT_WEIGHT,
+  CSS_TRANSITION_SPEED,
+  MEDIA_QUERIES,
+} from "constants/styles";
 import { URL_ENDPOINTS } from "constants/endpoints";
 import { Text } from "basics/Text";
 
@@ -57,6 +62,7 @@ const SubmitButtonEl = styled(BasicButton).attrs((props) => ({
 const InputContainer = styled.div`
   position: relative;
   display: flex;
+  justify-content: stretch;
 `;
 const EmailInput = styled.input.attrs({
   type: "email",
@@ -75,6 +81,9 @@ const EmailInput = styled.input.attrs({
   line-height: 1.75;
   vertical-align: middle;
   box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.16);
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    width: 100%;
+  }
 
   ::placeholder {
     color: ${PALETTE.black80};

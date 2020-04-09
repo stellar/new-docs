@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { PALETTE, FONT_WEIGHT } from "constants/styles";
+import { PALETTE, FONT_WEIGHT, MEDIA_QUERIES } from "constants/styles";
 
 import { Link } from "basics/Links";
 import { H4, H6 } from "basics/Text";
@@ -13,9 +13,17 @@ const El = styled.div`
   padding-top: 7.5rem;
   padding-bottom: 6rem;
   justify-content: space-between;
+
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    flex-direction: column;
+  }
 `;
 const ContainerEl = styled.div`
   min-width: 11rem;
+
+  @media (${MEDIA_QUERIES.ltLaptop}) {
+    margin-bottom: 1rem;
+  }
 `;
 const SubscribeHeadingEl = styled(H4)`
   font-size: 1.25rem;

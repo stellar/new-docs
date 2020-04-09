@@ -1,7 +1,6 @@
 import React from "react";
 import pathLib from "path";
 import PropTypes from "prop-types";
-import { throttle } from "lodash";
 import { graphql } from "gatsby";
 import styled, { css } from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
@@ -305,28 +304,6 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
 
-  React.useLayoutEffect(() => {
-    /* setViewportHeight() is used to set the custom vh css to be set to the value of 
-      window.innerHeight to be the full height of the window screen. For example, 
-      API Ref Page uses its desktop design on mobile. On an iPhone (375 x 667) if users want
-      to see the entire page they would have to zoom out completely to see it.
-      Without this function, when users zoom out they would see cutoff page because
-      its page's layout height is based on 375 x 667 (height: 100vh) not its window.innerHeight
-    */
-    const setViewportHeight = throttle(() => {
-      const vh = window.innerHeight * 0.01;
-      // Sets the value in the --vh custom property to the root of the document
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    });
-
-    setViewportHeight();
-    window.addEventListener("resize", setViewportHeight);
-
-    return () => {
-      window.removeEventListener("resize", setViewportHeight);
-    };
-  }, []);
-
   return (
     <ScrollRouter>
       <Helmet>
@@ -342,6 +319,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           title="Stellar API Reference"
           description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
           pageContext={pageContext}
+          viewport="width=1366, initial-scale=.1"
         >
           <PrismStyles />
           <Container>
