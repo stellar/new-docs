@@ -34,7 +34,6 @@ import { Expansion } from "components/Expansion";
 
 import { SideNav, SideNavBody } from "components/SideNav";
 import {
-  Container,
   ApiReferenceRow,
   ApiReferenceWrapper,
   SideNavColumn,
@@ -168,46 +167,45 @@ const SingleApiReference = React.memo(function ApiReference({
         description={description}
         pageContext={pageContext}
       >
-        <Container>
-          <ApiReferenceRow>
-            <SideNavColumn xs={3} lg={3} xl={4}>
-              <SideNavBackground />
-              <SideNav docType={docType.api}>
-                {Object.entries(docsBySubCategory).map((nav, i) => (
-                  <ExpansionContainerEl
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={i}
+        <ApiReferenceRow style={{ marginTop: "5rem" }}>
+          <SideNavColumn xs={3} lg={3} xl={4}>
+            <SideNavBackground />
+            <SideNav>
+              {Object.entries(docsBySubCategory).map((nav, i) => (
+                <ExpansionContainerEl
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={i}
+                >
+                  <Expansion
+                    title={nav[0]}
+                    expandedModeTitle={nav[0]}
+                    hasBorder
+                    collapseIcon={<ArrowIcon direction="up" />}
+                    expandIcon={<ArrowIcon direction="down" />}
+                    isDefaultExpanded={true}
                   >
-                    <Expansion
-                      title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                      expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                      collapseIcon={<ArrowIcon direction="up" />}
-                      expandIcon={<ArrowIcon direction="down" />}
-                      isDefaultExpanded={true}
-                    >
-                      <SideNavBody items={nav[1]} renderItem={renderItem} />
-                    </Expansion>
-                  </ExpansionContainerEl>
-                ))}
-              </SideNav>
-            </SideNavColumn>
-            <Column
-              xs={9}
-              xl={18}
-              isIndependentScroll
-              id={`${DOM_TARGETS.contentColumn}`}
-            >
-              <section>
-                <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
-                <NestedRow>
-                  <MDXRenderer>{body}</MDXRenderer>
-                </NestedRow>
-                <HorizontalRule />
-              </section>
-              <Footer />
-            </Column>
-          </ApiReferenceRow>
-        </Container>
+                    <SideNavBody items={nav[1]} renderItem={renderItem} />
+                  </Expansion>
+                </ExpansionContainerEl>
+              ))}
+            </SideNav>
+          </SideNavColumn>
+          <Column
+            xs={9}
+            xl={18}
+            isIndependentScroll
+            id={`${DOM_TARGETS.contentColumn}`}
+          >
+            <section>
+              <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
+              <NestedRow>
+                <MDXRenderer>{body}</MDXRenderer>
+              </NestedRow>
+              <HorizontalRule />
+            </section>
+            <Footer />
+          </Column>
+        </ApiReferenceRow>
       </LayoutBase>
     </MDXProvider>
   );

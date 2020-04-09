@@ -27,7 +27,7 @@ export const Content = styled.article`
   position: relative;
   margin: 0 auto;
 `;
-const CustomColumn = styled(Column)`
+export const CustomColumn = styled(Column)`
   @media (${MEDIA_QUERIES.gtXlDesktop}) {
     grid-column: ${(props) => (props.xlColumn ? props.xlColumn : "inherit")};
   }
