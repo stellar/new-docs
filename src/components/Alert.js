@@ -11,7 +11,7 @@ const AlertEl = styled.div`
   display: flex;
   font-size: 1rem;
   border-radius: 4px;
-  border: 1px solid ${PALETTE.purpleBlue};
+  border: 1px solid rgba(62, 27, 219, 0.2);
   background-color: rgba(62, 27, 219, 0.04);
   color: ${PALETTE.black80};
 
