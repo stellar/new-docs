@@ -47,9 +47,9 @@ import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
 import {
   ApiReferenceRow,
   ApiReferenceWrapper,
-  Container,
   NestedRow,
   SideNavColumn,
+  CustomColumn,
 } from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
@@ -278,17 +278,25 @@ const ReferenceSection = React.memo(
       <SectionEl>
         <Route originalFilePath={relativePath} path={path}>
           <>
-            <TrackedContent>
-              <TrackedEl id={path}>
-                <ApiRefLinkedH1 id={path}>{title}</ApiRefLinkedH1>
-                {githubLink && (
-                  <Link href={githubLink} newTab>
-                    <EditIcon color={PALETTE.purpleBlue} />
-                  </Link>
-                )}
-              </TrackedEl>
-            </TrackedContent>
-
+            <NestedRow>
+              {/* Hack to make it look appear as if we had a column-gap
+                4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
+                skip the 1st column to use it as column-gap, start at the 2nd column and
+                span through then next 8 columns (ends at column 9)
+              */}
+              <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
+                <TrackedContent>
+                  <TrackedEl id={path}>
+                    <ApiRefH1 id={path}>{title}</ApiRefH1>
+                    {githubLink && (
+                      <Link href={githubLink} newTab>
+                        <EditIcon color={PALETTE.purpleBlue} />
+                      </Link>
+                    )}
+                  </TrackedEl>
+                </TrackedContent>
+              </CustomColumn>
+            </NestedRow>
             <NestedRow>
               <MDXRenderer>{body}</MDXRenderer>
             </NestedRow>
@@ -333,59 +341,56 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           viewport="width=1366, initial-scale=.1"
         >
           <PrismStyles />
-          <Container>
-            <ApiReferenceRow>
-              <SideNavColumn xs={3} lg={3} xl={4}>
-                <SideNavBackground />
-                <SideNav docType={docType.api}>
-                  <NavAbsoluteEl ref={sideNavRef}>
-                    {Object.entries(docsBySubCategory).map((nav, i) => (
-                      <ExpansionContainerEl
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={i}
+
+          <ApiReferenceRow>
+            <SideNavColumn xs={3} lg={3} xl={4}>
+              <SideNavBackground />
+              <SideNav docType={docType.api}>
+                <NavAbsoluteEl ref={sideNavRef}>
+                  {Object.entries(docsBySubCategory).map((nav, i) => (
+                    <ExpansionContainerEl
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={i}
+                    >
+                      <Expansion
+                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        collapseIcon={<ArrowIcon direction="up" />}
+                        expandIcon={<ArrowIcon direction="down" />}
+                        isDefaultExpanded={true}
                       >
-                        <Expansion
-                          title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                          expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                          collapseIcon={<ArrowIcon direction="up" />}
-                          expandIcon={<ArrowIcon direction="down" />}
-                          isDefaultExpanded={true}
-                        >
-                          <SideNavBody
-                            items={nav[1]}
-                            renderItem={renderItem}
-                            forwardedRef={sideNavRef}
-                          />
-                        </Expansion>
-                      </ExpansionContainerEl>
-                    ))}
-                  </NavAbsoluteEl>
-                  <AbsoluteNavFooterEl>
-                    <StyledLink href="/docs">Documentation</StyledLink>
-                  </AbsoluteNavFooterEl>
-                </SideNav>
-              </SideNavColumn>
-              <Column
-                xs={9}
-                xl={18}
-                isIndependentScroll
-                id={`${DOM_TARGETS.contentColumn}`}
-              >
-                {referenceDocs.map(
-                  ({ body, id, parent, title, githubLink }) => (
-                    <ReferenceSection
-                      relativePath={parent.relativePath}
-                      key={id}
-                      title={title}
-                      githubLink={githubLink}
-                      body={body}
-                    />
-                  ),
-                )}
-                <Footer />
-              </Column>
-            </ApiReferenceRow>
-          </Container>
+                        <SideNavBody
+                          items={nav[1]}
+                          renderItem={renderItem}
+                          forwardedRef={sideNavRef}
+                        />
+                      </Expansion>
+                    </ExpansionContainerEl>
+                  ))}
+                </NavAbsoluteEl>
+                <AbsoluteNavFooterEl>
+                  <StyledLink href="/docs">Documentation</StyledLink>
+                </AbsoluteNavFooterEl>
+              </SideNav>
+            </SideNavColumn>
+            <Column
+              xs={9}
+              xl={18}
+              isIndependentScroll
+              id={`${DOM_TARGETS.contentColumn}`}
+            >
+              {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
+                <ReferenceSection
+                  relativePath={parent.relativePath}
+                  key={id}
+                  title={title}
+                  githubLink={githubLink}
+                  body={body}
+                />
+              ))}
+              <Footer />
+            </Column>
+          </ApiReferenceRow>
         </LayoutBase>
       </MDXProvider>
     </ScrollRouter>
