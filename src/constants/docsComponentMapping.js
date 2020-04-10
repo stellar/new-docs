@@ -38,7 +38,6 @@ export const components = {
   },
   span: styled.span``,
   p: styled(TextComponents.Text)`
-    line-height: 1.5;
     font-size: 1rem;
     color: ${({ theme }) => theme.darkGrey};
 
