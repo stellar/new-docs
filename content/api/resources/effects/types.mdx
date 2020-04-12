@@ -6,7 +6,7 @@ order: 10
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-There are six groups of effects:
+There are six groups of effect types. Each effect type has its own set of attributes.
 
 Account Effects
 
@@ -58,5 +58,84 @@ Signer Effects
 - Signer Updated
   - 
   - set_options
+
+</AttributeTable>
+
+Trustline Effects
+
+<AttributeTable>
+
+- TYPE
+  - 
+  - OPERATION(S)
+- Trustline Created
+  - 
+  - change_trust
+- Trustline Removed
+  - 
+  - change_trust
+- Trustline Updated
+  - 
+  - change_trust, allow_trust
+- Trustline Authorized
+  - 
+  - allow_trust
+- Trustline Deauthorized
+  - 
+  - allow_trust
+
+</AttributeTable>
+
+Trading Effects
+
+<AttributeTable>
+
+- TYPE
+  - 
+  - OPERATION(S)
+- Offer Created
+  - 
+  - manage_buy_offer, manage_sell_offer, create_passive_sell_offer
+- Offer Removed
+  - 
+  - manage_buy_offer, manage_sell_offer, create_passive_sell_offer, path_payment
+- Offer Updated
+  - 
+  - manage_buy_offer, manage_sell_offer, create_passive_sell_offer, path_payment
+- Trade
+  - 
+  - manage_buy_offer, manage_sell_offer, create_passive_sell_offer, path_payment
+
+</AttributeTable>
+
+Data Effects
+
+<AttributeTable>
+
+- TYPE
+  - 
+  - OPERATION(S)
+- Data Created
+  - 
+  - manage_data
+- Data Removed
+  - 
+  - manage_data
+- Data Updated
+  - 
+  - manage_data
+
+</AttributeTable>
+
+Miscellaneous Effects
+
+<AttributeTable>
+
+- TYPE
+  - 
+  - OPERATION(S)
+- Sequence Bumped
+  - 
+  - bump_sequence
 
 </AttributeTable>
