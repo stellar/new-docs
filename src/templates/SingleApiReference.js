@@ -57,6 +57,10 @@ const ExpansionContainerEl = styled.div`
     padding-bottom: 2.25rem;
   }
 `;
+const ApiRefH1 = styled(H1)`
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+`;
 const NavTitleEl = styled(H5)`
   margin: 0;
   line-height: normal;
@@ -114,23 +118,19 @@ const headerOptions = {
   treatIdAsHref: true,
   LinkComponent: DocsLink,
 };
-const ApiRefH1 = makeLinkedHeader(H1, headerOptions);
-const ApiRefH2 = makeLinkedHeader(H2, headerOptions);
-const ApiRefH3 = makeLinkedHeader(H3, headerOptions);
-const ApiRefH4 = makeLinkedHeader(H4, headerOptions);
-const ApiRefH5 = makeLinkedHeader(H5, headerOptions);
-const ApiRefH6 = makeLinkedHeader(H6, headerOptions);
+const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
+const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
 
 const componentMap = {
   ...components,
   a: DocsLink,
   wrapper: ApiReferenceWrapper,
-  h1: styled(components.h1).attrs({ as: ApiRefH1 }),
-  h2: styled(components.h2).attrs({ as: ApiRefH2 }),
-  h3: styled(components.h3).attrs({ as: ApiRefH3 }),
-  h4: styled(components.h4).attrs({ as: ApiRefH4 }),
-  h5: styled(components.h5).attrs({ as: ApiRefH5 }),
-  h6: styled(components.h6).attrs({ as: ApiRefH6 }),
+  h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
+  h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
+  h3: H3,
+  h4: H4,
+  h5: H5,
+  h6: H6,
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
     if (children === "GET") {
