@@ -9,7 +9,6 @@ import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { List, ListItem } from "basics/Text";
 
-import { NavLogo } from "components/Navigation/NavLogo";
 import { StickyEl } from "components/Navigation/SharedStyles";
 
 import { useSidebar } from "./useSidebar";
@@ -30,16 +29,12 @@ const checkIfOverview = (relativePath) => {
   return pathSegments[pathSegments.length - 1] === "index.mdx";
 };
 
-export const SideNav = ({ children, docType, ...props }) => (
-  <StickyEl {...props}>
-    {docType && <NavLogo pageName={docType} />}
-    {children}
-  </StickyEl>
+export const SideNav = ({ children, ...props }) => (
+  <StickyEl {...props}>{children}</StickyEl>
 );
 
 SideNav.propTypes = {
   children: PropTypes.node.isRequired,
-  docType: PropTypes.string,
 };
 
 export const SideNavBody = ({
@@ -106,11 +101,11 @@ const NestedNav = ({
   Its example can be seen in /api */
   const isOpen = isMobile ? true : isChildActive || isActive;
 
-  /* Nested navigation's default index.mdx has the same title as 
-    its folder's metadata.json's title which causes redundancy. 
-    For example, "Ledgers" navigation is created from metadata.json 
+  /* Nested navigation's default index.mdx has the same title as
+    its folder's metadata.json's title which causes redundancy.
+    For example, "Ledgers" navigation is created from metadata.json
     but its content that is in its index.mdx also has the title "Ledgers"
-    which creates two "Ledgers" in the navigation. We are omitting 
+    which creates two "Ledgers" in the navigation. We are omitting
     redundancy by skipping renderItem() if that's the case */
   const isSubnavOverview = isFirstItem && depth > 0;
 

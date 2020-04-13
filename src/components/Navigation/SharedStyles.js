@@ -1,14 +1,21 @@
+import React from "react";
+import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 
 import {
-  MEDIA_QUERIES,
-  REDESIGN_PALETTE,
-  PALETTE,
+  DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
+  MEDIA_QUERIES,
+  PALETTE,
+  REDESIGN_PALETTE,
 } from "constants/styles";
+
+import Logo from "assets/icons/stellar-logo.svg";
 
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
+
+import { DividerEl } from "components/Documentation/SharedStyles";
 
 export const H2 = styled(BasicH2)`
   font-weight: ${FONT_WEIGHT.normal};
@@ -68,6 +75,54 @@ export const NavAbsoluteEl = styled.div`
     );
   }
 `;
+
+export const El = styled.div`
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  padding: 0.5rem 0;
+  line-height: 1.5rem;
+  display: flex;
+  align-items: center;
+`;
+
+const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
+  ${({ theme = { logo: PALETTE.dark } }) => `
+  stroke: ${theme.logo};
+  fill: ${theme.logo};
+`};
+`;
+const PageNameEl = styled.span`
+  font-size: 1.125rem;
+  margin-bottom: -0.25rem;
+`;
+const NavDividerEl = styled(DividerEl)`
+  height: 3rem;
+  background-color: ${PALETTE.white80};
+`;
+const BetaBadgeEl = styled.div`
+  background-color: ${PALETTE.purpleBlue};
+  border-radius: 0.125rem;
+  padding: 0.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  line-height: 1;
+  color: ${PALETTE.white};
+  margin-bottom: -0.25rem;
+  margin-left: 0.5rem;
+`;
+
+export const NavLogo = ({ pageName }) => (
+  <El>
+    <LogoEl />
+    <NavDividerEl />
+    <PageNameEl>{pageName}</PageNameEl>
+    <BetaBadgeEl>beta</BetaBadgeEl>
+  </El>
+);
+
+NavLogo.propTypes = {
+  pageName: PropTypes.node.isRequired,
+};
+
 export const SideNavBackground = styled.div`
   position: absolute;
   background-color: ${REDESIGN_PALETTE.grey[0]};

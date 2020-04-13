@@ -29,6 +29,7 @@ import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
 import { loopAndExtractString } from "helpers/extractStringChildren";
 
+import { BetaNotice } from "components/BetaNotice";
 import { BasicButton } from "basics/Buttons";
 import { EditIcon, CheckmarkIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
@@ -44,6 +45,7 @@ import { Footer } from "components/Documentation/Footer";
 import {
   NavAbsoluteEl,
   AbsoluteNavFooterEl,
+  NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
 
@@ -227,7 +229,8 @@ const Documentation = ({ data, pageContext, location }) => {
   const left = (
     <>
       <SideNavBackground />
-      <SideNav docType={docType.doc}>
+      <SideNav>
+        <NavLogo pageName={docType.doc} />
         <NavAbsoluteEl>
           <Topics>
             {Object.values(docsContents).map((content) => {
@@ -261,6 +264,7 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const center = (
     <>
+      <BetaNotice />
       <Content>
         <H1>{header}</H1>
         {githubLink && (
