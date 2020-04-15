@@ -76,10 +76,11 @@ const PageNameEl = styled.span`
   font-size: 1.125rem;
   margin-bottom: -0.25rem;
 `;
-const NavDividerEl = styled(DividerEl)`
+export const NavDivider = styled(DividerEl)`
   background-color: ${PALETTE.white60};
 `;
-const BetaBadgeEl = styled.div`
+export const BetaBadge = styled.div`
+  display: inline-block;
   background-color: ${PALETTE.purpleBlue};
   border-radius: 0.125rem;
   padding: 0.25rem;
@@ -94,9 +95,9 @@ const BetaBadgeEl = styled.div`
 export const NavLogo = ({ pageName }) => (
   <El>
     <LogoEl />
-    <NavDividerEl />
+    <NavDivider />
     <PageNameEl>{pageName}</PageNameEl>
-    <BetaBadgeEl>beta</BetaBadgeEl>
+    <BetaBadge>beta</BetaBadge>
   </El>
 );
 
@@ -197,7 +198,9 @@ export const NavItem = styled.div`
 `;
 
 export const SideNavContainer = styled.div`
-  height: 100vh;
+  height: calc(100vh - 3.75rem);
+  width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
 `;

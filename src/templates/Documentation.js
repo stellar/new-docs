@@ -41,6 +41,7 @@ import { SideNavBackground, NavLogo } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
+import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 
 const contentId = "content";
 const { h1: H1, h2: H2, a: StyledLink, td: TD } = components;
@@ -257,6 +258,12 @@ const Documentation = ({ data, pageContext, location }) => {
         pageContext={pageContext}
       >
         <PrismStyles isDoc />
+        <MobileLeftNav
+          docsContents={docsContents}
+          currentUrl={url}
+          initialTopicsState={initialTopicsState}
+          rootDir={rootDir}
+        />
         <Container id={contentId}>
           <Row>
             <SideNavColumn xs={{ hide: true }} sm={3} lg={3}>
