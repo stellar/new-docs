@@ -112,6 +112,7 @@ const ColumnEl = styled.div`
     isIndependentScroll &&
     css`
       @media (${MEDIA_QUERIES.gtTablet}) {
+        padding-right: 1.5rem;
         overflow-y: scroll;
         height: 100vh;
       }
