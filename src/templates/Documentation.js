@@ -7,14 +7,8 @@ import { MDXProvider } from "@mdx-js/react";
 import path from "path";
 import { Location } from "@reach/router";
 
-import {
-  FONT_WEIGHT,
-  THEME,
-  DEFAULT_COLUMN_WIDTH,
-  PALETTE,
-} from "constants/styles";
+import { FONT_WEIGHT, THEME, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
-import { docType } from "constants/docType";
 import { DOM_TARGETS } from "constants/domNodes";
 
 import { slugify } from "helpers/slugify";
@@ -35,34 +29,20 @@ import { EditIcon, CheckmarkIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
-import { ListItem, Text } from "basics/Text";
+import { Text } from "basics/Text";
 
-import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { SideNavBody, TrackedContent } from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
+import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Documentation/Footer";
-import {
-  NavAbsoluteEl,
-  AbsoluteNavFooterEl,
-  SideNavContainer,
-  NavLogo,
-  SideNavBackground,
-} from "components/Navigation/SharedStyles";
+import { SideNavBackground } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const contentId = "content";
 const { h1: H1, h2: H2, a: StyledLink, td: TD } = components;
-
-const Topics = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-  padding-bottom: 1rem;
-  margin-right: 1rem;
-`;
 
 const RightNavEl = styled.div`
   font-size: 0.875rem;
@@ -92,15 +72,6 @@ const OutlineTitleEl = styled.div`
   text-transform: uppercase;
   font-weight: ${FONT_WEIGHT.bold};
   padding: 0.75rem 0;
-`;
-
-const RootItemEl = styled(ListItem)`
-  padding: 0.5rem 0;
-`;
-const RootLinkEl = styled(StyledLink)`
-  color: ${PALETTE.black80};
-  line-height: 1.75rem;
-  text-decoration: none;
 `;
 
 const NextUpEl = styled.div`
@@ -198,7 +169,7 @@ const Documentation = ({ data, pageContext, location }) => {
   const { relativeDirectory, name, rootDir } = pageContext;
 
   const docsContents =
-    (location.state && location.state.compiledDocsContents) ||
+    location.state?.compiledDocsContents ||
     buildDocsContents(allFile.group, rootDir);
 
   const pagePath = buildRelPath(relativeDirectory, rootDir);
@@ -228,40 +199,12 @@ const Documentation = ({ data, pageContext, location }) => {
   }));
 
   const left = (
-    <>
-      <SideNavBackground />
-      <SideNavContainer>
-        <NavLogo pageName={docType.doc} />
-        <NavAbsoluteEl>
-          <Topics>
-            {Object.values(docsContents).map((content) => {
-              const { articles, id, topicPath, title } = content;
-              if (topicPath === buildRelPath(rootDir, rootDir)) {
-                return Object.values(articles).map((rootArticle) => (
-                  <RootItemEl key={id}>
-                    <RootLinkEl href="/docs">{rootArticle.title}</RootLinkEl>
-                  </RootItemEl>
-                ));
-              }
-              return (
-                <Articles
-                  articles={articles}
-                  key={id}
-                  id={id}
-                  initialTopicsState={initialTopicsState}
-                  title={title}
-                  topicPath={topicPath}
-                  activeItem={url}
-                />
-              );
-            })}
-          </Topics>
-        </NavAbsoluteEl>
-        <AbsoluteNavFooterEl>
-          <StyledLink href="/api">API Reference</StyledLink>
-        </AbsoluteNavFooterEl>
-      </SideNavContainer>
-    </>
+    <LeftNav
+      docsContents={docsContents}
+      currentUrl={url}
+      initialTopicsState={initialTopicsState}
+      rootDir={rootDir}
+    />
   );
   const center = (
     <>
@@ -315,7 +258,8 @@ const Documentation = ({ data, pageContext, location }) => {
         <PrismStyles isDoc />
         <Container id={contentId}>
           <Row>
-            <SideNavColumn md={3} lg={3}>
+            <SideNavColumn xs={{ hide: true }} md={3} lg={3}>
+              <SideNavBackground />
               {left}
             </SideNavColumn>
             {/*
