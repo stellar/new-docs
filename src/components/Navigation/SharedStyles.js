@@ -36,15 +36,24 @@ export const NavAbsoluteEl = styled.div`
   @media (${MEDIA_QUERIES.ltLaptop}) {
     overflow-y: scroll;
   }
+`;
 
-  &::before {
+export const El = styled.div`
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  padding: 0.5rem 0;
+  line-height: 1.5rem;
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  &::after {
     content: "";
     z-index: 2;
-    position: fixed;
-    top: 2.68rem;
-    left: 2.5rem;
-    width: 15.62rem;
-    height: 3.125rem;
+    position: absolute;
+    bottom: -2.5rem;
+    left: 0;
+    width: 100%;
+    height: 2.5rem;
     background: rgb(250, 250, 250);
     background: linear-gradient(
       180deg,
@@ -55,33 +64,6 @@ export const NavAbsoluteEl = styled.div`
       rgba(250, 250, 250, 0) 100%
     );
   }
-
-  &::after {
-    content: "";
-    z-index: 2;
-    position: fixed;
-    bottom: 4.312rem;
-    left: 2.5rem;
-    width: 15.625rem;
-    height: 3.125rem;
-    background: rgb(250, 250, 250);
-    background: linear-gradient(
-      0deg,
-      rgba(250, 250, 250, 1) 0%,
-      rgba(250, 250, 250, 0.75) 25%,
-      rgba(250, 250, 250, 0.5) 50%,
-      rgba(250, 250, 250, 0.25) 75%,
-      rgba(250, 250, 250, 0) 100%
-    );
-  }
-`;
-
-export const El = styled.div`
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-  padding: 0.5rem 0;
-  line-height: 1.5rem;
-  display: flex;
-  align-items: center;
 `;
 
 const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
@@ -144,6 +126,27 @@ export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
   border-top: 1px solid ${PALETTE.white60};
   padding: 0.75rem 0 2rem;
+
+  // Bottom scroll gradient
+  position: relative;
+  &::after {
+    content: "";
+    z-index: 2;
+    position: absolute;
+    top: -3.125rem;
+    left: 0;
+    width: 100%;
+    height: 3.125rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      0deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
 `;
 export const Block = styled.div`
   max-width: 23rem;
