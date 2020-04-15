@@ -343,9 +343,9 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           <PrismStyles />
           <ApiReferenceRow>
             <SideNavColumn xs={3} lg={3} xl={4}>
+              <NavLogo pageName={docType.api} />
               <SideNavBackground />
               <SideNavContainer>
-                <NavLogo pageName={docType.api} />
                 <NavAbsoluteEl ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
                     <ExpansionContainerEl
