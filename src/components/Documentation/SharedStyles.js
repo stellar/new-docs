@@ -19,7 +19,7 @@ export const SideNavColumn = styled(Column)`
 export const DividerEl = styled.span`
   display: inline-block;
   width: 0.0625rem;
-  height: 1.5rem;
+  height: 2.75rem;
   margin: 0 1rem;
   background-color: rgba(255, 255, 255, 0.1);
 `;
