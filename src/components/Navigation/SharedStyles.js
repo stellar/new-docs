@@ -96,7 +96,7 @@ const PageNameEl = styled.span`
 `;
 const NavDividerEl = styled(DividerEl)`
   height: 3rem;
-  background-color: ${PALETTE.white80};
+  background-color: ${PALETTE.white60};
 `;
 const BetaBadgeEl = styled.div`
   background-color: ${PALETTE.purpleBlue};
