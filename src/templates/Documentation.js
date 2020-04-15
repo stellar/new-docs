@@ -9,6 +9,7 @@ import { Location } from "@reach/router";
 
 import { FONT_WEIGHT, THEME, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
+import { docType } from "constants/docType";
 import { DOM_TARGETS } from "constants/domNodes";
 
 import { slugify } from "helpers/slugify";
@@ -36,7 +37,7 @@ import { SideNavBody, TrackedContent } from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Documentation/Footer";
-import { SideNavBackground } from "components/Navigation/SharedStyles";
+import { SideNavBackground, NavLogo } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
@@ -258,15 +259,13 @@ const Documentation = ({ data, pageContext, location }) => {
         <PrismStyles isDoc />
         <Container id={contentId}>
           <Row>
-            <SideNavColumn xs={{ hide: true }} md={3} lg={3}>
+            <SideNavColumn xs={{ hide: true }} sm={3} lg={3}>
+              <NavLogo pageName={docType.doc} />
               <SideNavBackground />
               {left}
             </SideNavColumn>
-            {/*
-              We want the right hand side to appear above content on mobile
-            */}
-            <Column md={{ hide: true }}>{right}</Column>
             <Column
+              sm={5}
               md={7}
               isIndependentScroll
               id={`${DOM_TARGETS.contentColumn}`}

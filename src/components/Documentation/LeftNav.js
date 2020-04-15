@@ -2,8 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { docType } from "constants/docType";
-import { DEFAULT_COLUMN_WIDTH, PALETTE } from "constants/styles";
+import { PALETTE } from "constants/styles";
 
 import { buildRelPath } from "helpers/documentation";
 
@@ -15,13 +14,11 @@ import {
   NavAbsoluteEl,
   AbsoluteNavFooterEl,
   SideNavContainer,
-  NavLogo,
 } from "components/Navigation/SharedStyles";
 
 const TopicsEl = styled.ul`
   list-style-type: none;
   padding: 0;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
   padding-bottom: 1rem;
   margin-right: 1rem;
 `;
@@ -47,7 +44,6 @@ export const LeftNav = ({
   return (
     <>
       <SideNavContainer>
-        <NavLogo pageName={docType.doc} />
         <NavAbsoluteEl>
           <TopicsEl>
             {Object.values(docsContents).map((content) => {
