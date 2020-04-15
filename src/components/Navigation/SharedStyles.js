@@ -197,7 +197,7 @@ export const NavItem = styled.div`
   }
 `;
 
-export const StickyEl = styled.div`
+export const SideNavContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;

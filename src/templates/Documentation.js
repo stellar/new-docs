@@ -39,12 +39,13 @@ import { ListItem, Text } from "basics/Text";
 
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { SideNavBody, TrackedContent } from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { Footer } from "components/Documentation/Footer";
 import {
   NavAbsoluteEl,
   AbsoluteNavFooterEl,
+  SideNavContainer,
   NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
@@ -229,7 +230,7 @@ const Documentation = ({ data, pageContext, location }) => {
   const left = (
     <>
       <SideNavBackground />
-      <SideNav>
+      <SideNavContainer>
         <NavLogo pageName={docType.doc} />
         <NavAbsoluteEl>
           <Topics>
@@ -259,7 +260,7 @@ const Documentation = ({ data, pageContext, location }) => {
         <AbsoluteNavFooterEl>
           <StyledLink href="/api">API Reference</StyledLink>
         </AbsoluteNavFooterEl>
-      </SideNav>
+      </SideNavContainer>
     </>
   );
   const center = (

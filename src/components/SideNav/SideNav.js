@@ -9,8 +9,6 @@ import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { List, ListItem } from "basics/Text";
 
-import { StickyEl } from "components/Navigation/SharedStyles";
-
 import { useSidebar } from "./useSidebar";
 
 const NestedUl = styled(List)`
@@ -27,14 +25,6 @@ const ListItemEl = styled(ListItem)`
 const checkIfOverview = (relativePath) => {
   const pathSegments = relativePath.split("/");
   return pathSegments[pathSegments.length - 1] === "index.mdx";
-};
-
-export const SideNav = ({ children, ...props }) => (
-  <StickyEl {...props}>{children}</StickyEl>
-);
-
-SideNav.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export const SideNavBody = ({

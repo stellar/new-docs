@@ -37,10 +37,11 @@ import { LayoutBase } from "components/layout/LayoutBase";
 import {
   AbsoluteNavFooterEl,
   NavAbsoluteEl,
+  SideNavContainer,
   NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
   Context as ScrollRouterContext,
@@ -343,7 +344,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           <ApiReferenceRow>
             <SideNavColumn xs={3} lg={3} xl={4}>
               <SideNavBackground />
-              <SideNav>
+              <SideNavContainer>
                 <NavLogo pageName={docType.api} />
                 <NavAbsoluteEl ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
@@ -370,7 +371,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 <AbsoluteNavFooterEl>
                   <StyledLink href="/docs">Documentation</StyledLink>
                 </AbsoluteNavFooterEl>
-              </SideNav>
+              </SideNavContainer>
             </SideNavColumn>
             <Column
               xs={9}
