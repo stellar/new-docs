@@ -41,7 +41,7 @@ const headingBase = ({ theme }) => `
   margin: 0;
 
   ${Code} {
-    font-size: 1rem;
+    font-size: 1.25rem;
     vertical-align: middle;
   }
 `;
