@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import tinycolor from "tinycolor2";
 
 import { docType } from "constants/docType";
-import { MEDIA_QUERIES, PALETTE } from "constants/styles";
+import { MEDIA_QUERIES, PALETTE, CSS_TRANSITION_SPEED } from "constants/styles";
 
 import { CloseIcon, Menu } from "basics/Icons";
 
@@ -20,6 +21,14 @@ import { LeftNav } from "./LeftNav";
 const El = styled.div`
   position: fixed;
   z-index: 10;
+  background-color: ${(props) =>
+    props.isOpen
+      ? tinycolor(PALETTE.dark)
+          .setAlpha(0.7)
+          .toRgbString()
+      : "transparent"};
+  transition: background-color ${CSS_TRANSITION_SPEED.default};
+
   @media (${MEDIA_QUERIES.gtTablet}) {
     display: none;
   }
@@ -53,7 +62,7 @@ const MenuButtonEl = styled(BasicButton)`
 const OffscreenContainerEl = styled.div`
   width: 100vw;
   transform: translate(${(props) => (props.isOpen ? "0" : "-100%")});
-  transition: transform 0.2s;
+  transition: transform ${CSS_TRANSITION_SPEED.default};
 `;
 const MenuContainerEl = styled.div`
   background-color: ${PALETTE.white80};
@@ -80,7 +89,7 @@ export const MobileLeftNav = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
-    <El>
+    <El isOpen={isOpen}>
       <OffscreenContainerEl isOpen={isOpen}>
         <NavBarEl>
           <NavSectionEl>
@@ -88,7 +97,6 @@ export const MobileLeftNav = ({
             <NavIconSectionEl>
               <NavDivider />
               <MenuButtonEl
-                divider="left"
                 onClick={() => {
                   setIsOpen(false);
                 }}
@@ -100,7 +108,6 @@ export const MobileLeftNav = ({
           <NavSectionEl>
             <NavIconSectionEl>
               <MenuButtonEl
-                divider="right"
                 onClick={() => {
                   setIsOpen(true);
                 }}
