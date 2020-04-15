@@ -31,11 +31,13 @@ import { ArrowIcon, EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
+import { BetaNotice } from "components/BetaNotice";
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import {
   AbsoluteNavFooterEl,
   NavAbsoluteEl,
+  NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
 import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
@@ -338,11 +340,11 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           viewport="width=1366, initial-scale=.1"
         >
           <PrismStyles />
-
           <ApiReferenceRow>
             <SideNavColumn xs={3} lg={3} xl={4}>
               <SideNavBackground />
-              <SideNav docType={docType.api}>
+              <SideNav>
+                <NavLogo pageName={docType.api} />
                 <NavAbsoluteEl ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
                     <ExpansionContainerEl
@@ -376,6 +378,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               isIndependentScroll
               id={`${DOM_TARGETS.contentColumn}`}
             >
+              <BetaNotice />
               {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
                 <ReferenceSection
                   relativePath={parent.relativePath}

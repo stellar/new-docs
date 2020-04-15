@@ -1,26 +1,26 @@
+import React from "react";
+import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 
 import {
-  MEDIA_QUERIES,
-  REDESIGN_PALETTE,
-  PALETTE,
+  DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
+  MEDIA_QUERIES,
+  PALETTE,
+  REDESIGN_PALETTE,
 } from "constants/styles";
+
+import Logo from "assets/icons/stellar-logo.svg";
 
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
+
+import { DividerEl } from "components/Documentation/SharedStyles";
 
 export const H2 = styled(BasicH2)`
   font-weight: ${FONT_WEIGHT.normal};
   color: ${({ theme }) => theme.medium};
 `;
-
-const BACKDROP_COLOR = "rgba(250, 250, 250, 1)";
-const BACKDROP_FADE = "rgba(250, 250, 250, 0)";
-const SHADOW_COLOR = "rgba(0, 0, 0, 0.05)";
-const SHADOW_FADE = "rgba(0, 0, 0, 0)";
-const SHADOW_SIZE = "1.5rem";
-
 export const NavAbsoluteEl = styled.div`
   overflow-y: scroll;
   flex-grow: 1;
@@ -36,23 +36,75 @@ export const NavAbsoluteEl = styled.div`
   @media (${MEDIA_QUERIES.ltLaptop}) {
     overflow-y: scroll;
   }
-
-  // Edge gradients for scrolling. This is a little more robust than fixed
-  // positioning, which gets weird when the element is offscreen (on mobile or
-  // narrow laptops). See http://lea.verou.me/2012/04/background-attachment-local/
-
-  // Shadow covers
-  background: linear-gradient(${BACKDROP_COLOR} 30%, ${BACKDROP_FADE}),
-    linear-gradient(${BACKDROP_FADE}, ${BACKDROP_COLOR} 70%) 0 100%,
-    // Shadows
-      linear-gradient(${SHADOW_COLOR}, ${SHADOW_FADE} 100%),
-    linear-gradient(${SHADOW_FADE}, ${SHADOW_COLOR}) 0 100%;
-  background-repeat: no-repeat;
-  background-size: 100% 3rem, 100% 3rem, 100% ${SHADOW_SIZE},
-    100% ${SHADOW_SIZE};
-  // Opera doesn't support this in the shorthand
-  background-attachment: local, local, scroll, scroll;
 `;
+
+export const El = styled.div`
+  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  padding: 0.5rem 0;
+  line-height: 1.5rem;
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  &::after {
+    content: "";
+    z-index: 2;
+    position: absolute;
+    bottom: -2.5rem;
+    left: 0;
+    width: 100%;
+    height: 2.5rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      180deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
+`;
+
+const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
+  ${({ theme = { logo: PALETTE.dark } }) => `
+  stroke: ${theme.logo};
+  fill: ${theme.logo};
+`};
+`;
+const PageNameEl = styled.span`
+  font-size: 1.125rem;
+  margin-bottom: -0.25rem;
+`;
+const NavDividerEl = styled(DividerEl)`
+  height: 3rem;
+  background-color: ${PALETTE.white60};
+`;
+const BetaBadgeEl = styled.div`
+  background-color: ${PALETTE.purpleBlue};
+  border-radius: 0.125rem;
+  padding: 0.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  line-height: 1;
+  color: ${PALETTE.white};
+  margin-bottom: -0.25rem;
+  margin-left: 0.5rem;
+`;
+
+export const NavLogo = ({ pageName }) => (
+  <El>
+    <LogoEl />
+    <NavDividerEl />
+    <PageNameEl>{pageName}</PageNameEl>
+    <BetaBadgeEl>beta</BetaBadgeEl>
+  </El>
+);
+
+NavLogo.propTypes = {
+  pageName: PropTypes.node.isRequired,
+};
+
 export const SideNavBackground = styled.div`
   position: absolute;
   background-color: ${REDESIGN_PALETTE.grey[0]};
@@ -74,6 +126,27 @@ export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
   border-top: 1px solid ${PALETTE.white60};
   padding: 0.75rem 0 2rem;
+
+  // Bottom scroll gradient
+  position: relative;
+  &::after {
+    content: "";
+    z-index: 2;
+    position: absolute;
+    top: -3.125rem;
+    left: 0;
+    width: 100%;
+    height: 3.125rem;
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      0deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(250, 250, 250, 0.75) 25%,
+      rgba(250, 250, 250, 0.5) 50%,
+      rgba(250, 250, 250, 0.25) 75%,
+      rgba(250, 250, 250, 0) 100%
+    );
+  }
 `;
 export const Block = styled.div`
   max-width: 23rem;
