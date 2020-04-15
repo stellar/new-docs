@@ -20,6 +20,7 @@ import { LeftNav } from "./LeftNav";
 
 const El = styled.div`
   position: fixed;
+  pointer-events: ${(props) => (props.isOpen ? "all" : "none")};
   z-index: 10;
   background-color: ${(props) =>
     props.isOpen
@@ -38,6 +39,7 @@ const NavIconSectionEl = styled.div`
   align-items: center;
 `;
 const NavBarEl = styled.div`
+  pointer-events: all;
   display: flex;
   width: 200vw;
   align-items: center;
@@ -89,7 +91,14 @@ export const MobileLeftNav = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
-    <El isOpen={isOpen}>
+    <El
+      isOpen={isOpen}
+      onClick={() => {
+        if (isOpen) {
+          setIsOpen(false);
+        }
+      }}
+    >
       <OffscreenContainerEl isOpen={isOpen}>
         <NavBarEl>
           <NavSectionEl>
