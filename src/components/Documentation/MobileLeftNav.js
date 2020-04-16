@@ -83,6 +83,12 @@ const LinkEl = styled(Link)`
   color: ${PALETTE.purpleBlue};
 `;
 
+// We want clicks on the background to close the menu, but other clickable
+// elements shouldn't bubble up to that far.
+const stopBubbling = (e) => {
+  e.stopPropagation();
+};
+
 export const MobileLeftNav = ({
   currentUrl,
   initialTopicsState,
@@ -100,7 +106,7 @@ export const MobileLeftNav = ({
       }}
     >
       <OffscreenContainerEl isOpen={isOpen}>
-        <NavBarEl>
+        <NavBarEl onClick={stopBubbling}>
           <NavSectionEl>
             <NavLogo pageName={docType.doc} />
             <NavIconSectionEl>
@@ -134,7 +140,7 @@ export const MobileLeftNav = ({
             </BetaNoticeEl>
           </NavSectionEl>
         </NavBarEl>
-        <MenuContainerEl>
+        <MenuContainerEl onClick={stopBubbling}>
           <LeftNav
             docsContents={docsContents}
             currentUrl={currentUrl}
