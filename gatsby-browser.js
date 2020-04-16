@@ -65,9 +65,3 @@ export const shouldUpdateScroll = ({ routerProps }) => {
   }
   return true;
 };
-
-export const onClientEntry = async () => {
-  if (typeof IntersectionObserver === `undefined`) {
-    await import(`intersection-observer`);
-  }
-};
