@@ -77,6 +77,7 @@ const PageNameEl = styled.span`
   margin-bottom: -0.25rem;
 `;
 export const NavDivider = styled(DividerEl)`
+  height: 2.75rem;
   background-color: ${PALETTE.white60};
 `;
 export const BetaBadge = styled.div`
