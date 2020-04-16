@@ -251,9 +251,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           <DividerEl />
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
-            onCopy={() => {
-              setCopy((x) => !x);
-            }}
+            onCopy={() => !isCopied && setCopy(true)}
           >
             <CopyIconWrapper
               ref={CopyToClipboardRef}
