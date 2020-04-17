@@ -18,11 +18,17 @@ let lastScrollPosition = 0;
 const routeMap = new Map();
 const elementMap = new Map();
 
+let contentDom;
+
 export const ScrollRouter = ({ children }) => {
   const initialLoadCheck = React.useRef(false);
   const activeNodeRef = React.useRef();
   const trackedElementsRef = React.useRef([]);
   const isScrollingDown = React.useRef(false);
+
+  React.useEffect(() => {
+    contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
+  });
 
   // Navigation
   const onLinkClick = React.useCallback(function onLinkClick(route) {
@@ -32,14 +38,13 @@ export const ScrollRouter = ({ children }) => {
 
   // Scroll listener
   React.useEffect(() => {
-    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
     const handler = throttle(() => {
-      // If we haven't scrolled at least 20 pixels, just bail.
-      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 20) {
+      // If we haven't scrolled at least 100 pixels, just bail.
+      if (Math.abs(contentDom.scrollTop - lastScrollPosition) < 100) {
         return;
       }
-      isScrollingDown.current = contentDom.scrollY > lastScrollPosition;
-      lastScrollPosition = contentDom.scrollY;
+      isScrollingDown.current = contentDom.scrollTop > lastScrollPosition;
+      lastScrollPosition = contentDom.scrollTop;
 
       const newActiveNode = findActiveNode(
         trackedElementsRef.current,
@@ -67,6 +72,7 @@ export const ScrollRouter = ({ children }) => {
     elementMap.set(route, ref);
     trackedElementsRef.current.push(ref);
     trackedElementsRef.current.sort(sortByPosition);
+
     // We want to scroll to the element associated with the route _once_.
     if (!initialLoadCheck.current && window.location.pathname === route) {
       initialLoadCheck.current = true;
