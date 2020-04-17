@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { PALETTE } from "constants/styles";
+import { PALETTE, MEDIA_QUERIES } from "constants/styles";
 
 import { Text, HorizontalRule } from "basics/Text";
 import { Link } from "basics/Links";
@@ -9,6 +9,10 @@ import { Link } from "basics/Links";
 const BetaNoticeEl = styled(Text)`
   font-size: 1rem;
   margin: 2rem 0;
+
+  @media (${MEDIA_QUERIES.ltTablet}) {
+    display: none;
+  }
 `;
 const HrEl = styled(HorizontalRule)`
   margin-bottom: 0;

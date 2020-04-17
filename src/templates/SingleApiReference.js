@@ -32,14 +32,17 @@ import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
-import { SideNav, SideNavBody } from "components/SideNav";
+import { SideNavBody } from "components/SideNav";
 import {
   ApiReferenceRow,
   ApiReferenceWrapper,
   SideNavColumn,
   NestedRow,
 } from "components/Documentation/SharedStyles";
-import { SideNavBackground } from "components/Navigation/SharedStyles";
+import {
+  SideNavContainer,
+  SideNavBackground,
+} from "components/Navigation/SharedStyles";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
@@ -170,7 +173,7 @@ const SingleApiReference = React.memo(function ApiReference({
         <ApiReferenceRow>
           <SideNavColumn xs={3} lg={3} xl={4}>
             <SideNavBackground />
-            <SideNav docType={docType.api}>
+            <SideNavContainer docType={docType.api}>
               {Object.entries(docsBySubCategory).map((nav, i) => (
                 <ExpansionContainerEl
                   // eslint-disable-next-line react/no-array-index-key
@@ -187,7 +190,7 @@ const SingleApiReference = React.memo(function ApiReference({
                   </Expansion>
                 </ExpansionContainerEl>
               ))}
-            </SideNav>
+            </SideNavContainer>
           </SideNavColumn>
           <Column
             xs={9}
