@@ -13,12 +13,10 @@ export const Route = ({ children, originalFilePath, path }) => {
     ScrollRouterContext,
   );
   const ref = React.useRef();
-  const childRef = React.useRef();
   React.useEffect(() => {
-    childRef.current = ref.current.children[0];
-    trackElement(childRef, path);
+    trackElement(ref, path);
     return () => {
-      stopTrackingElement(childRef);
+      stopTrackingElement(ref);
     };
   }, [trackElement, stopTrackingElement, path]);
 
