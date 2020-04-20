@@ -89,11 +89,9 @@ const NavTitleEl = styled(H5)`
 `;
 const activeStyles = `
   color: ${PALETTE.purpleBlue};
-  background: rgba(0,0,0,0.04);
-  border-radius: 2px;
-  padding-left: 0.75rem;
   font-weight: ${FONT_WEIGHT.bold};
 `;
+
 const ApiRefH1 = styled(H1)`
   margin-top: 0.25rem;
   margin-bottom: 0;
