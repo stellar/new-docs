@@ -8,6 +8,7 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
+import { DOM_TARGETS } from "constants/domNodes";
 
 import { getCookie } from "helpers/getCookie";
 import { extractStringChildren } from "helpers/extractStringChildren";
@@ -154,7 +155,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const [activeLang, setActiveLang] = React.useState("");
   const [isCopied, setCopy] = React.useState(false);
   const [isHovered, setHover] = React.useState(false);
-  const [dimension, setDimension] = React.useState({ right: 0, top: 0 });
+  const [position, setPosition] = React.useState({ right: 0, top: 0 });
 
   const codeSnippetsArr = React.Children.toArray(codeSnippets);
   const selectedSnippet =
@@ -163,14 +164,17 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     ) || codeSnippetsArr[0];
   const SelectedSnippetStr = mdxJsxToString(selectedSnippet);
 
-  const CopyToClipboardRef = React.useCallback((node) => {
-    if (node !== null) {
-      setDimension({
-        right: Math.floor(node.getBoundingClientRect().right),
-        top: Math.floor(node.getBoundingClientRect().top),
-      });
-    }
-  }, []);
+  const CopyToClipboardRef = React.useCallback(
+    (node) => {
+      if (node !== null && isHovered) {
+        setPosition({
+          right: Math.floor(node.getBoundingClientRect().right),
+          top: Math.floor(node.getBoundingClientRect().top),
+        });
+      }
+    },
+    [isHovered],
+  );
 
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
@@ -180,6 +184,23 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     });
     setActiveLang(value);
   }, []);
+
+  React.useEffect(() => {
+    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
+
+    const setHoverFalse = () => {
+      if (isHovered) setHover(false);
+    };
+
+    /* Setting 'isHovered' to false while scrolling is necessary to 
+    prevent a tooltip to be displayed and its position to be scrolled 
+    together when a user scrolls while hovering on an icon */
+    contentDom.addEventListener("scroll", setHoverFalse);
+
+    return () => {
+      contentDom.removeEventListener("scroll", setHoverFalse);
+    };
+  }, [isHovered]);
 
   React.useEffect(() => {
     const langCookie = getCookie("lang");
@@ -230,9 +251,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           <DividerEl />
           <CopyToClipboard
             text={SelectedSnippetStr && SelectedSnippetStr}
-            onCopy={() => {
-              setCopy((x) => !x);
-            }}
+            onCopy={() => !isCopied && setCopy(true)}
           >
             <CopyIconWrapper
               ref={CopyToClipboardRef}
@@ -255,9 +274,11 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
         </OptionsContainer>
       </TitleEl>
       <ContentEl>{selectedSnippet}</ContentEl>
-      <Tooltip in={isHovered} isCopied={isCopied} parentDimension={dimension}>
-        {isCopied ? "Copied" : "Click to copy"}
-      </Tooltip>
+      {isHovered && (
+        <Tooltip in={isHovered} isCopied={isCopied} parentPosition={position}>
+          {isCopied ? "Copied" : "Click to copy"}
+        </Tooltip>
+      )}
     </MethodContentEl>
   );
 };
