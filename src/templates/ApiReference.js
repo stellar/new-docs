@@ -40,7 +40,12 @@ import {
   NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import {
+  SideNav,
+  SideNavBody,
+  Provider as SideNavProvider,
+  TrackedContent,
+} from "components/SideNav";
 import {
   ScrollRouter,
   Context as ScrollRouterContext,
@@ -276,27 +281,25 @@ const ReferenceSection = React.memo(
       <SectionEl>
         <Route originalFilePath={relativePath} path={path}>
           <TrackedContent identifier={path}>
-            <>
-              <NestedRow>
-                {/* Hack to make it look appear as if we had a column-gap
-                4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
-                skip the 1st column to use it as column-gap, start at the 2nd column and
-                span through then next 8 columns (ends at column 9)
+            <NestedRow>
+              {/* Hack to make it look appear as if we had a column-gap
+              4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
+              skip the 1st column to use it as column-gap, start at the 2nd column and
+              span through then next 8 columns (ends at column 9)
               */}
-                <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
-                  <ApiRefH1 id={path}>{title}</ApiRefH1>
-                  {githubLink && (
-                    <Link href={githubLink} newTab>
-                      <EditIcon color={PALETTE.purpleBlue} />
-                    </Link>
-                  )}
-                </CustomColumn>
-              </NestedRow>
-              <NestedRow>
-                <MDXRenderer>{body}</MDXRenderer>
-              </NestedRow>
-              <HorizontalRule />
-            </>
+              <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
+                <ApiRefH1 id={path}>{title}</ApiRefH1>
+                {githubLink && (
+                  <Link href={githubLink} newTab>
+                    <EditIcon color={PALETTE.purpleBlue} />
+                  </Link>
+                )}
+              </CustomColumn>
+            </NestedRow>
+            <NestedRow>
+              <MDXRenderer>{body}</MDXRenderer>
+            </NestedRow>
+            <HorizontalRule />
           </TrackedContent>
         </Route>
       </SectionEl>
@@ -338,57 +341,59 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         >
           <PrismStyles />
           <ApiReferenceRow>
-            <SideNavColumn xs={3} lg={3} xl={4}>
-              <SideNavBackground />
-              <SideNav>
-                <NavLogo pageName={docType.api} />
-                <NavAbsoluteEl ref={sideNavRef}>
-                  {Object.entries(docsBySubCategory).map((nav, i) => (
-                    <ExpansionContainerEl
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={i}
-                    >
-                      <Expansion
-                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        collapseIcon={<ArrowIcon direction="up" />}
-                        expandIcon={<ArrowIcon direction="down" />}
-                        isDefaultExpanded={true}
+            <SideNavProvider>
+              <SideNavColumn xs={3} lg={3} xl={4}>
+                <SideNavBackground />
+                <SideNav>
+                  <NavLogo pageName={docType.api} />
+                  <NavAbsoluteEl ref={sideNavRef}>
+                    {Object.entries(docsBySubCategory).map((nav, i) => (
+                      <ExpansionContainerEl
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={i}
                       >
-                        <SideNavBody
-                          items={nav[1]}
-                          renderItem={renderItem}
-                          forwardedRef={sideNavRef}
-                        />
-                      </Expansion>
-                    </ExpansionContainerEl>
+                        <Expansion
+                          title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                          expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                          collapseIcon={<ArrowIcon direction="up" />}
+                          expandIcon={<ArrowIcon direction="down" />}
+                          isDefaultExpanded={true}
+                        >
+                          <SideNavBody
+                            items={nav[1]}
+                            renderItem={renderItem}
+                            forwardedRef={sideNavRef}
+                          />
+                        </Expansion>
+                      </ExpansionContainerEl>
+                    ))}
+                  </NavAbsoluteEl>
+                  <AbsoluteNavFooterEl>
+                    <StyledLink href="/docs">Documentation</StyledLink>
+                  </AbsoluteNavFooterEl>
+                </SideNav>
+              </SideNavColumn>
+              <Column
+                xs={9}
+                xl={18}
+                isIndependentScroll
+                id={`${DOM_TARGETS.contentColumn}`}
+              >
+                <BetaNotice />
+                {referenceDocs
+                  .slice(0, 10)
+                  .map(({ body, id, parent, title, githubLink }) => (
+                    <ReferenceSection
+                      relativePath={parent.relativePath}
+                      key={id}
+                      title={title}
+                      githubLink={githubLink}
+                      body={body}
+                    />
                   ))}
-                </NavAbsoluteEl>
-                <AbsoluteNavFooterEl>
-                  <StyledLink href="/docs">Documentation</StyledLink>
-                </AbsoluteNavFooterEl>
-              </SideNav>
-            </SideNavColumn>
-            <Column
-              xs={9}
-              xl={18}
-              isIndependentScroll
-              id={`${DOM_TARGETS.contentColumn}`}
-            >
-              <BetaNotice />
-              {referenceDocs
-                .slice(0, 10)
-                .map(({ body, id, parent, title, githubLink }) => (
-                  <ReferenceSection
-                    relativePath={parent.relativePath}
-                    key={id}
-                    title={title}
-                    githubLink={githubLink}
-                    body={body}
-                  />
-                ))}
-              <Footer />
-            </Column>
+                <Footer />
+              </Column>
+            </SideNavProvider>
           </ApiReferenceRow>
         </LayoutBase>
       </MDXProvider>

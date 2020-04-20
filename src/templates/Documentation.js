@@ -39,7 +39,12 @@ import { ListItem, Text } from "basics/Text";
 
 import Articles from "components/Documentation/Articles";
 import { LayoutBase } from "components/layout/LayoutBase";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import {
+  SideNav,
+  SideNavBody,
+  Provider as SideNavProvider,
+  TrackedContent,
+} from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { Footer } from "components/Documentation/Footer";
 import {
@@ -313,29 +318,31 @@ const Documentation = ({ data, pageContext, location }) => {
         pageContext={pageContext}
       >
         <PrismStyles isDoc />
-        <Container id={contentId}>
-          <Row>
-            <SideNavColumn md={3} lg={3}>
-              {left}
-            </SideNavColumn>
-            {/*
+        <SideNavProvider>
+          <Container id={contentId}>
+            <Row>
+              <SideNavColumn md={3} lg={3}>
+                {left}
+              </SideNavColumn>
+              {/*
               We want the right hand side to appear above content on mobile
             */}
-            <Column md={{ hide: true }}>{right}</Column>
-            <Column
-              md={7}
-              isIndependentScroll
-              id={`${DOM_TARGETS.contentColumn}`}
-            >
-              {center}
-            </Column>
-            {pageOutline.length > 0 && (
-              <Column xs={{ hide: true }} md={2}>
-                {right}
+              <Column md={{ hide: true }}>{right}</Column>
+              <Column
+                md={7}
+                isIndependentScroll
+                id={`${DOM_TARGETS.contentColumn}`}
+              >
+                {center}
               </Column>
-            )}
-          </Row>
-        </Container>
+              {pageOutline.length > 0 && (
+                <Column xs={{ hide: true }} md={2}>
+                  {right}
+                </Column>
+              )}
+            </Row>
+          </Container>
+        </SideNavProvider>
       </LayoutBase>
     </MDXProvider>
   );
