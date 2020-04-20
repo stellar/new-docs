@@ -96,6 +96,11 @@ const ApiRefH1 = styled(H1)`
   margin-top: 0.25rem;
   margin-bottom: 0;
 `;
+const ApiRefH2 = styled(H2)`
+  padding-top: 0;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+`;
 const NavItemEl = styled.div`
   display: block;
   text-align: left;
@@ -244,7 +249,7 @@ const headerOptions = {
 };
 
 const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
-const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
+const ApiRefLinkedH2 = makeLinkedHeader(ApiRefH2, headerOptions);
 
 const componentMap = {
   ...components,
@@ -271,6 +276,18 @@ const componentMap = {
 const ReferenceSection = React.memo(
   ({ body, relativePath, title, githubLink }) => {
     const path = buildPathFromFile(relativePath);
+    const splitRelativePath = relativePath.split("/");
+
+    /* Check to see if a section is a nested item */
+    const isNestedSection =
+      relativePath.split("/").length > 3 &&
+      splitRelativePath[splitRelativePath.length - 1] !== "index.mdx";
+
+    const SectionHeader = isNestedSection ? (
+      <ApiRefH2 id={path}>{title}</ApiRefH2>
+    ) : (
+      <ApiRefH1 id={path}>{title}</ApiRefH1>
+    );
 
     return (
       <SectionEl>
@@ -282,10 +299,10 @@ const ReferenceSection = React.memo(
                 skip the 1st column to use it as column-gap, start at the 2nd column and
                 span through then next 8 columns (ends at column 9)
               */}
-              <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
+              <CustomColumn xs={9} xlColumn="2 / span 8">
                 <TrackedContent>
                   <TrackedEl id={path}>
-                    <ApiRefH1 id={path}>{title}</ApiRefH1>
+                    {SectionHeader}
                     {githubLink && (
                       <Link href={githubLink} newTab>
                         <EditIcon color={PALETTE.purpleBlue} />
