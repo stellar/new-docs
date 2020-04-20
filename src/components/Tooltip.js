@@ -57,7 +57,7 @@ export const Tooltip = ({
     }
   }, []);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     setTooltipPosition({
       left: parentPosition.right - tooltipDimension.width + 16,
       top: parentPosition.top + tooltipDimension.height - 90,
