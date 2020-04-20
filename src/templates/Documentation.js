@@ -166,16 +166,17 @@ const componentMapping = {
     has a <Code/> to highlight "/info" */
     if (typeof children !== "string") {
       // eslint-disable-next-line react/prop-types
-      const stringifyChildren = loopAndExtractString(children);
+      const id = slugify(loopAndExtractString(children));
       return (
-        <TrackedContent>
-          <H2 id={slugify(stringifyChildren)}>{children}</H2>
+        <TrackedContent identifier={id}>
+          <H2 id={id}>{children}</H2>
         </TrackedContent>
       );
     }
+    const id = slugify(children);
     return (
-      <TrackedContent>
-        <H2>{children}</H2>
+      <TrackedContent identifier={id}>
+        <H2 id={id}>{children}</H2>
       </TrackedContent>
     );
   },

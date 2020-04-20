@@ -6,23 +6,19 @@ const flatten = (ary) =>
     (a, b) => a.concat(Array.isArray(b.items) ? flatten(b.items).concat(b) : b),
     [],
   );
-const isNodeActive = (ref, id) => ref && id === ref.current.id;
 
 export const useSidebar = ({ childOptions, id }) => {
-  const { activeNode } = React.useContext(SideNavProgressContext);
-  const flattenedItems = flatten(childOptions);
+  const { activeContent } = React.useContext(SideNavProgressContext);
 
-  const isChildActive = !!flattenedItems.some((item) =>
-    isNodeActive(activeNode, item.id),
-  );
-  const isActive = !!isNodeActive(activeNode, id);
+  return React.useMemo(() => {
+    const isChildActive = !!flatten(childOptions).some(
+      (item) => activeContent.id === item.id,
+    );
+    const isActive = activeContent.id === id;
 
-  return React.useMemo(
-    () => ({
-      activeNode,
+    return {
       isActive,
       isChildActive,
-    }),
-    [activeNode, isActive, isChildActive],
-  );
+    };
+  }, [activeContent, id, childOptions]);
 };

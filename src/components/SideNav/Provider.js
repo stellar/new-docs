@@ -1,13 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
+import throttle from "lodash/throttle";
 
 import { DOM_TARGETS } from "constants/domNodes";
 
 import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
-  const aY = a.current.getBoundingClientRect().top;
-  const bY = b.current.getBoundingClientRect().top;
+  const aY = a.ref.current.getBoundingClientRect().top;
+  const bY = b.ref.current.getBoundingClientRect().top;
   return aY - bY;
 };
 let lastScrollPosition = 0;
@@ -15,44 +16,39 @@ let lastScrollPosition = 0;
 export const SideNavProgressContext = React.createContext({});
 
 export const Provider = ({ children }) => {
-  const [activeNode, setActiveNode] = React.useState();
+  const [activeContent, setActiveNode] = React.useState({ id: "", ref: null });
   const [trackedElements, setTrackedElements] = React.useState([]);
 
-  // We need to search backwards pretty frequently, so memoize it so we don't
-  // generate a ton of garbage.
-  const backwardsElements = React.useMemo(
-    () => trackedElements.slice().reverse(),
-    [trackedElements],
-  );
+  // We need to search just the refs pretty frequently, so memoize it so we
+  // don't generate a ton of garbage.
+  const elementRefs = React.useMemo(() => trackedElements.map((e) => e.ref), [
+    trackedElements,
+  ]);
 
   React.useEffect(() => {
     const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
 
-    const handler = () => {
-      // If we haven't scrolled at least 20 pixels, just bail.
-      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 20) {
+    const handler = throttle(() => {
+      // If we haven't scrolled at least 100 pixels, just bail.
+      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 100) {
         return;
       }
-      // A tracked element becomes "active" if it enters the part of the screen
-      // that we consider to be the focal point—about a third of the screen,
-      // offset from the top enough that it's definitely in view.
-      // If we're scrolling up, then we're watching for elements to come down
-      // from the top. If scrolling down, watching about the midpoint.
       const isScrollingDown = contentDom.scrollY > lastScrollPosition;
       lastScrollPosition = contentDom.scrollY;
 
-      const newActiveNode = findActiveNode(trackedElements, isScrollingDown);
-      if (newActiveNode && newActiveNode !== activeNode) {
+      const newActiveRef = findActiveNode(elementRefs, isScrollingDown);
+      const newActiveNode = trackedElements.find((e) => e.ref === newActiveRef);
+      if (newActiveNode && newActiveNode !== activeContent) {
         setActiveNode(newActiveNode);
       }
-    };
+    }, 60);
 
     contentDom.addEventListener("scroll", handler);
     handler();
     return () => {
       contentDom.removeEventListener("scroll", handler);
     };
-  }, [activeNode, backwardsElements, trackedElements]);
+  }, [activeContent, elementRefs, trackedElements]);
 
   const trackElement = React.useCallback(
     (ref) => {
@@ -69,11 +65,11 @@ export const Provider = ({ children }) => {
 
   const contextValue = React.useMemo(
     () => ({
-      activeNode,
+      activeContent,
       stopTrackingElement,
       trackElement,
     }),
-    [activeNode, stopTrackingElement, trackElement],
+    [activeContent, stopTrackingElement, trackElement],
   );
 
   return (

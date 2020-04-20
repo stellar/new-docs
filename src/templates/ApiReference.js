@@ -66,7 +66,6 @@ const GreenTableCell = styled.td`
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
-const TrackedEl = styled.div``;
 const SectionEl = styled.section`
   &:first-child {
     margin-top: 5rem;
@@ -276,31 +275,29 @@ const ReferenceSection = React.memo(
     return (
       <SectionEl>
         <Route originalFilePath={relativePath} path={path}>
-          <>
-            <NestedRow>
-              {/* Hack to make it look appear as if we had a column-gap
+          <TrackedContent identifier={path}>
+            <>
+              <NestedRow>
+                {/* Hack to make it look appear as if we had a column-gap
                 4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
                 skip the 1st column to use it as column-gap, start at the 2nd column and
                 span through then next 8 columns (ends at column 9)
               */}
-              <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
-                <TrackedContent>
-                  <TrackedEl id={path}>
-                    <ApiRefH1 id={path}>{title}</ApiRefH1>
-                    {githubLink && (
-                      <Link href={githubLink} newTab>
-                        <EditIcon color={PALETTE.purpleBlue} />
-                      </Link>
-                    )}
-                  </TrackedEl>
-                </TrackedContent>
-              </CustomColumn>
-            </NestedRow>
-            <NestedRow>
-              <MDXRenderer>{body}</MDXRenderer>
-            </NestedRow>
-            <HorizontalRule />
-          </>
+                <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
+                  <ApiRefH1 id={path}>{title}</ApiRefH1>
+                  {githubLink && (
+                    <Link href={githubLink} newTab>
+                      <EditIcon color={PALETTE.purpleBlue} />
+                    </Link>
+                  )}
+                </CustomColumn>
+              </NestedRow>
+              <NestedRow>
+                <MDXRenderer>{body}</MDXRenderer>
+              </NestedRow>
+              <HorizontalRule />
+            </>
+          </TrackedContent>
         </Route>
       </SectionEl>
     );
@@ -379,15 +376,17 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               id={`${DOM_TARGETS.contentColumn}`}
             >
               <BetaNotice />
-              {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
-                <ReferenceSection
-                  relativePath={parent.relativePath}
-                  key={id}
-                  title={title}
-                  githubLink={githubLink}
-                  body={body}
-                />
-              ))}
+              {referenceDocs
+                .slice(0, 10)
+                .map(({ body, id, parent, title, githubLink }) => (
+                  <ReferenceSection
+                    relativePath={parent.relativePath}
+                    key={id}
+                    title={title}
+                    githubLink={githubLink}
+                    body={body}
+                  />
+                ))}
               <Footer />
             </Column>
           </ApiReferenceRow>
