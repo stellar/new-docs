@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 
 import {
-  DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
   MEDIA_QUERIES,
   PALETTE,
@@ -39,13 +38,21 @@ export const NavAbsoluteEl = styled.div`
 `;
 
 export const El = styled.div`
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
+  position: relative;
   padding: 1.5rem 0;
   line-height: 1.5rem;
   display: flex;
   align-items: center;
 
-  position: relative;
+  &::before {
+    content: "";
+    height: 1px;
+    background-color: ${PALETTE.white60};
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+
   &::after {
     content: "";
     z-index: 2;
@@ -104,6 +111,7 @@ NavLogo.propTypes = {
 export const SideNavBackground = styled.div`
   position: absolute;
   background-color: ${REDESIGN_PALETTE.grey[0]};
+  border-right: 1px solid ${PALETTE.white60};
   left: -100rem;
   right: 0;
   top: -10rem;
@@ -120,8 +128,17 @@ export const NavImage = styled(Image)`
 `;
 export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
-  border-top: 1px solid ${PALETTE.white60};
-  padding: 0.75rem 0 2rem;
+  padding: 0.75rem 0;
+
+  // borderline
+  &::before {
+    content: "";
+    height: 1px;
+    background-color: ${PALETTE.white60};
+    width: 100%;
+    position: absolute;
+    top: 0;
+  }
 
   // Bottom scroll gradient
   position: relative;
