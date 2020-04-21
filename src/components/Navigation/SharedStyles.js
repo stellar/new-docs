@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 
 import {
-  DEFAULT_COLUMN_WIDTH,
   FONT_WEIGHT,
   MEDIA_QUERIES,
   PALETTE,
@@ -39,13 +38,21 @@ export const NavAbsoluteEl = styled.div`
 `;
 
 export const El = styled.div`
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-  padding: 0.5rem 0;
+  position: relative;
+  padding: 1.5rem 0;
   line-height: 1.5rem;
   display: flex;
   align-items: center;
 
-  position: relative;
+  &::before {
+    content: "";
+    height: 1px;
+    background-color: ${PALETTE.white60};
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+
   &::after {
     content: "";
     z-index: 2;
@@ -72,33 +79,28 @@ const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
   fill: ${theme.logo};
 `};
 `;
-const PageNameEl = styled.span`
-  font-size: 1.125rem;
-  margin-bottom: -0.25rem;
-`;
+
 export const NavDivider = styled(DividerEl)`
   height: 2.75rem;
   background-color: ${PALETTE.white60};
 `;
-export const BetaBadge = styled.div`
+export const Badge = styled.div`
   display: inline-block;
   background-color: ${PALETTE.purpleBlue};
   border-radius: 0.125rem;
-  padding: 0.25rem;
-  font-size: 0.75rem;
+  padding: 0.25rem 0.375rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   line-height: 1;
+  font-weight: ${FONT_WEIGHT.bold};
   color: ${PALETTE.white};
-  margin-bottom: -0.25rem;
-  margin-left: 0.5rem;
+  margin-left: 0.25rem;
 `;
 
 export const NavLogo = ({ pageName }) => (
   <El>
     <LogoEl />
-    <NavDivider />
-    <PageNameEl>{pageName}</PageNameEl>
-    <BetaBadge>beta</BetaBadge>
+    <Badge>{pageName}</Badge>
   </El>
 );
 
@@ -109,6 +111,7 @@ NavLogo.propTypes = {
 export const SideNavBackground = styled.div`
   position: absolute;
   background-color: ${REDESIGN_PALETTE.grey[0]};
+  border-right: 1px solid ${PALETTE.white60};
   left: -100rem;
   right: 0;
   top: -10rem;
@@ -125,8 +128,17 @@ export const NavImage = styled(Image)`
 `;
 export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
-  border-top: 1px solid ${PALETTE.white60};
   padding: 0.75rem 0 2rem;
+
+  // borderline
+  &::before {
+    content: "";
+    height: 1px;
+    background-color: ${PALETTE.white60};
+    width: 100%;
+    position: absolute;
+    top: 0;
+  }
 
   // Bottom scroll gradient
   position: relative;

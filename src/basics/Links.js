@@ -13,10 +13,6 @@ const basicLinkStyles = css`
   color: inherit;
   font-weight: ${FONT_WEIGHT.bold};
   line-height: 1.5;
-
-  &:hover {
-    color: #1c0c62;
-  }
 `;
 const BasicLink = styled(GatsbyLink)`
   ${basicLinkStyles};
