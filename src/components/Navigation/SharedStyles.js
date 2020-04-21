@@ -40,7 +40,7 @@ export const NavAbsoluteEl = styled.div`
 
 export const El = styled.div`
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-  padding: 0.5rem 0;
+  padding: 1.5rem 0;
   line-height: 1.5rem;
   display: flex;
   align-items: center;
@@ -72,33 +72,28 @@ const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
   fill: ${theme.logo};
 `};
 `;
-const PageNameEl = styled.span`
-  font-size: 1.125rem;
-  margin-bottom: -0.25rem;
-`;
+
 export const NavDivider = styled(DividerEl)`
   height: 2.75rem;
   background-color: ${PALETTE.white60};
 `;
-export const BetaBadge = styled.div`
+export const Badge = styled.div`
   display: inline-block;
   background-color: ${PALETTE.purpleBlue};
   border-radius: 0.125rem;
-  padding: 0.25rem;
-  font-size: 0.75rem;
+  padding: 0.25rem 0.375rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   line-height: 1;
+  font-weight: ${FONT_WEIGHT.bold};
   color: ${PALETTE.white};
-  margin-bottom: -0.25rem;
-  margin-left: 0.5rem;
+  margin-left: 0.25rem;
 `;
 
 export const NavLogo = ({ pageName }) => (
   <El>
     <LogoEl />
-    <NavDivider />
-    <PageNameEl>{pageName}</PageNameEl>
-    <BetaBadge>beta</BetaBadge>
+    <Badge>{pageName}</Badge>
   </El>
 );
 

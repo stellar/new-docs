@@ -11,11 +11,7 @@ import { CloseIcon, Menu } from "basics/Icons";
 import { BasicButton } from "basics/Buttons";
 import { Link } from "basics/Links";
 
-import {
-  BetaBadge,
-  NavDivider,
-  NavLogo,
-} from "components/Navigation/SharedStyles";
+import { NavDivider, NavLogo } from "components/Navigation/SharedStyles";
 import { LeftNav } from "./LeftNav";
 
 const El = styled.div`
@@ -136,7 +132,7 @@ export const MobileLeftNav = ({
               <LinkEl href="https://github.com/stellar/new-docs/issues">
                 here
               </LinkEl>
-              .<BetaBadge>beta</BetaBadge>
+              .
             </BetaNoticeEl>
           </NavSectionEl>
         </NavBarEl>
