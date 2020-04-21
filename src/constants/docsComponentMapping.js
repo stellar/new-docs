@@ -97,6 +97,9 @@ export const components = {
   hr: TextComponents.HorizontalRule,
   a: styled(Link)`
     color: ${PALETTE.purple};
+    &:hover {
+      color: #1c0c62;
+    }
   `,
   img: styled(BasicImage)`
     display: block;

@@ -118,13 +118,10 @@ const NavItemEl = styled.div`
           ${activeStyles}
         `
       : ""}
-
-  &:hover {
-    color: ${PALETTE.lightGrey};
-  }
 `;
 
 const StyledLink = components.a;
+
 // eslint-disable-next-line react/prop-types
 const DocsLink = ({ href, ...props }) => {
   const originalPath = React.useContext(SectionPathContext);
@@ -154,6 +151,10 @@ const NavLinkEl = styled(DocsLink)`
   color: inherit;
   font-weight: unset;
   display: block;
+
+  &:hover {
+    color: ${PALETTE.lightGrey};
+  }
 `;
 
 const isInViewport = (elem) => {

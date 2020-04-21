@@ -128,7 +128,7 @@ export const NavImage = styled(Image)`
 `;
 export const AbsoluteNavFooterEl = styled.div`
   list-style: none;
-  padding: 0.75rem 0;
+  padding: 0.75rem 0 2rem;
 
   // borderline
   &::before {
