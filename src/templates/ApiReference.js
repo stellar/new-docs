@@ -40,12 +40,7 @@ import {
   NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
-import {
-  SideNav,
-  SideNavBody,
-  Provider as SideNavProvider,
-  TrackedContent,
-} from "components/SideNav";
+import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
   Context as ScrollRouterContext,
@@ -341,59 +336,55 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         >
           <PrismStyles />
           <ApiReferenceRow>
-            <SideNavProvider>
-              <SideNavColumn xs={3} lg={3} xl={4}>
-                <SideNavBackground />
-                <SideNav>
-                  <NavLogo pageName={docType.api} />
-                  <NavAbsoluteEl ref={sideNavRef}>
-                    {Object.entries(docsBySubCategory).map((nav, i) => (
-                      <ExpansionContainerEl
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={i}
+            <SideNavColumn xs={3} lg={3} xl={4}>
+              <SideNavBackground />
+              <SideNav>
+                <NavLogo pageName={docType.api} />
+                <NavAbsoluteEl ref={sideNavRef}>
+                  {Object.entries(docsBySubCategory).map((nav, i) => (
+                    <ExpansionContainerEl
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={i}
+                    >
+                      <Expansion
+                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        collapseIcon={<ArrowIcon direction="up" />}
+                        expandIcon={<ArrowIcon direction="down" />}
+                        isDefaultExpanded={true}
                       >
-                        <Expansion
-                          title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                          expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                          collapseIcon={<ArrowIcon direction="up" />}
-                          expandIcon={<ArrowIcon direction="down" />}
-                          isDefaultExpanded={true}
-                        >
-                          <SideNavBody
-                            items={nav[1]}
-                            renderItem={renderItem}
-                            forwardedRef={sideNavRef}
-                          />
-                        </Expansion>
-                      </ExpansionContainerEl>
-                    ))}
-                  </NavAbsoluteEl>
-                  <AbsoluteNavFooterEl>
-                    <StyledLink href="/docs">Documentation</StyledLink>
-                  </AbsoluteNavFooterEl>
-                </SideNav>
-              </SideNavColumn>
-              <Column
-                xs={9}
-                xl={18}
-                isIndependentScroll
-                id={`${DOM_TARGETS.contentColumn}`}
-              >
-                <BetaNotice />
-                {referenceDocs
-                  .slice(0, 10)
-                  .map(({ body, id, parent, title, githubLink }) => (
-                    <ReferenceSection
-                      relativePath={parent.relativePath}
-                      key={id}
-                      title={title}
-                      githubLink={githubLink}
-                      body={body}
-                    />
+                        <SideNavBody
+                          items={nav[1]}
+                          renderItem={renderItem}
+                          forwardedRef={sideNavRef}
+                        />
+                      </Expansion>
+                    </ExpansionContainerEl>
                   ))}
-                <Footer />
-              </Column>
-            </SideNavProvider>
+                </NavAbsoluteEl>
+                <AbsoluteNavFooterEl>
+                  <StyledLink href="/docs">Documentation</StyledLink>
+                </AbsoluteNavFooterEl>
+              </SideNav>
+            </SideNavColumn>
+            <Column
+              xs={9}
+              xl={18}
+              isIndependentScroll
+              id={`${DOM_TARGETS.contentColumn}`}
+            >
+              <BetaNotice />
+              {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
+                <ReferenceSection
+                  relativePath={parent.relativePath}
+                  key={id}
+                  title={title}
+                  githubLink={githubLink}
+                  body={body}
+                />
+              ))}
+              <Footer />
+            </Column>
           </ApiReferenceRow>
         </LayoutBase>
       </MDXProvider>

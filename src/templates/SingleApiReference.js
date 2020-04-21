@@ -32,7 +32,11 @@ import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
-import { SideNav, SideNavBody } from "components/SideNav";
+import {
+  SideNavProgressContext,
+  SideNav,
+  SideNavBody,
+} from "components/SideNav";
 import {
   ApiReferenceRow,
   ApiReferenceWrapper,
@@ -170,24 +174,28 @@ const SingleApiReference = React.memo(function ApiReference({
         <ApiReferenceRow>
           <SideNavColumn xs={3} lg={3} xl={4}>
             <SideNavBackground />
-            <SideNav docType={docType.api}>
-              {Object.entries(docsBySubCategory).map((nav, i) => (
-                <ExpansionContainerEl
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={i}
-                >
-                  <Expansion
-                    title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                    expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                    collapseIcon={<ArrowIcon direction="up" />}
-                    expandIcon={<ArrowIcon direction="down" />}
-                    isDefaultExpanded={true}
+            <SideNavProgressContext.Provider
+              value={{ activeContent: { id: path } }}
+            >
+              <SideNav docType={docType.api}>
+                {Object.entries(docsBySubCategory).map((nav, i) => (
+                  <ExpansionContainerEl
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={i}
                   >
-                    <SideNavBody items={nav[1]} renderItem={renderItem} />
-                  </Expansion>
-                </ExpansionContainerEl>
-              ))}
-            </SideNav>
+                    <Expansion
+                      title={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                      expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                      collapseIcon={<ArrowIcon direction="up" />}
+                      expandIcon={<ArrowIcon direction="down" />}
+                      isDefaultExpanded={true}
+                    >
+                      <SideNavBody items={nav[1]} renderItem={renderItem} />
+                    </Expansion>
+                  </ExpansionContainerEl>
+                ))}
+              </SideNav>
+            </SideNavProgressContext.Provider>
           </SideNavColumn>
           <Column
             xs={9}

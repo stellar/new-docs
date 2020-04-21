@@ -5,6 +5,7 @@ import throttle from "lodash/throttle";
 import { DOM_TARGETS } from "constants/domNodes";
 
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
+import { SideNavProgressContext } from "components/SideNav/Provider";
 
 export const Context = React.createContext();
 
@@ -20,9 +21,12 @@ const elementMap = new Map();
 
 let contentDom;
 
-export const ScrollRouter = ({ children }) => {
+export const ScrollRouter = ({ children, initialActive = "" }) => {
   const initialLoadCheck = React.useRef(false);
-  const activeNodeRef = React.useRef();
+  const [activeNode, setActiveNode] = React.useState({
+    ref: null,
+    id: initialActive,
+  });
   const trackedElementsRef = React.useRef([]);
   const isScrollingDown = React.useRef(false);
 
@@ -52,8 +56,8 @@ export const ScrollRouter = ({ children }) => {
       );
       // If we've found an active node and it's not the same one as we had
       // before, update the route.
-      if (newActiveNode && newActiveNode !== activeNodeRef.current) {
-        activeNodeRef.current = newActiveNode;
+      if (newActiveNode && newActiveNode !== activeNode) {
+        setActiveNode(newActiveNode);
         window.history.replaceState(null, null, routeMap.get(newActiveNode));
       }
     }, 60);
@@ -64,7 +68,7 @@ export const ScrollRouter = ({ children }) => {
     return () => {
       contentDom.removeEventListener("scroll", handler);
     };
-  }, []);
+  }, [activeNode]);
 
   // Tracked sections
   const trackElement = React.useCallback((ref, route) => {
@@ -98,10 +102,30 @@ export const ScrollRouter = ({ children }) => {
     }),
     [stopTrackingElement, trackElement, onLinkClick, isScrollingDown],
   );
+  const sideNavContextValue = React.useMemo(
+    () => ({
+      // Make these no-op, cuz we're already tracking elements. This would be
+      // used by TrackedContent, but we'll already have Route components reporting
+      stopTrackingElement: () => {},
+      trackElement: () => {},
+      activeContent: {
+        ref: activeNode,
+        id: routeMap.get(activeNode),
+      },
+    }),
+    [activeNode],
+  );
 
-  return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+  return (
+    <Context.Provider value={contextValue}>
+      <SideNavProgressContext.Provider value={sideNavContextValue}>
+        {children}
+      </SideNavProgressContext.Provider>
+    </Context.Provider>
+  );
 };
 
 ScrollRouter.propTypes = {
   children: PropTypes.node.isRequired,
+  initialActive: PropTypes.string,
 };
