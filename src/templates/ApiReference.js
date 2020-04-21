@@ -107,7 +107,7 @@ const NavItemEl = styled.div`
   white-space: nowrap;
   font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
   color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
-  padding: 0.375rem 0;
+  padding: 0.25rem 0;
   padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
   transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
   font-weight: ${FONT_WEIGHT.normal};
