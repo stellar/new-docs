@@ -37,10 +37,11 @@ import { LayoutBase } from "components/layout/LayoutBase";
 import {
   AbsoluteNavFooterEl,
   NavAbsoluteEl,
+  SideNavContainer,
   NavLogo,
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
-import { SideNav, SideNavBody, TrackedContent } from "components/SideNav";
+import { SideNavBody, TrackedContent } from "components/SideNav";
 import {
   ScrollRouter,
   Context as ScrollRouterContext,
@@ -87,12 +88,15 @@ const NavTitleEl = styled(H5)`
 `;
 const activeStyles = `
   color: ${PALETTE.purpleBlue};
-  background: rgba(0,0,0,0.04);
-  border-radius: 2px;
-  padding-left: 0.75rem;
   font-weight: ${FONT_WEIGHT.bold};
 `;
+
 const ApiRefH1 = styled(H1)`
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+`;
+const ApiRefH2 = styled(H2)`
+  padding-top: 0;
   margin-top: 0.25rem;
   margin-bottom: 0;
 `;
@@ -244,7 +248,7 @@ const headerOptions = {
 };
 
 const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
-const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
+const ApiRefLinkedH2 = makeLinkedHeader(ApiRefH2, headerOptions);
 
 const componentMap = {
   ...components,
@@ -271,6 +275,18 @@ const componentMap = {
 const ReferenceSection = React.memo(
   ({ body, relativePath, title, githubLink }) => {
     const path = buildPathFromFile(relativePath);
+    const splitRelativePath = relativePath.split("/");
+
+    /* Check to see if a section is a nested item */
+    const isNestedSection =
+      relativePath.split("/").length > 3 &&
+      splitRelativePath[splitRelativePath.length - 1] !== "index.mdx";
+
+    const SectionHeader = isNestedSection ? (
+      <ApiRefH2 id={path}>{title}</ApiRefH2>
+    ) : (
+      <ApiRefH1 id={path}>{title}</ApiRefH1>
+    );
 
     return (
       <SectionEl>
@@ -282,8 +298,8 @@ const ReferenceSection = React.memo(
               skip the 1st column to use it as column-gap, start at the 2nd column and
               span through then next 8 columns (ends at column 9)
               */}
-              <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
-                <ApiRefH1 id={path}>{title}</ApiRefH1>
+              <CustomColumn xs={9} xlColumn="2 / span 8">
+                {SectionHeader}
                 {githubLink && (
                   <Link href={githubLink} newTab>
                     <EditIcon color={PALETTE.purpleBlue} />
@@ -337,9 +353,9 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           <PrismStyles />
           <ApiReferenceRow>
             <SideNavColumn xs={3} lg={3} xl={4}>
+              <NavLogo pageName={docType.api} />
               <SideNavBackground />
-              <SideNav>
-                <NavLogo pageName={docType.api} />
+              <SideNavContainer>
                 <NavAbsoluteEl ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
                     <ExpansionContainerEl
@@ -365,7 +381,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 <AbsoluteNavFooterEl>
                   <StyledLink href="/docs">Documentation</StyledLink>
                 </AbsoluteNavFooterEl>
-              </SideNav>
+              </SideNavContainer>
             </SideNavColumn>
             <Column
               xs={9}

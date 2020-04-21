@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 
-import { PORTAL_TARGETS, DOM_TARGETS } from "constants/domNodes";
+import { PORTAL_TARGETS } from "constants/domNodes";
 import { PALETTE, Z_INDEXES } from "constants/styles";
 
 import { renderToPortal } from "helpers/renderToPortal";
@@ -36,7 +36,7 @@ const TooltipEl = styled.div`
 export const Tooltip = ({
   in: inProp,
   duration = 200,
-  parentDimension,
+  parentPosition,
   children,
 }) => {
   const [tooltipDimension, setTooltipDimension] = React.useState({
@@ -58,29 +58,11 @@ export const Tooltip = ({
   }, []);
 
   React.useLayoutEffect(() => {
-    const targetDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
-
-    const onResize = () => {
-      if (tooltipDimension.width > 0) {
-        setTooltipPosition({
-          left: parentDimension.right - tooltipDimension.width + 16,
-          top: Math.abs(
-            targetDom.scrollTop -
-              parentDimension.top +
-              tooltipDimension.height +
-              24,
-          ),
-        });
-      }
-    };
-
-    window.addEventListener("resize", onResize);
-    onResize();
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, [tooltipDimension, parentDimension]);
+    setTooltipPosition({
+      left: parentPosition.right - tooltipDimension.width + 16,
+      top: parentPosition.top + tooltipDimension.height - 90,
+    });
+  }, [tooltipDimension, parentPosition]);
 
   return (
     <Transition
@@ -107,7 +89,7 @@ export const Tooltip = ({
 };
 
 Tooltip.propTypes = {
-  parentDimension: PropTypes.object.isRequired,
+  parentPosition: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
   in: PropTypes.bool,
   duration: PropTypes.number,

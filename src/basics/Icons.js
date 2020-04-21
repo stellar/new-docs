@@ -2,11 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+import { THEME } from "constants/styles";
+
 import CloseSVG from "assets/icons/icon-close.svg";
 import ChevronSVG from "assets/icons/icon-chevron.svg";
 import CheckmarkSVG from "assets/icons/icon-checkmark.svg";
 import EditSVG from "assets/icons/icon-edit.svg";
 import AlertSVG from "assets/icons/icon-alert.svg";
+import MenuSVG from "assets/icons/menu.svg";
 
 const AlertEl = styled.div`
   display: inline-block;
@@ -132,13 +135,15 @@ const CloseEl = styled.div`
   }
 `;
 
-export const CloseIcon = ({ color, className }) => (
+export const CloseIcon = ({ color = THEME.text, className }) => (
   <CloseEl color={color} className={className}>
     <CloseSVG />
   </CloseEl>
 );
 
 CloseIcon.propTypes = {
-  color: PropTypes.string.isRequired,
+  color: PropTypes.string,
   className: PropTypes.string,
 };
+
+export const Menu = MenuSVG;
