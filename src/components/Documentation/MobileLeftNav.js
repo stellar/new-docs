@@ -65,7 +65,7 @@ const OffscreenContainerEl = styled.div`
 const MenuContainerEl = styled.div`
   background-color: ${PALETTE.white80};
   width: 100%;
-  max-width: 19rem;
+  max-width: 26rem;
   border-right: 1px solid ${PALETTE.white60};
   padding-left: 1rem;
 `;
