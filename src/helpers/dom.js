@@ -31,7 +31,7 @@ const reverse = memoize((arr) => arr.slice().reverse());
  */
 export const findActiveNode = (possibleNodes, isScrollingDown) => {
   const topEdge = window.innerHeight * 0.125;
-  const bottomEdge = window.innerHeight * 0.25 + topEdge;
+  const bottomEdge = window.innerHeight * 0.875;
 
   if (!isScrollingDown) {
     // eslint-disable-next-line no-param-reassign
@@ -42,9 +42,9 @@ export const findActiveNode = (possibleNodes, isScrollingDown) => {
     if (!x.current) {
       return false;
     }
-    const { bottom } = x.current.getBoundingClientRect();
+    const { top, bottom } = x.current.getBoundingClientRect();
     return isScrollingDown
-      ? bottom > topEdge && bottom < window.innerHeight
-      : bottom < bottomEdge && bottom > 0;
+      ? top < bottomEdge && top > 0
+      : bottom > topEdge && bottom < window.innerHeight;
   });
 };

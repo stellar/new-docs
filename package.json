@@ -69,7 +69,6 @@
     "hast-to-hyperscript": "^7.0.0",
     "husky": "^2.1.0",
     "identity-obj-proxy": "^3.0.0",
-    "intersection-observer": "^0.7.0",
     "jest": "^24.9.0",
     "lodash": "^4.17.15",
     "memoize-one": "^5.1.1",

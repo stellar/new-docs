@@ -33,7 +33,11 @@ import { PrismStyles } from "basics/Prism";
 import { Text } from "basics/Text";
 
 import { LayoutBase } from "components/layout/LayoutBase";
-import { SideNavBody, TrackedContent } from "components/SideNav";
+import {
+  SideNavBody,
+  Provider as SideNavProvider,
+  TrackedContent,
+} from "components/SideNav";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Documentation/Footer";
@@ -140,16 +144,17 @@ const componentMapping = {
     has a <Code/> to highlight "/info" */
     if (typeof children !== "string") {
       // eslint-disable-next-line react/prop-types
-      const stringifyChildren = loopAndExtractString(children);
+      const id = slugify(loopAndExtractString(children));
       return (
-        <TrackedContent>
-          <H2 id={slugify(stringifyChildren)}>{children}</H2>
+        <TrackedContent identifier={id}>
+          <H2 id={id}>{children}</H2>
         </TrackedContent>
       );
     }
+    const id = slugify(children);
     return (
-      <TrackedContent>
-        <H2>{children}</H2>
+      <TrackedContent identifier={id}>
+        <H2 id={id}>{children}</H2>
       </TrackedContent>
     );
   },
@@ -264,28 +269,30 @@ const Documentation = ({ data, pageContext, location }) => {
           initialTopicsState={initialTopicsState}
           rootDir={rootDir}
         />
-        <Container id={contentId}>
-          <Row>
-            <SideNavColumn xs={{ hide: true }} sm={3} lg={3}>
-              <NavLogo pageName={docType.doc} />
-              <SideNavBackground />
-              {left}
-            </SideNavColumn>
-            <Column
-              sm={5}
-              md={7}
-              isIndependentScroll
-              id={`${DOM_TARGETS.contentColumn}`}
-            >
-              {center}
-            </Column>
-            {pageOutline.length > 0 && (
-              <Column xs={{ hide: true }} md={2}>
-                {right}
+        <SideNavProvider>
+          <Container id={contentId}>
+            <Row>
+              <SideNavColumn xs={{ hide: true }} sm={3} lg={3}>
+                <NavLogo pageName={docType.doc} />
+                <SideNavBackground />
+                {left}
+              </SideNavColumn>
+              <Column
+                sm={5}
+                md={7}
+                isIndependentScroll
+                id={`${DOM_TARGETS.contentColumn}`}
+              >
+                {center}
               </Column>
-            )}
-          </Row>
-        </Container>
+              {pageOutline.length > 0 && (
+                <Column xs={{ hide: true }} md={2}>
+                  {right}
+                </Column>
+              )}
+            </Row>
+          </Container>
+        </SideNavProvider>
       </LayoutBase>
     </MDXProvider>
   );

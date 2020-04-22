@@ -67,7 +67,6 @@ const GreenTableCell = styled.td`
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
-const TrackedEl = styled.div``;
 const SectionEl = styled.section`
   &:first-child {
     margin-top: 5rem;
@@ -293,31 +292,27 @@ const ReferenceSection = React.memo(
     return (
       <SectionEl>
         <Route originalFilePath={relativePath} path={path}>
-          <>
+          <TrackedContent identifier={path}>
             <NestedRow>
               {/* Hack to make it look appear as if we had a column-gap
-                4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
-                skip the 1st column to use it as column-gap, start at the 2nd column and
-                span through then next 8 columns (ends at column 9)
+              4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
+              skip the 1st column to use it as column-gap, start at the 2nd column and
+              span through then next 8 columns (ends at column 9)
               */}
               <CustomColumn xs={9} xlColumn="2 / span 8">
-                <TrackedContent>
-                  <TrackedEl id={path}>
-                    {SectionHeader}
-                    {githubLink && (
-                      <Link href={githubLink} newTab>
-                        <EditIcon color={PALETTE.purpleBlue} />
-                      </Link>
-                    )}
-                  </TrackedEl>
-                </TrackedContent>
+                {SectionHeader}
+                {githubLink && (
+                  <Link href={githubLink} newTab>
+                    <EditIcon color={PALETTE.purpleBlue} />
+                  </Link>
+                )}
               </CustomColumn>
             </NestedRow>
             <NestedRow>
               <MDXRenderer>{body}</MDXRenderer>
             </NestedRow>
             <HorizontalRule />
-          </>
+          </TrackedContent>
         </Route>
       </SectionEl>
     );

@@ -21,7 +21,7 @@ text-decoration: none;
 `;
 
 const El = styled(ListItem)``;
-const ArticleLink = styled(Link)`
+const ArticleLink = styled(({ isActive, ...props }) => <Link {...props} />)`
   ${topLevelNavItem}
   display: block;
   padding: 0.5rem 0;

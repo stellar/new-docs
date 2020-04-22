@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { throttle } from "lodash";
+import throttle from "lodash/throttle";
 
 import { DOM_TARGETS } from "constants/domNodes";
 
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
+import { SideNavProgressContext } from "components/SideNav/Provider";
 
 export const Context = React.createContext();
 
@@ -18,11 +19,20 @@ let lastScrollPosition = 0;
 const routeMap = new Map();
 const elementMap = new Map();
 
-export const ScrollRouter = ({ children }) => {
+let contentDom;
+
+export const ScrollRouter = ({ children, initialActive = "" }) => {
   const initialLoadCheck = React.useRef(false);
-  const activeNodeRef = React.useRef();
+  const [activeNode, setActiveNode] = React.useState({
+    ref: null,
+    id: initialActive,
+  });
   const trackedElementsRef = React.useRef([]);
   const isScrollingDown = React.useRef(false);
+
+  React.useEffect(() => {
+    contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
+  });
 
   // Navigation
   const onLinkClick = React.useCallback(function onLinkClick(route) {
@@ -32,14 +42,13 @@ export const ScrollRouter = ({ children }) => {
 
   // Scroll listener
   React.useEffect(() => {
-    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
     const handler = throttle(() => {
-      // If we haven't scrolled at least 20 pixels, just bail.
-      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 20) {
+      // If we haven't scrolled at least 100 pixels, just bail.
+      if (Math.abs(contentDom.scrollTop - lastScrollPosition) < 100) {
         return;
       }
-      isScrollingDown.current = contentDom.scrollY > lastScrollPosition;
-      lastScrollPosition = contentDom.scrollY;
+      isScrollingDown.current = contentDom.scrollTop > lastScrollPosition;
+      lastScrollPosition = contentDom.scrollTop;
 
       const newActiveNode = findActiveNode(
         trackedElementsRef.current,
@@ -47,8 +56,8 @@ export const ScrollRouter = ({ children }) => {
       );
       // If we've found an active node and it's not the same one as we had
       // before, update the route.
-      if (newActiveNode && newActiveNode !== activeNodeRef.current) {
-        activeNodeRef.current = newActiveNode;
+      if (newActiveNode && newActiveNode !== activeNode) {
+        setActiveNode(newActiveNode);
         window.history.replaceState(null, null, routeMap.get(newActiveNode));
       }
     }, 60);
@@ -59,7 +68,7 @@ export const ScrollRouter = ({ children }) => {
     return () => {
       contentDom.removeEventListener("scroll", handler);
     };
-  }, []);
+  }, [activeNode]);
 
   // Tracked sections
   const trackElement = React.useCallback((ref, route) => {
@@ -67,6 +76,7 @@ export const ScrollRouter = ({ children }) => {
     elementMap.set(route, ref);
     trackedElementsRef.current.push(ref);
     trackedElementsRef.current.sort(sortByPosition);
+
     // We want to scroll to the element associated with the route _once_.
     if (!initialLoadCheck.current && window.location.pathname === route) {
       initialLoadCheck.current = true;
@@ -92,10 +102,30 @@ export const ScrollRouter = ({ children }) => {
     }),
     [stopTrackingElement, trackElement, onLinkClick, isScrollingDown],
   );
+  const sideNavContextValue = React.useMemo(
+    () => ({
+      // Make these no-op, cuz we're already tracking elements. This would be
+      // used by TrackedContent, but we'll already have Route components reporting
+      stopTrackingElement: () => {},
+      trackElement: () => {},
+      activeContent: {
+        ref: activeNode,
+        id: routeMap.get(activeNode),
+      },
+    }),
+    [activeNode],
+  );
 
-  return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+  return (
+    <Context.Provider value={contextValue}>
+      <SideNavProgressContext.Provider value={sideNavContextValue}>
+        {children}
+      </SideNavProgressContext.Provider>
+    </Context.Provider>
+  );
 };
 
 ScrollRouter.propTypes = {
   children: PropTypes.node.isRequired,
+  initialActive: PropTypes.string,
 };

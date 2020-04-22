@@ -7,8 +7,6 @@ import { FONTS } from "constants/fonts";
 
 import { Link } from "basics/Links";
 
-import { Provider as SideNavProvider } from "components/SideNav";
-
 import { Seo } from "./Seo";
 
 const contentId = "content";
@@ -61,9 +59,7 @@ export const LayoutBase = ({
       path={pageContext.urlPath}
     />
     <SkipToContentEl />
-    <ContentEl>
-      <SideNavProvider>{children}</SideNavProvider>
-    </ContentEl>
+    <ContentEl>{children}</ContentEl>
   </>
 );
 
