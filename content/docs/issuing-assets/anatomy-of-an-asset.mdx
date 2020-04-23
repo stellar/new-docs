@@ -30,7 +30,7 @@ The public key of the issuing account is linked on the ledger to the asset itsel
 
 Before an account can hold an asset another account issues, it has to establish something called a trustline, which is a persistent account-level ledger entry created with a `change_trust` operation.
 
-A trustline is an explicit opt-in to hold a particular token, so it specifies both asset code and issuer. Each trustline increases an account’s minimum lumen balance by one [base reserve](../glossary/fees.mdx) — currently 0.5 XLM — and tracks the balance of the asset the account holds. Trustlines can also limit the amount of an asset an account can hold, though more often than not, account holders don’t set that limit: they simply turn the trustline on, which by default allows the maximum.
+A trustline is an explicit opt-in to hold a particular token, so it specifies both asset code and issuer. Each trustline increases an account’s minimum lumen balance by one [base reserve](../glossary/minimum-balance.mdx) — currently 0.5 XLM — and tracks the balance of the asset the account holds. Trustlines can also limit the amount of an asset an account can hold, though more often than not, account holders don’t set that limit: they simply turn the trustline on, which by default allows the maximum.
 
 A trustline also tracks liabilities. Buying liabilities equal the total amount of the asset offered to buy aggregated over all offers owned by an account, and selling liabilities equal the total amount of the asset offered to sell aggregated over all offers owned by an account. A trustline must always have balance sufficiently large to satisfy its selling liabilities, and a balance sufficiently below its limit to accommodate its buying liabilities.
 
