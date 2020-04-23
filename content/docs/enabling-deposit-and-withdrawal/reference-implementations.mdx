@@ -7,9 +7,7 @@ These docs walk through the steps necessary to set up and launch both a test ser
 
 ## Anchor Server Reference Implementation
 
-To help with server setup, SDF created [Polaris](link), an extendable django reusable-app that comes with fully-implemented endpoints, templates, and database models. It's built in Python using the community-supported [Stellar Python SDK](link), and is compliant with the Stellar Ecosystem Protocols mentioned in the previous section.
- 
-In the Polaris repo, you can also find a [Reference Implementation Project](link), a WIP example of an anchor server.
+To help with server setup, SDF created [Polaris](https://github.com/stellar/django-polaris), an extendable django reusable-app that comes with fully-implemented endpoints, templates, and database models. It's built in Python using the community-supported [Stellar Python SDK](https://github.com/StellarCN/py-stellar-base), and is compliant with the Stellar Ecosystem Protocols mentioned in the previous section.
  
 **Image 1: Screenshots of the reference implementation**
 
@@ -19,12 +17,12 @@ If you choose to use Polaris, you can jumpstart your deployment, and connect loc
 
 ## Demo Client & Deployed Example
 
-Once you have a server set up, SDF also maintains a [Demo Client Project](link) that makes it easy to test your implementation on both the testnet and the pubnet. 
+Once you have a server set up, SDF also maintains a [Demo Client Project](https://github.com/stellar/sep24-demo-client) that makes it easy to test your implementation on both the testnet and the pubnet. 
 
-The public [Deployed Demo Client](link) allows you to run those tests without needing to set up a new hosting infrastructure for that project.
+TWe've even built a [Deployed Demo Client](https://sep24.stellar.org/), which is an interface that allows you to run those tests without needing to set up a new hosting infrastructure for that project.
 
 **Image 2: Screenshots of the demo client**
 
 With the demo client, you can test your deposit and withdraw flows, and get information about the transactions that are created during those processes. To start testing the deploys, simply update the settings of the Demo Client (click the gear button on the bottom right) to include your project's information.
 
-If you just want to see what the flows look like from a client's point of view, there's also a public [Demo Client Integrated with a Deployed Reference Server](link) that gives a clear step-by-step visual example of how the functionalities work along with insightful information about the requests, protocols, and possible validation messages.  You can run that demo *right now* and to get a sense of how the anchor/wallet interaction works.   
+If you don't yet have your own infrastructure set up, but you're curious to see how the demo client works, there's also a  [version pre-popluated with dummy values](https://sep24.stellar.org/#HOME_DOMAIN=%22https://stellar-anchor-server.herokuapp.com/%22&TRANSFER_SERVER=%22%22&WEB_AUTH_ENDPOINT=%22%22&USER_SK=%22SDNPTKNPIXJ2GSDI5657I4EGTHXCAROUWSUVVA5CGRDK6ZRTGJZD3KXV%22&HORIZON_URL=%22https://horizon-testnet.stellar.org%22&ASSET_CODE=%22USD%22&ASSET_ISSUER=%22%22&EMAIL_ADDRESS=%22%22&AUTO_ADVANCE=false&PUBNET=false). It gives a clear step-by-step visual example of how the functionalities work along with insightful information about the requests, protocols, and possible validation messages.  You can run that demo *right now* and to get a sense of how the anchor/wallet interaction works.   
