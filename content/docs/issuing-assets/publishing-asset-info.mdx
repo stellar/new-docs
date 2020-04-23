@@ -24,13 +24,13 @@ about your organization’s Stellar integration.  You write it in TOML, a simple
 
 That way, everyone knows where to find it, anyone can look it up, and it *proves* that the owner of the HTTPS domain hosting the stellar.toml claims *responsibility* for the accounts and assets listed in it.  
 
-Using a [`set_options`](../glossary/operations.mdx#set-optionss) operation, you can link your Stellar account to the domain that hosts your `stellar.toml`, thereby creating a definitive on-chain connection between this information and that account.
+Using a [`set_options`](../glossary/operations.mdx#set-options) operation, you can link your Stellar account to the domain that hosts your `stellar.toml`, thereby creating a definitive on-chain connection between this information and that account.
 
 ## How to complete your stellar.toml
 
-Stellar Ecosystem Prosopals are open protocols for building on top of Stellar, and the very first SEP, aptly named [SEP-0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), specifies everything you could ever want to include in a `stellar.toml` file.  This guide, which is targeted toward asset issuers, won’t cover the `Validator Information` section (that’s covered in the [Run a Core Node section](../run-core-node/index.mdx)), and may omit some details relevant to your use case.  
+Stellar Ecosystem Proposals are open protocols for building on top of Stellar, and the very first SEP, aptly named [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), specifies everything you could ever want to include in a `stellar.toml` file.  This guide, which is targeted toward asset issuers, won’t cover the `Validator Information` section (that’s covered in the [Run a Core Node section](../run-core-node/index.mdx)), and may omit some details relevant to your use case.  
 
-The goal here is to walk through the sections of SEP-0001 that directly relate to asset issuers, so you should use this guide in conjunction with [that SEP](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) to make sure you complete your `stellar.toml` correctly.  The four sections we’ll cover:
+The goal here is to walk through the sections of [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) that directly relate to asset issuers, so you should use this guide in conjunction with that SEP to make sure you complete your `stellar.toml` correctly.  The four sections we’ll cover:
 
 * General Information
 * Organization Documentation
@@ -38,6 +38,14 @@ The goal here is to walk through the sections of SEP-0001 that directly relate t
 * Currency Documentation
 
 For each of those sections, we’ll let you know which fields are **required**, meaning all asset issuers *must* include them to be listed by exchanges and wallets, and which fields are **suggested**.  Completing suggested fields is a good way to make your asset stand out.
+
+
+<Alert>
+
+Note: it's a good idea to keep the sections in the order presented in [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), which is also the order they're presented here.  TOML requires arrays to be at the end, so if you move scramble the order, you may cause errors for TOML parsers
+
+</Alert>
+
 
 ### General Information
 
