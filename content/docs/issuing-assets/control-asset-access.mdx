@@ -7,7 +7,7 @@ import { CodeExample } from "components/CodeExample";
 
 ## High-level view of authorization flags
 
-When you issue an asset on Stellar, anyone can hold it by default.  In general, that’s a good thing: easy access means better reach and better liquidity, and most of the time, issuers with KYC requirements can handle those when an asset moves onto or off of the network.  Most fiat-backed token issuers, for instance, use the transfer server protocol specified in SEP-24 to decide whether to honor deposits and withdrawals rather than setting account-level flags.      
+When you issue an asset on Stellar, anyone can hold it by default.  In general, that’s a good thing: easy access means better reach and better liquidity, and most of the time, issuers with KYC requirements can handle those when an asset moves onto or off of the network.  Most fiat-backed token issuers, for instance, use the transfer server protocol specified in SEP-24 to decide whether to honor deposits and withdrawals rather than setting account-level flags.  You can read about how to do that in the [Enable Deposit and Withdrawal](../enabling-deposit-and-withdrawal/index.mdx) section.      
 
 However, if you need to control access to an asset to comply with regulations (or for any other reason), you can easily do so by enabling flags on your issuing account. 
 
@@ -28,10 +28,11 @@ With this setting, neither of the other authorization flags can be set, and the 
 ### Example flow 
 
 To get a sense of how authorization flags work, you can step through how an issuer would use `AUTHORIZATION REQUIRED` and `AUTHORIZATION REVOCABLE` to grant access to an asset, then to freeze it:
+
 1. User decides he/she wants to accept an asset
 2. User opens a trust line with this asset's issuing account
 3. Issuer authorizes the user's trustline
-4. User can accept and send the asset to whomever else has a trustline open with the issuer
+4. User can accept and send the asset to anyone else that has a trustline open with the issuer
 5. Issuer wants to freeze user's access to asset
 6. Issuer deauthorizes user's trustline
 7. User cannot send or accept this asset

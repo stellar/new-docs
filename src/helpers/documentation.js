@@ -376,7 +376,7 @@ export const groupByCategory = (referenceDocs) => {
   }, {});
 };
 
-const ensureArray = (maybeArray) =>
+export const ensureArray = (maybeArray) =>
   Array.isArray(maybeArray) ? maybeArray : [maybeArray];
 const combineAdjacentStrings = (list) =>
   list.reduce((accum, item) => {

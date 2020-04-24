@@ -6,14 +6,13 @@ order: 20
 import { CodeExample } from "components/CodeExample";
 
 Most of the time, you’ll be sending money to someone else who has their own account. For this
-tutorial, however, you'll need a second account to transact with.  So before proceeding, follow the steps outlined in [Create an Account](./create-account.md) to make a both sending account and a recipient account.
+tutorial, however, you'll need a second account to transact with.  So before proceeding, follow the steps outlined in [Create an Account](./create-account.mdx) to make *two* accounts: one for sending and one for receiving.
 
 
 ## About Operations and Transactions
 
-Actions that do things on Stellar, like sending payments or making
-buy or sell offers, are called [operations](link). In order to actually
-perform an operation, you create a **transaction**, which is just a group of anywhere from 1 to 100 operations accompanied
+Actions that do things on Stellar — like sending payments or making
+buy or sell offers — are called [operations](../glossary/operations.mdx). To submit an operation to the network, you bundle it into a [transaction](../glossary/transactions.mdx), which is a group of anywhere from 1 to 100 operations accompanied
 by some extra information, like which account is making the transaction and a cryptographic
 signature to verify that the transaction is authentic.
 
@@ -23,13 +22,13 @@ with one operation), the first will succeed and the second will fail because you
 lumens. You’ll be left with 40 lumens. However, if you group the two payments into a single
 transaction, they will both fail and you’ll be left with the full 100 lumens still in your account.
 
-Every transaction also incurs a small fee. Like the minimum balance on accounts, this fee deters spam and prevents people from overloading the system. This [base fee](link) is
+Every transaction also incurs a small fee. Like the minimum balance on accounts, this fee deters spam and prevents people from overloading the system. This [base fee](../glossary/fees.mdx) is
 very small — 100 stroops per operation where a stroop equals 1 * 10 ^-7 XLM — and it's charged for each operation in a transaction. A transaction with two operations, for instance, would cost 200 stroops.
 
 ## Send a Payment
 
-Stellar stores and communicates transaction data in a binary format called [XDR](link), which is optimized for network performance but unreadable to the human eye. Luckily, [Horizon](link), the Stellar API, and the
-Stellar SDKs convert XDRs into friendlier formats. Here’s how you might send 10 lumens to an account:
+Stellar stores and communicates transaction data in a binary format called [XDR](../glossary/xdr.mdx), which is optimized for network performance but unreadable to the human eye. Luckily, [Horizon](../../api/introduction/index.mdx), the Stellar API, and the
+[Stellar SDKs](../software-and-sdks/index.mdx) convert XDRs into friendlier formats. Here’s how you might send 10 lumens to an account:
 
 <CodeExample>
 
@@ -247,8 +246,8 @@ except (BadRequestError, BadResponseError) as err:
 
 What exactly happened there? Let’s break it down.
 
-1. Confirm that the account ID you are sending to actually exists by loading the associated account
-data from the Stellar network. Everything will actually be OK if you skip this step, but
+1. Confirm that the account ID (aka the *public key*)  you are sending to actually exists by loading the associated account
+data from the Stellar network. It's okay to skip this step, but
 it gives you an opportunity to avoid making a transaction that will inevitably fail. 
     
 <CodeExample>
@@ -275,8 +274,8 @@ it gives you an opportunity to avoid making a transaction that will inevitably f
 </CodeExample>
 
 2. Load data for the account you are sending from. An account can only perform one transaction at a
-   time and has something called a [**sequence
-   number**,](link) which helps Stellar verify the order of
+   time and has something called a [sequence
+   number](../glossary/accounts.mdx#sequence-number), which helps Stellar verify the order of
    transactions. A transaction’s sequence number needs to match the account’s sequence number, so
    you need to get the account’s current sequence number from the network.
 
@@ -332,7 +331,7 @@ transaction = TransactionBuilder(
 </CodeExample>
 
 4. Add the payment operation to the account. Note that you need to specify the type of asset you
-   are sending: Stellar’s network currency is the [lumen](link), but you can send any asset issued on the network.  We'll cover sending non-lumen assets [below](#transacting-in-other-currencies). For now, though, we’ll stick to
+   are sending: Stellar’s network currency is the [lumen](https://www.stellar.org/lumens), but you can send any asset issued on the network.  We'll cover sending non-lumen assets [below](#transacting-in-other-currencies). For now, though, we’ll stick to
    lumens, which are called “native” assets in the SDK:
 
 <CodeExample>
@@ -375,8 +374,8 @@ systems have a native way to accurately represent extremely small or large decim
 uses strings as a reliable way to represent the exact amount across any system.
 
 5. Optionally, you can add your own metadata, called a
-   [**memo,**](../concepts/transactions.md#memo) to a transaction. Stellar doesn’t do anything with
-   this data, but you can use it for any purpose you’d like.  Many exchanges require memos for incoming transactions because they use a single Stellar account for all their users, and rely on the memo to differentiate between internal user accounts.
+   [memo](../glossary/transactions.mdx#memo), to a transaction. Stellar doesn’t do anything with
+   this data, but you can use it for any purpose you’d like.  Many exchanges require memos for incoming transactions because they use a single Stellar account for all their users and rely on the memo to differentiate between internal user accounts.
 
 <CodeExample title="Add a Memo">
 
@@ -459,7 +458,7 @@ You don’t actually need to do anything to receive payments into a Stellar acco
 a successful transaction to send assets to you, those assets will automatically be added to your
 account.
 
-However, you may want keep an eye out for incoming payments.  A simple program that watches the network for payments and prints each one might look like:
+However, you may want to keep an eye out for incoming payments.  A simple program that watches the network for payments and prints each one might look like:
 
 <CodeExample title="Receive Payments">
 
@@ -763,20 +762,9 @@ payments_next = payments.next()
 
 ## Transacting in Other Currencies
 
-One of the amazing things about the Stellar network is that you can create, hold, send, receive, and trade many types of
-assets, such as US dollars, Nigerian naira, bitcoin, or even your own new kind of asset.
+One of the amazing things about the Stellar network is that you can create, hold, send, receive, and trade any type of
+asset.  Many organizations issue assets on Stellar that represent real-world currencies such as US dollars or Nigerian naira or other cryptocurrencies such as bitcoin or ether.
 
-While Stellar’s native asset, the lumen, is fairly simple, all other assets can be thought of like
-a credit issued by a particular account. In fact, when you trade US dollars on the Stellar network,
-you don’t actually trade US dollars—you trade US dollars *from a particular account.* That’s why
-the assets in the example above had both a `code` and an `issuer`. The `issuer` is the ID of the
-account that created the asset. Understanding what account issued the asset is important: to redeem a Stellar-network dollar , you return it to the issuer, who honors the credit with an actual dollar bill or a dollar in the bank.  To find out more about how that works, check out [Enable Deposits and Withdrawals](link). 
+Each of these redeemable assets — *anchored* in the Stellar vernacular — is essentially a credit issued by a particular account that represents reserves those accounts hold outside the network.  That's why the assets in the example above had both a `code` and an `issuer`: the `issuer` is the public key of the
+account that created the asset, an account owned by the organization that ultimately honors the credit that asset represents. To find out more about how that works, check out [Enable Deposits and Withdrawals](../enabling-deposit-and-withdrawal/index.mdx). 
 
-Stellar also supports payments sent as one type of asset and received as another. You can send
-Nigerian naira to a friend in Germany and have them receive euros. These multi-currency
-transactions, which are called [path payments](link), are made possible by a built-in market mechanism where people can make offers to buy
-and sell different types of assets. Stellar will automatically find the best exchange
-rates to convert your naira to euros. This system is called [distributed
-exchange](../concepts/exchange.md).
-
-You can read more about the details of assets in [Issuing Assets](link).
