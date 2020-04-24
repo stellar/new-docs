@@ -1,3 +1,5 @@
+import { ensureArray } from "helpers/documentation";
+
 /**
  * @desc convert JSX to String
  * @param {object} component - React Component that needs to be converted to String
@@ -22,9 +24,10 @@ export const extractStringChildren = (component, finalString = "") => {
 };
 
 export const loopAndExtractString = (arr) => {
+  const arrChildren = ensureArray(arr);
   let str;
   // eslint-disable-next-line react/prop-types
-  arr.forEach((child) => {
+  arrChildren.forEach((child) => {
     if (child !== "string") {
       str = extractStringChildren(child, str);
     } else {
