@@ -17,13 +17,13 @@
     - [Quote](#quote)
     - [Paragraph and Headings](#paragraph-and-headings)
   - [Custom Components](#custom-components)
-    - [<AttributeTable/>](#attributetable)
-    - [<Alert/>](#alert)
-    - [<CodeExample/>](#codeexample)
-    - [<Endpoint/>](#endpoint)
-    - [<ExampleResponse/>](#example-json-response)
-    - [<NavTable/>](#navtable)
-    - [Diagrams (Mermaid)](#diagrams-mermaid)
+    - [`<AttributeTable/>`](#attributetable)
+    - [`<Alert/>`](#alert)
+    - [`<CodeExample/>`](#codeexample)
+    - [`<Endpoint/>`](#endpoint)
+    - [`<ExampleResponse/>`](#example-json-response)
+    - [`<NavTable/>`](#navtable)
+    - [`Diagrams (Mermaid)`](#diagrams-mermaid)
 
 # How to Run
 
@@ -52,11 +52,11 @@ yarn prod:serve
 
 ## Page Metadata
 
-_Title_ (og:title, page title): Pulled from front matter. _Order_ (order in
+**Title** (og:title, page title): Pulled from front matter. **Order** (order in
 which a page appears in the table of contents): Pulled from front matter. URL
 slug: Pulled from the folder or file name
 
-_All names must use dashes for spaces instead of spaces or underscores_
+**All names must use dashes for spaces instead of spaces or underscores**
 
 ```
 ---
@@ -81,7 +81,9 @@ contents): Pulled from a metadata.json file in the folder
 ```
 
 If we want to sort pages in an alphabetical order, add `sortMethod` in the main
-folder's `metadata.json`. The below example is for
+folder's `metadata.json`.
+
+The below example is for
 [/glossary](https://github.com/stellar/new-docs/blob/master/content/docs/glossary/metadata.json)
 page
 
@@ -94,8 +96,9 @@ page
 ```
 
 Folders may be nested, which means that a final URL may be stitched together
-from multiple metadata files. Check `/content` folder to see how its nested
-order is working
+from multiple metadata files.
+
+Check `/content` folder to see how its nested order is working
 
 ```
 src/
@@ -187,9 +190,9 @@ images.
 
 Beyond defining title font sizes, line heights, and weights:
 
-- _H1_ tags are reserved for the page’s title and should not be used; that said,
-  if they are used, they will still show up on the front end as H1 tags
-- _H2_ tags populate the ride-side page
+- **H1** tags are reserved for the page’s title and should not be used; that
+  said, if they are used, they will still show up on the front end as H1 tags
+- **H2** tags populate the ride-side page
   [table of contents](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
   in Documentation
 
@@ -198,9 +201,10 @@ Beyond defining title font sizes, line heights, and weights:
 Custom (React) components that are being used throughout Documentation and API
 Reference.
 
-### <AttributeTable>
+### `<AttributeTable>`
 
 `<AttributeTable/>` is currently used in API Reference. Nested Table is allowed.
+
 For example,
 [Api Reference > Resources > Operations > Object](https://developers.stellar.org/api/resources/operations/object/)
 
@@ -231,9 +235,11 @@ import { AttributeTable } from "components/AttributeTable";
 </AttributeTable>
 ```
 
-### <Alert/>
+### `<Alert/>`
 
-`<Alert/>` is currently used in Documentation. For example,
+`<Alert/>` is currently used in Documentation.
+
+For example,
 [Seeting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
 
 ```
@@ -246,10 +252,11 @@ Note: the testnet is reset every three months, so when building on it, make sure
 </Alert>
 ```
 
-### <CodeExample/>
+### `<CodeExample/>`
 
-`<CodeExample/>` is currently used in both API Reference and Documentation. For
-example,
+`<CodeExample/>` is currently used in both API Reference and Documentation.
+
+For example,
 [Seeting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
 in Documentation and
 [Resources > Transaction > Retrieve a Transaction](https://developers.stellar.org/api/resources/transactions/single/)
@@ -314,9 +321,11 @@ If you would like to add an additional language to this, visit
 [CodeExample.js](https://github.com/stellar/new-docs/blob/master/src/components/CodeExample.js)
 and add it to `CODE_LANGS`.
 
-### <Endpoint/>
+### `<Endpoint/>`
 
-`<Endpoint/>` is currently used in API Reference. For example,
+`<Endpoint/>` is currently used in API Reference.
+
+For example,
 [Aggregations > Order Books > Retrieve an Order Book](https://developers.stellar.org/api/aggregations/order-books/single/)
 
 ```
@@ -331,7 +340,7 @@ import { Endpoint } from "components/Endpoint";
 </Endpoint>
 ```
 
-### <EndpointsTable/>
+### `<EndpointsTable/>`
 
 `<EndpointsTable/>` is currently used in API Reference. For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/)
@@ -355,7 +364,9 @@ import { EndpointsTable } from "components/EndpointsTable";
 ### Example (JSON) Response
 
 `<ExampleResponse/>` is currently used in API Reference to display JSON
-response. For example,
+response.
+
+For example,
 [Introduction > XDR](https://developers.stellar.org/api/introduction/xdr/). In
 Documentation, we use `<CodeExample/>` for JSON response.
 
@@ -378,11 +389,12 @@ import { ExampleResponse } from "components/ExampleResponse";
 </ExampleResponse>
 ````
 
-### <NavTable/>
+### `<NavTable/>`
 
 `<NavTable/>` is currently used in API Reference to display navigation sections
-and its descriptions. For example,
-[Introduction](https://developers.stellar.org/api/introduction/).
+and its descriptions.
+
+For example, [Introduction](https://developers.stellar.org/api/introduction/).
 
 ```
 import { NavTable } from "components/NavTable";
@@ -398,9 +410,6 @@ import { NavTable } from "components/NavTable";
 
 </NavTable>
 ```
-
-Mermaid See Allow for flowcharts and sequence diagrams via Mermaid (not Gantt
-charts) Allow for skinning mermaid (designs coming at a later date)
 
 ### Diagrams (Mermaid)
 
