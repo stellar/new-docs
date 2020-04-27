@@ -202,7 +202,7 @@ Beyond defining title font sizes, line heights, and weights:
 Custom (React) components that are being used throughout Documentation and API
 Reference.
 
-### `<AttributeTable>`
+### AttributeTable
 
 `<AttributeTable/>` is currently used in API Reference. Nested Table is allowed.
 
@@ -236,7 +236,7 @@ import { AttributeTable } from "components/AttributeTable";
 </AttributeTable>
 ```
 
-### `<Alert/>`
+### Alert
 
 `<Alert/>` is currently used in Documentation.
 
@@ -253,7 +253,7 @@ Note: the testnet is reset every three months, so when building on it, make sure
 </Alert>
 ```
 
-### `<CodeExample/>`
+### CodeExample
 
 `<CodeExample/>` is currently used in both API Reference and Documentation. It
 is using [Prism syntax highlighting library](https://prismjs.com/).
@@ -323,7 +323,7 @@ If you would like to add an additional language to this, visit
 [CodeExample.js](https://github.com/stellar/new-docs/blob/master/src/components/CodeExample.js)
 and add it to `CODE_LANGS`.
 
-### `<Endpoint/>`
+### Endpoint
 
 `<Endpoint/>` is currently used in API Reference.
 
@@ -342,7 +342,7 @@ import { Endpoint } from "components/Endpoint";
 </Endpoint>
 ```
 
-### `<EndpointsTable/>`
+### EndpointsTable
 
 `<EndpointsTable/>` is currently used in API Reference. For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/).
@@ -390,7 +390,7 @@ import { ExampleResponse } from "components/ExampleResponse";
 </ExampleResponse>
 ````
 
-### `<NavTable/>`
+### NavTable
 
 `<NavTable/>` is currently used in API Reference to display navigation sections
 and its descriptions.
