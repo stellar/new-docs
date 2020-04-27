@@ -215,9 +215,11 @@ Reference.
 
 ```
 <Alert>
-<!-- EMPTY SPACE IS NEEDED FOR A COMPONENT TO RENDER PROPERLY -->
+<!-- EMPTY SPACE IS NEEDED BELOW FOR A COMPONENT TO RENDER PROPERLY -->
+
 Note: the testnet is reset every three months, so when building on it, make sure you have a plan to recreate necessary accounts and other data.  For more info, check out the [best practices for using the testnet](../glossary/testnet.mdx#best-practices-for-using-testnet).
-<!-- EMPTY SPACE IS NEEDED FOR A COMPONENT TO RENDER PROPERLY -->
+
+<!-- EMPTY SPACE IS NEEDED BELOW FOR A COMPONENT TO RENDER PROPERLY -->
 </Alert>
 ```
 
