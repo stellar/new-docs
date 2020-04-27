@@ -143,7 +143,7 @@ src/
 
 ### Unordered List
 
-<img src="./readme-imgs/unordered-list.png" alt="Unordered List" width="600"/>
+<img src="./readme-imgs/unordered-list.png" alt="Unordered List" width="400"/>
 
 ```
 - Unordered lists
@@ -160,7 +160,7 @@ src/
 
 ### Ordered List
 
-<img src="./readme-imgs/ordered-list.png" alt="Ordered List" width="600"/>
+<img src="./readme-imgs/ordered-list.png" alt="Ordered List" width="500"/>
 
 ```
 1. [`Set Options`](../api/resources/operations/object/set-options.mdx) to set the flags on the issuing account to `0x1` to enable `AUTHORIZATION REQUIRED`. This is necessary because you cannot run the [`Allow Trust`](../api/resources/operations/object/allow-trust.mdx) operation without `AUTHORIZATION REQUIRED` being set on your issuing account.
@@ -213,7 +213,7 @@ Reference.
 
 ### AttributeTable
 
-<img src="./readme-imgs/attribute-table.png" alt="AttributeTable Component" width="600"/>
+<img src="./readme-imgs/attribute-table.png" alt="AttributeTable Component" width="500"/>
 
 `<AttributeTable/>` is currently used in API Reference. Nested Table is allowed.
 
@@ -249,7 +249,7 @@ import { AttributeTable } from "components/AttributeTable";
 
 ### Alert
 
-<img src="./readme-imgs/alert.png" alt="Alert Component" width="600"/>
+<img src="./readme-imgs/alert.png" alt="Alert Component" width="712"/>
 
 `<Alert/>` is currently used in Documentation.
 
@@ -268,7 +268,7 @@ Note: the testnet is reset every three months, so when building on it, make sure
 
 ### CodeExample
 
-<img src="./readme-imgs/code-example.png" alt="CodeExample Component" width="600"/>
+<img src="./readme-imgs/code-example.png" alt="CodeExample Component" width="389"/>
 
 `<CodeExample/>` is currently used in both API Reference and Documentation. It
 is using [Prism syntax highlighting library](https://prismjs.com/).
@@ -340,7 +340,7 @@ and add it to `CODE_LANGS`.
 
 ### Endpoint
 
-<img src="./readme-imgs/endpoint.png" alt="Endpoint Component" width="600"/>
+<img src="./readme-imgs/endpoint.png" alt="Endpoint Component" width="500"/>
 
 `<Endpoint/>` is currently used in API Reference.
 
@@ -361,7 +361,7 @@ import { Endpoint } from "components/Endpoint";
 
 ### EndpointsTable
 
-<img src="./readme-imgs/endpointstable.png" alt="EndpointsTable Component" width="600"/>
+<img src="./readme-imgs/endpointstable.png" alt="EndpointsTable Component" width="389"/>
 
 `<EndpointsTable/>` is currently used in API Reference. For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/).
@@ -384,7 +384,7 @@ import { EndpointsTable } from "components/EndpointsTable";
 
 ### Example (JSON) Response
 
-<img src="./readme-imgs/exampleresponse.png" alt="ExampleResponse Component" width="600"/>
+<img src="./readme-imgs/exampleresponse.png" alt="ExampleResponse Component" width="389"/>
 
 `<ExampleResponse/>` is currently used in API Reference to display JSON
 response. In Documentation, we use `<CodeExample/>` for JSON response.
@@ -413,7 +413,7 @@ import { ExampleResponse } from "components/ExampleResponse";
 
 ### NavTable
 
-<img src="./readme-imgs/navtable.png" alt="NavTable Component" width="600"/>
+<img src="./readme-imgs/navtable.png" alt="NavTable Component" width="389"/>
 
 `<NavTable/>` is currently used in API Reference to display navigation sections
 and its descriptions.
