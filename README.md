@@ -124,7 +124,7 @@ src/
 
 ### Table
 
-![Table](./readme-imgs/table.png)
+<img src="./readme-imgs/table.png" alt="Table" width="600"/>
 
 ```
 | Field | Requirements | Description |
