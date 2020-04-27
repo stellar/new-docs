@@ -21,6 +21,7 @@
     - [`<Alert/>`](#alert)
     - [`<CodeExample/>`](#codeexample)
     - [`<Endpoint/>`](#endpoint)
+    - [`<EndpointsTable/>`](#endpointstable)
     - [`<ExampleResponse/>`](#example-json-response)
     - [`<NavTable/>`](#navtable)
     - [`Diagrams (Mermaid)`](#diagrams-mermaid)
@@ -254,17 +255,17 @@ Note: the testnet is reset every three months, so when building on it, make sure
 
 ### `<CodeExample/>`
 
-`<CodeExample/>` is currently used in both API Reference and Documentation.
+`<CodeExample/>` is currently used in both API Reference and Documentation. It
+is using [Prism syntax highlighting library](https://prismjs.com/).
+
+You can include snippets for more than one language. See an example of including
+a snippet for `curl` and `JavaScript` below.
 
 For example,
 [Seeting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
 in Documentation and
 [Resources > Transaction > Retrieve a Transaction](https://developers.stellar.org/api/resources/transactions/single/)
-in API Reference. It is using
-[Prism syntax highlighting library](https://prismjs.com/).
-
-You can include snippets for more than one language. See an example of including
-a snippet for `curl` and `JavaScript` below.
+in API Reference.
 
 ````
 import { CodeExample } from "components/CodeExample";
@@ -298,6 +299,7 @@ Languages that are currently being used in Documentation and API Reference are
 below:
 
 ```
+// https://github.com/stellar/new-docs/blob/master/src/components/CodeExample.js
 const CODE_LANGS = {
   bash: "bash",
   curl: "cURL",
@@ -326,7 +328,7 @@ and add it to `CODE_LANGS`.
 `<Endpoint/>` is currently used in API Reference.
 
 For example,
-[Aggregations > Order Books > Retrieve an Order Book](https://developers.stellar.org/api/aggregations/order-books/single/)
+[Aggregations > Order Books > Retrieve an Order Book](https://developers.stellar.org/api/aggregations/order-books/single/).
 
 ```
 import { Endpoint } from "components/Endpoint";
@@ -343,7 +345,7 @@ import { Endpoint } from "components/Endpoint";
 ### `<EndpointsTable/>`
 
 `<EndpointsTable/>` is currently used in API Reference. For example,
-[Resources > Transactions](https://developers.stellar.org/api/resources/transactions/)
+[Resources > Transactions](https://developers.stellar.org/api/resources/transactions/).
 
 ```
 import { EndpointsTable } from "components/EndpointsTable";
@@ -364,11 +366,10 @@ import { EndpointsTable } from "components/EndpointsTable";
 ### Example (JSON) Response
 
 `<ExampleResponse/>` is currently used in API Reference to display JSON
-response.
+response. In Documentation, we use `<CodeExample/>` for JSON response.
 
 For example,
-[Introduction > XDR](https://developers.stellar.org/api/introduction/xdr/). In
-Documentation, we use `<CodeExample/>` for JSON response.
+[Introduction > XDR](https://developers.stellar.org/api/introduction/xdr/).
 
 ````
 import { ExampleResponse } from "components/ExampleResponse";
