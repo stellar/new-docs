@@ -24,7 +24,7 @@
     - [`<EndpointsTable/>`](#endpointstable)
     - [`<ExampleResponse/>`](#example-json-response)
     - [`<NavTable/>`](#navtable)
-    - [`Diagrams (Mermaid)`](#diagrams-mermaid)
+    - [Diagrams (Mermaid)](#diagrams-mermaid)
 
 # How to Run
 
@@ -53,9 +53,10 @@ yarn prod:serve
 
 ## Page Metadata
 
-**Title** (og:title, page title): Pulled from front matter. **Order** (order in
-which a page appears in the table of contents): Pulled from front matter. URL
-slug: Pulled from the folder or file name
+**Title** (og:title, page title): Pulled from front matter.
+
+**Order** (order in which a page appears in the table of contents): Pulled from
+front matter. URL slug: Pulled from the folder or file name
 
 **All names must use dashes for spaces instead of spaces or underscores**
 
@@ -123,6 +124,8 @@ src/
 
 ### Table
 
+![Table](./readme-imgs/table.png)
+
 ```
 | Field | Requirements | Description |
 | --- | --- | --- |
@@ -140,6 +143,8 @@ src/
 
 ### Unordered List
 
+![Unordered List](./readme-imgs/unordered-list.png)
+
 ```
 - Unordered lists
   - Unordered lists with nesting
@@ -154,6 +159,8 @@ src/
 ```
 
 ### Ordered List
+
+![Ordered List](./readme-imgs/ordered-list.png)
 
 ```
 1. [`Set Options`](../api/resources/operations/object/set-options.mdx) to set the flags on the issuing account to `0x1` to enable `AUTHORIZATION REQUIRED`. This is necessary because you cannot run the [`Allow Trust`](../api/resources/operations/object/allow-trust.mdx) operation without `AUTHORIZATION REQUIRED` being set on your issuing account.
@@ -183,6 +190,8 @@ images.
 
 ### Quote
 
+![Quote](./readme-imgs/quote.png)
+
 ```
 > Here's a quote
 ```
@@ -203,6 +212,8 @@ Custom (React) components that are being used throughout Documentation and API
 Reference.
 
 ### AttributeTable
+
+![AttributeTable Component](./readme-imgs/attribute-table.png)
 
 `<AttributeTable/>` is currently used in API Reference. Nested Table is allowed.
 
@@ -238,6 +249,8 @@ import { AttributeTable } from "components/AttributeTable";
 
 ### Alert
 
+![Alert Component](./readme-imgs/alert.png)
+
 `<Alert/>` is currently used in Documentation.
 
 For example,
@@ -254,6 +267,8 @@ Note: the testnet is reset every three months, so when building on it, make sure
 ```
 
 ### CodeExample
+
+![CodeExample Component](./readme-imgs/code-example.png)
 
 `<CodeExample/>` is currently used in both API Reference and Documentation. It
 is using [Prism syntax highlighting library](https://prismjs.com/).
@@ -325,6 +340,8 @@ and add it to `CODE_LANGS`.
 
 ### Endpoint
 
+![Endpoint Component](./readme-imgs/endpoint.png)
+
 `<Endpoint/>` is currently used in API Reference.
 
 For example,
@@ -343,6 +360,8 @@ import { Endpoint } from "components/Endpoint";
 ```
 
 ### EndpointsTable
+
+![EndpointsTable Component](./readme-imgs/endpointstable.png)
 
 `<EndpointsTable/>` is currently used in API Reference. For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/).
@@ -364,6 +383,8 @@ import { EndpointsTable } from "components/EndpointsTable";
 ```
 
 ### Example (JSON) Response
+
+![ExampleResponse Component](./readme-imgs/exampleresponse.png)
 
 `<ExampleResponse/>` is currently used in API Reference to display JSON
 response. In Documentation, we use `<CodeExample/>` for JSON response.
@@ -392,6 +413,8 @@ import { ExampleResponse } from "components/ExampleResponse";
 
 ### NavTable
 
+![NavTable](./readme-imgs/navtable.png)
+
 `<NavTable/>` is currently used in API Reference to display navigation sections
 and its descriptions.
 
@@ -413,6 +436,8 @@ import { NavTable } from "components/NavTable";
 ```
 
 ### Diagrams (Mermaid)
+
+![Diagrams](./readme-imgs/mermaid.png)
 
 We're using [Mermaid](https://mermaidjs.github.io/#/) for diagrams.
 
