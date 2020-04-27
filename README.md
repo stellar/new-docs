@@ -3,14 +3,27 @@
 # Contents
 
 - [How to Run](#how-to-run)
-  - [Local Development](##local-development)
+  - [Local Development](#local-development)
   - [Local Production Build](#local-production-build)
 - [Structure](#structure)
-  - [Page Metadata](##page-metadata)
+  - [Page Metadata](#page-metadata)
   - [Folder Metadata](#folder-metadata)
 - [Markdown](#markdown)
-  - [Basic Components](##basic-components)
-  - [Custom (React) Components](##react-components)
+  - [Basic Components](#basic-components)
+    - [Table](#table)
+    - [Unordered List](#unordered-list)
+    - [Ordered List](#ordered-list)
+    - [Images](#images)
+    - [Quote](#quote)
+    - [Paragraph and Headings](#paragraph-and-headings)
+  - [Custom Components](#custom-components)
+    - [<AttributeTable/>](#attributetable)
+    - [<Alert/>](#alert)
+    - [<CodeExample/>](#codeexample)
+    - [<Endpoint/>](#endpoint)
+    - [<ExampleResponse/>](#example-json-response)
+    - [<NavTable/>](#navtable)
+    - [Diagrams (Mermaid)](#diagrams-mermaid)
 
 # How to Run
 
@@ -156,13 +169,13 @@ Currently, only [Documentation](https://developers.stellar.org/docs/) uses
 images.
 
 1. Drop the images in the `content/docs/web-assets` folder
-2. Refer to the asset as "![image caption](web-assets/image-file-name.png)" in
+2. Refer to the asset as `![image caption](web-assets/image-file-name.png)` in
    the proper location in your file - make sure that `web-assets`' relative path
    is correct
 3. Captions: Include alt text if you’d like a caption:
-   "![This is the image caption](web-assets/image-file-name.png)" Leave the alt
+   `![This is the image caption](web-assets/image-file-name.png)` Leave the alt
    text section blank if you do not want a caption:
-   "![](web-assets/image-file-name.png)"
+   `![](web-assets/image-file-name.png)`
 
 ### Quote
 
@@ -180,7 +193,12 @@ Beyond defining title font sizes, line heights, and weights:
   [table of contents](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
   in Documentation
 
-### Attribute Table `<AttributeTable>`
+## Custom Components
+
+Custom (React) components that are being used throughout Documentation and API
+Reference.
+
+### <AttributeTable>
 
 `<AttributeTable/>` is currently used in API Reference. Nested Table is allowed.
 For example,
@@ -213,7 +231,7 @@ import { AttributeTable } from "components/AttributeTable";
 </AttributeTable>
 ```
 
-### Alert `<Alert/>`
+### <Alert/>
 
 `<Alert/>` is currently used in Documentation. For example,
 [Seeting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
@@ -228,7 +246,7 @@ Note: the testnet is reset every three months, so when building on it, make sure
 </Alert>
 ```
 
-### CodeExample `<CodeExample/>
+### <CodeExample/>
 
 `<CodeExample/>` is currently used in both API Reference and Documentation. For
 example,
@@ -296,7 +314,7 @@ If you would like to add an additional language to this, visit
 [CodeExample.js](https://github.com/stellar/new-docs/blob/master/src/components/CodeExample.js)
 and add it to `CODE_LANGS`.
 
-### Endpoint `<Endpoint/>`
+### <Endpoint/>
 
 `<Endpoint/>` is currently used in API Reference. For example,
 [Aggregations > Order Books > Retrieve an Order Book](https://developers.stellar.org/api/aggregations/order-books/single/)
@@ -313,7 +331,7 @@ import { Endpoint } from "components/Endpoint";
 </Endpoint>
 ```
 
-### Endpoints Table `<EndpointsTable/>`
+### <EndpointsTable/>
 
 `<EndpointsTable/>` is currently used in API Reference. For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/)
@@ -334,7 +352,7 @@ import { EndpointsTable } from "components/EndpointsTable";
 </EndpointsTable>
 ```
 
-### Example (JSON) Response `<ExampleResponse/>`
+### Example (JSON) Response
 
 `<ExampleResponse/>` is currently used in API Reference to display JSON
 response. For example,
@@ -360,7 +378,7 @@ import { ExampleResponse } from "components/ExampleResponse";
 </ExampleResponse>
 ````
 
-### Nav Table `<NavTable/>`
+### <NavTable/>
 
 `<NavTable/>` is currently used in API Reference to display navigation sections
 and its descriptions. For example,
