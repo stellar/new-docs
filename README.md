@@ -211,6 +211,16 @@ Beyond defining title font sizes, line heights, and weights:
 Custom (React) components that are being used throughout Documentation and API
 Reference.
 
+**Make sure that there is an empty space within the wrapper**
+
+```
+<Alert>
+<!-- EMPTY SPACE IS NEEDED FOR A COMPONENT TO RENDER PROPERLY -->
+Note: the testnet is reset every three months, so when building on it, make sure you have a plan to recreate necessary accounts and other data.  For more info, check out the [best practices for using the testnet](../glossary/testnet.mdx#best-practices-for-using-testnet).
+<!-- EMPTY SPACE IS NEEDED FOR A COMPONENT TO RENDER PROPERLY -->
+</Alert>
+```
+
 ### AttributeTable
 
 <img src="./readme-imgs/attribute-table.png" alt="AttributeTable Component" width="500"/>
@@ -254,7 +264,7 @@ import { AttributeTable } from "components/AttributeTable";
 `<Alert/>` is currently used in Documentation.
 
 For example,
-[Seeting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
+[Setting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
 
 ```
 import { Alert } from "components/Alert";
@@ -277,7 +287,7 @@ You can include snippets for more than one language. See an example of including
 a snippet for `curl` and `JavaScript` below.
 
 For example,
-[Seeting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
+[Setting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
 in Documentation and
 [Resources > Transaction > Retrieve a Transaction](https://developers.stellar.org/api/resources/transactions/single/)
 in API Reference.
@@ -315,6 +325,7 @@ below:
 
 ```
 // https://github.com/stellar/new-docs/blob/master/src/components/CodeExample.js
+
 const CODE_LANGS = {
   bash: "bash",
   curl: "cURL",
@@ -363,7 +374,9 @@ import { Endpoint } from "components/Endpoint";
 
 <img src="./readme-imgs/endpointstable.png" alt="EndpointsTable Component" width="389"/>
 
-`<EndpointsTable/>` is currently used in API Reference. For example,
+`<EndpointsTable/>` is currently used in API Reference.
+
+For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/).
 
 ```
