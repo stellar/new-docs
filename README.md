@@ -82,7 +82,7 @@ contents): Pulled from a metadata.json file in the folder
 }
 ```
 
-If we want to sort pages in an alphabetical order, add `sortMethod` in the main
+If we want to sort pages in an alphabetical order, add `sortMethod` in that
 folder's `metadata.json`.
 
 The below example is for
