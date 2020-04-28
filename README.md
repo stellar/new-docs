@@ -33,9 +33,9 @@
 
 To build this project, you must have the following dependencies installed:
 
-- node 10.16.3
+- `node 10.16.3`
   - The latest node version may not be compatible with the "sharp" module
-- yarn
+- `yarn`
 
 ## Local Development
 
@@ -56,16 +56,18 @@ yarn prod:serve
 
 # Structure
 
-`src/` contains all documentation, API reference sections, and web assets
-(images, videos, pdfs) needed for the docs. Each page is authored as an
-`index.mdx` document.
+- `/content` contains
+  - Documentation `/docs`
+    - Web assets `/docs/web-assets`
+  - API Reference `/api`
+  - Each page is authored as an `index.mdx` document.
 
 ## Page Metadata
 
-**Title** (og:title, page title): Pulled from front matter.
-
-**Order** (order in which a page appears in the table of contents): Pulled from
-front matter. URL slug: Pulled from the folder or file name
+- **Title** (og:title, page title): Pulled from front matter.
+- **Order** (order in which a page appears in the table of contents): Pulled
+  from front matter.
+- **URL slug**: Pulled from the folder or file name
 
 **All names must use dashes for spaces instead of spaces or underscores**
 
@@ -80,9 +82,10 @@ order: 40
 
 Each folder must have a `metadata.json` file with 2 keys:
 
-_Title_ (section title in the table of contents): Pulled from a `metadata.json`
-file in the folder. _Order_ (order in which a section appears in the table of
-contents): Pulled from a metadata.json file in the folder
+- **Title** (section title in the table of contents): Pulled from a
+  `metadata.json` file in the folder
+- **Order** (order in which a section appears in the table of contents): Pulled
+  from a metadata.json file in the folder
 
 ```json
 {
@@ -222,6 +225,8 @@ Reference.
 
 **Make sure that there is an empty space within the wrapper**
 
+For example,
+
 ```
 <Alert>
 <!-- EMPTY SPACE IS NEEDED BELOW FOR A COMPONENT TO RENDER PROPERLY -->
@@ -237,7 +242,8 @@ Note: the testnet is reset every three months, so when building on it, make sure
 <img src="./readme-imgs/attribute-table.png" alt="AttributeTable Component" width="500"/>
 
 `<AttributeTable/>` explains each attribute or argument that is being used.
-Nested table will turn into "child attributes" that are collapsed by default.
+Nested table will turn into "child attributes" that are collapsed by default
+(See `prices_r` and its child attributes from the example above).
 
 - PropTypes
   - `children` (required)
