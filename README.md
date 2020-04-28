@@ -3,6 +3,7 @@
 # Contents
 
 - [How to Run](#how-to-run)
+  - [Dependencies](#dependencies)
   - [Local Development](#local-development)
   - [Local Production Build](#local-production-build)
 - [Structure](#structure)
@@ -27,6 +28,14 @@
     - [Diagrams (Mermaid)](#diagrams-mermaid)
 
 # How to Run
+
+## Dependencies
+
+To build this project, you must have the following dependencies installed:
+
+- node 10.16.3
+  - The latest node version may not be compatible with the "sharp" module
+- yarn
 
 ## Local Development
 
@@ -176,8 +185,8 @@ src/
 
 ### Images
 
-Currently, only [Documentation](https://developers.stellar.org/docs/) uses
-images.
+Currently (April, 2020), only
+[Documentation](https://developers.stellar.org/docs/) uses images.
 
 1. Drop the images in the `content/docs/web-assets` folder
 2. Refer to the asset as `![image caption](web-assets/image-file-name.png)` in
@@ -227,7 +236,11 @@ Note: the testnet is reset every three months, so when building on it, make sure
 
 <img src="./readme-imgs/attribute-table.png" alt="AttributeTable Component" width="500"/>
 
-`<AttributeTable/>` is currently used in API Reference. Nested Table is allowed.
+`<AttributeTable/>` explains each attribute or argument that is being used.
+Nested table will turn into "child attributes" that are collapsed by default.
+
+- PropTypes
+  - `children` (required)
 
 For example,
 [Api Reference > Resources > Operations > Object](https://developers.stellar.org/api/resources/operations/object/)
@@ -263,7 +276,10 @@ import { AttributeTable } from "components/AttributeTable";
 
 <img src="./readme-imgs/alert.png" alt="Alert Component" width="712"/>
 
-`<Alert/>` is currently used in Documentation.
+`<Alert/>` is used to convey hints, warnings, and etc.
+
+- PropTypes
+  - `children` (required)
 
 For example,
 [Setting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
@@ -282,11 +298,15 @@ Note: the testnet is reset every three months, so when building on it, make sure
 
 <img src="./readme-imgs/code-example.png" alt="CodeExample Component" width="389"/>
 
-`<CodeExample/>` is currently used in both API Reference and Documentation. It
-is using [Prism syntax highlighting library](https://prismjs.com/).
+`<CodeExample/>` is a code snippet component. You can include snippets for more
+than one language. See an example of including a snippet for `curl` and
+`JavaScript` below. It is using
+[Prism syntax highlighting library](https://prismjs.com/).
 
-You can include snippets for more than one language. See an example of including
-a snippet for `curl` and `JavaScript` below.
+- PropTypes
+  - `title` (optional)
+  - `children` (required)
+  - `href` (optional)
 
 For example,
 [Setting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
@@ -357,6 +377,9 @@ and add it to `CODE_LANGS`.
 
 `<Endpoint/>` is currently used in API Reference.
 
+- PropTypes
+  - `children` (required)
+
 For example,
 [Aggregations > Order Books > Retrieve an Order Book](https://developers.stellar.org/api/aggregations/order-books/single/).
 
@@ -376,7 +399,12 @@ import { Endpoint } from "components/Endpoint";
 
 <img src="./readme-imgs/endpointstable.png" alt="EndpointsTable Component" width="389"/>
 
-`<EndpointsTable/>` is currently used in API Reference.
+`<EndpointsTable/>` displays an endpoint and its
+[HTTP method](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods).
+
+- PropTypes
+  - `title` (required)
+  - `children` (required)
 
 For example,
 [Resources > Transactions](https://developers.stellar.org/api/resources/transactions/).
@@ -401,8 +429,12 @@ import { EndpointsTable } from "components/EndpointsTable";
 
 <img src="./readme-imgs/exampleresponse.png" alt="ExampleResponse Component" width="389"/>
 
-`<ExampleResponse/>` is currently used in API Reference to display JSON
-response. In Documentation, we use `<CodeExample/>` for JSON response.
+`<ExampleResponse/>` is **only** used in API Reference for JSON response. In
+Documentation, we use `<CodeExample/>` for JSON response.
+
+- PropTypes
+  - `title` (optional)
+  - `children` (required)
 
 For example,
 [Introduction > XDR](https://developers.stellar.org/api/introduction/xdr/).
@@ -430,8 +462,11 @@ import { ExampleResponse } from "components/ExampleResponse";
 
 <img src="./readme-imgs/navtable.png" alt="NavTable Component" width="389"/>
 
-`<NavTable/>` is currently used in API Reference to display navigation sections
-and its descriptions.
+`<NavTable/>` is used to display navigation sections and its description.
+
+- PropTypes
+  - `title` (required)
+  - `children` (required)
 
 For example, [Introduction](https://developers.stellar.org/api/introduction/).
 
