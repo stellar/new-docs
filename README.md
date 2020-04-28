@@ -115,19 +115,32 @@ from multiple metadata files.
 Check `/content` folder to see how its nested order is working
 
 ```
-src/
-├── documentation/
-│   ├── metadata.json
-│   ├── index.mdx
-│   └── walkthroughs/
-│       ├── metadata.json
-│       └── index.mdx
-└── reference/
+content/
+├── api/
+│    ├── metadata.json
+│    └── aggregations/
+│        ├── metadata.json
+│        ├── index.mdx
+│        └── fee-stats/
+│          ├── index.mdx
+│          ├── metadata.json
+│          ├── object.mdx
+│          └── single.mdx
+└── docs/
     ├── metadata.json
     ├── index.mdx
-    └── horizon/
-        ├── metadata.json
-        └── index.mdx
+    ├── web-assets/
+    │    └── img.png
+    └── building-apps/
+      ├── basic-wallet.mdx
+      ├── custom-assets.mdx
+      ├── index.mdx
+      ├── metadata.json
+      └── connect-to-anchors/
+        ├── deposit-anchored-assets.mdx
+        ├── index.mdx
+        ├── setup-for-anchored-assets.mdx
+        └── metadata.json
 ```
 
 # Markdown
