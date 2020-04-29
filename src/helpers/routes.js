@@ -38,8 +38,16 @@ export const isRelativeUrl = (href) => {
   return true;
 };
 
-export const resolveRelativeUrl = (relativeUrl, location) =>
-  buildPathFromFile(path.resolve(path.dirname(location), relativeUrl));
+/**
+ * resolveRelativeUrl takes a file path and a path relative to it, and returns a
+ * well-formed URL.
+ * @param {string} originalFile The original file path that the page was
+ * generated from. This should end in .mdx.
+ * @param {string} relativeUrl A relative path.
+ * @return {string} The final URL, ready for use in an <a> tag.
+ */
+export const resolveRelativeUrl = (originalFile, relativeUrl) =>
+  buildPathFromFile(path.resolve(path.dirname(originalFile), relativeUrl));
 
 export const getLinkTarget = (link) => {
   if (link.startsWith("/api")) {

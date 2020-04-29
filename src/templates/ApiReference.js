@@ -133,7 +133,7 @@ const DocsLink = ({ href, ...props }) => {
     let finalUrl = href;
     // Resolve relative links
     if (isRelativeUrl(finalUrl)) {
-      finalUrl = resolveRelativeUrl(finalUrl, originalPath);
+      finalUrl = resolveRelativeUrl(originalPath, finalUrl);
     }
     return {
       url: finalUrl,
