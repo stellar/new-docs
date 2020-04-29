@@ -26,6 +26,7 @@ import {
   buildPathFromFile,
   resolveRelativeUrl,
   getLinkTarget,
+  isRelativeUrl,
 } from "helpers/routes";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
@@ -131,7 +132,7 @@ const DocsLink = ({ href, ...props }) => {
   const { url, destinationType } = React.useMemo(() => {
     let finalUrl = href;
     // Resolve relative links
-    if (finalUrl.startsWith(".")) {
+    if (isRelativeUrl(finalUrl)) {
       finalUrl = resolveRelativeUrl(finalUrl, originalPath);
     }
     return {
