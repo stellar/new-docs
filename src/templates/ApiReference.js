@@ -154,9 +154,10 @@ const DocsLink = ({ href, ...props }) => {
         />
       );
     case LINK_DESTINATIONS.docs:
+      return <StyledLink href={url} {...props} />;
     case LINK_DESTINATIONS.external:
     default:
-      return <StyledLink href={url} {...props} />;
+      return <StyledLink newTab href={url} {...props} />;
   }
 };
 DocsLink.propTypes = {
