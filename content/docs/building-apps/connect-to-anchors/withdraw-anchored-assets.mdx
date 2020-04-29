@@ -5,7 +5,9 @@ order: 30
 
 import { CodeExample } from "components/CodeExample";
 
-At this point, you should have a [basic wallet](link) that can handle [custom assets](link), and you should have [enabled deposits](link) and used the SDF-maintained testnet [Anchor Reference Implementation](link) to get some test tokens into your wallet.  After you’ve had some fun with your new asset, it's time to learn to perform this process in reverse, and that's what we'll do here: set your wallet up to handle withdrawals.
+<Alert>
+At this point, you should have a [basic wallet](../basic-wallet.mdx) that can handle [custom assets](../custom-assets.mdx), and you should have [enabled deposits](./deposit-anchored-assets.mdx) and used the SDF-maintained testnet [Anchor Reference Implementation](link) to get some test tokens into your wallet.  After you’ve had some fun with your new asset, it's time to learn to perform this process in reverse, and that's what we'll do here: set your wallet up to handle withdrawals.
+</Alert>
 
 In a live situation, this is the step when a user takes a Stellar-based token and redeems it with an Anchor for the underlying asset it represents.  It's how they'd move money off the network and back into their bank account, for instance. 
 
@@ -198,7 +200,7 @@ export default async function withdrawAsset(e: Event) {
 
 </CodeExample>
 
-We’ll actually everything except the stuff that is significantly different than the [deposit flow](link).  The main difference between the two is who submits the Stellar transaction: in the deposit flow the anchor is sends the wallet a Stellar asset; in the withdraw flow the wallet sends the asset to the anchor.  So for the witdraw flow, we’ll need to build and submit a payment transaction.
+We’ll actually skip everything except the stuff that is significantly different than the [deposit flow](./deposit-anchored-assets.mdx).  The main difference between the two is who submits the Stellar transaction: in the deposit flow the anchor is sends the wallet a Stellar asset; in the withdraw flow the wallet sends the asset to the anchor.  So for the witdraw flow, we’ll need to build and submit a payment transaction.
 
 ## Create and Submit Payment Transaction
 <CodeExample>
@@ -265,7 +267,8 @@ First thing we’ll see is the use of a Promise. This allows us to respond to an
 
 </CodeExample>
 
-Otherwise if the transaction status is `pending_user_transfer_start` and we haven’t yet submitted a transaction to the Anchor, we attempt that. We load up the user's account to get the next valid sequence number, and build a Stellar [transaction](link) consisting of a [payment operation](link) with all the details from the transaction object that the anchor is expecting. Once we have a valid transaction built, we’ll sign it with the keypair, submit the transaction to the network, and wait for a response. If the transaction is successful, we save that value to `submittedTxn` and reload the anchor popup to observe the pending status. Make sure to set the `submittedTxn` to a truthy value or else you run the risk of submitting the transaction multiple times, as the anchor may take a moment to realize you’ve successfully submitted a transaction to them.
+Otherwise if the transaction status is `pending_user_transfer_start` and we haven’t yet submitted a transaction to the Anchor, we attempt that. We load up the user's account to get the next valid sequence number, and build a Stellar [transaction](../../glossary/transactions.mdx) consisting of a [payment operation](../../glossary/operations.mdx
+) with all the details from the transaction object that the anchor is expecting. Once we have a valid transaction built, we’ll sign it with the keypair, submit the transaction to the network, and wait for a response. If the transaction is successful, we save that value to `submittedTxn` and reload the anchor popup to observe the pending status. Make sure to set the `submittedTxn` to a truthy value or else you run the risk of submitting the transaction multiple times, as the anchor may take a moment to realize you’ve successfully submitted a transaction to them.
 
 <CodeExample>
 
@@ -301,5 +304,5 @@ With this method saved and the server reloaded we have a fully functional SEP-00
 
 
 
-[1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/sep24
+[1]:	https://github.com/stellar/stellar-demo-wallet/tree/sep24
 

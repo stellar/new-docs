@@ -5,11 +5,15 @@ order: 50
 
 import { CodeExample } from "components/CodeExample";
 
-> In this tutorial we’re going to modify our base wallet app to include functionality to send XLM to other Stellar accounts.
+<Alert>
+  
+In this tutorial we’re going to modify our [base wallet app](./basic-wallet.mdx) to include functionality to send XLM to other Stellar accounts.
+
+</Alert>
 
 [View keystore boilerplate code on GitHub][1]
 
-In the [Build a Basic Wallet sectiion](link), we did the hard work of wiring up a secure client and rock-solid key creation and storage structure with a clear plan for key use and management.  Now that we have a method for creating an account — and for storing that account's secrets so they're safe and easy to use — we're ready to start making payments.  We'll start with XLM payments since they're a little simpler; in the [next sectiion], we'll look at how to support payments for other assets.
+In the [Build a Basic Wallet section](./basic-wallet.mdx), we did the hard work of wiring up a secure client and rock-solid key creation and storage structure with a clear plan for key use and management.  Now that we have a method for creating an account — and for storing that account's secrets so they're safe and easy to use — we're ready to start making payments.  We'll start with XLM payments since they're a little simpler; in the [next sectiion](./custom-assets.mdx), we'll look at how to support payments for other assets.
 
 There isn’t too much that's new or complicated here: we'll be building on what we already have. Again, most of the work will be in `src/components/wallet/`; however, before we dive into that file let’s clean up our project just a touch and add some helpful polish. Namely a loader component.
 
@@ -709,9 +713,9 @@ Finally, we log any success transaction, kill the loader, and `updateAccount` to
 There we go! That wasn’t so bad right? Pretty simple, and yet from this tutorial we have the power to hold and observe balances, and to make payments using the power of the Stellar ledger. Amazing!
 
 
-[1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/keystore
+[1]:	https://github.com/stellar/stellar-demo-wallet/tree/keystore
 [2]:	https://friendbot.stellar.org/
-[3]:	https://github.com/tyvdh/stellar-demo-wallet/tree/pay
+[3]:	https://github.com/stellar/stellar-demo-wallet/tree/pay
 
 
 [image-1]:	https://tyler.link/pM4Z2R+

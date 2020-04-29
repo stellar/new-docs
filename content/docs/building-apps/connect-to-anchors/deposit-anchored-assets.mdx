@@ -6,7 +6,11 @@ order: 20
 
 import { CodeExample } from "components/CodeExample";
 
-This section of the tutorial takes the [basic wallet](link) with [trustlines](link) and [anchor connections](link) enabled and adds the ability to initiate in-app deposits with an Anchor.  If you have all that ready, and the stellar.toml file is loaded into a `@Prop` on your component, you’re ready to begin the initial deposit of their asset into our wallet. 
+<Alert>
+  
+This section of the tutorial takes the [basic wallet](../basic-wallet.mdx) with [trustlines](../custom-assets.mdx) and [anchor connections](./setup-for-anchored-assets.mdx) enabled and adds the ability to initiate in-app deposits with an Anchor.  If you have all that ready, and the stellar.toml file is loaded into a `@Prop` on your component, you’re ready to begin the initial deposit of their asset into our wallet. 
+
+</Alert>
 
 ## Create Deposit Method
 Let’s create `./methods/depositAsset.ts`.
@@ -399,7 +403,7 @@ If popups are disabled, we should kill the loader and show that error in the UI.
 
 </CodeExample>
 
-## Checking Deposit Status
+## Check Deposit Status
 SEP-0024 allows specifies two methods for further communication between the anchor window and the wallet: a POST JSON for when you have a server, message and postMessage for when you have a client-side service. We don’t have a server, so we opt for the `urlBuilder.searchParams.set('callback', 'postMessage')`. With that set, we can setup a window `'message'` event listener which will fire whenever the anchor popup window sends a `postMessage` to our popup `window`. From there we just listen to the popup message until `transaction.status` equals `'completed'`.  At that point our deposit has succeeded, and we can `this.updateAccount()` and kill the loader. If the transaction is still in a pending status we’ll wait 1 second before reloading the anchor popup window and checking again.
 
 If at any point during this flow there’s an error we should catch that, kill the loader, and display the error to the user.

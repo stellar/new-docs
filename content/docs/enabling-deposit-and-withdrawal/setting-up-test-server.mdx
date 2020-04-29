@@ -117,6 +117,7 @@ Once you have implemented an `/info` endpoint and set up for user authentication
 
 Deposit flows involve a back-and-forth between an issuer's server and a wallet's client that starts with the wallet polling the `/info` endpoint and setting up an authenticated user session as described in the previous sections. The general sequence of deposit events looks like this:
 
+```mermaid
 sequenceDiagram
     participant Wallet
     participant Anchor
@@ -138,7 +139,7 @@ sequenceDiagram
     Anchor->>Stellar: POST /transaction [Horizon]
     Stellar->>Anchor: Transaction result [Horizon]
     Stellar->>Wallet: Transaction result 
-    
+```    
 
 ### The POST `/transactions/deposit/interactive` Endpoint
 
@@ -192,6 +193,7 @@ The withdrawal flow is the off-ramp from the Stellar Network. In it, a user make
 
 Like deposit flows, withdraw flows involve a back-and-forth between an anchor’s server and a wallet’s client that starts with the wallet polling the `/info` endpoint and setting up an authenticated user session as described in the previous sections. The general sequence of deposit events looks like this:
 
+```mermaid
 sequenceDiagram
     participant Wallet
     participant Anchor
@@ -212,7 +214,7 @@ sequenceDiagram
     Anchor->>Stellar: POST /transaction [Horizon]
     Stellar->>Anchor: Transaction result [Horizon]
     Stellar->>Wallet: Transaction result 
-    
+```    
 
 ### `/transactions/withdraw/interactive` Endpoint
 

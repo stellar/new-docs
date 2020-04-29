@@ -5,14 +5,18 @@ order: 60
 
 import { CodeExample } from "components/CodeExample";
 
-> In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed [Build a Basic Wallet](link) and [Make XLM Payments](link).
+<Alert>
+  
+In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed [Build a Basic Wallet](./basic-wallet.mdx) and [Make XLM Payments](./xlm-payments.mdx).
+
+</Alert>
 
 [View pay boilerplate code on GitHub][1]
 
 ## What's a Custom Asset?
-Stellar allows anyone to easily issue an asset, and all assets can be held, transferred, and traded just like XLM, the network token.  Every asset *other* than XLM exists on the network in the form of [trustlines](link): an asset holder explicitly agrees to allow a balance of a specific token issued by a specific issuing account by creating a persistent ledger entry tied to the holding account.  You can find out more in the guide to [creating custom assets](link).
+Stellar allows anyone to easily issue an asset, and all assets can be held, transferred, and traded just like XLM, the network token.  Every asset *other* than XLM exists on the network in the form of trustlines: an asset holder explicitly agrees to allow a balance of a specific token issued by a specific issuing account by creating a persistent ledger entry tied to the holding account.  You can find out more in the guide to [creating custom assets](../issuing-assets/index.mdx).
 
-Each trustline increases the user's [base reserve](link) by 0.5 XLM, and in this tutorial, we'll go over how to set up your wallet to create trustlines and manage the base reserve on behalf of a user. 
+Each trustline increases the user's [base reserve](../glossary/minimum-balance.mdx) by 0.5 XLM, and in this tutorial, we'll go over how to set up your wallet to create trustlines and manage the base reserve on behalf of a user. 
 
 
 ## Add Trustlines Button
@@ -280,7 +284,7 @@ Wallet.prototype.render = render
 
 Only thing worth seeing here besides the inclusion of the new `trustAsset` method is the addition of the `trust?: boolean,` in the `Loading` class.
 
-## Adding Trustlines
+## Add Trustlines
 
 Alright so, finally we get to the `./methods/trustAsset.ts` file!
 
@@ -408,6 +412,6 @@ If we have any of those variables set, we can “preload” our interface a bit,
 So there we have it! The ability to accept and pay with custom assets on Stellar!
 
 
-[1]:	https://github.com/tyvdh/stellar-demo-wallet/tree/pay
-[3]:	https://github.com/tyvdh/stellar-demo-wallet/tree/trustline
+[1]:	https://github.com/stellar/stellar-demo-wallet/tree/pay
+[3]:	https://github.com/stellar/stellar-demo-wallet/tree/trustline
 
