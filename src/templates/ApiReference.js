@@ -1,5 +1,4 @@
 import React from "react";
-import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled, { css } from "styled-components";
@@ -17,12 +16,17 @@ import {
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 import { DOM_TARGETS } from "constants/domNodes";
+import { LINK_DESTINATIONS } from "constants/routes";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { normalizeMdx } from "helpers/mdx";
-import { buildPathFromFile } from "helpers/routes";
+import {
+  buildPathFromFile,
+  resolveRelativeUrl,
+  getLinkTarget,
+} from "helpers/routes";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { Column } from "basics/Grid";
@@ -121,30 +125,42 @@ const NavItemEl = styled.div`
 
 const StyledLink = components.a;
 
-// eslint-disable-next-line react/prop-types
 const DocsLink = ({ href, ...props }) => {
   const originalPath = React.useContext(SectionPathContext);
   const { onLinkClick } = React.useContext(ScrollRouterContext);
+  const { url, destinationType } = React.useMemo(() => {
+    let finalUrl = href;
+    // Resolve relative links
+    if (finalUrl.startsWith(".")) {
+      finalUrl = resolveRelativeUrl(finalUrl, originalPath);
+    }
+    return {
+      url: finalUrl,
+      destinationType: getLinkTarget(finalUrl),
+    };
+  }, [href, originalPath]);
 
-  let url = href;
-
-  // Resolve relative links
-  if (url.startsWith(".")) {
-    url = buildPathFromFile(
-      pathLib.resolve(pathLib.dirname(originalPath), url),
-    );
+  switch (destinationType) {
+    case LINK_DESTINATIONS.api:
+      return (
+        <StyledLink
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onLinkClick(url);
+          }}
+          href={url}
+          {...props}
+        />
+      );
+    case LINK_DESTINATIONS.docs:
+    case LINK_DESTINATIONS.external:
+    default:
+      return <StyledLink href={url} {...props} />;
   }
-  return (
-    <StyledLink
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onLinkClick(url);
-      }}
-      href={url}
-      {...props}
-    />
-  );
+};
+DocsLink.propTypes = {
+  href: PropTypes.string.isRequired,
 };
 const NavLinkEl = styled(DocsLink)`
   color: inherit;
