@@ -2,11 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+import { OriginalFileContext } from "basics/Links";
 import { Context as ScrollRouterContext } from "components/ApiRefRouting/ScrollRouter";
 
 const El = styled.div``;
-
-export const SectionPathContext = React.createContext("");
 
 export const Route = ({ children, originalFilePath, path }) => {
   const { trackElement, stopTrackingElement } = React.useContext(
@@ -21,9 +20,9 @@ export const Route = ({ children, originalFilePath, path }) => {
   }, [trackElement, stopTrackingElement, path]);
 
   return (
-    <SectionPathContext.Provider value={originalFilePath}>
-      <El ref={ref}>{React.Children.only(children)}</El>
-    </SectionPathContext.Provider>
+    <OriginalFileContext.Provider value={originalFilePath}>
+      <El ref={ref}>{React.Children.only(children)}</El>;
+    </OriginalFileContext.Provider>
   );
 };
 

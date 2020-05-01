@@ -1,6 +1,4 @@
 import React from "react";
-import { Location } from "@reach/router";
-import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled from "styled-components";
@@ -27,6 +25,7 @@ import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ArrowIcon } from "basics/Icons";
+import { OriginalFileContext, BasicLink } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -87,24 +86,7 @@ const NavItemEl = styled(BasicButton)`
   }
 `;
 
-const StyledLink = components.a;
-// eslint-disable-next-line react/prop-types
-const DocsLink = ({ href, ...props }) => (
-  <Location>
-    {({ location }) => {
-      // eslint-disable-next-line react/prop-types
-      let url = href.split(".mdx")[0].replace("index", "");
-      if (url.startsWith(".")) {
-        url = pathLib.resolve(location.pathname, url);
-      }
-      if (/no-js/.test(url)) {
-        url = `${url.replace("no-js/", "")}?javascript=false`;
-      }
-      return <StyledLink href={url} {...props} />;
-    }}
-  </Location>
-);
-const NavLinkEl = styled(DocsLink)`
+const NavLinkEl = styled(BasicLink)`
   color: inherit;
   font-weight: unset;
 `;
@@ -119,14 +101,13 @@ const renderItem = ({ depth, id, isActive, title }) => (
 
 const headerOptions = {
   treatIdAsHref: true,
-  LinkComponent: DocsLink,
+  LinkComponent: BasicLink,
 };
 const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
 const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
 
 const componentMap = {
   ...components,
-  a: DocsLink,
   wrapper: ApiReferenceWrapper,
   h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
   h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
@@ -205,7 +186,9 @@ const SingleApiReference = React.memo(function ApiReference({
             <section>
               <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
               <NestedRow>
-                <MDXRenderer>{body}</MDXRenderer>
+                <OriginalFileContext.Provider value={parent.relativePath}>
+                  <MDXRenderer>{body}</MDXRenderer>
+                </OriginalFileContext.Provider>
               </NestedRow>
               <HorizontalRule />
             </section>

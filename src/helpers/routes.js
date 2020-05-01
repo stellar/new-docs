@@ -1,4 +1,5 @@
 import path from "path";
+import url from "url";
 import { LINK_DESTINATIONS } from "constants/routes";
 
 import {
@@ -25,14 +26,14 @@ export { buildRoute, buildPathFromFile, normalizeRoute };
  * @return {boolean} Whether it's relative or not
  */
 export const isRelativeUrl = (href) => {
-  try {
-    // eslint-disable-next-line no-new
-    new URL(href);
+  const hrefObj = url.parse(href);
+  if (!href) {
     return false;
-  } catch (e) {
-    // do nothing, it's not a complete URL
   }
-  if (href.startsWith("/")) {
+  if (hrefObj.host) {
+    return false;
+  }
+  if (hrefObj.pathname?.startsWith("/")) {
     return false;
   }
   return true;
@@ -46,8 +47,10 @@ export const isRelativeUrl = (href) => {
  * @param {string} relativeUrl A relative path.
  * @return {string} The final URL, ready for use in an <a> tag.
  */
-export const resolveRelativeUrl = (originalFile, relativeUrl) =>
-  buildPathFromFile(path.resolve(path.dirname(originalFile), relativeUrl));
+export const resolveRelativePath = (originalFile, relativeUrl) =>
+  buildPathFromFile(
+    path.resolve(normalizeRoute(path.dirname(originalFile)), relativeUrl),
+  );
 
 export const getLinkTarget = (link) => {
   if (link.startsWith("/api")) {
