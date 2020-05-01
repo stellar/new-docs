@@ -19,7 +19,7 @@ import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
-import { buildPathFromFile } from "helpers/routes";
+import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
@@ -39,11 +39,14 @@ import {
   NestedRow,
 } from "components/Documentation/SharedStyles";
 import {
+  AbsoluteNavFooterEl,
   SideNavContainer,
   SideNavBackground,
+  NavLogo,
 } from "components/Navigation/SharedStyles";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
+import { BetaNotice } from "components/BetaNotice";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -95,7 +98,7 @@ const NavLinkEl = styled(BasicLink)`
 // eslint-disable-next-line react/prop-types
 const renderItem = ({ depth, id, isActive, title }) => (
   <NavItemEl depth={depth} isActive={isActive}>
-    <NavLinkEl href={`/no-js/${id}`}>{title}</NavLinkEl>
+    <NavLinkEl href={normalizeRoute(`/no-js/${id}`)}>{title}</NavLinkEl>
   </NavItemEl>
 );
 
@@ -153,11 +156,12 @@ const SingleApiReference = React.memo(function ApiReference({
       >
         <ApiReferenceRow>
           <SideNavColumn xs={3} lg={3} xl={4}>
+            <NavLogo pageName={docType.api} />
             <SideNavBackground />
             <SideNavProgressContext.Provider
               value={{ activeContent: { id: path } }}
             >
-              <SideNavContainer docType={docType.api}>
+              <SideNavContainer>
                 {Object.entries(docsBySubCategory).map((nav, i) => (
                   <ExpansionContainerEl
                     // eslint-disable-next-line react/no-array-index-key
@@ -174,6 +178,9 @@ const SingleApiReference = React.memo(function ApiReference({
                     </Expansion>
                   </ExpansionContainerEl>
                 ))}
+                <AbsoluteNavFooterEl>
+                  <BasicLink href="/docs">Documentation</BasicLink>
+                </AbsoluteNavFooterEl>
               </SideNavContainer>
             </SideNavProgressContext.Provider>
           </SideNavColumn>
@@ -183,6 +190,7 @@ const SingleApiReference = React.memo(function ApiReference({
             isIndependentScroll
             id={`${DOM_TARGETS.contentColumn}`}
           >
+            <BetaNotice />
             <section>
               <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
               <NestedRow>
