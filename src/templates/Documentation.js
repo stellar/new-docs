@@ -4,8 +4,6 @@ import { graphql } from "gatsby";
 import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
-import path from "path";
-import { Location } from "@reach/router";
 
 import { FONT_WEIGHT, THEME, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
@@ -28,7 +26,7 @@ import { BetaNotice } from "components/BetaNotice";
 import { BasicButton } from "basics/Buttons";
 import { EditIcon, CheckmarkIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
-import { Link } from "basics/Links";
+import { OriginalFileContext, BasicLink } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 import { Text } from "basics/Text";
 
@@ -48,7 +46,7 @@ import DevelopersPreview from "assets/images/og_developers.jpg";
 import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 
 const contentId = "content";
-const { h1: H1, h2: H2, a: StyledLink, td: TD } = components;
+const { h1: H1, h2: H2, td: TD } = components;
 
 const RightNavEl = styled.div`
   font-size: 0.875rem;
@@ -122,21 +120,6 @@ const PageOutlineItem = ({ id, isActive, title }) => (
 const componentMapping = {
   ...components,
   // eslint-disable-next-line react/prop-types
-  a: React.forwardRef(function DocsLink({ href, ...props }, ref) {
-    return (
-      <Location>
-        {({ location }) => {
-          // eslint-disable-next-line react/prop-types
-          let url = href.split(".mdx")[0].replace("index", "");
-          if (url.startsWith(".")) {
-            url = path.resolve(location.pathname, url);
-          }
-          return <StyledLink ref={ref} href={url} {...props} />;
-        }}
-      </Location>
-    );
-  }),
-  // eslint-disable-next-line react/prop-types
   h2: ({ children }) => {
     /* For cases when <H2/> has an element besides strings.
     For example, "Implementing the /info Endpoint" from
@@ -187,6 +170,7 @@ const Documentation = ({ data, pageContext, location }) => {
     rootDir,
   );
 
+  const { relativePath: originalFilePath } = articleBody;
   const { body, headings, mdxAST: mdxAst } = articleBody.childMdx;
   const {
     title: header,
@@ -214,14 +198,14 @@ const Documentation = ({ data, pageContext, location }) => {
     />
   );
   const center = (
-    <>
+    <OriginalFileContext.Provider value={originalFilePath}>
       <BetaNotice />
       <Content>
         <H1>{header}</H1>
         {githubLink && (
-          <Link href={githubLink} newTab>
+          <BasicLink href={githubLink} newTab>
             <EditIcon color={PALETTE.purpleBlue} />
-          </Link>
+          </BasicLink>
         )}
         <MDXRenderer>{body}</MDXRenderer>
         <ModifiedEl>
@@ -231,17 +215,17 @@ const Documentation = ({ data, pageContext, location }) => {
         {articleNextUp && (
           <NextUpEl>
             Next Up:{" "}
-            <StyledLink
+            <BasicLink
               href={articleNextUp.url}
               state={{ compiledDocsContents: docsContents }}
             >
               {articleNextUp.title}
-            </StyledLink>
+            </BasicLink>
           </NextUpEl>
         )}
       </Content>
       <Footer />
-    </>
+    </OriginalFileContext.Provider>
   );
   const right = (
     <RightNavEl>
@@ -315,6 +299,7 @@ export default Documentation;
 export const pageQuery = graphql`
   query DocumentationQuery($mdxId: String) {
     articleBody: file(childMdx: { id: { eq: $mdxId } }) {
+      relativePath
       childMdx {
         body
         mdxAST

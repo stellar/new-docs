@@ -1,5 +1,4 @@
 import React from "react";
-import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled, { css } from "styled-components";
@@ -28,7 +27,7 @@ import { useMatchMedia } from "helpers/useMatchMedia";
 import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { ArrowIcon, EditIcon } from "basics/Icons";
-import { Link } from "basics/Links";
+import { Link, BasicLink } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
 import { BetaNotice } from "components/BetaNotice";
@@ -46,7 +45,7 @@ import {
   ScrollRouter,
   Context as ScrollRouterContext,
 } from "components/ApiRefRouting/ScrollRouter";
-import { Route, SectionPathContext } from "components/ApiRefRouting/Route";
+import { Route } from "components/ApiRefRouting/Route";
 import {
   ApiReferenceRow,
   ApiReferenceWrapper,
@@ -121,32 +120,7 @@ const NavItemEl = styled.div`
 
 const StyledLink = components.a;
 
-// eslint-disable-next-line react/prop-types
-const DocsLink = ({ href, ...props }) => {
-  const originalPath = React.useContext(SectionPathContext);
-  const { onLinkClick } = React.useContext(ScrollRouterContext);
-
-  let url = href;
-
-  // Resolve relative links
-  if (url.startsWith(".")) {
-    url = buildPathFromFile(
-      pathLib.resolve(pathLib.dirname(originalPath), url),
-    );
-  }
-  return (
-    <StyledLink
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onLinkClick(url);
-      }}
-      href={url}
-      {...props}
-    />
-  );
-};
-const NavLinkEl = styled(DocsLink)`
+const NavLinkEl = styled(BasicLink)`
   color: inherit;
   font-weight: unset;
   display: block;
@@ -245,7 +219,7 @@ const renderItem = ({
 
 const headerOptions = {
   treatIdAsHref: true,
-  LinkComponent: DocsLink,
+  LinkComponent: BasicLink,
 };
 
 const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
@@ -253,7 +227,6 @@ const ApiRefLinkedH2 = makeLinkedHeader(ApiRefH2, headerOptions);
 
 const componentMap = {
   ...components,
-  a: DocsLink,
   wrapper: ApiReferenceWrapper,
   h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
   h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),

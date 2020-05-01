@@ -1,6 +1,4 @@
 import React from "react";
-import { Location } from "@reach/router";
-import pathLib from "path";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled from "styled-components";
@@ -21,12 +19,13 @@ import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
-import { buildPathFromFile } from "helpers/routes";
+import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ArrowIcon } from "basics/Icons";
+import { OriginalFileContext, BasicLink } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -40,11 +39,14 @@ import {
   NestedRow,
 } from "components/Documentation/SharedStyles";
 import {
+  AbsoluteNavFooterEl,
   SideNavContainer,
   SideNavBackground,
+  NavLogo,
 } from "components/Navigation/SharedStyles";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
+import { BetaNotice } from "components/BetaNotice";
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -87,24 +89,7 @@ const NavItemEl = styled(BasicButton)`
   }
 `;
 
-const StyledLink = components.a;
-// eslint-disable-next-line react/prop-types
-const DocsLink = ({ href, ...props }) => (
-  <Location>
-    {({ location }) => {
-      // eslint-disable-next-line react/prop-types
-      let url = href.split(".mdx")[0].replace("index", "");
-      if (url.startsWith(".")) {
-        url = pathLib.resolve(location.pathname, url);
-      }
-      if (/no-js/.test(url)) {
-        url = `${url.replace("no-js/", "")}?javascript=false`;
-      }
-      return <StyledLink href={url} {...props} />;
-    }}
-  </Location>
-);
-const NavLinkEl = styled(DocsLink)`
+const NavLinkEl = styled(BasicLink)`
   color: inherit;
   font-weight: unset;
 `;
@@ -113,20 +98,19 @@ const NavLinkEl = styled(DocsLink)`
 // eslint-disable-next-line react/prop-types
 const renderItem = ({ depth, id, isActive, title }) => (
   <NavItemEl depth={depth} isActive={isActive}>
-    <NavLinkEl href={`/no-js/${id}`}>{title}</NavLinkEl>
+    <NavLinkEl href={normalizeRoute(`/no-js/${id}`)}>{title}</NavLinkEl>
   </NavItemEl>
 );
 
 const headerOptions = {
   treatIdAsHref: true,
-  LinkComponent: DocsLink,
+  LinkComponent: BasicLink,
 };
 const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
 const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
 
 const componentMap = {
   ...components,
-  a: DocsLink,
   wrapper: ApiReferenceWrapper,
   h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
   h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
@@ -172,11 +156,12 @@ const SingleApiReference = React.memo(function ApiReference({
       >
         <ApiReferenceRow>
           <SideNavColumn xs={3} lg={3} xl={4}>
+            <NavLogo pageName={docType.api} />
             <SideNavBackground />
             <SideNavProgressContext.Provider
               value={{ activeContent: { id: path } }}
             >
-              <SideNavContainer docType={docType.api}>
+              <SideNavContainer>
                 {Object.entries(docsBySubCategory).map((nav, i) => (
                   <ExpansionContainerEl
                     // eslint-disable-next-line react/no-array-index-key
@@ -193,6 +178,9 @@ const SingleApiReference = React.memo(function ApiReference({
                     </Expansion>
                   </ExpansionContainerEl>
                 ))}
+                <AbsoluteNavFooterEl>
+                  <BasicLink href="/docs">Documentation</BasicLink>
+                </AbsoluteNavFooterEl>
               </SideNavContainer>
             </SideNavProgressContext.Provider>
           </SideNavColumn>
@@ -202,10 +190,13 @@ const SingleApiReference = React.memo(function ApiReference({
             isIndependentScroll
             id={`${DOM_TARGETS.contentColumn}`}
           >
+            <BetaNotice />
             <section>
               <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
               <NestedRow>
-                <MDXRenderer>{body}</MDXRenderer>
+                <OriginalFileContext.Provider value={parent.relativePath}>
+                  <MDXRenderer>{body}</MDXRenderer>
+                </OriginalFileContext.Provider>
               </NestedRow>
               <HorizontalRule />
             </section>

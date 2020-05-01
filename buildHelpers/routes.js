@@ -30,11 +30,16 @@ const DOCS_ROOT = "docs";
 
 const buildPathFromFile = (filePath) => {
   const pathRegex = /(.*)\..*$/;
-
   // Strip `index` so that `index.mdx` files come through with just their
   // relative path.
-  const match = pathRegex.exec(filePath.replace("index", ""));
-  return normalizeRoute(match[1]);
+  const pathWithIndexStripped = filePath.replace("index", "");
+  const match = pathRegex.exec(pathWithIndexStripped);
+
+  // Placeholder links go through this code path too, and they don't have a file
+  // extension and thus don't match the regex. Hack fix to avoid issues.
+  const roughRoute = match === null ? pathWithIndexStripped : match[1];
+
+  return normalizeRoute(roughRoute);
 };
 
 module.exports = {

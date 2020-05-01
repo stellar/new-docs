@@ -7,7 +7,7 @@ import { FONT_WEIGHT, PALETTE } from "constants/styles";
 import { BasicButton } from "basics/Buttons";
 import { ArrowIcon } from "basics/Icons";
 import { ListItem, List } from "basics/Text";
-import { Link } from "basics/Links";
+import { BasicLink } from "basics/Links";
 
 const topLevelNavItem = `
 color: ${PALETTE.black60};
@@ -21,7 +21,9 @@ text-decoration: none;
 `;
 
 const El = styled(ListItem)``;
-const ArticleLink = styled(({ isActive, ...props }) => <Link {...props} />)`
+const ArticleLink = styled(({ isActive, ...props }) => (
+  <BasicLink {...props} />
+))`
   ${topLevelNavItem}
   display: block;
   padding: 0.5rem 0;
