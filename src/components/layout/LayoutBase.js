@@ -5,13 +5,13 @@ import Helmet from "react-helmet";
 
 import { FONTS } from "constants/fonts";
 
-import { Link } from "basics/Links";
+import { BasicLink } from "basics/Links";
 
 import { Seo } from "./Seo";
 
 const contentId = "content";
 const ContentEl = styled.div.attrs({ id: contentId })``;
-const SkipToContentEl = styled(Link).attrs({
+const SkipToContentEl = styled(BasicLink).attrs({
   href: `#${contentId}`,
   children: `Skip to content`,
 })`
