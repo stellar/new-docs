@@ -21,7 +21,7 @@ export const Route = ({ children, originalFilePath, path }) => {
 
   return (
     <OriginalFileContext.Provider value={originalFilePath}>
-      <El ref={ref}>{React.Children.only(children)}</El>;
+      <El ref={ref}>{React.Children.only(children)}</El>
     </OriginalFileContext.Provider>
   );
 };
