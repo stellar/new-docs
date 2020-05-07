@@ -149,7 +149,7 @@ Those are the only required fields to initiate a deposit request, so that’s al
 
 ### Initiate Interactive Flow
 
-In the interactive flow, the issuer’s server responds to the wallet’s POST with the `interactive customer information needed` response detailed [here](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#2-interactive-customer-information-needed). That response is a JSON object containing a URL that the wallet uses to open an issuer-hosted webapp, which is what the issuer uses to collect the information it needs from a user to complete a deposit. The reason this flow relies on an issuer-hosted webapp is that wallets can’t predict what type of information an issuer will need.
+In the interactive flow, the anchor’s server responds to the wallet’s POST with the `interactive customer information needed` response detailed [here](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#2-interactive-customer-information-needed). That response is a JSON object containing a URL that the wallet uses to open an issuer-hosted webapp, which is what the issuer uses to collect the information it needs from a user to complete a deposit. The reason this flow relies on an issuer-hosted webapp is that wallets can’t predict what type of information an issuer will need.
 
 If authentication is required, it should be handled before kicking off the deposit by the server hosting the interactive flow, usually using a one-time-use JWT to start a backend persistent session as described in the [previous section](./#authentication). If you use [Polaris](./reference-implementations.mdx), authentication is handled for you.
 
@@ -218,7 +218,7 @@ sequenceDiagram
 
 ### `/transactions/withdraw/interactive` Endpoint
 
-Before initiating a withdrawal, a wallet polls an issuer’s `/info` endpoint and creates an authenticated user session as described in the [previous section](./#authentication). Once that’s done, a wallet makes a POST request to an issuer’s `/transactions/withdraw/interactive` endpoint to start a withdrawal, which creates a new but incomplete transaction record in the issuer’s database. The issuer’s response to the request should contain the transaction’s ID as well as the URL that should be requested to begin the interactive flow.
+Before initiating a withdrawal, a wallet hits the anchor’s `/info` endpoint and creates an authenticated user session as described in the [previous section](./#authentication). Once that’s done, a wallet makes a POST request to an issuer’s `/transactions/withdraw/interactive` endpoint to start a withdrawal, which creates a new but incomplete transaction record in the issuer’s database. The issuer’s response to the request should contain the transaction’s ID as well as the URL that should be requested to begin the interactive flow.
 
 The webapp then collects the information necessary to complete the transaction.
 
@@ -236,7 +236,7 @@ The response to the wallet’s POST request to the `/transactions/withdraw/inter
 
 There are a number of UI pages that should be served to the user while walking through the withdraw flow. These pages can be divided into three separate categories or phases.
 
-- Mocked KYC: When starting a withdrawal, the issuer may be legally obligated to collect specific information from the user. In the testing phase, you don’t need to store this information permanently, but you still need to provide the interface to collect it. There is no restriction on the number of pages used, but often, you can get all you need with a single page. Make sure you understand relevant legal requirements before implementing this phase of the process.
+- Mocked KYC: When starting a withdrawal, the anchor may be legally obligated to collect specific information from the user. In the testing phase, you don’t need to store this information permanently, but you still need to provide the interface to collect it. There is no restriction on the number of pages used, but often, you can get all you need with a single page. Make sure you understand relevant legal requirements before implementing this phase of the process.
 - Withdrawal information: The issuer needs to collect the numerical amount of the asset to transfer. There may be other pieces of data you want to collect as well. Make sure you have all the information necessary to submit a successful transaction to the stellar network.
 - Waiting for transfer: Once the issuer has collected all the information needed for a withdrawal, the last page rendered in the interactive flow should make a `postMessage` call to the Wallet, notifying the wallet that it has all the information it needs.
 
