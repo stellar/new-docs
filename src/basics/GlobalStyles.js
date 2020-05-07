@@ -37,10 +37,6 @@ export const GlobalStyles = createGlobalStyle`
   twitter-widget {
     margin: auto;
   }
-  ::-webkit-scrollbar {
-    width: 0px;  /* Remove scrollbar space */
-    background: transparent;  /* Optional: just make scrollbar invisible */
-  }
 
 ${FONTS.map(
   (font) => css`
