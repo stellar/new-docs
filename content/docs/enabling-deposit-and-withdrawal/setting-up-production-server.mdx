@@ -3,7 +3,7 @@ title: Set Up a Production Server
 order: 40
 ---
 
-Once the test server is live and you have tested both deposit and withdraw flows, it's time to get started with the real deploy connected to real KYC and real banking rails providers. Before using any banking APIs, it's critical that you perform a full security audit on the system to make sure that there aren't any security vulnerabilities.
+Once the test server is live and you have tested both deposit and withdraw flows, it's time to get started with the real deploy connected to real KYC and real banking rails providers. Before using any banking APIs, it's critical that you perform a full security audit on the system to make sure that there aren't any vulnerabilities.
 
 ## Deploying a Secure Environment
 
@@ -19,7 +19,7 @@ Since the distribution account will be managed programmatically, it should only 
 
 Most anchors need to collect  [Know Your Customer](https://en.wikipedia.org/wiki/Know_your_customer) information to comply with local regulations before honoring deposits and withdrawals. The KYC flow usually consists of a simple form that gathers relevant information about the user such as name, email, address, age, and government-issued ID number.
 
-How you handle KYC is up to you: there are many services that provide KYC solutions through APIs and iFrames, and that validate the input data and sync with governmental databases to verify requirements. Each jurisdiction has specific KYC requirements, and they differ from jurisdiction to jurisdiction, so it's best to find a country-specific KYC provider that meets your needs.
+How you handle KYC is up to you: there are many services that provide KYC solutions through APIs and iFrames, and validate the input data and sync with governmental databases to verify requirements. Each jurisdiction has specific KYC requirements, and they differ from jurisdiction to jurisdiction, so it's best to find a country-specific KYC provider that meets your needs.
 
 Some countries require different KYC fields depending on the amount to be deposited or withdrawn. If that's the case in your jurisdiction and you need to adapt your KYC forms based on the deposit or withdrawal amount, simply add an amount field before the KYC form, and make sure that the KYC fields are updated based on that value.
 
