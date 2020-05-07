@@ -14,14 +14,16 @@ const El = styled.div`
   padding-bottom: 6rem;
   justify-content: space-between;
 
-  @media (${MEDIA_QUERIES.ltLaptop}) {
+  @media (${MEDIA_QUERIES.ltDesktop}) {
+    padding-top: 4.5rem;
     flex-direction: column;
   }
 `;
 const ContainerEl = styled.div`
   min-width: 11rem;
 
-  @media (${MEDIA_QUERIES.ltLaptop}) {
+  @media (${MEDIA_QUERIES.ltDesktop}) {
+    margin-top: 3rem;
     margin-bottom: 1rem;
   }
 `;

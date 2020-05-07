@@ -54,6 +54,11 @@ const ContentEl = styled.div`
   ${Table} {
     padding: 0 1rem;
   }
+
+  ::-webkit-scrollbar {
+    width: 0px; /* Remove scrollbar space */
+    background: transparent; /* Optional: just make scrollbar invisible */
+  }
 `;
 
 /**

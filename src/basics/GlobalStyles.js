@@ -37,6 +37,7 @@ export const GlobalStyles = createGlobalStyle`
   twitter-widget {
     margin: auto;
   }
+
 ${FONTS.map(
   (font) => css`
     @font-face {
