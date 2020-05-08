@@ -48,6 +48,8 @@ import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 const contentId = "content";
 const { h1: H1, h2: H2, td: TD } = components;
 
+const SCROLLED_PX = 24;
+
 const RightNavEl = styled.div`
   font-size: 0.875rem;
   line-height: 1rem;
@@ -189,6 +191,21 @@ const Documentation = ({ data, pageContext, location }) => {
     title: value,
   }));
 
+  const contentDomRef = React.useRef();
+
+  React.useEffect(() => {
+    const onKeyDownScroll = (e) => {
+      if (e.key === "ArrowDown") {
+        contentDomRef.current.scrollTop += SCROLLED_PX;
+      }
+      if (e.key === "ArrowUp") {
+        contentDomRef.current.scrollTop -= SCROLLED_PX;
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDownScroll);
+  }, []);
+
   const left = (
     <LeftNav
       docsContents={docsContents}
@@ -266,6 +283,7 @@ const Documentation = ({ data, pageContext, location }) => {
                 md={7}
                 isIndependentScroll
                 id={`${DOM_TARGETS.contentColumn}`}
+                ref={contentDomRef}
               >
                 {center}
               </Column>

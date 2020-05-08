@@ -59,6 +59,7 @@ import DevelopersPreview from "assets/images/og_developers.jpg";
 
 const NAV_BAR_HEIGHT = 89;
 const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
+const SCROLLED_PX = 24;
 
 const GreenTableCell = styled.td`
   color: ${PALETTE.lightGreen};
@@ -304,8 +305,23 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
-  const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
+
+  const sideNavRef = React.useRef();
+  const contentDomRef = React.useRef();
+
+  React.useEffect(() => {
+    const onKeyDownScroll = (e) => {
+      if (e.key === "ArrowDown") {
+        contentDomRef.current.scrollTop += SCROLLED_PX;
+      }
+      if (e.key === "ArrowUp") {
+        contentDomRef.current.scrollTop -= SCROLLED_PX;
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDownScroll);
+  }, []);
 
   return (
     <ScrollRouter>
@@ -362,6 +378,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               xl={18}
               isIndependentScroll
               id={`${DOM_TARGETS.contentColumn}`}
+              ref={contentDomRef}
             >
               <BetaNotice />
               {referenceDocs.map(({ body, id, parent, title, githubLink }) => (

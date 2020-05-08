@@ -119,7 +119,7 @@ const ColumnEl = styled.div`
     `}
 `;
 
-export const Column = (props) => {
+export const Column = React.forwardRef((props, ref) => {
   const {
     xs = COLUMNS[COL_SIZES.xs].count,
     sm = xs || COLUMNS[COL_SIZES.sm].count,
@@ -127,8 +127,8 @@ export const Column = (props) => {
     lg = md || COLUMNS[COL_SIZES.lg].count,
     ...rest
   } = props;
-  return <ColumnEl {...rest} {...{ xs, sm, md, lg }} />;
-};
+  return <ColumnEl ref={ref} {...rest} {...{ xs, sm, md, lg }} />;
+});
 
 const ColumnSizePropType = PropTypes.oneOfType([
   PropTypes.number.isRequired,
