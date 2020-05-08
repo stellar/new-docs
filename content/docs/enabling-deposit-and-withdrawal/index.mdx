@@ -7,11 +7,13 @@ One of the main use cases for Stellar is the tokenization of fiat currency to op
 
 This section doesn't cover the basic steps for issuing an asset on the network — you can find those [here](../issuing-assets/index.mdx) — rather, it explains how developers can *connect* the Stellar Network to their country's banking system and regulatory processes such as [KYC](https://en.wikipedia.org/wiki/Know_your_customer) and [AML](https://en.wikipedia.org/wiki/Money_laundering#Anti-money_laundering) by setting up a webapp and specific endpoints that allow users to make deposits and withdrawals.  It will walk through the flow, features, and protocol specifications for integrating with wallets and other clients, and offer examples and tools to make the process easier to implement and test.  
 
-There are three stages in the process, each of which we will go over in detail:
+We will go over SDF's [Reference Implementations](./reference-implementations.mdx) and all three stages of the development process:
 
 1. [Setting up a test server](./setting-up-test-server.mdx)
 1. [Setting up a production server](./setting-up-production-server.mdx)
 1. [Launch](./launch.mdx)
+
+
 
 ## The basic customer flow
 
@@ -38,4 +40,4 @@ There are many use cases covered by the existing SEPs — including regulated as
 
 This guide will focus on the **Interactive Anchor/Wallet Asset Transfer Server** SEP (aka [SEP-24](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md)), since it defines the specs for deposit and withdrawal implementations. SEP-24 is focused on *interactive user flows*, meaning flows where users interact with an Anchor-hosted interface rendered inside a wallet. 
 
-To enable an interactive flow, fiat-backed Anchors (aka on/off ramps) should implement two SEPs in addition to: [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), which links meta-information to an asset (and which we go over in detail in [this guide](../issuing-assets/publishing-asset-info.mdx)), and [SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md), which creates authenticated user session.  If you follow this guide, we'll walk through setting up all that infrastructure on both the testnet and the public network.
+To enable an interactive flow, fiat-backed Anchors (aka on/off ramps) should implement two SEPs in addition to SEP-24: [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), which links meta-information to organizations and assets (and which we go over in detail in [this guide](../issuing-assets/publishing-asset-info.mdx)), and [SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md), which creates authenticated user session.  In this guide, we'll walk through setting up all that infrastructure on both the testnet and the public network.
