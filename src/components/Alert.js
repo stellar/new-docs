@@ -14,6 +14,8 @@ const AlertEl = styled.div`
   border: 1px solid rgba(62, 27, 219, 0.2);
   background-color: rgba(62, 27, 219, 0.04);
   color: ${PALETTE.black80};
+  padding: 0.5rem 0.75rem;
+  line-height: 1.75;
 
   p {
     margin: 0.5rem 0;
@@ -22,8 +24,7 @@ const AlertEl = styled.div`
 
 const CustomAlertIcon = styled(AlertIcon)`
   margin-right: 0.5rem;
-  margin-left: 0.75rem;
-  margin-top: 0.9rem;
+  margin-top: 0.2rem;
 `;
 
 export const Alert = ({ children }) => (
