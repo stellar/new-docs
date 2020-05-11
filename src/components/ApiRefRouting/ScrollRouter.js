@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import throttle from "lodash/throttle";
 
-import { DOM_TARGETS } from "constants/domNodes";
-
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
 import { SideNavProgressContext } from "components/SideNav/Provider";
 
@@ -19,8 +17,6 @@ let lastScrollPosition = 0;
 const routeMap = new Map();
 const elementMap = new Map();
 
-let contentDom;
-
 export const ScrollRouter = ({ children, initialActive = "" }) => {
   const initialLoadCheck = React.useRef(false);
   const [activeNode, setActiveNode] = React.useState({
@@ -29,10 +25,6 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
   });
   const trackedElementsRef = React.useRef([]);
   const isScrollingDown = React.useRef(false);
-
-  React.useEffect(() => {
-    contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
-  });
 
   // Navigation
   const onLinkClick = React.useCallback(function onLinkClick(route) {
@@ -44,11 +36,11 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
   React.useEffect(() => {
     const handler = throttle(() => {
       // If we haven't scrolled at least 100 pixels, just bail.
-      if (Math.abs(contentDom.scrollTop - lastScrollPosition) < 100) {
+      if (Math.abs(window.scrollTop - lastScrollPosition) < 100) {
         return;
       }
-      isScrollingDown.current = contentDom.scrollTop > lastScrollPosition;
-      lastScrollPosition = contentDom.scrollTop;
+      isScrollingDown.current = window.scrollTop > lastScrollPosition;
+      lastScrollPosition = window.scrollTop;
 
       const newActiveNode = findActiveNode(
         trackedElementsRef.current,
@@ -62,11 +54,11 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       }
     }, 60);
 
-    contentDom.addEventListener("scroll", handler);
+    window.addEventListener("scroll", handler);
     handler();
 
     return () => {
-      contentDom.removeEventListener("scroll", handler);
+      window.removeEventListener("scroll", handler);
     };
   }, [activeNode]);
 

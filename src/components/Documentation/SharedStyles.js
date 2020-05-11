@@ -14,7 +14,9 @@ export const Container = styled(GridContainer)`
   }
 `;
 export const SideNavColumn = styled(Column)`
-  position: relative;
+  position: sticky;
+  height: 100vh;
+  top: 0;
 `;
 export const DividerEl = styled.span`
   display: inline-block;

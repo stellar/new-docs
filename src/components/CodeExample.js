@@ -8,7 +8,6 @@ import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
 import CopyIcon from "assets/icons/icon-copy.svg";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
-import { DOM_TARGETS } from "constants/domNodes";
 
 import { getCookie } from "helpers/getCookie";
 import { extractStringChildren } from "helpers/extractStringChildren";
@@ -186,8 +185,6 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   }, []);
 
   React.useEffect(() => {
-    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
-
     const setHoverFalse = () => {
       if (isHovered) setHover(false);
     };
@@ -195,10 +192,10 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     /* Setting 'isHovered' to false while scrolling is necessary to 
     prevent a tooltip to be displayed and its position to be scrolled 
     together when a user scrolls while hovering on an icon */
-    contentDom.addEventListener("scroll", setHoverFalse);
+    window.addEventListener("scroll", setHoverFalse);
 
     return () => {
-      contentDom.removeEventListener("scroll", setHoverFalse);
+      window.removeEventListener("scroll", setHoverFalse);
     };
   }, [isHovered]);
 
