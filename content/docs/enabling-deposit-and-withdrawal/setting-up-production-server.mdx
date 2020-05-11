@@ -27,6 +27,12 @@ KYC information should be linked to the session created through [Stellar Web Aut
 
 Make sure the errors and validation messages are clear and include instructions for what to do next to ensure a good user experience and increase the KYC conversion rate. You should also localize messages based on the user's language and location.
 
+## Pre-Filling the KYC Form
+
+Pre-filling the KYC form is a great way to reduce the friction of getting started using an anchor, and wallets usually provide a set of fields that are commonly used throughout the ecosystem. In summary, the anchor can render the KYC form with the user's values that were previously sent by the wallet in the /transactions/deposit/interactive and /transactions/withdraw/interactive endpoints.
+All fields from [SEP-9](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0009.md) can be sent by wallets in the previously mentioned endpoints, but the most common are: email, first name, last name and phone number. Also, you should still enable the pre-filled fields to be editable, since the user might have inputted a different name in the Wallet's sign-up process, and could want to edit it before finalizing the Anchor's KYC process.
+
+
 ## Connecting to Real Banking Rails
 
 Fiat-backed token issuers are expected to manage a full reserve.  That means there's a 1:1 relationship between Stellar-network tokens and money in the bank.  Since each fiat token on Stellar is backed by, and can be redeemed for, an underlying, real-world asset, issuers of fiat-backed tokens need to connect to real banking rails to validate user deposits (through bank transfers, credit card payments, etc.) and to complete user withdrawals (generally through bank transfers).  If you're an anchor honoring deposits and withdrawals of a token another organization issues, you'll follow a similar process.
