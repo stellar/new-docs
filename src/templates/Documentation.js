@@ -8,7 +8,6 @@ import { MDXProvider } from "@mdx-js/react";
 import { FONT_WEIGHT, THEME, PALETTE } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
-import { DOM_TARGETS } from "constants/domNodes";
 
 import { slugify } from "helpers/slugify";
 import { smoothScrollTo } from "helpers/dom";
@@ -261,12 +260,7 @@ const Documentation = ({ data, pageContext, location }) => {
                 <SideNavBackground />
                 {left}
               </SideNavColumn>
-              <Column
-                sm={5}
-                md={7}
-                isIndependentScroll
-                id={`${DOM_TARGETS.contentColumn}`}
-              >
+              <Column sm={5} md={7}>
                 {center}
               </Column>
               {pageOutline.length > 0 && (

@@ -33,6 +33,7 @@ export const GlobalStyles = createGlobalStyle`
   /* http://tachyons.io/docs/layout/box-sizing/ */
   body * {
     box-sizing: border-box;
+    overscroll-behavior: contain;
   }
   twitter-widget {
     margin: auto;

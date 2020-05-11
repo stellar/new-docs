@@ -13,7 +13,6 @@ import {
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
-import { DOM_TARGETS } from "constants/domNodes";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
@@ -184,12 +183,7 @@ const SingleApiReference = React.memo(function ApiReference({
               </SideNavContainer>
             </SideNavProgressContext.Provider>
           </SideNavColumn>
-          <Column
-            xs={9}
-            xl={18}
-            isIndependentScroll
-            id={`${DOM_TARGETS.contentColumn}`}
-          >
+          <Column xs={9} xl={18}>
             <BetaNotice />
             <section>
               <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>

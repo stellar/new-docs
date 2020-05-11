@@ -15,7 +15,6 @@ import {
 } from "constants/styles";
 import { components } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
-import { DOM_TARGETS } from "constants/domNodes";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
@@ -357,12 +356,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 </AbsoluteNavFooterEl>
               </SideNavContainer>
             </SideNavColumn>
-            <Column
-              xs={9}
-              xl={18}
-              isIndependentScroll
-              id={`${DOM_TARGETS.contentColumn}`}
-            >
+            <Column xs={9} xl={18}>
               <BetaNotice />
               {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
                 <ReferenceSection

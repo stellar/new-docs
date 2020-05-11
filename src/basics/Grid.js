@@ -107,16 +107,6 @@ const ColumnEl = styled.div`
   ${({ md }) => getColStyle(COL_SIZES.md, md)};
   ${({ lg }) => getColStyle(COL_SIZES.lg, lg)};
   ${({ xl }) => (xl ? getColStyle(COL_SIZES.xl, xl) : "")};
-
-  ${({ isIndependentScroll }) =>
-    isIndependentScroll &&
-    css`
-      @media (${MEDIA_QUERIES.gtTablet}) {
-        padding-right: 1.5rem;
-        overflow-y: scroll;
-        height: 100vh;
-      }
-    `}
 `;
 
 export const Column = (props) => {

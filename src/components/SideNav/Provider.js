@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import throttle from "lodash/throttle";
 
-import { DOM_TARGETS } from "constants/domNodes";
-
 import { findActiveNode } from "helpers/dom";
 
 const sortByPosition = (a, b) => {
@@ -26,15 +24,13 @@ export const Provider = ({ children }) => {
   ]);
 
   React.useEffect(() => {
-    const contentDom = document.querySelector(`#${DOM_TARGETS.contentColumn}`);
-
     const handler = throttle(() => {
       // If we haven't scrolled at least 100 pixels, just bail.
-      if (Math.abs(contentDom.scrollY - lastScrollPosition) < 100) {
+      if (Math.abs(window.scrollY - lastScrollPosition) < 100) {
         return;
       }
-      const isScrollingDown = contentDom.scrollY > lastScrollPosition;
-      lastScrollPosition = contentDom.scrollY;
+      const isScrollingDown = window.scrollY > lastScrollPosition;
+      lastScrollPosition = window.scrollY;
 
       const newActiveRef = findActiveNode(elementRefs, isScrollingDown);
       const newActiveNode = trackedElements.find((e) => e.ref === newActiveRef);
@@ -43,10 +39,10 @@ export const Provider = ({ children }) => {
       }
     }, 60);
 
-    contentDom.addEventListener("scroll", handler);
+    window.addEventListener("scroll", handler);
     handler();
     return () => {
-      contentDom.removeEventListener("scroll", handler);
+      window.removeEventListener("scroll", handler);
     };
   }, [activeContent, elementRefs, trackedElements]);
 
