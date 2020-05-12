@@ -52,6 +52,8 @@ const RightNavEl = styled.div`
   line-height: 1rem;
   padding-top: 4.25rem;
   overflow-y: hidden;
+  position: sticky;
+  top: 0;
   margin: 0;
 
   li:before {
