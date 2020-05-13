@@ -76,7 +76,7 @@ export const Container = styled.div`
   ${getSizeQuery(COL_SIZES.xs)} {
   }
   ${getSizeQuery(COL_SIZES.sm)} {
-    max-width: 53rem;
+    max-width: 60rem;
   }
   ${getSizeQuery(COL_SIZES.md)} {
     max-width: unset;
