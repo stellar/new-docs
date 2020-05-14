@@ -5,7 +5,7 @@ import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 
 import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 
-if (document) {
+if (typeof window !== "undefined") {
   [
     "https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js",
     "https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js",

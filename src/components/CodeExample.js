@@ -302,11 +302,12 @@ export const CodeExample = React.forwardRef(function CodeExample(
       React.Children.map(children, (child) => {
         // The language is present in the css className under `language-xx`.
         // Swipe it, then put it on `data-language` like `CodeSnippet` expects.
-        const { className } = child.props.children.props;
-        const lang = className
-          .split(" ")
-          .find((x) => x.startsWith("language-"))
-          .split("-")[1];
+        // If the code snippet has no language specified, there won't be a
+        // className at all.
+        const { className = "" } = child.props.children.props;
+        const langClass =
+          className.split(" ").find((x) => x.startsWith("language-")) || "";
+        const lang = langClass.split("-")[1];
         return React.cloneElement(child, { "data-language": lang });
       }),
     [children],
