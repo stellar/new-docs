@@ -11,6 +11,7 @@ import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 
 import { getCookie } from "helpers/getCookie";
 import { extractStringChildren } from "helpers/extractStringChildren";
+import { waitFor } from "helpers/waitFor";
 
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
@@ -134,11 +135,11 @@ const mdxJsxToString = (jsx) => {
   let str;
 
   if (children.props.children.length > 0) {
-    if (typeof children.props.children[0].props.children === "string") {
-      str = children.props.children[0].props.children;
+    if (typeof children.props.children === "string") {
+      str = children.props.children;
       return str;
     }
-    str = children.props.children[0].props.children.map((codeSnippet) =>
+    str = children.props.children.map((codeSnippet) =>
       extractStringChildren(codeSnippet),
     );
   }
@@ -155,6 +156,12 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const [isCopied, setCopy] = React.useState(false);
   const [isHovered, setHover] = React.useState(false);
   const [position, setPosition] = React.useState({ right: 0, top: 0 });
+
+  React.useEffect(() => {
+    waitFor(() => !!window.Prism).then(() => {
+      window.Prism.highlightAll();
+    });
+  });
 
   const codeSnippetsArr = React.Children.toArray(codeSnippets);
   const selectedSnippet =
@@ -189,8 +196,8 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
       if (isHovered) setHover(false);
     };
 
-    /* Setting 'isHovered' to false while scrolling is necessary to 
-    prevent a tooltip to be displayed and its position to be scrolled 
+    /* Setting 'isHovered' to false while scrolling is necessary to
+    prevent a tooltip to be displayed and its position to be scrolled
     together when a user scrolls while hovering on an icon */
     window.addEventListener("scroll", setHoverFalse);
 
@@ -295,9 +302,24 @@ export const CodeExample = React.forwardRef(function CodeExample(
   { title, children, href, ...props },
   ref,
 ) {
+  const codeSnippets = React.useMemo(
+    () =>
+      React.Children.map(children, (child) => {
+        // The language is present in the css className under `language-xx`.
+        // Swipe it, then put it on `data-language` like `CodeSnippet` expects.
+        const { className } = child.props.children.props;
+        const lang = className
+          .split(" ")
+          .find((x) => x.startsWith("language-"))
+          .split("-")[1];
+        return React.cloneElement(child, { "data-language": lang });
+      }),
+    [children],
+  );
+
   return (
     <CodeExampleEl ref={ref} {...props}>
-      <CodeSnippet codeSnippets={children} title={title} href={href} />
+      <CodeSnippet codeSnippets={codeSnippets} title={title} href={href} />
     </CodeExampleEl>
   );
 });

@@ -207,6 +207,7 @@ export const TableCell = styled.td`
 `;
 export const Preformatted = styled.pre`
   &&& {
+    margin: 0;
     font-family: ${PALETTE.monospace};
     position: relative;
     background: transparent;
