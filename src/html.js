@@ -7,6 +7,18 @@ export default function HTML(props) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+if (document.location.pathname.startsWith('/api')) {
+  var el = document.getElementById(document.location.pathname)
+  if (el) {
+    el.scrollIntoView();
+  }
+}
+`,
+          }}
+        />
         {props.headComponents}
       </head>
       <body {...props.bodyAttributes}>
