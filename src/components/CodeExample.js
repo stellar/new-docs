@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { navigate } from "@reach/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
@@ -28,7 +27,7 @@ const CODE_LANGS = {
   java: "Java",
   javascript: "JavaScript",
   js: "JavaScript",
-  json: "json",
+  json: "JSON",
   python: "Python",
   scss: "SCSS",
   toml: "TOML",
@@ -44,18 +43,17 @@ const LangSelect = styled(Select)`
 
   select {
     display: inline-block;
+    margin: 0 1rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
     border: none;
     background: transparent;
     color: ${PALETTE.white};
-    margin: 0 calc(1rem - 1px);
     font-weight: 500;
-    font-size: 0.75rem;
-    padding: 0;
   }
 `;
 
 const LangOptionEl = styled.div`
-  margin: calc(0.5rem - 1px) 0;
   font-family: ${FONT_FAMILY.monospace};
   font-weight: 500;
   font-size: 0.75rem;
@@ -185,9 +183,6 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
     document.cookie = `lang=${value}`;
-    navigate(`?lang=${value}`, {
-      replace: true,
-    });
     setActiveLang(value);
   }, []);
 
