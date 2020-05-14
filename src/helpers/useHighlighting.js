@@ -1,13 +1,10 @@
 import React from "react";
-
-import { waitFor } from "helpers/waitFor";
+import Prism from "prismjs";
 
 export const useHighlighting = (ref) => {
   React.useEffect(() => {
-    waitFor(() => !!window.Prism).then(() => {
-      requestAnimationFrame(() => {
-        window.Prism.highlightAllUnder(ref.current);
-      });
+    requestAnimationFrame(() => {
+      Prism.highlightAllUnder(ref.current);
     });
   });
 };

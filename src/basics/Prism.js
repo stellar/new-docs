@@ -1,25 +1,25 @@
 import { createGlobalStyle } from "styled-components";
-import { waitFor } from "helpers/waitFor";
+import Prism from "prismjs";
 
+import "prismjs/plugins/line-numbers/prism-line-numbers";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-bash";
+import "prismjs/components/prism-go";
+import "prismjs/components/prism-markup";
+import "prismjs/components/prism-toml";
+import "prismjs/components/prism-yaml";
+import "prismjs/components/prism-python";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 
 import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 
-if (typeof window !== "undefined") {
-  [
-    "https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js",
-    "https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js",
-  ].forEach((src) => {
-    const script = document.createElement("script");
-    script.src = src;
-    document.body.append(script);
-  });
-  waitFor(() => !!window.Prism).then(() => {
-    window.Prism.plugins.autoloader.languages_path =
-      "https://unpkg.com/prismjs@1.20.0/components/";
-    window.Prism.manual = true;
-  });
-}
+Prism.languages.curl = Prism.languages.js;
+Prism.languages.tsx = Prism.languages.js;
+Prism.languages.ts = Prism.languages.js;
+Prism.languages.JavaScript = Prism.languages.js;
+Prism.languages.sh = Prism.languages.bash;
+Prism.languages.html = Prism.languages.markup;
 
 // All markdown content has syntax highlighting markup created, but not all
 // pages load the css required to actually style the lines appropriately.
@@ -62,8 +62,6 @@ pre[class*="language-"] {
 
   .line-numbers-rows {
     display: block;
-    padding-left: 0.5rem !important;
-    left: -0.5rem !important;
 
     div[data-language="json"] & {
       display: none !important;

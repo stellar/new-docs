@@ -273,7 +273,9 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           )}
         </OptionsContainer>
       </TitleEl>
-      <ContentEl ref={contentsRef}>{selectedSnippet}</ContentEl>
+      <ContentEl className="line-numbers" ref={contentsRef}>
+        {selectedSnippet}
+      </ContentEl>
       {isHovered && (
         <Tooltip in={isHovered} isCopied={isCopied} parentPosition={position}>
           {isCopied ? "Copied" : "Click to copy"}
