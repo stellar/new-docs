@@ -2,23 +2,27 @@ import { createGlobalStyle } from "styled-components";
 import Prism from "prismjs";
 
 import "prismjs/plugins/line-numbers/prism-line-numbers";
-import "prismjs/components/prism-json";
-import "prismjs/components/prism-java";
 import "prismjs/components/prism-bash";
+import "prismjs/components/prism-c";
+import "prismjs/components/prism-cpp";
+import "prismjs/components/prism-css";
 import "prismjs/components/prism-go";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-markup";
-import "prismjs/components/prism-toml";
-import "prismjs/components/prism-yaml";
 import "prismjs/components/prism-python";
+import "prismjs/components/prism-scss";
+import "prismjs/components/prism-toml";
+import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-yaml";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 
 import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 
 Prism.languages.curl = Prism.languages.js;
-Prism.languages.tsx = Prism.languages.js;
-Prism.languages.ts = Prism.languages.js;
 Prism.languages.sh = Prism.languages.bash;
-Prism.languages.html = Prism.languages.markup;
 
 // All markdown content has syntax highlighting markup created, but not all
 // pages load the css required to actually style the lines appropriately.

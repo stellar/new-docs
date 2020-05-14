@@ -21,8 +21,8 @@ import { Code } from "basics/Text";
 
 const CODE_LANGS = {
   bash: "bash",
-  curl: "cURL",
   cpp: "C++",
+  curl: "cURL",
   go: "Go",
   html: "html",
   java: "Java",
