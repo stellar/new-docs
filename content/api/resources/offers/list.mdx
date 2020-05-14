@@ -66,7 +66,7 @@ When filtering by buying or selling arguments, you must use a combination of `se
 curl "https://horizon.stellar.org/offers?selling_asset_type=credit_alphanum4&selling_asset_issuer=GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX&selling_asset_code=USD&limit=3"
 ```
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
@@ -203,7 +203,7 @@ server
 
 <CodeExample title="JavaScript Streaming Example">
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 

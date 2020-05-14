@@ -74,7 +74,7 @@ The individual segments are also aligned with multiples of `resolution` since ep
 curl "https://horizon.stellar.org/trade_aggregations?base_asset_type=native&counter_asset_code=EURT&counter_asset_issuer=GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S&counter_asset_type=credit_alphanum4&resolution=3600000&start_time=1582156800000&end_time=1582178400000"
 ```
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
@@ -185,7 +185,7 @@ server
 
 <CodeExample title="JavaScript Streaming Example">
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 

@@ -342,7 +342,7 @@ import { CodeExample } from "components/CodeExample";
 curl "https://horizon.stellar.org/ledgers/27147222/transactions?limit=2"
 ```
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
@@ -374,7 +374,6 @@ const CODE_LANGS = {
   go: "Go",
   html: "html",
   java: "Java",
-  javascript: "JavaScript",
   js: "JavaScript",
   json: "json",
   python: "Python",

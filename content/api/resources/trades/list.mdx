@@ -66,7 +66,7 @@ When filtering for a specific orderbook, you must use use all six of these argum
 curl "https://horizon.stellar.org/trades?base_asset_type=credit_alphanum4&base_asset_issuer=GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX&base_asset_code=USD&counter_asset_type=native&limit=3"
 ```
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 
@@ -218,7 +218,7 @@ server
 
 <CodeExample title="JavaScript Streaming Example">
 
-```JavaScript
+```js
 var StellarSdk = require('stellar-sdk')
 var server = new StellarSdk.Server('https://horizon.stellar.org')
 

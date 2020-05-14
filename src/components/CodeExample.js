@@ -26,7 +26,6 @@ const CODE_LANGS = {
   go: "Go",
   html: "html",
   java: "Java",
-  javascript: "JavaScript",
   js: "JavaScript",
   json: "JSON",
   python: "Python",

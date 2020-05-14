@@ -17,7 +17,6 @@ import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 Prism.languages.curl = Prism.languages.js;
 Prism.languages.tsx = Prism.languages.js;
 Prism.languages.ts = Prism.languages.js;
-Prism.languages.JavaScript = Prism.languages.js;
 Prism.languages.sh = Prism.languages.bash;
 Prism.languages.html = Prism.languages.markup;
 
