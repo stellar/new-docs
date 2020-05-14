@@ -10,7 +10,7 @@ import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 
 import { getCookie } from "helpers/getCookie";
 import { extractStringChildren } from "helpers/extractStringChildren";
-import { waitFor } from "helpers/waitFor";
+import { useHighlighting } from "helpers/useHighlighting";
 
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
@@ -155,11 +155,8 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const [isHovered, setHover] = React.useState(false);
   const [position, setPosition] = React.useState({ right: 0, top: 0 });
 
-  React.useEffect(() => {
-    waitFor(() => !!window.Prism).then(() => {
-      window.Prism.highlightAll();
-    });
-  });
+  const contentsRef = React.useRef();
+  useHighlighting(contentsRef);
 
   const codeSnippetsArr = React.Children.toArray(codeSnippets);
   const selectedSnippet =
@@ -272,7 +269,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           )}
         </OptionsContainer>
       </TitleEl>
-      <ContentEl>{selectedSnippet}</ContentEl>
+      <ContentEl ref={contentsRef}>{selectedSnippet}</ContentEl>
       {isHovered && (
         <Tooltip in={isHovered} isCopied={isCopied} parentPosition={position}>
           {isCopied ? "Copied" : "Click to copy"}
