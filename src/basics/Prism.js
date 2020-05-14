@@ -34,7 +34,6 @@ https://prismjs.com/download.html#themes=prism&languages=clike+javascript */
  */
 code[class*="language-"],
 pre[class*="language-"] {
-  color: ${PALETTE.white};
   font-family: ${FONT_FAMILY.monospace};
   font-size: 1em;
   text-align: left;
@@ -83,15 +82,6 @@ pre[class*="language-"] {
   }
 }
 
-div[data-language="json"] {
-  .token.property,
-  .token.tag,
-  .token.constant,
-  .token.symbol,
-  .token.deleted {
-    color: ${(props) => (props.isDoc ? PALETTE.white : "slategray")};
-  }
-}
 /* Code blocks */
 pre[class*="language-"] {
   margin: 0;
@@ -102,24 +92,11 @@ pre[class*="language-"] {
   border-radius: 0.3em;
   white-space: normal;
 }
-.token.comment,
-.token.prolog,
-.token.doctype,
-.token.cdata {
-  color: "slategray";
-}
 .token.punctuation {
   color: ${PALETTE.lightGrey};
 }
 .namespace {
   opacity: 0.7;
-}
-.token.property,
-.token.tag,
-.token.constant,
-.token.symbol,
-.token.deleted {
-  color: rgba(255,255,255,0.6);
 }
 .token.boolean {
     color: #e5c687;

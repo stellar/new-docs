@@ -206,17 +206,20 @@ export const TableCell = styled.td`
   border: solid 1px ${PALETTE.white60};
 `;
 export const Preformatted = styled.pre`
-  &&& {
+  && {
     margin: 0;
     font-family: ${PALETTE.monospace};
     position: relative;
     background: transparent;
     font-size: 0.8rem;
     line-height: 1.7;
+  }
+
+  & ${Code} {
     color: ${PALETTE.darkGrey};
   }
 
-  &&& ${Code} {
+  && ${Code} {
     display: inline-block;
     border: none;
     background-color: transparent;

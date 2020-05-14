@@ -17,6 +17,7 @@ import { Select } from "basics/Inputs";
 
 import { Tooltip } from "components/Tooltip";
 import { DividerEl } from "components/Documentation/SharedStyles";
+import { Code } from "basics/Text";
 
 const CODE_LANGS = {
   bash: "bash",
@@ -83,6 +84,9 @@ const ContentEl = styled.div`
 `;
 
 const CodeExampleEl = styled.div`
+  & ${Code} {
+    color: ${PALETTE.light};
+  }
   display: flex;
   flex-direction: column;
   margin-top: 0.5rem;
