@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { navigate } from "@reach/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
@@ -11,23 +10,24 @@ import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 
 import { getCookie } from "helpers/getCookie";
 import { extractStringChildren } from "helpers/extractStringChildren";
+import { useHighlighting } from "helpers/useHighlighting";
 
 import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 
 import { Tooltip } from "components/Tooltip";
 import { DividerEl } from "components/Documentation/SharedStyles";
+import { Code } from "basics/Text";
 
 const CODE_LANGS = {
   bash: "bash",
-  curl: "cURL",
   cpp: "C++",
+  curl: "cURL",
   go: "Go",
   html: "html",
   java: "Java",
-  javascript: "JavaScript",
   js: "JavaScript",
-  json: "json",
+  json: "JSON",
   python: "Python",
   scss: "SCSS",
   toml: "TOML",
@@ -43,18 +43,17 @@ const LangSelect = styled(Select)`
 
   select {
     display: inline-block;
+    margin: 0 1rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
     border: none;
     background: transparent;
     color: ${PALETTE.white};
-    margin: 0 calc(1rem - 1px);
     font-weight: 500;
-    font-size: 0.75rem;
-    padding: 0;
   }
 `;
 
 const LangOptionEl = styled.div`
-  margin: calc(0.5rem - 1px) 0;
   font-family: ${FONT_FAMILY.monospace};
   font-weight: 500;
   font-size: 0.75rem;
@@ -84,6 +83,9 @@ const ContentEl = styled.div`
 `;
 
 const CodeExampleEl = styled.div`
+  & ${Code} {
+    color: ${PALETTE.light};
+  }
   display: flex;
   flex-direction: column;
   margin-top: 0.5rem;
@@ -134,11 +136,11 @@ const mdxJsxToString = (jsx) => {
   let str;
 
   if (children.props.children.length > 0) {
-    if (typeof children.props.children[0].props.children === "string") {
-      str = children.props.children[0].props.children;
+    if (typeof children.props.children === "string") {
+      str = children.props.children;
       return str;
     }
-    str = children.props.children[0].props.children.map((codeSnippet) =>
+    str = children.props.children.map((codeSnippet) =>
       extractStringChildren(codeSnippet),
     );
   }
@@ -155,6 +157,9 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const [isCopied, setCopy] = React.useState(false);
   const [isHovered, setHover] = React.useState(false);
   const [position, setPosition] = React.useState({ right: 0, top: 0 });
+
+  const contentsRef = React.useRef();
+  useHighlighting(contentsRef);
 
   const codeSnippetsArr = React.Children.toArray(codeSnippets);
   const selectedSnippet =
@@ -178,9 +183,6 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
     document.cookie = `lang=${value}`;
-    navigate(`?lang=${value}`, {
-      replace: true,
-    });
     setActiveLang(value);
   }, []);
 
@@ -189,8 +191,8 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
       if (isHovered) setHover(false);
     };
 
-    /* Setting 'isHovered' to false while scrolling is necessary to 
-    prevent a tooltip to be displayed and its position to be scrolled 
+    /* Setting 'isHovered' to false while scrolling is necessary to
+    prevent a tooltip to be displayed and its position to be scrolled
     together when a user scrolls while hovering on an icon */
     window.addEventListener("scroll", setHoverFalse);
 
@@ -270,7 +272,9 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
           )}
         </OptionsContainer>
       </TitleEl>
-      <ContentEl>{selectedSnippet}</ContentEl>
+      <ContentEl className="line-numbers" ref={contentsRef}>
+        {selectedSnippet}
+      </ContentEl>
       {isHovered && (
         <Tooltip in={isHovered} isCopied={isCopied} parentPosition={position}>
           {isCopied ? "Copied" : "Click to copy"}
@@ -295,9 +299,25 @@ export const CodeExample = React.forwardRef(function CodeExample(
   { title, children, href, ...props },
   ref,
 ) {
+  const codeSnippets = React.useMemo(
+    () =>
+      React.Children.map(children, (child) => {
+        // The language is present in the css className under `language-xx`.
+        // Swipe it, then put it on `data-language` like `CodeSnippet` expects.
+        // If the code snippet has no language specified, there won't be a
+        // className at all.
+        const { className = "" } = child.props.children.props;
+        const langClass =
+          className.split(" ").find((x) => x.startsWith("language-")) || "";
+        const lang = langClass.split("-")[1];
+        return React.cloneElement(child, { "data-language": lang });
+      }),
+    [children],
+  );
+
   return (
     <CodeExampleEl ref={ref} {...props}>
-      <CodeSnippet codeSnippets={children} title={title} href={href} />
+      <CodeSnippet codeSnippets={codeSnippets} title={title} href={href} />
     </CodeExampleEl>
   );
 });

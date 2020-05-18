@@ -1,39 +1,90 @@
 import { createGlobalStyle } from "styled-components";
+import Prism from "prismjs";
 
+import "prismjs/plugins/line-numbers/prism-line-numbers";
+import "prismjs/components/prism-bash";
+import "prismjs/components/prism-c";
+import "prismjs/components/prism-cpp";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-go";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-markup";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-scss";
+import "prismjs/components/prism-toml";
+import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-yaml";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 
 import { PALETTE, FONT_WEIGHT, FONT_FAMILY } from "constants/styles";
 
+Prism.languages.curl = Prism.languages.js;
+Prism.languages.sh = Prism.languages.bash;
+
+const LIGHT_PALETTE = {
+  light: PALETTE.lightGrey,
+  lightGrey: PALETTE.lightGrey,
+  green: "#6EBD00",
+  blue: "#657EFF",
+  yellow: "#E69D00",
+};
+const DARK_PALETTE = {
+  light: PALETTE.lightGrey,
+  grey: PALETTE.lightGrey,
+  green: "#ABCC7D",
+  blue: "#A9B7FF",
+  yellow: "#FFDD96",
+};
+
+const RESPONSE_THEME = {
+  key: LIGHT_PALETTE.medium,
+  punctuation: LIGHT_PALETTE.grey,
+  boolean: LIGHT_PALETTE.yellow,
+  string: LIGHT_PALETTE.green,
+  number: LIGHT_PALETTE.blue,
+};
+const CODE_THEME = {
+  punctuation: DARK_PALETTE.grey,
+  property: DARK_PALETTE.grey,
+  builtin: DARK_PALETTE.blue,
+  string: DARK_PALETTE.green,
+  function: DARK_PALETTE.yellow,
+  boolean: DARK_PALETTE.yellow,
+  object: DARK_PALETTE.yellow,
+  comment: DARK_PALETTE.grey,
+  variable: DARK_PALETTE.light,
+  htmlTag: DARK_PALETTE.grey,
+  cssVariable: DARK_PALETTE.yellow,
+  cssSelector: DARK_PALETTE.green,
+};
+
 // All markdown content has syntax highlighting markup created, but not all
 // pages load the css required to actually style the lines appropriately.
 // This component has to be rendered to add color to syntax.
-export const PrismStyles = createGlobalStyle`	
-/* PrismJS 1.16.0	
-https://prismjs.com/download.html#themes=prism&languages=clike+javascript */	
-/**	
- * prism.js default theme for JavaScript, CSS and HTML	
- * Based on dabblet (http://dabblet.com)	
- * @author Lea Verou	
- */	
-code[class*="language-"],	
-pre[class*="language-"] {	
-  color: ${PALETTE.white};
-  font-family: ${FONT_FAMILY.monospace};	
-  font-size: 1em;	
-  text-align: left;	
-  white-space: pre-wrap;	
-  word-spacing: normal;	
-  word-break: normal;	
-  word-wrap: normal;	
-  line-height: 1.5;	
-  -moz-tab-size: 4;	
-  -o-tab-size: 4;	
-  tab-size: 4;	
-  -webkit-hyphens: none;	
-  -moz-hyphens: none;	
-  -ms-hyphens: none;	
+export const PrismStyles = createGlobalStyle`
+/* PrismJS 1.16.0
+https://prismjs.com/download.html#themes=prism&languages=clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  margin: 0;
+  font-family: ${FONT_FAMILY.monospace};
+  font-size: 1em;
+  text-align: left;
+  white-space: pre-wrap;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
   hyphens: none;
-
 
   &.line-numbers {
     display: block;
@@ -44,10 +95,8 @@ pre[class*="language-"] {
     }
   }
 
-  .line-numbers-rows {	
+  .line-numbers-rows {
     display: block;
-    padding-left: 0.5rem !important;
-    left: -0.5rem !important;
 
     div[data-language="json"] & {
       display: none !important;
@@ -57,102 +106,93 @@ pre[class*="language-"] {
       color: #8d8f99 !important;
     }
   }
-}	
-
-@media print {	
-  code[class*="language-"],	
-  pre[class*="language-"] {	
-    text-shadow: none;
-  }	
 }
 
-div[data-language="json"] {
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+/* Example response */
+.language-json {
   .token.property,
-  .token.tag,
-  .token.constant,
-  .token.symbol,
-  .token.deleted {
-    color: ${(props) => (props.isDoc ? PALETTE.white : "slategray")};
+  .token.operator {
+    color: ${RESPONSE_THEME.key};
+  }
+  .token.punctuation {
+    color: ${RESPONSE_THEME.punctuation};
+  }
+  .token.boolean {
+    color: ${RESPONSE_THEME.boolean};
+  }
+  .token.number {
+    color: ${RESPONSE_THEME.number};
+  }
+  .token.string {
+    color: ${RESPONSE_THEME.string};
   }
 }
-/* Code blocks */	
-pre[class*="language-"] {	
-  margin: 0;
-}	
-/* Inline code */	
-:not(pre) > code[class*="language-"] {	
-  padding: 0.1em;	
-  border-radius: 0.3em;	
-  white-space: normal;	
-}	
-.token.comment,	
-.token.prolog,	
-.token.doctype,	
-.token.cdata {	
-  color: "slategray";
-}	
-.token.punctuation {	
-  color: ${PALETTE.lightGrey};
-}	
-.namespace {	
-  opacity: 0.7;	
-}	
-.token.property,	
-.token.tag,	
-.token.constant,	
-.token.symbol,	
-.token.deleted {	
-  color: rgba(255,255,255,0.6);
-}	
-.token.boolean {	
-    color: #e5c687;	
-}	
-.token.number {	
-    color: #8792cc;	
-}	
-.token.selector,	
-.token.attr-name,	
-.token.string,	
-.token.char,	
-.token.builtin,	
-.token.inserted {	
-  color: #abcc7d;
-}	
-.token.operator,	
-.token.entity,	
-.token.url,	
-.language-css .token.string,	
-.style .token.string {	
-  color: ${PALETTE.black60};	
-}	
-.token.atrule,	
-.token.attr-value,	
-.token.keyword {	
-  color: #a9b7ff;	
-}	
-.token.function,	
-.token.class-name {	
-  color: #ffdd96;	
-}	
-.token.regex,	
-.token.important,	
-.token.variable {	
-  color: #e90;	
-}	
-.token.important,	
-.token.bold {	
-  font-weight: ${FONT_WEIGHT.bold};	
-}	
-.token.italic {	
-  font-style: italic;	
-}	
-.token.entity {	
-  cursor: help;	
-}	
-/**	
- * If you only want to use line numbering	
- */	
-.gatsby-highlight {  	
-  border-radius: 0.3em;	
+
+/* Example code */
+pre[class*="language-"]:not(.language-json) {
+  .token.punctuation,
+  .token.operator {
+    color: ${CODE_THEME.punctuation};
+  }
+  .token.property {
+    color: ${CODE_THEME.property};
+  }
+  .token.builtin,
+  .token.atrule,
+  .token.attr-name,
+  .token.keyword {
+    color: ${CODE_THEME.builtin};
+  }
+  .token.string,
+  .token.url,
+  .token.attr-value {
+    color: ${CODE_THEME.string};
+  }
+  .token.regex,
+  .token.function {
+    color: ${CODE_THEME.function};
+  }
+  .token.boolean {
+    color: ${CODE_THEME.boolean};
+  }
+  .token.class-name {
+    color: ${CODE_THEME.object};
+  }
+  .token.comment {
+    color: ${CODE_THEME.comment};
+  }
+  .token.variable {
+    color: ${CODE_THEME.variable};
+  }
+  .token.tag {
+    color: ${CODE_THEME.htmlTag};
+  }
+  .language-css, .language-scss {
+    .token.variable {
+      color: ${CODE_THEME.cssVariable};
+    }
+  }
+  .token.selector {
+    color: ${CODE_THEME.cssSelector};
+  }
+}
+
+/* Generic */
+.token.important,
+.token.bold {
+  font-weight: ${FONT_WEIGHT.bold};
+}
+.token.italic {
+  font-style: italic;
+}
+.token.entity {
+  cursor: help;
 }
 `;

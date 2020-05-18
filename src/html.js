@@ -16,6 +16,18 @@ export default function HTML(props) {
           id="___gatsby"
           dangerouslySetInnerHTML={{ __html: props.body }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+if (document.location.pathname.startsWith('/api')) {
+  var el = document.getElementById(document.location.pathname)
+  if (el) {
+    el.scrollIntoView();
+  }
+}
+`,
+          }}
+        />
         {props.postBodyComponents}
       </body>
     </html>

@@ -41,59 +41,6 @@ module.exports = {
               maxWidth: 800,
             },
           },
-          {
-            resolve: `gatsby-remark-prismjs`,
-            options: {
-              showLineNumbers: true,
-              noInlineHighlight: true,
-              languageExtensions: [
-                {
-                  language: "curl",
-                  extend: "javascript",
-                  definition: {
-                    curl_types: /(curl)/,
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      resolve: "gatsby-transformer-remark",
-      options: {
-        plugins: [
-          {
-            resolve: "gatsby-remark-mermaid",
-            options: {
-              theme: "neutral",
-              fontFamily:
-                '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
-            },
-          },
-          {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 800,
-            },
-          },
-          {
-            resolve: `gatsby-remark-prismjs`,
-            options: {
-              showLineNumbers: true,
-              noInlineHighlight: true,
-              languageExtensions: [
-                {
-                  language: "curl",
-                  extend: "javascript",
-                  definition: {
-                    curl_types: /(curl)/,
-                  },
-                },
-              ],
-            },
-          },
         ],
       },
     },
