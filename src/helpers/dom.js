@@ -35,7 +35,7 @@ export const findActiveNode = (possibleNodes, isScrollingDown) => {
     possibleNodes = reverse(possibleNodes);
   }
 
-  return possibleNodes.find((x) => {
+  const activeNodes = possibleNodes.filter((x) => {
     if (!x.current) {
       return false;
     }
@@ -44,4 +44,6 @@ export const findActiveNode = (possibleNodes, isScrollingDown) => {
       ? top < bottomEdge && top > 0
       : bottom > topEdge && bottom < window.innerHeight;
   });
+
+  return isScrollingDown ? activeNodes[activeNodes.length - 1] : activeNodes[0];
 };
