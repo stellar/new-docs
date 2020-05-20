@@ -376,8 +376,38 @@ export const groupByCategory = (referenceDocs) => {
   }, {});
 };
 
+/**
+ * consolidateToSection is a reducer function to consolidate
+ * all of subsequent items after <h2/> into an array of section
+ * For <TrackedContent/> to surround its H2 and the content for /docs
+ */
+export const consolidateToSection = () => {
+  let lastH2Index;
+
+  return function(acc, ele, index) {
+    const arr = [];
+
+    if (ele.props.mdxType === "h2") {
+      if (!lastH2Index) {
+        lastH2Index = index;
+      } else {
+        lastH2Index += 1;
+      }
+      arr.push(ele);
+      acc.push(arr);
+    } else if (lastH2Index && index > lastH2Index) {
+      acc[lastH2Index].push(ele);
+    } else {
+      acc.push(ele);
+    }
+
+    return acc;
+  };
+};
+
 export const ensureArray = (maybeArray) =>
   Array.isArray(maybeArray) ? maybeArray : [maybeArray];
+
 const combineAdjacentStrings = (list) =>
   list.reduce((accum, item) => {
     const lastIndex = accum.length - 1;

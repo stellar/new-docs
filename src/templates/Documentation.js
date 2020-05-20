@@ -16,6 +16,7 @@ import {
   findInitialOpenTopics,
   findArticle,
   buildDocsContents,
+  consolidateToSection,
 } from "helpers/documentation";
 import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
@@ -106,6 +107,8 @@ const ModifiedEl = styled.div`
   }
 `;
 
+const SectionEl = styled.section``;
+
 const PageOutlineItem = ({ id, isActive, title }) => (
   <NavItemEl
     isActive={isActive}
@@ -121,26 +124,39 @@ const PageOutlineItem = ({ id, isActive, title }) => (
 const componentMapping = {
   ...components,
   // eslint-disable-next-line react/prop-types
+  wrapper: ({ children }) => {
+    const DocSections = React.Children.toArray(children).reduce(
+      consolidateToSection(),
+      [],
+    );
+
+    return DocSections.map((docSection, index) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <SectionEl key={index}>
+        {docSection.length > 0 ? (
+          <TrackedContent
+            identifier={slugify(
+              loopAndExtractString(docSection[0].props.children),
+            )}
+          >
+            {docSection}
+          </TrackedContent>
+        ) : (
+          docSection
+        )}
+      </SectionEl>
+    ));
+  },
+  // eslint-disable-next-line react/prop-types
   h2: ({ children }) => {
     /* For cases when <H2/> has an element besides strings.
     For example, "Implementing the /info Endpoint" from
     '/docs/enabling-deposit-and-withdrawal/setting-up-test-server/
     has a <Code/> to highlight "/info" */
-    if (typeof children !== "string") {
-      // eslint-disable-next-line react/prop-types
-      const id = slugify(loopAndExtractString(children));
-      return (
-        <TrackedContent identifier={id}>
-          <H2 id={id}>{children}</H2>
-        </TrackedContent>
-      );
-    }
-    const id = slugify(children);
-    return (
-      <TrackedContent identifier={id}>
-        <H2 id={id}>{children}</H2>
-      </TrackedContent>
-    );
+    const id = slugify(loopAndExtractString(children));
+
+    // eslint-disable-next-line react/prop-types
+    return <H2 id={id}>{children}</H2>;
   },
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
