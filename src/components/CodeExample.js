@@ -3,8 +3,9 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
-import { CopyIcon } from "basics/Icons";
+import { BasicButton } from "basics/Buttons";
+import { CopyIcon, ExternalLinkIcon } from "basics/Icons";
+import { Code } from "basics/Text";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 
@@ -16,7 +17,6 @@ import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 
 import { Tooltip } from "components/Tooltip";
-import { Code } from "basics/Text";
 
 const CODE_LANGS = {
   bash: "bash",

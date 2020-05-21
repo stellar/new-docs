@@ -95,12 +95,7 @@ export const Tooltip = ({ duration = 150, message, children }) => {
     >
       {children}
       {renderToPortal(
-        <TooltipEl
-          isOpen={isOpen}
-          ref={tooltipRef}
-          duration={duration}
-          //  style={position}
-        >
+        <TooltipEl isOpen={isOpen} ref={tooltipRef} duration={duration}>
           {message}
         </TooltipEl>,
         PORTAL_TARGETS.tooltip,

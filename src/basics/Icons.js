@@ -11,6 +11,7 @@ import CopySVG from "assets/icons/icon-copy.svg";
 import EditSVG from "assets/icons/icon-edit.svg";
 import AlertSVG from "assets/icons/icon-alert.svg";
 import MenuSVG from "assets/icons/menu.svg";
+import ExternalLinkSVG from "assets/icons/icon-external-link.svg";
 
 const AlertEl = styled.div`
   display: inline-block;
@@ -154,3 +155,5 @@ const CopyIconEl = styled(CopySVG)`
 `;
 
 export const CopyIcon = (props) => <CopyIconEl {...props} />;
+
+export const ExternalLinkIcon = ExternalLinkSVG;
