@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { PORTAL_TARGETS } from "constants/domNodes";
 
 export default function HTML(props) {
   return (
@@ -29,6 +30,10 @@ if (document.location.pathname.startsWith('/api')) {
           }}
         />
         {props.postBodyComponents}
+
+        {Object.values(PORTAL_TARGETS).map((name) => (
+          <div key={name} id={name} />
+        ))}
       </body>
     </html>
   );

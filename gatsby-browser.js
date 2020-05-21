@@ -1,7 +1,6 @@
 import React from "react";
 import * as Sentry from "@sentry/browser";
 
-import { PORTAL_TARGETS } from "constants/domNodes";
 import { GlobalStyles } from "basics/GlobalStyles";
 import Providers from "components/Providers";
 import { IS_BUILD } from "./buildHelpers/env";
@@ -48,12 +47,6 @@ export const onInitialClientRender = () => {
     }
     /* eslint-enable */
   }
-
-  Object.values(PORTAL_TARGETS).forEach((name) => {
-    const portal = document.createElement("div");
-    portal.id = name;
-    document.body.appendChild(portal);
-  });
 };
 
 const isApiReference = (routerProps) =>
