@@ -42,7 +42,6 @@ const LangSelect = styled(Select)`
 
   select {
     display: inline-block;
-    margin: 0 1rem;
     padding: 0.5rem;
     font-size: 0.75rem;
     border: none;
@@ -110,8 +109,9 @@ const CodeExampleEl = styled.div`
   }
 `;
 
-const CopyWrapperEl = styled.div`
-  cursor: pointer;
+const CopyButtonEl = styled(BasicButton).attrs({
+  "aria-label": "Copy snippet",
+})`
   padding: 0.75rem 1rem;
 `;
 
@@ -246,9 +246,9 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
               text={SelectedSnippetStr}
               onCopy={() => !isCopied && setCopy(true)}
             >
-              <CopyWrapperEl>
+              <CopyButtonEl>
                 <CopyIcon />
-              </CopyWrapperEl>
+              </CopyButtonEl>
             </CopyToClipboard>
           </Tooltip>
 
