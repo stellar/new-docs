@@ -36,6 +36,9 @@ import {
   Provider as SideNavProvider,
   TrackedContent,
 } from "components/SideNav";
+
+import { SideNavProgressContext } from "components/SideNav/Provider";
+
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Documentation/Footer";
@@ -109,17 +112,27 @@ const ModifiedEl = styled.div`
 
 const SectionEl = styled.section``;
 
-const PageOutlineItem = ({ id, isActive, title }) => (
-  <NavItemEl
-    isActive={isActive}
-    onClick={(e) => {
-      e.preventDefault();
-      smoothScrollTo(document.getElementById(id));
-    }}
-  >
-    {title}
-  </NavItemEl>
-);
+const PageOutlineItem = ({ id, isActive, title }) => {
+  const { setActiveNode, onNavClick } = React.useContext(
+    SideNavProgressContext,
+  );
+
+  return (
+    <NavItemEl
+      isActive={isActive}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavClick(true);
+        setActiveNode(document.getElementById(id));
+        smoothScrollTo(document.getElementById(id), () => {
+          onNavClick(false);
+        });
+      }}
+    >
+      {title}
+    </NavItemEl>
+  );
+};
 
 const componentMapping = {
   ...components,

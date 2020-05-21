@@ -380,11 +380,12 @@ export const groupByCategory = (referenceDocs) => {
  * consolidateToSection is a reducer function to consolidate
  * all of subsequent items after <h2/> into an array of section
  * For <TrackedContent/> to surround its H2 and the content for /docs
+ * @returns {array} An array of objects with sections grouped
  */
 export const consolidateToSection = () => {
   let lastH2Index;
 
-  return function(acc, ele, index) {
+  return function consolidateReducer(acc, ele, index) {
     const arr = [];
 
     if (ele.props.mdxType === "h2") {

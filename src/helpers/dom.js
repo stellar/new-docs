@@ -7,13 +7,15 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 // eslint-disable-next-line
 const scrollPlugin = ScrollToPlugin;
 
-export const smoothScrollTo = (node, options = {}) => {
-  const { offset = 0, duration = 0.55 } = options;
+export const smoothScrollTo = (node, onCompleteFn) => {
+  const offset = 0;
+  const duration = 0.55;
 
   TweenLite.to(window, duration, {
     scrollTo: {
       y: node.offsetTop + offset,
     },
+    onComplete: onCompleteFn,
   });
 };
 
@@ -40,10 +42,23 @@ export const findActiveNode = (possibleNodes, isScrollingDown) => {
       return false;
     }
     const { top, bottom } = x.current.getBoundingClientRect();
+
     return isScrollingDown
       ? top < bottomEdge && top > 0
       : bottom > topEdge && bottom < window.innerHeight;
   });
 
-  return isScrollingDown ? activeNodes[activeNodes.length - 1] : activeNodes[0];
+  const isReachedBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - topEdge;
+
+  if (isScrollingDown) {
+    // For Edge case
+    // The last two items on https://developers.stellar.org/docs/
+    // Has equal hiearachy when scrolled all the way down
+    // Display the last item when scrolled all the way to the bottom
+    return isReachedBottom
+      ? activeNodes[activeNodes.length - 1]
+      : activeNodes[0];
+  }
+  return activeNodes[activeNodes.length - 1];
 };
