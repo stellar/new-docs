@@ -1,4 +1,3 @@
-import memoize from "memoize-one";
 import { TweenLite } from "gsap/TweenLite";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
@@ -19,8 +18,6 @@ export const smoothScrollTo = (node, onCompleteFn) => {
   });
 };
 
-const reverse = memoize((arr) => arr.slice().reverse());
-
 /**
  * findActiveNode expects a list of react refs and whether we're scrolling down
  * or not, and returns which node is most likely to be in focus.
@@ -30,35 +27,27 @@ const reverse = memoize((arr) => arr.slice().reverse());
  */
 export const findActiveNode = (possibleNodes, isScrollingDown) => {
   const topEdge = window.innerHeight * 0.125;
-  const bottomEdge = window.innerHeight * 0.875;
+  const bottomEdge = window.innerHeight * 0.5;
 
-  if (!isScrollingDown) {
-    // eslint-disable-next-line no-param-reassign
-    possibleNodes = reverse(possibleNodes);
-  }
+  const isReachedBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - topEdge;
 
-  const activeNodes = possibleNodes.filter((x) => {
+  return possibleNodes.find((x) => {
     if (!x.current) {
       return false;
     }
     const { top, bottom } = x.current.getBoundingClientRect();
 
-    return isScrollingDown
-      ? top < bottomEdge && top > 0
-      : bottom > topEdge && bottom < window.innerHeight;
+    if (isScrollingDown) {
+      // For Edge case
+      // The last two items on https://developers.stellar.org/docs/
+      // Has equal hiearachy when scrolled all the way down
+      // Display the last item when scrolled all the way to the bottom
+      return isReachedBottom
+        ? bottom + bottomEdge > window.innerHeight - topEdge
+        : top < bottomEdge && top > 0;
+    }
+
+    return bottom > topEdge && bottom < window.innerHeight;
   });
-
-  const isReachedBottom =
-    window.innerHeight + window.scrollY >= document.body.offsetHeight - topEdge;
-
-  if (isScrollingDown) {
-    // For Edge case
-    // The last two items on https://developers.stellar.org/docs/
-    // Has equal hiearachy when scrolled all the way down
-    // Display the last item when scrolled all the way to the bottom
-    return isReachedBottom
-      ? activeNodes[activeNodes.length - 1]
-      : activeNodes[0];
-  }
-  return activeNodes[activeNodes.length - 1];
 };
