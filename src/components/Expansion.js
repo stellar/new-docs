@@ -19,7 +19,7 @@ const ExpandedSectionEl = styled.div`
   ${(props) =>
     props.isExpanded
       ? `
-  height: ${props.originalHeight}px;
+  height: ${props.originalHeight};
   display: block;`
       : `
   height: 0px;`}
@@ -64,10 +64,10 @@ const ExpansionIconEl = styled.div`
 
 export const ExpandedSection = ({ children, isExpanded, ...props }) => {
   const sectionRef = React.useRef(null);
-  const [originalHeight, setHeight] = React.useState(0);
+  const [originalHeight, setHeight] = React.useState("auto");
 
   React.useLayoutEffect(() => {
-    setHeight(sectionRef.current.scrollHeight);
+    setHeight(`${sectionRef.current.scrollHeight / 16}rem`);
   }, []);
 
   return (
