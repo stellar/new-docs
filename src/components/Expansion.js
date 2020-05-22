@@ -22,10 +22,13 @@ const ExpandedSectionEl = styled.div`
   height: ${props.originalHeight};
   display: block;`
       : `
-  height: 0px;`}
+  height: 0px;
+    border-bottom: none;`}
 `;
 
-const ExpansionEl = styled.div`
+const ExpansionEl = styled.div.attrs((props) => ({
+  "aria-expanded": props.isExpanded,
+}))`
   display: flex;
   flex-direction: column;
   border-radius: 4px;
@@ -34,11 +37,8 @@ const ExpansionEl = styled.div`
   ${ExpansionHeaderEl} {
     padding: 1rem 0;
   }
-  ${ExpandedSectionEl} {
-    padding: 0;
-  }
 
-  ${({ hasBorder }) =>
+  ${({ hasBorder, isExpanded }) =>
     hasBorder &&
     css`
       ${ExpansionHeaderEl} {
@@ -46,17 +46,17 @@ const ExpansionEl = styled.div`
         padding: 1rem;
       }
       ${ExpandedSectionEl} {
-        padding: 1rem;
         border-top: none;
         border-right: solid 1px ${PALETTE.white60};
         border-left: solid 1px ${PALETTE.white60};
-        border-bottom: solid 1px ${PALETTE.white60};
+        ${isExpanded && `border-bottom: solid 1px ${PALETTE.white60};`}
       }
     `}
 `;
 
 const ExpansionIconEl = styled.div`
   display: block;
+
   width: auto;
   align-items: center;
   justify-content: space-between;
@@ -64,7 +64,9 @@ const ExpansionIconEl = styled.div`
 
 export const ExpandedSection = ({ children, isExpanded, ...props }) => {
   const sectionRef = React.useRef(null);
-  const [originalHeight, setHeight] = React.useState("auto");
+  const [originalHeight, setHeight] = React.useState(
+    isExpanded ? "auto" : "0rem",
+  );
 
   React.useLayoutEffect(() => {
     setHeight(`${sectionRef.current.scrollHeight / 16}rem`);
@@ -114,7 +116,7 @@ export const Expansion = React.forwardRef(function Expansion(
   return (
     <ExpansionEl
       hasBorder={hasBorder}
-      aria-expanded={isExpanded}
+      isExpanded={isExpanded}
       ref={ref}
       {...props}
     >
