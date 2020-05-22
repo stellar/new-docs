@@ -10,13 +10,19 @@ const ExpansionHeaderEl = styled.div`
   justify-content: space-between;
   height: auto;
   overflow: hidden;
-  transition: transform ${CSS_TRANSITION_SPEED.default} ease-out;
+  transition: transform ${CSS_TRANSITION_SPEED.default} ease-in-out;
 `;
 
 const ExpandedSectionEl = styled.div`
   overflow: hidden;
-  height: ${(props) => (props.isExpanded ? "auto" : 0)};
-  display: ${(props) => (props.isExpanded ? "block" : "none")};
+  transition: height ${CSS_TRANSITION_SPEED.default} ease-in-out;
+  ${(props) =>
+    props.isExpanded
+      ? `
+  height: ${props.originalHeight}px;
+  display: block;`
+      : `
+  height: 0px;`}
 `;
 
 const ExpansionEl = styled.div`
@@ -56,16 +62,21 @@ const ExpansionIconEl = styled.div`
   justify-content: space-between;
 `;
 
-const ExpandedSection = ({ children, isExpanded, ...props }) => {
+export const ExpandedSection = ({ children, isExpanded, ...props }) => {
   const sectionRef = React.useRef(null);
-  const [height, setHeight] = React.useState(0);
+  const [originalHeight, setHeight] = React.useState(0);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     setHeight(sectionRef.current.scrollHeight);
-  }, [height]);
+  }, []);
 
   return (
-    <ExpandedSectionEl ref={sectionRef} isExpanded={isExpanded} {...props}>
+    <ExpandedSectionEl
+      {...props}
+      ref={sectionRef}
+      isExpanded={isExpanded}
+      originalHeight={originalHeight}
+    >
       {children}
     </ExpandedSectionEl>
   );
