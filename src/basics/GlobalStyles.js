@@ -1,10 +1,11 @@
-import { createGlobalStyle, css } from "styled-components";
+import React from "react";
+import { createGlobalStyle } from "styled-components";
 import styledNormalize from "styled-normalize";
 
 import { FONTS } from "constants/fonts";
 import { FONT_FAMILY } from "constants/styles";
 
-export const GlobalStyles = createGlobalStyle`
+const Styles = createGlobalStyle`
   body,
   html,
   input,
@@ -38,9 +39,10 @@ export const GlobalStyles = createGlobalStyle`
   twitter-widget {
     margin: auto;
   }
+`;
 
-${FONTS.map(
-  (font) => css`
+const fontStyles = FONTS.map(
+  (font) => `
     @font-face {
       font-display: ${font.fontDisplay || "swap"};
       font-family: "${font.fontFamily}";
@@ -52,6 +54,11 @@ ${FONTS.map(
       ${font.unicodeRange && `unicode-range: ${font.unicodeRange};`}
     }
   `,
-)}
-  }
-`;
+).join("");
+
+export const GlobalStyles = () => (
+  <>
+    <style dangerouslySetInnerHTML={{ __html: fontStyles }} />
+    <Styles />
+  </>
+);
