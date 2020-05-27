@@ -16,6 +16,7 @@ import {
   findInitialOpenTopics,
   findArticle,
   buildDocsContents,
+  consolidateToSection,
 } from "helpers/documentation";
 import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
@@ -35,6 +36,9 @@ import {
   Provider as SideNavProvider,
   TrackedContent,
 } from "components/SideNav";
+
+import { SideNavProgressContext } from "components/SideNav/Provider";
+
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Documentation/Footer";
@@ -106,41 +110,66 @@ const ModifiedEl = styled.div`
   }
 `;
 
-const PageOutlineItem = ({ id, isActive, title }) => (
-  <NavItemEl
-    isActive={isActive}
-    onClick={(e) => {
-      e.preventDefault();
-      smoothScrollTo(document.getElementById(id));
-    }}
-  >
-    {title}
-  </NavItemEl>
-);
+const SectionEl = styled.section``;
+
+const PageOutlineItem = ({ id, isActive, title }) => {
+  const { setActiveNode, onNavClick } = React.useContext(
+    SideNavProgressContext,
+  );
+
+  return (
+    <NavItemEl
+      isActive={isActive}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavClick(true);
+        setActiveNode(document.getElementById(id));
+        smoothScrollTo(document.getElementById(id), () => {
+          onNavClick(false);
+        });
+      }}
+    >
+      {title}
+    </NavItemEl>
+  );
+};
 
 const componentMapping = {
   ...components,
+  // eslint-disable-next-line react/prop-types
+  wrapper: ({ children }) => {
+    const DocSections = React.Children.toArray(children).reduce(
+      consolidateToSection(),
+      [],
+    );
+
+    return DocSections.map((docSection, index) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <SectionEl key={index}>
+        {docSection.length > 0 ? (
+          <TrackedContent
+            identifier={slugify(
+              loopAndExtractString(docSection[0].props.children),
+            )}
+          >
+            {docSection}
+          </TrackedContent>
+        ) : (
+          docSection
+        )}
+      </SectionEl>
+    ));
+  },
   // eslint-disable-next-line react/prop-types
   h2: ({ children }) => {
     /* For cases when <H2/> has an element besides strings.
     For example, "Implementing the /info Endpoint" from
     '/docs/enabling-deposit-and-withdrawal/setting-up-test-server/
     has a <Code/> to highlight "/info" */
-    if (typeof children !== "string") {
-      // eslint-disable-next-line react/prop-types
-      const id = slugify(loopAndExtractString(children));
-      return (
-        <TrackedContent identifier={id}>
-          <H2 id={id}>{children}</H2>
-        </TrackedContent>
-      );
-    }
-    const id = slugify(children);
-    return (
-      <TrackedContent identifier={id}>
-        <H2 id={id}>{children}</H2>
-      </TrackedContent>
-    );
+    const id = slugify(loopAndExtractString(children));
+
+    // eslint-disable-next-line react/prop-types
+    return <H2 id={id}>{children}</H2>;
   },
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {
