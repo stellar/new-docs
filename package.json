@@ -77,7 +77,6 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
     "lodash": "^4.17.15",
-    "prettier": "^1.17.0",
     "pretty-quick": "^1.10.0",
     "prismjs": "^1.17.1",
     "prop-types": "^15.7.2",
@@ -99,5 +98,8 @@
   },
   "homepage": "https://stellar.org",
   "license": "MIT",
-  "prettier": "@stellar/prettier-config"
+  "prettier": "@stellar/prettier-config",
+  "devDependencies": {
+    "prettier": "prettier/prettier"
+  }
 }

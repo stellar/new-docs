@@ -5,23 +5,31 @@ order: 50
 
 import { CodeExample } from "components/CodeExample";
 
-If you want to run a [Full Validator](link) or an [Archiver](link), you need to set up your node to publish a history archive. You can host an archive using a blob store such as Amazon's s3 or Digital Ocean's spaces, or you can simply serve a local archive directly via an HTTP server such as Nginx or Apache.  If you're setting up a [Watcher](link) or a [Basic Validator](link), you can skip this section.  No matter what kind of node you're planning to run, make sure to set it up to `get` history, which is covered in [Configuration](link). 
+If you want to run a [Full Validator](link) or an [Archiver](link), you need to
+set up your node to publish a history archive. You can host an archive using a
+blob store such as Amazon's s3 or Digital Ocean's spaces, or you can simply
+serve a local archive directly via an HTTP server such as Nginx or Apache. If
+you're setting up a [Watcher](link) or a [Basic Validator](link), you can skip
+this section. No matter what kind of node you're planning to run, make sure to
+set it up to `get` history, which is covered in [Configuration](link).
 
 ## Caching and History Archives
 
-You can significantly reduce the data transfer costs associated with running a public History archive by using common caching techniques or a CDN.
+You can significantly reduce the data transfer costs associated with running a
+public History archive by using common caching techniques or a CDN.
 
 Three simple rules apply to caching the History archives:
 
-  * Do not cache the archive state file `.well-known/history-stellar.json` (**"Cache-Control: no-cache"**)
-  * Do not cache HTTP 4xx responses (**"Cache-Control: no-cache"**)
-  * Cache everything else for as long as possible (**> 1 day**)
+- Do not cache the archive state file `.well-known/history-stellar.json`
+  (**"Cache-Control: no-cache"**)
+- Do not cache HTTP 4xx responses (**"Cache-Control: no-cache"**)
+- Cache everything else for as long as possible (**> 1 day**)
 
 ## Local History Archive Using nginx
 
 To publish a local history archive using nginx:
 
- * Add a history configuration stanza to your `/etc/stellar/stellar-core.cfg`:
+- Add a history configuration stanza to your `/etc/stellar/stellar-core.cfg`:
 
 <CodeExample>
 
@@ -34,7 +42,7 @@ mkdir="mkdir -p /mnt/xvdf/stellar-core-archive/node_001/{0}"
 
 </CodeExample>
 
- * Run new-hist to create the local archive
+- Run new-hist to create the local archive
 
 `# sudo -u stellar stellar-core --conf /etc/stellar/stellar-core.cfg new-hist local`
 
@@ -59,7 +67,7 @@ This command creates the history archive structure:
 
 </CodeExample>
 
- * Configure a virtual host to serve the local archive (Nginx)
+- Configure a virtual host to serve the local archive (Nginx)
 
 <CodeExample>
 
@@ -99,7 +107,7 @@ server {
 
 To publish a history archive using Amazon S3:
 
- * Add a history configuration stanza to your `/etc/stellar/stellar-core.cfg`:
+- Add a history configuration stanza to your `/etc/stellar/stellar-core.cfg`:
 
 <CodeExample>
 
@@ -111,12 +119,12 @@ put='aws s3 cp --region us-east-1 {0} s3://bucket.name/{1}' # Direct S3 access
 
 </CodeExample>
 
- * Run new-hist to create the s3 archive
+- Run new-hist to create the s3 archive
 
 `# sudo -u stellar stellar-core --conf /etc/stellar/stellar-core.cfg new-hist s3`
 
- * Serve the archive using an Amazon S3 static site
- * Optionally place a reverse proxy and CDN in front of the S3 static site
+- Serve the archive using an Amazon S3 static site
+- Optionally place a reverse proxy and CDN in front of the S3 static site
 
 <CodeExample>
 
@@ -177,16 +185,24 @@ server {
 
 ## Backfilling a history archive
 
-Given the choice, it's best to configure your history archive prior to your node's initial synch to the network.  That way your validator's history publishes as you join/synch to the network.
+Given the choice, it's best to configure your history archive prior to your
+node's initial synch to the network. That way your validator's history publishes
+as you join/synch to the network.
 
-However, if you have *not* published an archive during the node's initial synch, it's still possible to use the [stellar-archivist](https://github.com/stellar/go/tree/master/tools/stellar-archivist) command line tool to mirror, scan, and repair existing archives.
+However, if you have _not_ published an archive during the node's initial synch,
+it's still possible to use the
+[stellar-archivist](https://github.com/stellar/go/tree/master/tools/stellar-archivist)
+command line tool to mirror, scan, and repair existing archives.
 
-Using the [SDF package repositories](link) you can install `stellar-archivist` by running `apt-get install stellar-archivist`
+Using the [SDF package repositories](link) you can install `stellar-archivist`
+by running `apt-get install stellar-archivist`
 
-The steps required to create a History archive for an existing validator — in other words, to upgrade a Basic Validator to a Full Validator — are straightforward:
+The steps required to create a History archive for an existing validator — in
+other words, to upgrade a Basic Validator to a Full Validator — are
+straightforward:
 
- * Stop your stellar-core instance (`systemctl stop stellar-core`)
- * Configure a history archive for the new node
+- Stop your stellar-core instance (`systemctl stop stellar-core`)
+- Configure a history archive for the new node
 
 <CodeExample>
 
@@ -199,7 +215,7 @@ mkdir="mkdir -p /mnt/xvdf/stellar-core-archive/node_001/{0}"
 
 </CodeExample>
 
- * Run new-hist to create the local archive
+- Run new-hist to create the local archive
 
 `# sudo -u stellar stellar-core --conf /etc/stellar/stellar-core.cfg new-hist local`
 
@@ -224,8 +240,9 @@ This command creates the History archive structure:
 
 </CodeExample>
 
- * Start your Stellar Core instance (`systemctl start stellar-core`)
- * Allow your node to join the network and watch it start publishing a few checkpoints to the newly created archive
+- Start your Stellar Core instance (`systemctl start stellar-core`)
+- Allow your node to join the network and watch it start publishing a few
+  checkpoints to the newly created archive
 
 <CodeExample>
 
@@ -235,11 +252,17 @@ This command creates the History archive structure:
 
 </CodeExample>
 
-At this stage your validator is successfully publishing its history, which enables other users to join the network using your archive (although it won't allow them to `CATCHUP_COMPLETE=true` as the archive only has partial network history).
+At this stage your validator is successfully publishing its history, which
+enables other users to join the network using your archive (although it won't
+allow them to `CATCHUP_COMPLETE=true` as the archive only has partial network
+history).
 
 ## Complete History Archive
 
-If you decide to publish a complete archive — which enables other users to join the network from the genesis ledger — it's also  possible to use `stellar-archivist` to add all missing history data to your partial archive, and to verify the state and integrity of your archive.  For example:
+If you decide to publish a complete archive — which enables other users to join
+the network from the genesis ledger — it's also possible to use
+`stellar-archivist` to add all missing history data to your partial archive, and
+to verify the state and integrity of your archive. For example:
 
 <CodeExample>
 
@@ -262,9 +285,11 @@ If you decide to publish a complete archive — which enables other users to joi
 
 </CodeExample>
 
-As you can tell from the output of the `scan` command, some history, ledger, transactions, and results are missing from the local history archive.
+As you can tell from the output of the `scan` command, some history, ledger,
+transactions, and results are missing from the local history archive.
 
-You can repair the missing data using stellar-archivist's `repair` command combined with a known full archive — such as the SDF public history archive:
+You can repair the missing data using stellar-archivist's `repair` command
+combined with a known full archive — such as the SDF public history archive:
 
 `# stellar-archivist repair http://history.stellar.org/prd/core-testnet/core_testnet_001/ file:///mnt/xvdf/stellar-core-archive/node_001/`
 
@@ -310,7 +335,8 @@ You can repair the missing data using stellar-archivist's `repair` command combi
 
 </CodeExample>
 
-A final scan of the local archive confirms that it has been successfully repaired
+A final scan of the local archive confirms that it has been successfully
+repaired
 
 `# stellar-archivist scan file:///mnt/xvdf/stellar-core-archive/node_001`
 
@@ -329,4 +355,5 @@ A final scan of the local archive confirms that it has been successfully repaire
 
 </CodeExample>
 
-Start your stellar-core instance (`systemctl start stellar-core`), and you should have a complete history archive being written to by your full validator.
+Start your stellar-core instance (`systemctl start stellar-core`), and you
+should have a complete history archive being written to by your full validator.

@@ -5,28 +5,53 @@ order: 30
 
 import { CodeExample } from "components/CodeExample";
 
-Horizon is configured using command line flags or environment variables.  To see the list of command line flags that are available (and their default values) for your version of Horizon, run:
+Horizon is configured using command line flags or environment variables. To see
+the list of command line flags that are available (and their default values) for
+your version of Horizon, run:
 
 `horizon --help`
 
-When you run the command above, you'll see that Horizon defines a large number of flags; however, only three are required:
+When you run the command above, you'll see that Horizon defines a large number
+of flags; however, only three are required:
 
 | flag                    | envvar                      | example                              |
-|-------------------------|-----------------------------|--------------------------------------|
+| ----------------------- | --------------------------- | ------------------------------------ |
 | `--db-url`              | `DATABASE_URL`              | postgres://localhost/horizon_testnet |
 | `--stellar-core-db-url` | `STELLAR_CORE_DATABASE_URL` | postgres://localhost/core_testnet    |
 | `--stellar-core-url`    | `STELLAR_CORE_URL`          | http://localhost:11626               |
 
-`--db-url` specifies the Horizon database, and its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.2/static/libpq-connect.html#AEN38419).  `--stellar-core-db-url` specifies a Stellar Core database which will be used to load data from the Stellar ledger.  Finally, `--stellar-core-url` specifies the HTTP control port for an instance of Stellar Core.  This URL should be associated with the Stellar Core server that is writing to the database at `--stellar-core-db-url`.
+`--db-url` specifies the Horizon database, and its value should be a valid
+[PostgreSQL Connection URI](http://www.postgresql.org/docs/9.2/static/libpq-connect.html#AEN38419).
+`--stellar-core-db-url` specifies a Stellar Core database which will be used to
+load data from the Stellar ledger. Finally, `--stellar-core-url` specifies the
+HTTP control port for an instance of Stellar Core. This URL should be associated
+with the Stellar Core server that is writing to the database at
+`--stellar-core-db-url`.
 
-Specifying command line flags every time you invoke Horizon can be cumbersome, and so we recommend using environment variables.  There are many tools you can use to manage environment variables:  we recommend either [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).  A template configuration that is compatible with dotenv can be found in the [Horizon git repo](https://github.com/stellar/go/blob/master/services/horizon/.env.template).
+Specifying command line flags every time you invoke Horizon can be cumbersome,
+and so we recommend using environment variables. There are many tools you can
+use to manage environment variables: we recommend either
+[direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv). A
+template configuration that is compatible with dotenv can be found in the
+[Horizon git repo](https://github.com/stellar/go/blob/master/services/horizon/.env.template).
 
 ## Preparing the Database
 
-Before running the Horizon server, you must first prepare the Horizon database.  This database will be used for all of the information produced by Horizon, notably historical information about successful transactions that have occurred on the stellar network.
+Before running the Horizon server, you must first prepare the Horizon database.
+This database will be used for all of the information produced by Horizon,
+notably historical information about successful transactions that have occurred
+on the stellar network.
 
-To prepare a database for Horizon's use, you must first ensure the database is blank.  It's easiest to simply create a new database on your postgres server specifically for Horizon's use.  Next you must install the schema by running `horizon db init`.  Remember to use the appropriate command line flags or environment variables to configure Horizon as explained in [Configuring ](#Configuring).  This command will log any errors that occur.
+To prepare a database for Horizon's use, you must first ensure the database is
+blank. It's easiest to simply create a new database on your postgres server
+specifically for Horizon's use. Next you must install the schema by running
+`horizon db init`. Remember to use the appropriate command line flags or
+environment variables to configure Horizon as explained in
+[Configuring ](#Configuring). This command will log any errors that occur.
 
 ### Postgres Configuration
 
-It is recommended to set `random_page_cost=1` in Postgres configuration if you are using SSD storage. With this setting Query Planner will make a better use of indexes, expecially for `JOIN` queries. We've noticed a huge speed improvement for some queries.
+It is recommended to set `random_page_cost=1` in Postgres configuration if you
+are using SSD storage. With this setting Query Planner will make a better use of
+indexes, expecially for `JOIN` queries. We've noticed a huge speed improvement
+for some queries.

@@ -5,37 +5,93 @@ order: -100
 
 import { CodeExample } from "components/CodeExample";
 
-Right now, you're looking at the **new Stellar docs**, which are a work in progress.  These new docs will live alongside the [existing Stellar docs](https://www.stellar.org/developers/guides/) until we complete the content, do some polish passes, root out and squash any bugs in the interface, and get feedback from the SDF and the Stellar community at large.
+Right now, you're looking at the **new Stellar docs**, which are a work in
+progress. These new docs will live alongside the
+[existing Stellar docs](https://www.stellar.org/developers/guides/) until we
+complete the content, do some polish passes, root out and squash any bugs in the
+interface, and get feedback from the SDF and the Stellar community at large.
 
-The goal is to keep everything good from the existing docs but to streamline the navigation, improve the looks, and update the content to better reflect where things stand now.  These new docs are also more modular — they're organized around different learning paths —  and the plan is to add new paths as network use cases evolve. 
+The goal is to keep everything good from the existing docs but to streamline the
+navigation, improve the looks, and update the content to better reflect where
+things stand now. These new docs are also more modular — they're organized
+around different learning paths — and the plan is to add new paths as network
+use cases evolve.
 
-As you read through these new docs, you will likely find bugs, errors, typos, or omissions.  When you do, please file PRs or issues in this repo or make a report using [this typeform survey](https://stellarform.typeform.com/to/suEIZI).
+As you read through these new docs, you will likely find bugs, errors, typos, or
+omissions. When you do, please file PRs or issues in this repo or make a report
+using [this typeform survey](https://stellarform.typeform.com/to/suEIZI).
 
-In addition to the docs here, which are guides to building on Stellar, you'll also see a link at the bottom of the left nav to the API Reference.  You should check those out, too: that's a resource most developers consult as they build on Stellar.
+In addition to the docs here, which are guides to building on Stellar, you'll
+also see a link at the bottom of the left nav to the API Reference. You should
+check those out, too: that's a resource most developers consult as they build on
+Stellar.
 
 A rundown of what's here:
 
 ## [Tutorials](./tutorials/create-account.mdx)
-If you’re new to Stellar and want to get an overview of the network, this is where to start.  The early tutorials will show you how to do some basic things like create an account and make payments.  The later tutorials cover more advanced topics like Stellar smart contracts.  If you want to issue an asset or build an app, you're better served checking the sections dedicated to those paths.
+
+If you’re new to Stellar and want to get an overview of the network, this is
+where to start. The early tutorials will show you how to do some basic things
+like create an account and make payments. The later tutorials cover more
+advanced topics like Stellar smart contracts. If you want to issue an asset or
+build an app, you're better served checking the sections dedicated to those
+paths.
 
 ## [Issue Assets](./issuing-assets/index.mdx)
-Stellar is a multi-currency network by design.  The ability to issue assets is fundamental to Stellar, and it's something you can do quickly, safely, and in a few lines of code.  Once you've issued an asset, you can also publish canonical information about it for wallets and consumers, control access to it by setting simple flags, and make it available for trade on the Stellar decentralized exchange.  This section will show you how. 
+
+Stellar is a multi-currency network by design. The ability to issue assets is
+fundamental to Stellar, and it's something you can do quickly, safely, and in a
+few lines of code. Once you've issued an asset, you can also publish canonical
+information about it for wallets and consumers, control access to it by setting
+simple flags, and make it available for trade on the Stellar decentralized
+exchange. This section will show you how.
 
 ## [Enable Deposit and Withdrawal](./enabling-deposit-and-withdrawal/index.mdx)
-Many Stellar assets represent real-world currencies such as dollars, euros, or naira.  Companies that accept deposits and honor withdrawals of those currencies — **anchors** in Stellar terminology — set up standard infrastructure connecting Stellar to banking rails so Stellar interfaces can initiate transactions on behalf of users.  If you want to set up an on/off ramp that interoperates with Stellar wallets, this section is for you.  
+
+Many Stellar assets represent real-world currencies such as dollars, euros, or
+naira. Companies that accept deposits and honor withdrawals of those currencies
+— **anchors** in Stellar terminology — set up standard infrastructure connecting
+Stellar to banking rails so Stellar interfaces can initiate transactions on
+behalf of users. If you want to set up an on/off ramp that interoperates with
+Stellar wallets, this section is for you.
 
 ## [Build Apps](./building-apps/index.mdx)
-Stellar is a self-serve distributed ledger that you can use as a backend to power all kinds of apps and services.  Any app built on Stellar relies on the same basic functions: key storage, account creation, transaction signing, and queries to the Stellar database. This section of the docs will walk you through the process of building a basic wallet that does all those things, and will show you how to add features to it like the support for in-app deposits and withdrawals from anchors.
+
+Stellar is a self-serve distributed ledger that you can use as a backend to
+power all kinds of apps and services. Any app built on Stellar relies on the
+same basic functions: key storage, account creation, transaction signing, and
+queries to the Stellar database. This section of the docs will walk you through
+the process of building a basic wallet that does all those things, and will show
+you how to add features to it like the support for in-app deposits and
+withdrawals from anchors.
 
 ## [Run a Core Node](./run-core-node/index.mdx)
-This section explains the technical and operational aspects of installing, configuring, and maintaining a Stellar Core node, which is a server that connects to the Stellar peer-to-peer network to keep a common distributed ledger.  You don’t have to run a node to get started on Stellar, but you will likely want to if you're in production, need high-availability access network, or want to help increase network health and decentralization.  
+
+This section explains the technical and operational aspects of installing,
+configuring, and maintaining a Stellar Core node, which is a server that
+connects to the Stellar peer-to-peer network to keep a common distributed
+ledger. You don’t have to run a node to get started on Stellar, but you will
+likely want to if you're in production, need high-availability access network,
+or want to help increase network health and decentralization.
 
 ## [Run an API Server](./run-api-server/index.mdx)
-Most developers access the network using Horizon, the Stellar API.  It takes the performance-oriented data structures from Stellar Core and converts them into a friendlier format.  If you're running your own Stellar Core node and using it to submit transactions or get network data, you will likely also want to run your own Horizon instance, and this section will show you how.  If you're just looking to use Horizon (vs. setting up a Horizon server), consult the API Reference.
+
+Most developers access the network using Horizon, the Stellar API. It takes the
+performance-oriented data structures from Stellar Core and converts them into a
+friendlier format. If you're running your own Stellar Core node and using it to
+submit transactions or get network data, you will likely also want to run your
+own Horizon instance, and this section will show you how. If you're just looking
+to use Horizon (vs. setting up a Horizon server), consult the API Reference.
 
 ## [Software and SDKs](./software-and-sdks/index.mdx)
-This is where you'll find all the Stellar SDKs.  There are a lot of them, and they're all pretty well maintained and documented, so you should be able to build on Stellar in your language of choice.  This section is also home to some tools and reference implementations created and maintained by the Stellar Development Foundation to kickstart development.
+
+This is where you'll find all the Stellar SDKs. There are a lot of them, and
+they're all pretty well maintained and documented, so you should be able to
+build on Stellar in your language of choice. This section is also home to some
+tools and reference implementations created and maintained by the Stellar
+Development Foundation to kickstart development.
 
 ## [Glossary](./glossary/accounts.mdx)
-This section defines all the terms and explains all the concepts germane to Stellar.  Use it to look up a word, or to dig deeper into nitty-gritty details.
 
+This section defines all the terms and explains all the concepts germane to
+Stellar. Use it to look up a word, or to dig deeper into nitty-gritty details.
