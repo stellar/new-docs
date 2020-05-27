@@ -6,9 +6,11 @@ order: 100
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-Updates the “authorized” flag of an existing trust line. This must be called by the issuer of the asset.
+Updates the “authorized” flag of an existing trust line. This must be called by
+the issuer of the asset.
 
-See the [`Allow Trust` errors](../../../errors/result-codes/operation-specific/allow-trust.mdx).
+See the
+[`Allow Trust` errors](../../../errors/result-codes/operation-specific/allow-trust.mdx).
 
 <AttributeTable>
 
@@ -17,13 +19,14 @@ See the [`Allow Trust` errors](../../../errors/result-codes/operation-specific/a
   - DESCRIPTION
 - asset_type
   - string
-  - The type of asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type of asset. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - asset_code
   - string
   - The Stellar address of the asset.
 - asset_issuer
   - string
-  - The code for the asset. 
+  - The code for the asset.
 - authorize
   - boolean
   - Allows or disallows trust.

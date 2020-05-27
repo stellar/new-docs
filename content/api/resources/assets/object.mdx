@@ -27,7 +27,10 @@ When Horizon returns information about an asset, it uses the following format:
   - The number of units issued for this asset.
 - num_accounts
   - number
-  - The numnber of accounts that have issued a trustline to this asset. If the `auth_required` flag for this asset's issuer is set to `true`, this number only includes the accounts who have both set up a trustline to the asset and have been authorized to hold the asset.
+  - The numnber of accounts that have issued a trustline to this asset. If the
+    `auth_required` flag for this asset's issuer is set to `true`, this number
+    only includes the accounts who have both set up a trustline to the asset and
+    have been authorized to hold the asset.
 - flags
   - object
   - Flags denote the enabling/disabling of certain asset issuer privileges.
@@ -36,13 +39,16 @@ When Horizon returns information about an asset, it uses the following format:
       - If set to `true`, none of the following flags can be changed.
     - auth_required
       - boolean
-      - If set to `true`, anyone who wants to hold an asset issued by this account must first be approved by this account.
+      - If set to `true`, anyone who wants to hold an asset issued by this
+        account must first be approved by this account.
     - auth_revocable
       - boolean
-      - If set to `true`, this account can freeze the balance of a holder of an asset issued by this account.
+      - If set to `true`, this account can freeze the balance of a holder of an
+        asset issued by this account.
 - paging_token
   - number
-  - A cursor value for use in [pagination](../../introduction/pagination/index.mdx).
+  - A cursor value for use in
+    [pagination](../../introduction/pagination/index.mdx).
 
 </AttributeTable>
 

@@ -8,12 +8,17 @@ import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
-This endpoint lists all effects and can be used in [streaming](../../introduction/streaming.mdx) mode. Streaming mode allows you to listen for new effects as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known effect unless a `cursor` is set, in which case it will start from that `cursor`. By setting the cursor value to `now`, you can stream effects created since your request time.
+This endpoint lists all effects and can be used in
+[streaming](../../introduction/streaming.mdx) mode. Streaming mode allows you to
+listen for new effects as they are added to the Stellar ledger. If called in
+streaming mode, Horizon will start at the earliest known effect unless a
+`cursor` is set, in which case it will start from that `cursor`. By setting the
+cursor value to `now`, you can stream effects created since your request time.
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|     |                                                               |
+| --- | ------------------------------------------------------------- |
 | GET | /effects?cursor={paging_token}&order={asc,desc}&limit={1-200} |
 
 </Endpoint>
@@ -25,13 +30,18 @@ This endpoint lists all effects and can be used in [streaming](../../introductio
   - DESCRIPTION
 - cursor
   - optional
-  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+  - A number that points to a specific location in a collection of responses and
+    is pulled from the `paging_token` value of a record.
 - order
   - optional
-  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+  - A designation of the order in which records should appear. Options include
+    `asc`(ascending) or `desc` (descending). If this argument isn’t set, it
+    defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The total number of records returned. The limit can range from 1 to 200 - an
+    upper limit that is hardcoded in Horizon for performance reasons. If this
+    argument isn’t designated, it defaults to 10.
 
 </AttributeTable>
 
@@ -42,18 +52,19 @@ curl "https://horizon.stellar.org/effects"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-server.effects()
+server
+  .effects()
   .call()
   .then(function (effectResults) {
     //page 1
-    console.log(effectResults.records)
+    console.log(effectResults.records);
   })
   .catch(function (err) {
-    console.log(err)
-  })
+    console.log(err);
+  });
 ```
 
 </CodeExample>
@@ -148,18 +159,16 @@ server.effects()
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
 
 var effectHandler = function (effectResponse) {
   console.log(effectResponse);
 };
 
-var es = server.effects()
-  .cursor('now')
-  .stream({
-    onmessage: effectHandler
-  })
+var es = server.effects().cursor("now").stream({
+  onmessage: effectHandler,
+});
 ```
 
 </CodeExample>

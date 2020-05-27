@@ -8,16 +8,25 @@ import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
-This endpoint lists all trades and can be used in [streaming](../introduction/streaming.mdx) mode.
+This endpoint lists all trades and can be used in
+[streaming](../introduction/streaming.mdx) mode.
 
-Streaming mode allows you to listen for new trades as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known trade unless a `cursor` is set, in which case it will start from that `cursor`. By setting the cursor value to `now`, you can stream trades created since your request time.
+Streaming mode allows you to listen for new trades as they are added to the
+Stellar ledger. If called in streaming mode, Horizon will start at the earliest
+known trade unless a `cursor` is set, in which case it will start from that
+`cursor`. By setting the cursor value to `now`, you can stream trades created
+since your request time.
 
-When filtering for a specific orderbook, you must use use all six of these arguments: `base_asset_type`, `base_asset_issuer`, `base_asset_code`, `counter_asset_type`, `counter_asset_issuer`, and `counter_asset_code`. If the base or counter asset is XLM, you only need to indicate the asset type as `native` and do not need to designate the code or the issuer.
+When filtering for a specific orderbook, you must use use all six of these
+arguments: `base_asset_type`, `base_asset_issuer`, `base_asset_code`,
+`counter_asset_type`, `counter_asset_issuer`, and `counter_asset_code`. If the
+base or counter asset is XLM, you only need to indicate the asset type as
+`native` and do not need to designate the code or the issuer.
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|     |                                                                                                                                                                                                                                                                                                                                                                         |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET | /trades?offer_id={:offer_id}&base_asset_type={native,credit_alphanum4,credit_alphanum12}&base_asset_issuer={:account_id}&base_asset_code{:asset_code}&counter_asset_type={native,credit_alphanum4,credit_alphanum12}&counter_asset_issuer={:account_id}&counter_asset_code{:asset_code}&cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
@@ -32,7 +41,8 @@ When filtering for a specific orderbook, you must use use all six of these argum
   - The offer ID. Used to filter for trades originating from a specific offer.
 - base_asset_type
   - optional
-  - The type for the base asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type for the base asset. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - base_asset_issuer
   - optional
   - The Stellar address of the base asset’s issuer.
@@ -41,7 +51,8 @@ When filtering for a specific orderbook, you must use use all six of these argum
   - The code for the base asset.
 - counter_asset_type
   - optional
-  - The type for the counter asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type for the counter asset. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - counter_asset_issuer
   - optional
   - The Stellar address of the counter asset’s issuer.
@@ -50,13 +61,18 @@ When filtering for a specific orderbook, you must use use all six of these argum
   - The code for the counter asset.
 - cursor
   - optional
-  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+  - A number that points to a specific location in a collection of responses and
+    is pulled from the `paging_token` value of a record.
 - order
   - optional
-  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+  - A designation of the order in which records should appear. Options include
+    `asc`(ascending) or `desc` (descending). If this argument isn’t set, it
+    defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The total number of records returned. The limit can range from 1 to 200 - an
+    upper limit that is hardcoded in Horizon for performance reasons. If this
+    argument isn’t designated, it defaults to 10.
 
 </AttributeTable>
 
@@ -67,22 +83,25 @@ curl "https://horizon.stellar.org/trades?base_asset_type=credit_alphanum4&base_a
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.trades()
-.forAssetPair(
-  new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'),
-  new StellarSdk.Asset.native(),
-)
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .trades()
+  .forAssetPair(
+    new StellarSdk.Asset(
+      "USD",
+      "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
+    ),
+    new StellarSdk.Asset.native(),
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -219,21 +238,24 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var tradesHandler = function(resp) {
-  console.log(resp)
-}
+var tradesHandler = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.trades()
-.forAssetPair(
-  new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'),
-  new StellarSdk.Asset.native(),
-)
-.cursor('now')
-.stream({onmessage: tradesHandler})
+  .trades()
+  .forAssetPair(
+    new StellarSdk.Asset(
+      "USD",
+      "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
+    ),
+    new StellarSdk.Asset.native(),
+  )
+  .cursor("now")
+  .stream({ onmessage: tradesHandler });
 ```
 
 </CodeExample>

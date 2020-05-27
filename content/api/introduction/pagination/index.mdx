@@ -7,11 +7,16 @@ import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
-To make it possible to explore the millions of records for resources like transactions and operations, Horizon paginates the data it returns for collection-based endpoints.
+To make it possible to explore the millions of records for resources like
+transactions and operations, Horizon paginates the data it returns for
+collection-based endpoints.
 
-Each individual transaction, operation, ledger, etc. is returned as a record, and a group of records is called a collection. Records are returned as an array under the `_embedded` attribute.
+Each individual transaction, operation, ledger, etc. is returned as a record,
+and a group of records is called a collection. Records are returned as an array
+under the `_embedded` attribute.
 
-To move between pages of a collection of records, use the links in the `next` and `prev` attributes nested under the top-level `_links` attribute.
+To move between pages of a collection of records, use the links in the `next`
+and `prev` attributes nested under the top-level `_links` attribute.
 
 <AttributeTable>
 
@@ -26,10 +31,12 @@ To move between pages of a collection of records, use the links in the `next` an
       - An `href` key with a link to the response itself as the value.
     - \_links.next
       - array
-      - An `href` key with a link to the next page for this endpoint as the value.
+      - An `href` key with a link to the next page for this endpoint as the
+        value.
     - \_links.prev
       - array
-      - An `href` key with a link to the next page for this endpoint as the value.
+      - An `href` key with a link to the next page for this endpoint as the
+        value.
 - \_embedded
   - array
   - An `href` key with a link to the next page for this endpoint as the value.
@@ -42,24 +49,24 @@ To move between pages of a collection of records, use the links in the `next` an
 <CodeExample title="Example Request">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.transactions()
-.call()
-.then(function(resp) {
-  // page 1
-  console.log(resp)
-  return resp.next()
-})
-.then(function(resp) {
-  // page 2
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .transactions()
+  .call()
+  .then(function (resp) {
+    // page 1
+    console.log(resp);
+    return resp.next();
+  })
+  .then(function (resp) {
+    // page 2
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

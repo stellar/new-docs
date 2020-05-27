@@ -18,7 +18,8 @@ When Horizon returns information about an offer, it uses the following format:
   - A unique identifier for this offer.
 - paging_token
   - number
-  - A cursor value for use in [pagination](../../introduction/pagination/index.mdx).
+  - A cursor value for use in
+    [pagination](../../introduction/pagination/index.mdx).
 - seller
   - string
   - The account ID of the account making this offer.
@@ -30,7 +31,8 @@ When Horizon returns information about an offer, it uses the following format:
   - The asset this offer wants to buy.
 - amount
   - string
-  - The amount of `selling` that the account making this offer is willing to sell.
+  - The amount of `selling` that the account making this offer is willing to
+    sell.
 - price_r
   - object
   - A precise representation of the buy and sell price of the assets on offer.
@@ -42,7 +44,8 @@ When Horizon returns information about an offer, it uses the following format:
       - The denominator.
 - price
   - string
-  - How many units of `buying` it takes to get 1 unit of `selling`. A number representing the decimal form of `price_r`.
+  - How many units of `buying` it takes to get 1 unit of `selling`. A number
+    representing the decimal form of `price_r`.
 - last_modified_ledger
   - integer
   - The sequence number of the last ledger in which this offer was modified.

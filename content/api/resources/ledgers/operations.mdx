@@ -12,8 +12,8 @@ This endpoint returns successful operations in a specific ledger.
 
 <Endpoint>
 
-|  |  |
-| --- | --- |
+|     |                                                                                                                                          |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | GET | /ledgers/:ledger_sequence/operations?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
 
 </Endpoint>
@@ -28,19 +28,26 @@ This endpoint returns successful operations in a specific ledger.
   - The sequence number of a specific ledger.
 - cursor
   - optional
-  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+  - A number that points to a specific location in a collection of responses and
+    is pulled from the `paging_token` value of a record.
 - order
   - optional
-  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+  - A designation of the order in which records should appear. Options include
+    `asc`(ascending) or `desc` (descending). If this argument isn’t set, it
+    defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The total number of records returned. The limit can range from 1 to 200 - an
+    upper limit that is hardcoded in Horizon for performance reasons. If this
+    argument isn’t designated, it defaults to 10.
 - include_failed
   - optional
-  - Set to true to include failed operations in results. Options include `true` and `false`.
+  - Set to true to include failed operations in results. Options include `true`
+    and `false`.
 - join
   - optional
-  - Set to `transactions` to include the transactions which created each of the operations in the response.
+  - Set to `transactions` to include the transactions which created each of the
+    operations in the response.
 
 </AttributeTable>
 
@@ -51,19 +58,19 @@ curl "https://horizon.stellar.org/ledgers/27147222/operations?limit=2"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.operations()
-.forLedger('27147222')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .operations()
+  .forLedger("27147222")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

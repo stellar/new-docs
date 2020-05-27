@@ -8,7 +8,8 @@ import { AttributeTable } from "components/AttributeTable";
 
 Sends an amount in a specific asset to a destination account.
 
-See the [`Payment` errors](../../../errors/result-codes/operation-specific/payment.mdx).
+See the
+[`Payment` errors](../../../errors/result-codes/operation-specific/payment.mdx).
 
 <AttributeTable>
 
@@ -17,13 +18,16 @@ See the [`Payment` errors](../../../errors/result-codes/operation-specific/payme
   - DESCRIPTION
 - asset_type
   - string
-  - The type of asset being sent. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type of asset being sent. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - asset_code
   - string
-  - The code for the asset being sent. Appears if the `asset_type` is not `native`.
+  - The code for the asset being sent. Appears if the `asset_type` is not
+    `native`.
 - asset_issuer
   - string
-  - The Stellar address of the issuer of the asset being sent. Appears if the `asset_type` is not `native`.
+  - The Stellar address of the issuer of the asset being sent. Appears if the
+    `asset_type` is not `native`.
 - from
   - string
   - The payment sender’s public key.

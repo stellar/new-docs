@@ -6,9 +6,12 @@ order: 30
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-Sends a payment from one account to another in a path through the order books, starting as one asset and ending as another. Path payments that are `Strict Receive` designate the payment amount in the asset received.
+Sends a payment from one account to another in a path through the order books,
+starting as one asset and ending as another. Path payments that are
+`Strict Receive` designate the payment amount in the asset received.
 
-See the [`Path Payment Strict Receive` errors](../../../errors/result-codes/operation-specific/path-payment-strict-receive.mdx).
+See the
+[`Path Payment Strict Receive` errors](../../../errors/result-codes/operation-specific/path-payment-strict-receive.mdx).
 
 <AttributeTable>
 
@@ -17,13 +20,16 @@ See the [`Path Payment Strict Receive` errors](../../../errors/result-codes/oper
   - DESCRIPTION
 - asset_type
   - string
-  - The type of asset being received. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type of asset being received. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - asset_code
   - string
-  - The code for the asset being received. Appears if the `asset_type` is not `native`.
+  - The code for the asset being received. Appears if the `asset_type` is not
+    `native`.
 - asset_issuer
   - string
-  - The Stellar address of the issuer of the asset being received. Appears if the `asset_type` is not `native`.
+  - The Stellar address of the issuer of the asset being received. Appears if
+    the `asset_type` is not `native`.
 - from
   - string
   - The payment sender’s public key.
@@ -44,7 +50,8 @@ See the [`Path Payment Strict Receive` errors](../../../errors/result-codes/oper
       - The Stellar address of the intermediary asset’s issuer.
     - asset_type
       - string
-      - The type for the intermediary asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+      - The type for the intermediary asset. Either `native`,
+        `credit_alphanum4`, or `credit_alphanum12`.
 - source_amount
   - string
   - Amount sent designated in the source asset.
@@ -53,7 +60,8 @@ See the [`Path Payment Strict Receive` errors](../../../errors/result-codes/oper
   - The maximum amount to be sent designated in the source asset.
 - source_asset_type
   - string
-  - The type for the source asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type for the source asset. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - source_asset_code
   - string
   - The code for the source asset.

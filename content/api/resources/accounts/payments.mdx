@@ -8,14 +8,19 @@ import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
-This endpoint represents successful payments for a given account and can be used in streaming mode.
+This endpoint represents successful payments for a given account and can be used
+in streaming mode.
 
-Streaming mode allows you to listen for new payments for this account as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known payment unless a `cursor` is set, in which case it will start from that `cursor`. By setting the `cursor` value to `now`, you can stream payments created since your request time.
+Streaming mode allows you to listen for new payments for this account as they
+are added to the Stellar ledger. If called in streaming mode, Horizon will start
+at the earliest known payment unless a `cursor` is set, in which case it will
+start from that `cursor`. By setting the `cursor` value to `now`, you can stream
+payments created since your request time.
 
 <Endpoint>
 
-|  |  |
-| --- | --- |
+|     |                                                                                                                                    |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | GET | /accounts/:account_id/payments?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
 
 </Endpoint>
@@ -30,19 +35,26 @@ Streaming mode allows you to listen for new payments for this account as they ar
   - This account's public key encoded in a base32 string representation.
 - cursor
   - optional
-  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+  - A number that points to a specific location in a collection of responses and
+    is pulled from the `paging_token` value of a record.
 - order
   - optional
-  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+  - A designation of the order in which records should appear. Options include
+    `asc`(ascending) or `desc` (descending). If this argument isn’t set, it
+    defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The total number of records returned. The limit can range from 1 to 200 - an
+    upper limit that is hardcoded in Horizon for performance reasons. If this
+    argument isn’t designated, it defaults to 10.
 - include_failed
   - optional
-  - Set to true to include failed operations in results. Options include `true` and `false`.
+  - Set to true to include failed operations in results. Options include `true`
+    and `false`.
 - join
   - optional
-  - Set to `transactions` to include the transactions which created each of the operations in the response.
+  - Set to `transactions` to include the transactions which created each of the
+    operations in the response.
 
 </AttributeTable>
 
@@ -53,19 +65,19 @@ curl "https://horizon.stellar.org/accounts/GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPN
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.payments()
-.forAccount('GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .payments()
+  .forAccount("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -251,18 +263,18 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.payments()
-.forAccount('GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE')
-.cursor('now')
-.stream({onmessage: callback})
+  .payments()
+  .forAccount("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE")
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>

@@ -23,13 +23,18 @@ import { CodeExample } from "components/CodeExample";
   - DESCRIPTION
 - cursor
   - optional
-  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+  - A number that points to a specific location in a collection of responses and
+    is pulled from the `paging_token` value of a record.
 - order
   - optional
-  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+  - A designation of the order in which records should appear. Options include
+    `asc`(ascending) or `desc` (descending). If this argument isn’t set, it
+    defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The total number of records returned. The limit can range from 1 to 200 - an
+    upper limit that is hardcoded in Horizon for performance reasons. If this
+    argument isn’t designated, it defaults to 10.
 
 </AttributeTable>
 
@@ -40,22 +45,22 @@ curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=11372524932
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.operations()
-.forLedger('26478723')
-.cursor('113725249324879872')
-.limit(5)
-.order('asc')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .operations()
+  .forLedger("26478723")
+  .cursor("113725249324879872")
+  .limit(5)
+  .order("asc")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

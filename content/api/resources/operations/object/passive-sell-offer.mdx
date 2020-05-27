@@ -6,9 +6,13 @@ order: 70
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-Creates an offer that will not consume a counter offer that exactly matches this offer. This is useful for offers meant to be 1:1 exchanges for path payments. Use Manage Sell Offer to manage this offer after using this operation to create it.
+Creates an offer that will not consume a counter offer that exactly matches this
+offer. This is useful for offers meant to be 1:1 exchanges for path payments.
+Use Manage Sell Offer to manage this offer after using this operation to create
+it.
 
-See the [`Create Passive Sell Offer` errors](../../../errors/result-codes/operation-specific/passive-sell-offer.mdx).
+See the
+[`Create Passive Sell Offer` errors](../../../errors/result-codes/operation-specific/passive-sell-offer.mdx).
 
 <AttributeTable>
 
@@ -17,10 +21,12 @@ See the [`Create Passive Sell Offer` errors](../../../errors/result-codes/operat
   - DESCRIPTION
 - amount
   - string
-  - The amount of `selling_asset` that the account making this offer is willing to sell.
+  - The amount of `selling_asset` that the account making this offer is willing
+    to sell.
 - price
   - string
-  - How many units of `selling_asset` it takes to get 1 unit of `buying_asset`. A number representing the decimal form of `price_r`.
+  - How many units of `selling_asset` it takes to get 1 unit of `buying_asset`.
+    A number representing the decimal form of `price_r`.
 - price_r
   - object
   - A precise representation of the buy and sell price of the assets on offer.
@@ -32,22 +38,28 @@ See the [`Create Passive Sell Offer` errors](../../../errors/result-codes/operat
       - The denominator.
 - buying_asset_type
   - string
-  - The type for the buying asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type for the buying asset. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - buying_asset_issuer
   - string
-  - The Stellar address of the buying asset’s issuer. Appears if the `buying_asset_type` is not `native`.
+  - The Stellar address of the buying asset’s issuer. Appears if the
+    `buying_asset_type` is not `native`.
 - buying_asset_code
   - string
-  - The code for the buying asset. Appears if the `buying_asset_type` is not `native`.
+  - The code for the buying asset. Appears if the `buying_asset_type` is not
+    `native`.
 - selling_asset_type
   - string
-  - The type for the selling asset. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type for the selling asset. Either `native`, `credit_alphanum4`, or
+    `credit_alphanum12`.
 - selling_asset_issuer
   - string
-  - The Stellar address of the selling asset’s issuer. Appears if the `selling_asset_type` is not `native`.
+  - The Stellar address of the selling asset’s issuer. Appears if the
+    `selling_asset_type` is not `native`.
 - selling_asset_code
   - string
-  - The code for the selling asset. Appears if the `selling_asset_type` is not `native`.
+  - The code for the selling asset. Appears if the `selling_asset_type` is not
+    `native`.
 - offer_id
   - string
   - A unique identifier for this offer.
