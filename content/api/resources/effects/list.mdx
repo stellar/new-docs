@@ -12,8 +12,8 @@ This endpoint lists all effects and can be used in [streaming](../../introductio
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|     |                                                               |
+| --- | ------------------------------------------------------------- |
 | GET | /effects?cursor={paging_token}&order={asc,desc}&limit={1-200} |
 
 </Endpoint>
@@ -42,18 +42,19 @@ curl "https://horizon.stellar.org/effects"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-server.effects()
+server
+  .effects()
   .call()
   .then(function (effectResults) {
     //page 1
-    console.log(effectResults.records)
+    console.log(effectResults.records);
   })
   .catch(function (err) {
-    console.log(err)
-  })
+    console.log(err);
+  });
 ```
 
 </CodeExample>
@@ -148,18 +149,16 @@ server.effects()
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
 
 var effectHandler = function (effectResponse) {
   console.log(effectResponse);
 };
 
-var es = server.effects()
-  .cursor('now')
-  .stream({
-    onmessage: effectHandler
-  })
+var es = server.effects().cursor("now").stream({
+  onmessage: effectHandler,
+});
 ```
 
 </CodeExample>

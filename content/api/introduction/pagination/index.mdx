@@ -42,24 +42,24 @@ To move between pages of a collection of records, use the links in the `next` an
 <CodeExample title="Example Request">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.transactions()
-.call()
-.then(function(resp) {
-  // page 1
-  console.log(resp)
-  return resp.next()
-})
-.then(function(resp) {
-  // page 2
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .transactions()
+  .call()
+  .then(function (resp) {
+    // page 1
+    console.log(resp);
+    return resp.next();
+  })
+  .then(function (resp) {
+    // page 2
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

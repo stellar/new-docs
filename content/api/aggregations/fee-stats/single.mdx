@@ -12,8 +12,8 @@ The fee stats endpoint provides information about per-operation fee stats over t
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|     |            |
+| --- | ---------- |
 | GET | /fee_stats |
 
 </Endpoint>
@@ -25,17 +25,17 @@ curl "https://horizon.stellar.org/fee_stats"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.feeStats()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .feeStats()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

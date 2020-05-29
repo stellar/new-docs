@@ -18,8 +18,8 @@ The individual segments are also aligned with multiples of `resolution` since ep
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /trade_aggregations?start_time={:start_time}&end_time={:end_time}&resolution={:resolution}&offset={:offset}&base_asset_type={native,credit_alphanum4,credit_alphanum12}&base_asset_issuer={:account_id}&base_asset_code{:asset_code}&counter_asset_type={native,credit_alphanum4,credit_alphanum12}&counter_asset_issuer={:account_id}&counter_asset_code{:asset_code}&order={asc,desc}&limit={1-200} |
 
 </Endpoint>
@@ -75,32 +75,28 @@ curl "https://horizon.stellar.org/trade_aggregations?base_asset_type=native&coun
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var base = new StellarSdk.Asset.native()
-var counter = new StellarSdk.Asset("EURT", "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S")
-var startTime = 1582156800000
-var endTime = 1582178400000
-var resolution = 3600000
-var offset = 0
+var base = new StellarSdk.Asset.native();
+var counter = new StellarSdk.Asset(
+  "EURT",
+  "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+);
+var startTime = 1582156800000;
+var endTime = 1582178400000;
+var resolution = 3600000;
+var offset = 0;
 
 server
-.tradeAggregation(
-  base,
-  counter,
-  startTime,
-  endTime,
-  resolution,
-  offset,
-)
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .tradeAggregation(base, counter, startTime, endTime, resolution, offset)
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -186,31 +182,27 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
-var base = new StellarSdk.Asset.native()
-var counter = new StellarSdk.Asset("EURT", "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S")
-var startTime = 1582156800000
-var endTime = 1582178400000
-var resolution = 3600000
-var offset = 0
+var base = new StellarSdk.Asset.native();
+var counter = new StellarSdk.Asset(
+  "EURT",
+  "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+);
+var startTime = 1582156800000;
+var endTime = 1582178400000;
+var resolution = 3600000;
+var offset = 0;
 
 var es = server
-.tradeAggregation(
-  base,
-  counter,
-  startTime,
-  endTime,
-  resolution,
-  offset,
-)
-.cursor('now')
-.stream({onmessage: callback})
+  .tradeAggregation(base, counter, startTime, endTime, resolution, offset)
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>

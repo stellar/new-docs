@@ -12,8 +12,8 @@ The single transaction endpoint provides information on a specific transaction.
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|     |                               |
+| --- | ----------------------------- |
 | GET | /transactions/:transaction_id |
 
 </Endpoint>
@@ -36,19 +36,21 @@ curl "https://horizon.stellar.org/transactions/5ebd5c0af4385500b53dd63b0ef5f6e8f
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon.stellar.org');
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.transactions()
-.transaction('5ebd5c0af4385500b53dd63b0ef5f6e8feef1a7e1c86989be3cdcce825f3c0cc')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .transactions()
+  .transaction(
+    "5ebd5c0af4385500b53dd63b0ef5f6e8feef1a7e1c86989be3cdcce825f3c0cc",
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

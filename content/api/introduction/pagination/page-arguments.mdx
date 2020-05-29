@@ -40,22 +40,22 @@ curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=11372524932
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.operations()
-.forLedger('26478723')
-.cursor('113725249324879872')
-.limit(5)
-.order('asc')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .operations()
+  .forLedger("26478723")
+  .cursor("113725249324879872")
+  .limit(5)
+  .order("asc")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

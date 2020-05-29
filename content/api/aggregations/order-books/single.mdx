@@ -14,8 +14,8 @@ When filtering for a specific order book, you must use use all six of these argu
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /order_book?selling_asset_type={native,credit_alphanum4,credit_alphanum12}&selling_asset_issuer={:account_id}&selling_asset_code{:asset_code}&buying_asset_type={native,credit_alphanum4,credit_alphanum12}&buying_asset_issuer={:account_id}&buying_asset_code{:asset_code}&limit={1-200} |
 
 </Endpoint>
@@ -56,21 +56,24 @@ curl "https://horizon.stellar.org/order_book?selling_asset_type=native&buying_as
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.orderbook(
-  new StellarSdk.Asset.native(),
-  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
-)
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .orderbook(
+    new StellarSdk.Asset.native(),
+    new StellarSdk.Asset(
+      "BB1",
+      "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN",
+    ),
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -163,20 +166,23 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.orderbook(
-  new StellarSdk.Asset.native(),
-  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
-)
-.cursor('now')
-.stream({onmessage: callback})
+  .orderbook(
+    new StellarSdk.Asset.native(),
+    new StellarSdk.Asset(
+      "BB1",
+      "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN",
+    ),
+  )
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>

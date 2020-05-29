@@ -12,8 +12,8 @@ This endpoint lists all successful transactions and can be used in [streaming](.
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /transactions?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
@@ -45,18 +45,18 @@ curl "https://horizon.stellar.org/transactions?limit=3"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.transactions()
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .transactions()
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -232,17 +232,17 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var tradesHandler = function(resp) {
-  console.log(resp)
-}
+var tradesHandler = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.transactions()
-.cursor('now')
-.stream({onmessage: tradesHandler})
+  .transactions()
+  .cursor("now")
+  .stream({ onmessage: tradesHandler });
 ```
 
 </CodeExample>
