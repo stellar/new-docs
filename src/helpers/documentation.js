@@ -502,7 +502,8 @@ const getAttributes = (listItemElement) => {
 
   return {
     name,
-    type: typeElement.props.children,
+    type:
+      typeElement.props.children === "skip" ? null : typeElement.props.children,
     description: description.length === 1 ? description[0] : description,
     childAttributes: childAttributes.length > 0 ? childAttributes : null,
   };
