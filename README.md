@@ -315,12 +315,12 @@ import { AttributeTable } from "components/AttributeTable";
 Example: `<AttributeTable/>` without type specified on
 [API's Manage Data Object](https://developers.stellar.org/api/resources/operations/object/manage-data/).
 
-<img src="./readme-imgs/attributetable-with-type" alt="AttributeTable with Type" width="712"/>
+<img src="./readme-imgs/attributetable-with-type.png" alt="AttributeTable with Type" width="500"/>
 
 Example: `<AttributeTable/>` with type specified on
 [API's Effect Types](https://developers.stellar.org/api/resources/effects/types/).
 
-<img src="./readme-imgs/attributetable-without-type.png" alt="AttributeTable without Type" width="712"/>
+<img src="./readme-imgs/attributetable-without-type.png" alt="AttributeTable without Type" width="500"/>
 
 ### Alert
 
