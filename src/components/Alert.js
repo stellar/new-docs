@@ -35,5 +35,5 @@ export const Alert = ({ children }) => (
 );
 
 Alert.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.element.isRequired,
 };
