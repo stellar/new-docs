@@ -291,6 +291,8 @@ import { AttributeTable } from "components/AttributeTable";
 </AttributeTable>
 ```
 
+#### Omitting Data Type within <AttributeTable/>
+
 `Data Type` is not required. If you want to skip it, simply add a text "skip" in
 it
 
