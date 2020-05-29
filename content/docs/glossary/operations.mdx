@@ -1,13 +1,14 @@
 ---
 title: Operations
-order: 
+order:
 ---
 
-Operations are the bread and butter of Stellar: they’re the individual commands that mutate the ledger.  Transactions, which accounts sign and submit for inclusion in the ledger, are really just bundles of operations.  Transactions can, by definition, include anywhere from 1 to 100 operations.
+Operations are the bread and butter of Stellar: they’re the individual commands that mutate the ledger. Transactions, which accounts sign and submit for inclusion in the ledger, are really just bundles of operations. Transactions can, by definition, include anywhere from 1 to 100 operations.
 
-Network capacity, which is determined by validator vote, is measured in terms of operations/ledger.  Currently, it’s set to 1,000. 
+Network capacity, which is determined by validator vote, is measured in terms of operations/ledger. Currently, it’s set to 1,000.
 
 There are thirteen possible operation types:
+
 - [Create Account](./list-of-operations.md#create-account)
 - [Payment](./list-of-operations.md#payment)
 - [Path Payment Strict Send](./list-of-operations.md#path-payment-strict-send)
@@ -26,34 +27,30 @@ Operations are executed on behalf of the source account specified in the transac
 
 ## Thresholds
 
-Each operation falls under a specific threshold category: low, medium, or high.
-Thresholds define the level of privilege an operation needs in order to succeed.
+Each operation falls under a specific threshold category: low, medium, or high. Thresholds define the level of privilege an operation needs in order to succeed.
 
-* Low Security:
-  * `AllowTrust`
-  * `BumpSequence`
-* Medium Security:
-  * Everything Else (`Payment`, `ChangeTrust`, etc.).
-* High Security:
-  * `AccountMerge`
-  * `SetOptions` (only when changing signers and the thresholds for each category).
+- Low Security:
+  - `AllowTrust`
+  - `BumpSequence`
+- Medium Security:
+  - Everything Else (`Payment`, `ChangeTrust`, etc.).
+- High Security:
+  - `AccountMerge`
+  - `SetOptions` (only when changing signers and the thresholds for each category).
 
 ## Validity of an Operation
 
-When a transaction is submitted to a node, the node checks the validity of each operation in the transaction before attempting to include it in a candidate transaction set.  These initial operation validity checks are intended to be fast and simple: more intensive checks come later, after fees have been consumed. For an operation to pass this first validity check, it has to meet the following conditions:
+When a transaction is submitted to a node, the node checks the validity of each operation in the transaction before attempting to include it in a candidate transaction set. These initial operation validity checks are intended to be fast and simple: more intensive checks come later, after fees have been consumed. For an operation to pass this first validity check, it has to meet the following conditions:
 
 1. The signatures on the transaction must be valid for the operation. That means:
-   * The signatures are from valid signers for the source account of the operation.
-   * The combined weight of all signatures for the source account _of the operation_ meets the
-     threshold for the operation.
+   - The signatures are from valid signers for the source account of the operation.
+   - The combined weight of all signatures for the source account _of the operation_ meets the threshold for the operation.
 2. The operation itself must be well formed. Typically this means checking the parameters for the operation to see if they're in a valid format.
-   * For example, only positive values can be set for the amount of a payment operation.
-3. The operation must be valid in the current protocol version of the network. Deprecated operations, such as inflation, are invalid by design. 
- 
+   - For example, only positive values can be set for the amount of a payment operation.
+3. The operation must be valid in the current protocol version of the network. Deprecated operations, such as inflation, are invalid by design.
+
 For more details on this process, see the [lifecycle of a transaction][tx-lifecycle].
 
 ## Result
 
-For each operation, there is a matching result type. In the case of success, this result allows
-users to gather information about the effects of the operation. In the case of failure, it allows
-users to learn more about the error.
+For each operation, there is a matching result type. In the case of success, this result allows users to gather information about the effects of the operation. In the case of failure, it allows users to learn more about the error.

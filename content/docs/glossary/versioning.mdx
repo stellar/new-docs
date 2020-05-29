@@ -11,8 +11,7 @@ This document describes the various mechanisms used to keep the overall system w
 
 ### ledgerVersion
 
-This uint32 stored in the ledger header describes the version number of the overall protocol.
-Protocol in this case is defined both as "wire format"--i.e., the serialized forms of all objects stored in the ledger--and its behavior.
+This uint32 stored in the ledger header describes the version number of the overall protocol. Protocol in this case is defined both as "wire format"--i.e., the serialized forms of all objects stored in the ledger--and its behavior.
 
 This version number is incremented every time the protocol changes.
 
@@ -34,9 +33,7 @@ Upgrade steps are applied before applying the transaction set to ensure that the
 
 Each node has its own way of tracking which version it supports--for example, a "min version", "max version"--but it can also include things like "black listed versions." Supported versions are not tracked from within the protocol.
 
-Note that minProtocolVersion is distinct from the version an instance understands:
-typically an implementation understands versions n .. maxProtocolVersion, where n <= minProtocolVersion.
-The reason for this is that nodes must be able to replay transactions from history (down to version 'n'), yet there might be some issue/vulnerability that we don't want to be exploitable for new transactions.
+Note that minProtocolVersion is distinct from the version an instance understands: typically an implementation understands versions n .. maxProtocolVersion, where n <= minProtocolVersion. The reason for this is that nodes must be able to replay transactions from history (down to version 'n'), yet there might be some issue/vulnerability that we don't want to be exploitable for new transactions.
 
 ### Ledger object versioning
 
@@ -57,17 +54,16 @@ case 0:
 In this case, the version 'v' refers to the version of the object and permits the addition of new arms.
 
 This scheme offers several benefits:
-* Implementations become wire compatible without code changes only by updating their protocol definition files.
-* Even without updating the protocol definition files, older implementations continue to function as long as they don't encounter newer formats.
-* It promotes code sharing between versions of the objects.
+
+- Implementations become wire compatible without code changes only by updating their protocol definition files.
+- Even without updating the protocol definition files, older implementations continue to function as long as they don't encounter newer formats.
+- It promotes code sharing between versions of the objects.
 
 Note that while this scheme promotes code sharing for components consuming those objects, code sharing is not necessarily promoted for stellar-core itself because the behavior must be preserved for all versions: In order to reconstruct the ledger chain from arbitrary points in time, the behavior must be 100% compatible.
 
 ### Operations versioning
-Operations are versioned as a whole: If a new parameter needs to be added or changed, versioning is achieved by adding a new operation.
-This causes some duplication of logic in clients but avoids introducing potential bugs. For example, code that would sign only certain types of transactions must be fully aware of what it's signing.
-Envelope versioning
-Pattern used to allow for extensibility of envelopes (signed content):
+
+Operations are versioned as a whole: If a new parameter needs to be added or changed, versioning is achieved by adding a new operation. This causes some duplication of logic in clients but avoids introducing potential bugs. For example, code that would sign only certain types of transactions must be fully aware of what it's signing. Envelope versioning Pattern used to allow for extensibility of envelopes (signed content):
 
 <CodeExample>
 
@@ -85,11 +81,7 @@ case 0:
 
 </CodeExample>
 
-This pattern allows the capability to modify the envelope if needed and ensures that clients don't blindly consume content that they couldn't validate.
-Upgrading objects that don't have an extension point
-The object's schema must be cloned and its parent object must be updated to use the new object type. The assumption here is that there is no unversioned "root" object.
-Supported implementations lifetime considerations
-In order to keep the codebase in a maintainable state, implementations may not preserve the ability to play back from genesis. Instead they may opt to support a limited range--for example, only preserve the capability to replay the previous 3 months of transactions (assuming that the network's minProtocolVersion is more recent than that).
+This pattern allows the capability to modify the envelope if needed and ensures that clients don't blindly consume content that they couldn't validate. Upgrading objects that don't have an extension point The object's schema must be cloned and its parent object must be updated to use the new object type. The assumption here is that there is no unversioned "root" object. Supported implementations lifetime considerations In order to keep the codebase in a maintainable state, implementations may not preserve the ability to play back from genesis. Instead they may opt to support a limited range--for example, only preserve the capability to replay the previous 3 months of transactions (assuming that the network's minProtocolVersion is more recent than that).
 
 This does not change the ability of the node to (re)join or participate in the network; it only affects the ability for a node to do historical validation.
 
