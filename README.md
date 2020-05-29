@@ -291,6 +291,37 @@ import { AttributeTable } from "components/AttributeTable";
 </AttributeTable>
 ```
 
+`Data Type` is not required. If you want to skip it, simply add a text "skip" in
+it
+
+```
+import { AttributeTable } from "components/AttributeTable";
+
+<AttributeTable>
+
+- TYPE
+  - skip
+  - OPERATION(S)
+- Account Created
+  - skip
+  - create_account
+- Account Removed
+  - skip
+  - merge_account
+
+  </AttributeTable>
+```
+
+Example: `<AttributeTable/>` without type specified on
+[API's Manage Data Object](https://developers.stellar.org/api/resources/operations/object/manage-data/).
+
+<img src="./readme-imgs/attributetable-with-type" alt="AttributeTable with Type" width="712"/>
+
+Example: `<AttributeTable/>` with type specified on
+[API's Effect Types](https://developers.stellar.org/api/resources/effects/types/).
+
+<img src="./readme-imgs/attributetable-without-type.png" alt="AttributeTable without Type" width="712"/>
+
 ### Alert
 
 <img src="./readme-imgs/alert.png" alt="Alert Component" width="712"/>
