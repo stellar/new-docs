@@ -1,23 +1,23 @@
 ---
 title: Accounts
-order: 
+order:
 ---
 
-Accounts are the central data structure in Stellar.  They hold balances, sign transactions, and issue assets.  All entries that persist on the ledger are owned by a particular account. 
+Accounts are the central data structure in Stellar. They hold balances, sign transactions, and issue assets. All entries that persist on the ledger are owned by a particular account.
 
-In addition to a valid keypair, an account needs a balance of XLM sufficient to meet the network reserve before it exists on the ledger.    
+In addition to a valid keypair, an account needs a balance of XLM sufficient to meet the network reserve before it exists on the ledger.
 
-## Keypair 
+## Keypair
 
-Stellar relies on public key cryptography to ensure that transactions are secure: every account requires a valid keypair consisting of a *public key* a *private key*. The public key is, as the name suggests, public.  It’s visible on the ledger, anyone can look it up, and it’s what others use to send payments to the account, identify the issuer an asset, and verify that a given transaction is authorized.  
+Stellar relies on public key cryptography to ensure that transactions are secure: every account requires a valid keypair consisting of a _public key_ a _private key_. The public key is, as the name suggests, public. It’s visible on the ledger, anyone can look it up, and it’s what others use to send payments to the account, identify the issuer an asset, and verify that a given transaction is authorized.
 
-The private key, however, is something an account holder should guard closely. It’s kind of like the combination to a lock — anyone who knows it can access the account, sign transactions, send funds, whatever.  Do not share your private key with anyone.
+The private key, however, is something an account holder should guard closely. It’s kind of like the combination to a lock — anyone who knows it can access the account, sign transactions, send funds, whatever. Do not share your private key with anyone.
 
 You can use any Stellar wallet or SDK to generate a valid keypair.
 
 ## Account Creation
 
-A keypair alone doesn’t create an account: before an account exists on the ledger, it needs an XLM balance sufficient to meet the minimum network reserve.  The minimum reserve, which is determined by validator vote, is intended to disincentivize the creation of tons of unused accounts in order to prevent ledger spam and maintain the efficiency and scalability of the network.
+A keypair alone doesn’t create an account: before an account exists on the ledger, it needs an XLM balance sufficient to meet the minimum network reserve. The minimum reserve, which is determined by validator vote, is intended to disincentivize the creation of tons of unused accounts in order to prevent ledger spam and maintain the efficiency and scalability of the network.
 
 There is a specific operation, Create Account, which you use to make a payment to a valid public key that does not exist on the ledger, thereby creating the account.
 
@@ -27,20 +27,17 @@ Accounts have the following fields:
 
 ### Account ID
 
-The public key that was used to create the account.  Even if you replace the signer on the with a different key, the original account ID will always be used to identify the account.
+The public key that was used to create the account. Even if you replace the signer on the with a different key, the original account ID will always be used to identify the account.
 
 ### Sequence number
 
-The current transaction sequence number of the account. This number starts equal to the ledger number at which the account was created, and increments upward as the account signs transactions.  
+The current transaction sequence number of the account. This number starts equal to the ledger number at which the account was created, and increments upward as the account signs transactions.
 
 ### Number of subentries
 
-Number of entries the account owns. This number is used to calculate the account's minimum balance: each subentry increases an account’s reserve by 0.5XLM.  Subentries include:
+Number of entries the account owns. This number is used to calculate the account's minimum balance: each subentry increases an account’s reserve by 0.5XLM. Subentries include:
 
-*Trustlines
-*Offers
-*Signers
-*Data entries
+*Trustlines *Offers *Signers *Data entries
 
 ### Thresholds
 
@@ -54,21 +51,22 @@ To add a home domain to an account, use the [Set Options](link) operation.
 
 ### Flags
 
-Asset issuers set flags at the account level if they want to control access to the assets they issue.  There are three flags:
- - **Authorization required (0x1)**: Requires the issuing account to grant an account permission to hold an asset.
- - **Authorization revocable (0x2)**: Allows the issuing account to revoke an asset held by other accounts.
- - **Authorization immutable (0x4)**: Prevents the issuer from setting either of the above flags or deleting the issuing account.
+Asset issuers set flags at the account level if they want to control access to the assets they issue. There are three flags:
+
+- **Authorization required (0x1)**: Requires the issuing account to grant an account permission to hold an asset.
+- **Authorization revocable (0x2)**: Allows the issuing account to revoke an asset held by other accounts.
+- **Authorization immutable (0x4)**: Prevents the issuer from setting either of the above flags or deleting the issuing account.
 
 ### Balances
 
-Each account has a balance for each token the account holds, including XLM.  
+Each account has a balance for each token the account holds, including XLM.
 
 ### Liabilities
 
-Each account also tracks its liabilities. Buying liabilities equal the total amount of an asset offered to buy aggregated over all offers owned by this account, and selling liabilities equal the total amount of an asset offered to sell aggregated over all offers owned by this account. 
+Each account also tracks its liabilities. Buying liabilities equal the total amount of an asset offered to buy aggregated over all offers owned by this account, and selling liabilities equal the total amount of an asset offered to sell aggregated over all offers owned by this account.
 
 An account must always have a balance sufficiently above the minimum reserve to satisfy its lumen selling liabilities, and a balance sufficiently below the maximum to accommodate its lumen buying liabilities.
 
 ### Signers
 
-You can add signers to an account, and this field lists other public keys and their weights that can be used to authorize transactions.  For more info, see [multisig](link).
+You can add signers to an account, and this field lists other public keys and their weights that can be used to authorize transactions. For more info, see [multisig](link).

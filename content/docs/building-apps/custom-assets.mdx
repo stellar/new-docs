@@ -8,53 +8,102 @@ import { Alert } from "components/Alert";
 
 <Alert>
 
-In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections.  It asssumes that you've already completed [Build a Basic Wallet](./basic-wallet.mdx) and [Make XLM Payments](./xlm-payments.mdx).
+In this section of the tutorial, we'll add the ability to hold and transfer custom assets to the basic wallet we built in previous sections. It asssumes that you've already completed [Build a Basic Wallet](./basic-wallet.mdx) and [Make XLM Payments](./xlm-payments.mdx).
 
 </Alert>
 
 [View pay boilerplate code on GitHub][1]
 
 ## What's a Custom Asset?
-Stellar allows anyone to easily issue an asset, and all assets can be held, transferred, and traded just like XLM, the network token.  Every asset *other* than XLM exists on the network in the form of trustlines: an asset holder explicitly agrees to allow a balance of a specific token issued by a specific issuing account by creating a persistent ledger entry tied to the holding account.  You can find out more in the guide to [creating custom assets](../issuing-assets/index.mdx).
 
-Each trustline increases the user's [base reserve](../glossary/minimum-balance.mdx) by 0.5 XLM, and in this tutorial, we'll go over how to set up your wallet to create trustlines and manage the base reserve on behalf of a user. 
+Stellar allows anyone to easily issue an asset, and all assets can be held, transferred, and traded just like XLM, the network token. Every asset _other_ than XLM exists on the network in the form of trustlines: an asset holder explicitly agrees to allow a balance of a specific token issued by a specific issuing account by creating a persistent ledger entry tied to the holding account. You can find out more in the guide to [creating custom assets](../issuing-assets/index.mdx).
 
+Each trustline increases the user's [base reserve](../glossary/minimum-balance.mdx) by 0.5 XLM, and in this tutorial, we'll go over how to set up your wallet to create trustlines and manage the base reserve on behalf of a user.
 
 ## Add Trustlines Button
+
 To enable custom asset handling, we need to modify three files and create one new one. Let’s start with our modifications. First up the `./events/render.tsx` file. We need to add a button for creating these new trustlines!
 
 <CodeExample>
 
 ```tsx
-import { h } from '@stencil/core'
-import { has as loHas } from 'lodash-es'
+import { h } from "@stencil/core";
+import { has as loHas } from "lodash-es";
 
 export default function render() {
   return [
     <stellar-prompt prompter={this.prompter} />,
 
+    this.account ? (
+      [
+        <div class="account-key">
+          <p>{this.account.publicKey}</p>
+          <button
+            class="small"
+            type="button"
+            onClick={(e) => this.copyAddress(e)}
+          >
+            Copy Address
+          </button>
+          <button
+            class="small"
+            type="button"
+            onClick={(e) => this.copySecret(e)}
+          >
+            Copy Secret
+          </button>
+        </div>,
+
+        <button
+          class={this.loading.trust ? "loading" : null}
+          type="button"
+          onClick={(e) => this.trustAsset(e)}
+        >
+          {this.loading.trust ? <stellar-loader /> : null} Trust Asset
+        </button>,
+        <button
+          class={this.loading.pay ? "loading" : null}
+          type="button"
+          onClick={(e) => this.makePayment(e)}
+        >
+          {this.loading.pay ? <stellar-loader /> : null} Make Payment
+        </button>,
+      ]
+    ) : (
+      <button
+        class={this.loading.fund ? "loading" : null}
+        type="button"
+        onClick={(e) => this.createAccount(e)}
+      >
+        {this.loading.fund ? <stellar-loader /> : null} Create Account
+      </button>
+    ),
+
+    this.error ? (
+      <pre class="error">{JSON.stringify(this.error, null, 2)}</pre>
+    ) : null,
+
+    loHas(this.account, "state") ? (
+      <pre class="account-state">
+        {JSON.stringify(this.account.state, null, 2)}
+      </pre>
+    ) : null,
+
     this.account
-    ? [
-      <div class="account-key">
-        <p>{this.account.publicKey}</p>
-        <button class="small" type="button" onClick={(e) => this.copyAddress(e)}>Copy Address</button>
-        <button class="small" type="button" onClick={(e) => this.copySecret(e)}>Copy Secret</button>
-      </div>,
-
-      <button class={this.loading.trust ? 'loading' : null} type="button" onClick={(e) => this.trustAsset(e)}>{this.loading.trust ? <stellar-loader /> : null} Trust Asset</button>,
-      <button class={this.loading.pay ? 'loading' : null} type="button" onClick={(e) => this.makePayment(e)}>{this.loading.pay ? <stellar-loader /> : null} Make Payment</button>,
-    ]
-    : <button class={this.loading.fund ? 'loading' : null} type="button" onClick={(e) => this.createAccount(e)}>{this.loading.fund ? <stellar-loader /> : null} Create Account</button>,
-
-    this.error ? <pre class="error">{JSON.stringify(this.error, null, 2)}</pre> : null,
-
-    loHas(this.account, 'state') ? <pre class="account-state">{JSON.stringify(this.account.state, null, 2)}</pre> : null,
-
-    this.account ? [
-      <button class={this.loading.update ? 'loading' : null} type="button" onClick={(e) => this.updateAccount(e)}>{this.loading.update ? <stellar-loader /> : null} Update Account</button>,
-      <button type="button" onClick={(e) => this.signOut(e)}>Sign Out</button>,
-    ] : null,
-  ]
+      ? [
+          <button
+            class={this.loading.update ? "loading" : null}
+            type="button"
+            onClick={(e) => this.updateAccount(e)}
+          >
+            {this.loading.update ? <stellar-loader /> : null} Update Account
+          </button>,
+          <button type="button" onClick={(e) => this.signOut(e)}>
+            Sign Out
+          </button>,
+        ]
+      : null,
+  ];
 }
 ```
 
@@ -67,7 +116,7 @@ Next up, let’s update the `./methods/makePayment.ts` file.
 <CodeExample>
 
 ```ts
-import sjcl from '@tinyanvil/sjcl'
+import sjcl from "@tinyanvil/sjcl";
 import {
   Keypair,
   Account,
@@ -75,93 +124,96 @@ import {
   BASE_FEE,
   Networks,
   Operation,
-  Asset
-} from 'stellar-sdk'
-import { has as loHas } from 'lodash-es'
+  Asset,
+} from "stellar-sdk";
+import { has as loHas } from "lodash-es";
 
-import { handleError } from '@services/error'
+import { handleError } from "@services/error";
 
 export default async function makePayment(e: Event) {
   try {
-    e.preventDefault()
+    e.preventDefault();
 
-    let instructions = await this.setPrompt('{Amount} {Asset} {Destination}')
-        instructions = instructions.split(' ')
+    let instructions = await this.setPrompt("{Amount} {Asset} {Destination}");
+    instructions = instructions.split(" ");
 
     if (!/xlm/gi.test(instructions[1]))
-      instructions[3] = await this.setPrompt(`Who issues the ${instructions[1]} asset?`, 'Enter ME to refer to yourself')
+      instructions[3] = await this.setPrompt(
+        `Who issues the ${instructions[1]} asset?`,
+        "Enter ME to refer to yourself",
+      );
 
-    const pincode = await this.setPrompt('Enter your keystore pincode')
+    const pincode = await this.setPrompt("Enter your keystore pincode");
 
-    if (
-      !instructions
-      || !pincode
-    ) return
+    if (!instructions || !pincode) return;
 
     const keypair = Keypair.fromSecret(
-      sjcl.decrypt(pincode, this.account.keystore)
-    )
+      sjcl.decrypt(pincode, this.account.keystore),
+    );
 
-    if (/me/gi.test(instructions[3]))
-      instructions[3] = keypair.publicKey()
+    if (/me/gi.test(instructions[3])) instructions[3] = keypair.publicKey();
 
-    this.error = null
-    this.loading = {...this.loading, pay: true}
+    this.error = null;
+    this.loading = { ...this.loading, pay: true };
 
     await this.server
-    .accounts()
-    .accountId(keypair.publicKey())
-    .call()
-    .then(({sequence}) => {
-      const account = new Account(keypair.publicKey(), sequence)
-      const transaction = new TransactionBuilder(account, {
-        fee: BASE_FEE,
-        networkPassphrase: Networks.TESTNET
-      })
-      .addOperation(Operation.payment({
-        destination: instructions[2],
-        asset: instructions[3] ? new Asset(instructions[1], instructions[3]) : Asset.native(),
-        amount: instructions[0]
-      }))
-      .setTimeout(0)
-      .build()
-
-      transaction.sign(keypair)
-      return this.server.submitTransaction(transaction)
-      .catch((err) => {
-        if ( // Paying an account which doesn't exist, create it instead
-          loHas(err, 'response.data.extras.result_codes.operations')
-          && err.response.data.status === 400
-          && err.response.data.extras.result_codes.operations.indexOf('op_no_destination') !== -1
-          && !instructions[3]
-        ) {
-          const transaction = new TransactionBuilder(account, {
-            fee: BASE_FEE,
-            networkPassphrase: Networks.TESTNET
-          })
-          .addOperation(Operation.createAccount({
-            destination: instructions[2],
-            startingBalance: instructions[0]
-          }))
+      .accounts()
+      .accountId(keypair.publicKey())
+      .call()
+      .then(({ sequence }) => {
+        const account = new Account(keypair.publicKey(), sequence);
+        const transaction = new TransactionBuilder(account, {
+          fee: BASE_FEE,
+          networkPassphrase: Networks.TESTNET,
+        })
+          .addOperation(
+            Operation.payment({
+              destination: instructions[2],
+              asset: instructions[3]
+                ? new Asset(instructions[1], instructions[3])
+                : Asset.native(),
+              amount: instructions[0],
+            }),
+          )
           .setTimeout(0)
-          .build()
+          .build();
 
-          transaction.sign(keypair)
-          return this.server.submitTransaction(transaction)
-        }
+        transaction.sign(keypair);
+        return this.server.submitTransaction(transaction).catch((err) => {
+          if (
+            // Paying an account which doesn't exist, create it instead
+            loHas(err, "response.data.extras.result_codes.operations") &&
+            err.response.data.status === 400 &&
+            err.response.data.extras.result_codes.operations.indexOf(
+              "op_no_destination",
+            ) !== -1 &&
+            !instructions[3]
+          ) {
+            const transaction = new TransactionBuilder(account, {
+              fee: BASE_FEE,
+              networkPassphrase: Networks.TESTNET,
+            })
+              .addOperation(
+                Operation.createAccount({
+                  destination: instructions[2],
+                  startingBalance: instructions[0],
+                }),
+              )
+              .setTimeout(0)
+              .build();
 
-        else throw err
+            transaction.sign(keypair);
+            return this.server.submitTransaction(transaction);
+          } else throw err;
+        });
       })
-    })
-    .then((res) => console.log(res))
-    .finally(() => {
-      this.loading = {...this.loading, pay: false}
-      this.updateAccount()
-    })
-  }
-
-  catch (err) {
-    this.error = handleError(err)
+      .then((res) => console.log(res))
+      .finally(() => {
+        this.loading = { ...this.loading, pay: false };
+        this.updateAccount();
+      });
+  } catch (err) {
+    this.error = handleError(err);
   }
 }
 ```
@@ -173,11 +225,14 @@ This is a big file was covered in great detail in the [Make XLM Payments](link) 
 <CodeExample>
 
 ```ts
-let instructions = await this.setPrompt('{Amount} {Asset} {Destination}')
-    instructions = instructions.split(' ')
+let instructions = await this.setPrompt("{Amount} {Asset} {Destination}");
+instructions = instructions.split(" ");
 
 if (!/xlm/gi.test(instructions[1]))
-  instructions[3] = await this.setPrompt(`Who issues the ${instructions[1]} asset?`, 'Enter ME to refer to yourself')
+  instructions[3] = await this.setPrompt(
+    `Who issues the ${instructions[1]} asset?`,
+    "Enter ME to refer to yourself",
+  );
 ```
 
 </CodeExample>
@@ -187,8 +242,7 @@ This change allows us to indicate a specific asset code we’d like use to make 
 <CodeExample>
 
 ```ts
-if (/me/gi.test(instructions[3]))
-  instructions[3] = keypair.publicKey()
+if (/me/gi.test(instructions[3])) instructions[3] = keypair.publicKey();
 ```
 
 </CodeExample>
@@ -210,75 +264,69 @@ The final changes are in the `wallet.ts` itself and tie together all the other u
 <CodeExample>
 
 ```ts
-import {
-  Component,
-  State,
-  Prop
-} from '@stencil/core'
-import {
-  Server,
-  ServerApi,
-} from 'stellar-sdk'
+import { Component, State, Prop } from "@stencil/core";
+import { Server, ServerApi } from "stellar-sdk";
 
-import componentWillLoad from './events/componentWillLoad'
-import render from './events/render'
+import componentWillLoad from "./events/componentWillLoad";
+import render from "./events/render";
 
-import createAccount from './methods/createAccount'
-import updateAccount from './methods/updateAccount'
-import trustAsset from './methods/trustAsset' // NEW
-import makePayment from './methods/makePayment' // UPDATE
-import copyAddress from './methods/copyAddress'
-import copySecret from './methods/copySecret'
-import signOut from './methods/signOut'
-import setPrompt from './methods/setPrompt'
+import createAccount from "./methods/createAccount";
+import updateAccount from "./methods/updateAccount";
+import trustAsset from "./methods/trustAsset"; // NEW
+import makePayment from "./methods/makePayment"; // UPDATE
+import copyAddress from "./methods/copyAddress";
+import copySecret from "./methods/copySecret";
+import signOut from "./methods/signOut";
+import setPrompt from "./methods/setPrompt";
 
-import { Prompter } from '@prompt/prompt'
+import { Prompter } from "@prompt/prompt";
 
 interface StellarAccount {
-  publicKey: string,
-  keystore: string,
-  state?: ServerApi.AccountRecord,
+  publicKey: string;
+  keystore: string;
+  state?: ServerApi.AccountRecord;
 }
 
-interface Loading { // UPDATE
-  fund?: boolean,
-  pay?: boolean,
-  trust?: boolean, // NEW
-  update?: boolean,
+interface Loading {
+  // UPDATE
+  fund?: boolean;
+  pay?: boolean;
+  trust?: boolean; // NEW
+  update?: boolean;
 }
 
 @Component({
-  tag: 'stellar-wallet',
-  styleUrl: 'wallet.scss',
-  shadow: true
+  tag: "stellar-wallet",
+  styleUrl: "wallet.scss",
+  shadow: true,
 })
 export class Wallet {
-  @State() account: StellarAccount
-  @State() prompter: Prompter = {show: false}
-  @State() loading: Loading = {}
-  @State() error: any = null
+  @State() account: StellarAccount;
+  @State() prompter: Prompter = { show: false };
+  @State() loading: Loading = {};
+  @State() error: any = null;
 
-  @Prop() server: Server
+  @Prop() server: Server;
 
   // Component events
   componentWillLoad() {}
   render() {}
 
   // Stellar methods
-  createAccount = createAccount
-  updateAccount = updateAccount
-  trustAsset = trustAsset // NEW
-  makePayment = makePayment // UPDATE
-  copyAddress = copyAddress
-  copySecret = copySecret
-  signOut = signOut
+  createAccount = createAccount;
+  updateAccount = updateAccount;
+  trustAsset = trustAsset; // NEW
+  makePayment = makePayment; // UPDATE
+  copyAddress = copyAddress;
+  copySecret = copySecret;
+  signOut = signOut;
 
   // Misc methods
-  setPrompt = setPrompt
+  setPrompt = setPrompt;
 }
 
-Wallet.prototype.componentWillLoad = componentWillLoad
-Wallet.prototype.render = render
+Wallet.prototype.componentWillLoad = componentWillLoad;
+Wallet.prototype.render = render;
 ```
 
 </CodeExample>
@@ -292,7 +340,7 @@ Alright so, finally we get to the `./methods/trustAsset.ts` file!
 <CodeExample>
 
 ```ts
-import sjcl from '@tinyanvil/sjcl'
+import sjcl from "@tinyanvil/sjcl";
 import {
   Keypair,
   Account,
@@ -300,74 +348,67 @@ import {
   BASE_FEE,
   Networks,
   Operation,
-  Asset
-} from 'stellar-sdk'
+  Asset,
+} from "stellar-sdk";
 
-import { handleError } from '@services/error'
+import { handleError } from "@services/error";
 
 export default async function trustAsset(
   e?: Event,
   asset?: string,
   issuer?: string,
-  pincode?: string
+  pincode?: string,
 ) {
   try {
-    if (e)
-      e.preventDefault()
+    if (e) e.preventDefault();
 
-    let instructions
+    let instructions;
 
-    if (
-      asset
-      && issuer
-    ) instructions = [asset, issuer]
-
+    if (asset && issuer) instructions = [asset, issuer];
     else {
-      instructions = await this.setPrompt('{Asset} {Issuer}')
-      instructions = instructions.split(' ')
+      instructions = await this.setPrompt("{Asset} {Issuer}");
+      instructions = instructions.split(" ");
     }
 
-    pincode = pincode || await this.setPrompt('Enter your keystore pincode')
+    pincode = pincode || (await this.setPrompt("Enter your keystore pincode"));
 
-    if (
-      !instructions
-      || !pincode
-    ) return
+    if (!instructions || !pincode) return;
 
     const keypair = Keypair.fromSecret(
-      sjcl.decrypt(pincode, this.account.keystore)
-    )
+      sjcl.decrypt(pincode, this.account.keystore),
+    );
 
-    this.error = null
-    this.loading = {...this.loading, trust: true}
+    this.error = null;
+    this.loading = { ...this.loading, trust: true };
 
-    await this.server.accounts()
-    .accountId(keypair.publicKey())
-    .call()
-    .then(({sequence}) => {
-      const account = new Account(keypair.publicKey(), sequence)
-      const transaction = new TransactionBuilder(account, {
-        fee: BASE_FEE,
-        networkPassphrase: Networks.TESTNET
+    await this.server
+      .accounts()
+      .accountId(keypair.publicKey())
+      .call()
+      .then(({ sequence }) => {
+        const account = new Account(keypair.publicKey(), sequence);
+        const transaction = new TransactionBuilder(account, {
+          fee: BASE_FEE,
+          networkPassphrase: Networks.TESTNET,
+        })
+          .addOperation(
+            Operation.changeTrust({
+              asset: new Asset(instructions[0], instructions[1]),
+            }),
+          )
+          .setTimeout(0)
+          .build();
+
+        transaction.sign(keypair);
+        return this.server.submitTransaction(transaction);
       })
-      .addOperation(Operation.changeTrust({
-        asset: new Asset(instructions[0], instructions[1])
-      }))
-      .setTimeout(0)
-      .build()
-
-      transaction.sign(keypair)
-      return this.server.submitTransaction(transaction)
-    })
-    .then((res) => console.log(res))
-    .finally(() => {
-      this.loading = {...this.loading, trust: false}
-      this.updateAccount()
-    })
-  }
-
-  catch (err) {
-    this.error = handleError(err)
+      .then((res) => console.log(res))
+      .finally(() => {
+        this.loading = { ...this.loading, trust: false };
+        this.updateAccount();
+      });
+  } catch (err) {
+    this.error = handleError(err);
   }
 }
 ```
@@ -412,7 +453,5 @@ If we have any of those variables set, we can “preload” our interface a bit,
 
 So there we have it! The ability to accept and pay with custom assets on Stellar!
 
-
-[1]:	https://github.com/stellar/stellar-demo-wallet/tree/pay
-[3]:	https://github.com/stellar/stellar-demo-wallet/tree/trustline
-
+[1]: https://github.com/stellar/stellar-demo-wallet/tree/pay
+[3]: https://github.com/stellar/stellar-demo-wallet/tree/trustline

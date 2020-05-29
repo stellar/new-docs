@@ -11,6 +11,7 @@ import { AttributeTable } from "components/AttributeTable";
 This endpoint returns all payment-related operations in a specific ledger.
 
 Operation types that can be returned by this endpoint include:
+
 - `create_account`
 - `payment`
 - `path_payment`
@@ -57,19 +58,19 @@ curl "https://horizon.stellar.org/ledgers/27521176/payments?limit=1"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.payments()
-.forLedger('27521176')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .payments()
+  .forLedger("27521176")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

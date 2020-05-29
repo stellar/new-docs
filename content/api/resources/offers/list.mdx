@@ -16,8 +16,8 @@ When filtering by buying or selling arguments, you must use a combination of `se
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /offers?seller={:account_id}&selling_asset_type={native,credit_alphanum4,credit_alphanum12}&selling_asset_issuer={:account_id}&selling_asset_code{:asset_code}&buying_asset_type={native,credit_alphanum4,credit_alphanum12}&buying_asset_issuer={:account_id}&buying_asset_code{:asset_code}&cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
@@ -67,19 +67,24 @@ curl "https://horizon.stellar.org/offers?selling_asset_type=credit_alphanum4&sel
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.offers()
-.selling(new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'))
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .offers()
+  .selling(
+    new StellarSdk.Asset(
+      "USD",
+      "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
+    ),
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -204,18 +209,23 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.offers()
-.selling(new StellarSdk.Asset('USD', 'GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX'))
-.cursor('now')
-.stream({onmessage: callback})
+  .offers()
+  .selling(
+    new StellarSdk.Asset(
+      "USD",
+      "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
+    ),
+  )
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>

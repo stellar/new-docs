@@ -3,7 +3,7 @@ title: Transactions
 order:
 ---
 
-Transactions are commands that modify the ledger state. They consist of a list of anywhere from 1 to 100 operations, and they are signed, submitted to the network, and considered for inclusion in the transaction set via SCP.  They contain the operations used to send payments, enter orders into the [distributed exchange](link), change settings on accounts, and authorize accounts to hold assets. If you think of the ledger as a database, then transactions are SQL commands.
+Transactions are commands that modify the ledger state. They consist of a list of anywhere from 1 to 100 operations, and they are signed, submitted to the network, and considered for inclusion in the transaction set via SCP. They contain the operations used to send payments, enter orders into the [distributed exchange](link), change settings on accounts, and authorize accounts to hold assets. If you think of the ledger as a database, then transactions are SQL commands.
 
 ## Transaction Attributes
 
@@ -15,7 +15,7 @@ The account that originates the transaction. This account also provides the fee 
 
 ### Fee
 
-Each transaction incurs a fee, which is paid by the source account.  When you submit a transaction, you set the maximum that you are willing to pay per operation, but you’re charged the minimum fee possible based on network activity.  For more info, see [transaction fees](./transaction-fees.mdx)
+Each transaction incurs a fee, which is paid by the source account. When you submit a transaction, you set the maximum that you are willing to pay per operation, but you’re charged the minimum fee possible based on network activity. For more info, see [transaction fees](./transaction-fees.mdx)
 
 ### Sequence Number
 
@@ -25,7 +25,7 @@ However, if several transactions with the same source account make it into the s
 
 ### List of Operations
 
-Transactions contain an arbitrary list of [operations](./operations.md) inside them. Typically there is just one operation, but it's possible to have multiple (up to 100).  Operations are executed in order as one ACID transaction, meaning that either all operations are applied or none are.  If any operation fails, the whole transaction fails. If operations are on accounts other than the source account, then they require signatures of the accounts in question.
+Transactions contain an arbitrary list of [operations](./operations.md) inside them. Typically there is just one operation, but it's possible to have multiple (up to 100). Operations are executed in order as one ACID transaction, meaning that either all operations are applied or none are. If any operation fails, the whole transaction fails. If operations are on accounts other than the source account, then they require signatures of the accounts in question.
 
 ### List of Signatures
 
@@ -36,46 +36,35 @@ Signatures are required to authorize operations and to authorize changes to the 
 ### Memo
 
 The memo contains optional extra information. It is the responsibility of the client to interpret this value. Memos can be one of the following types:
-   - `MEMO_TEXT` : A string encoded using either ASCII or UTF-8, up to 28-bytes long.
-   - `MEMO_ID` :  A 64 bit unsigned integer.
-   - `MEMO_HASH` : A 32 byte hash.
-   - `MEMO_RETURN` : A 32 byte hash intended to be interpreted as the hash of the transaction the sender is refunding.
+
+- `MEMO_TEXT` : A string encoded using either ASCII or UTF-8, up to 28-bytes long.
+- `MEMO_ID` : A 64 bit unsigned integer.
+- `MEMO_HASH` : A 32 byte hash.
+- `MEMO_RETURN` : A 32 byte hash intended to be interpreted as the hash of the transaction the sender is refunding.
 
 ### Time Bounds
 
-The optional UNIX timestamp (in seconds), determined by ledger time, of a lower and upper bound of when this transaction will be valid. If a transaction is submitted too early or too late, it will fail to make it into the transaction set. `maxTime` equal `0` means that it's not set. _We highly advise for all transactions to use time bounds, and many SDKs enforce their usage._ If a
-transaction doesn't make it into the transaction set, it is kept around in memory in order to be
-added to the next transaction set on a best effort basis. Because of this behavior, we highly
-advise that all transactions are created with time bounds in order to invalidate transactions
-after a certain amount of time, especially if you plan to resubmit your transaction at a later time.
+The optional UNIX timestamp (in seconds), determined by ledger time, of a lower and upper bound of when this transaction will be valid. If a transaction is submitted too early or too late, it will fail to make it into the transaction set. `maxTime` equal `0` means that it's not set. _We highly advise for all transactions to use time bounds, and many SDKs enforce their usage._ If a transaction doesn't make it into the transaction set, it is kept around in memory in order to be added to the next transaction set on a best effort basis. Because of this behavior, we highly advise that all transactions are created with time bounds in order to invalidate transactions after a certain amount of time, especially if you plan to resubmit your transaction at a later time.
 
 ## Transaction Envelopes
 
-Once a transaction is ready to be signed, the transaction object is wrapped in an object called a
-`Transaction Envelope`, which contains the transaction as well as a set of signatures. Most
-transaction envelopes only contain a single signature along with the transaction, but in
-[multi-signature setups](./multi-sig.md) it can contain many signatures.
+Once a transaction is ready to be signed, the transaction object is wrapped in an object called a `Transaction Envelope`, which contains the transaction as well as a set of signatures. Most transaction envelopes only contain a single signature along with the transaction, but in [multi-signature setups](./multi-sig.md) it can contain many signatures.
 
 Ultimately, transaction envelopes are passed around the network and are included in transaction sets, as opposed to raw Transaction objects.
 
-It's of note that each signer signs the hash of the transaction object in addition to the network
-passphrase. This is done to ensure that a given transaction can only be submitted to the intended network by its signers. For more information, see [Networks](./networks.md).
+It's of note that each signer signs the hash of the transaction object in addition to the network passphrase. This is done to ensure that a given transaction can only be submitted to the intended network by its signers. For more information, see [Networks](./networks.md).
+
 ## Validity of a Transaction
+
 To determine if a transaction is valid, many checks take place over the course of the transaction's lifecycle. The following conditions determine whether a transaction is valid:
 
-* **Source Account** — The source account must exist on the ledger.
-* **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.md) for the number of operations submitted as part of the transaction. Note that this does not guarantee that the transaction will be applied; it only guarantees that it is valid. In addition, the source account must be able to pay the fee specified. In the case where multiple transactions are submitted but only a subset of them can be paid for, they are checked for validity in order of sequence number.
-* **Sequence Number** — For the transaction to be valid, the sequence number
-  must be 1 greater than the sequence number stored in the source account [account
-  entry](./accounts.md) _when the transaction is applied_. This means when checking the validity of multiple transactions with the same source account in a candidate transaction set, they must all be valid transactions and their sequence numbers must be offset by 1 from each other. When it comes to apply time, they are ordered and applied according to their sequence number.
-  * For example, if your source account's sequence number is 5 and you submit 3 transactions, all transactions must be considered valid and their sequence numbers must be 6, 7, and 8 in order for any of them to make it into a candidate transaction set.
-* **List of Operations** — Each operation must pass all of the [validity checks for an
-  operation](./operations.md#validity-of-an-operation).
-* **List of Signatures** — In addition to meeting the signature requirements of each operation in the transaction, the following requirements must be met for the transaction:
-  * The appropriate network passphrase was part of the transaction hash that was signed by each of the signers. See [Networks](./networks.md) for more on network passphrases.
-  * The combined weight of all signatures for the source account _of the transaction_ meets
-    the low threshold for the source account. This is necessary in order for fees to be taken and
-    the sequence number to be incremented later in the transaction lifecycle.
-* **Memo** — The memo type must be a valid type, and the memo itself must be adhere to the formatting of the memo type.
-* **Time Bounds** — The transaction must be submitted within the set time bounds of the
-  transaction, otherwise it will be considered invalid.
+- **Source Account** — The source account must exist on the ledger.
+- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.md) for the number of operations submitted as part of the transaction. Note that this does not guarantee that the transaction will be applied; it only guarantees that it is valid. In addition, the source account must be able to pay the fee specified. In the case where multiple transactions are submitted but only a subset of them can be paid for, they are checked for validity in order of sequence number.
+- **Sequence Number** — For the transaction to be valid, the sequence number must be 1 greater than the sequence number stored in the source account [account entry](./accounts.md) _when the transaction is applied_. This means when checking the validity of multiple transactions with the same source account in a candidate transaction set, they must all be valid transactions and their sequence numbers must be offset by 1 from each other. When it comes to apply time, they are ordered and applied according to their sequence number.
+  - For example, if your source account's sequence number is 5 and you submit 3 transactions, all transactions must be considered valid and their sequence numbers must be 6, 7, and 8 in order for any of them to make it into a candidate transaction set.
+- **List of Operations** — Each operation must pass all of the [validity checks for an operation](./operations.md#validity-of-an-operation).
+- **List of Signatures** — In addition to meeting the signature requirements of each operation in the transaction, the following requirements must be met for the transaction:
+  - The appropriate network passphrase was part of the transaction hash that was signed by each of the signers. See [Networks](./networks.md) for more on network passphrases.
+  - The combined weight of all signatures for the source account _of the transaction_ meets the low threshold for the source account. This is necessary in order for fees to be taken and the sequence number to be incremented later in the transaction lifecycle.
+- **Memo** — The memo type must be a valid type, and the memo itself must be adhere to the formatting of the memo type.
+- **Time Bounds** — The transaction must be submitted within the set time bounds of the transaction, otherwise it will be considered invalid.

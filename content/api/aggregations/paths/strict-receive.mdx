@@ -14,8 +14,8 @@ For this search, Horizon loads a list of assets available to the sender (based o
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /paths/strict-receive?source_account={:account_id}&source_assets={:asset_list}&destination_asset_type={native,credit_alphanum4,credit_alphanum12}&destination_asset_code={:asset_code}&destination_asset_issuer={:account_id}&destination_amount={:amount} |
 
 </Endpoint>
@@ -53,24 +53,30 @@ curl "https://horizon.stellar.org/paths/strict-receive?source_assets=CNY:GAREELU
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.strictReceivePaths(
-  [
-    new StellarSdk.Asset('CNY', 'GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX')
-  ],
-  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
-  '5',
-)
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .strictReceivePaths(
+    [
+      new StellarSdk.Asset(
+        "CNY",
+        "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX",
+      ),
+    ],
+    new StellarSdk.Asset(
+      "BB1",
+      "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN",
+    ),
+    "5",
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -186,23 +192,29 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.strictReceivePaths(
-  [
-    new StellarSdk.Asset('CNY', 'GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX')
-  ],
-  new StellarSdk.Asset('BB1', 'GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN'),
-  '5',
-)
-.cursor('now')
-.stream({onmessage: callback})
+  .strictReceivePaths(
+    [
+      new StellarSdk.Asset(
+        "CNY",
+        "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX",
+      ),
+    ],
+    new StellarSdk.Asset(
+      "BB1",
+      "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN",
+    ),
+    "5",
+  )
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>
