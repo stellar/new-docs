@@ -236,7 +236,7 @@ Beyond defining title font sizes, line heights, and weights:
 Custom (React) components that are being used throughout Documentation and API
 Reference.
 
-**Make sure that there is an empty space within the wrapper**
+**Make sure that there is an empty line within the wrapper**
 
 For example,
 

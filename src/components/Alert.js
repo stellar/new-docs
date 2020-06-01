@@ -27,12 +27,21 @@ const CustomAlertIcon = styled(AlertIcon)`
   margin-top: 0.2rem;
 `;
 
-export const Alert = ({ children }) => (
-  <AlertEl>
-    <CustomAlertIcon color={PALETTE.purpleBlue} />
-    {children}
-  </AlertEl>
-);
+export const Alert = ({ children }) => {
+  if (typeof children === "string") {
+    // eslint-disable-next-line no-console
+    throw new Error(
+      "Children is parsed as a raw string. Make sure that there is an empty line within the React component wrapper in MDX. An empty line is needed to be parsed as markdown.",
+    );
+  }
+
+  return (
+    <AlertEl>
+      <CustomAlertIcon color={PALETTE.purpleBlue} />
+      {children}
+    </AlertEl>
+  );
+};
 
 Alert.propTypes = {
   children: PropTypes.element.isRequired,
