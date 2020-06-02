@@ -1,0 +1,55 @@
+---
+title: Manage Sell Offer Result Codes
+order: 50
+---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { AttributeTable } from "components/AttributeTable";
+
+These are result codes that communicate success (200) or failure (400) specific to the `Manage Sell Offer` operation.
+
+Learn more about the [`Manage Sell Offer` operation](../../../../docs/glossary/operations/manage-sell-offer.mdx).
+
+<AttributeTable>
+
+- OpSuccess
+  - MANAGE_SELL_OFFER_SUCCESS
+  - The offer was successfully placed
+- OpMalformed
+  - MANAGE_SELL_OFFER_MALFORMED
+  - generated offer would be invalid
+- op_sell_no_trust
+  - MANAGE_SELL_OFFER_SELL_NO_TRUST
+  - no trust line for what we're selling
+- op_buy_no_trust
+  - MANAGE_SELL_OFFER_BUY_NO_TRUST
+  - no trust line for what we're buying
+- sell_not_authorized
+  - MANAGE_SELL_OFFER_SELL_NOT_AUTHORIZED
+  - not authorized to sell
+- buy_not_authorized
+  - MANAGE_SELL_OFFER_BUY_NOT_AUTHORIZED
+  - not authorized to buy
+- OpLineFull
+  - MANAGE_SELL_OFFER_LINE_FULL
+  - can't receive more of what it's buying
+- OpUnderfunded
+  - MANAGE_SELL_OFFER_UNDERFUNDED
+  - doesn't hold what it's trying to sell
+- op_cross_self
+  - MANAGE_SELL_OFFER_CROSS_SELF
+  - would cross an offer from the same user
+- op_sell_no_issuer
+  - MANAGE_SELL_OFFER_SELL_NO_ISSUER
+  - no issuer for what we're selling
+- buy_no_issuer
+  - MANAGE_SELL_OFFER_BUY_NO_ISSUER
+  - no issuer for what we're buying
+- op_offer_not_found
+  - MANAGE_SELL_OFFER_NOT_FOUND
+  - offerID does not match an existing offer
+- OpLowReserve
+  - MANAGE_SELL_OFFER_LOW_RESERVE
+  - not enough funds to create a new Offer
+
+</AttributeTable>

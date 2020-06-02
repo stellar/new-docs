@@ -1,6 +1,6 @@
 ---
 title: Path Payment Strict Send Result Codes
-order: 30
+order: 40
 ---
 
 import { ExampleResponse } from "components/ExampleResponse";
@@ -16,7 +16,7 @@ Learn more about the [`Path Payment Strict Send` operation](../../../../docs/glo
   - STELLAR PROTOCOL CODE
   - DESCRIPTION
 - OpSuccess
-  - PAYMENT_SUCCESS
+  - PATH_PAYMENT_STRICT_SEND_SUCCESS
   - The payment was successfully completed.
 - OpMalformed
   - PATH_PAYMENT_STRICT_SEND_MALFORMED
@@ -24,9 +24,6 @@ Learn more about the [`Path Payment Strict Send` operation](../../../../docs/glo
 - OpUnderfunded
   - PATH_PAYMENT_STRICT_SEND_UNDERFUNDED
   - The source account (sender) does not have enough lumens to send the payment amount while maintaining its own minimum reserve.
-- OpLowReserve
-  - PAYMENT_LOW_RESERVE
-  - The source account did not have the necessary trustline.
 - OpSrcNoTrust
   - PATH_PAYMENT_STRICT_SEND_SRC_NO_TRUST
   - The source account is missing the appropriate trustline.
@@ -46,7 +43,7 @@ Learn more about the [`Path Payment Strict Send` operation](../../../../docs/glo
   - PATH_PAYMENT_STRICT_SEND_LINE_FULL
   - The destination account (receiver) does not have sufficient limits to receive amount and still satisfy its buying liabilities.
 - OpNoIssuer
-  - PATH_PAYMENT_STRICT_SEND_NO_ISSUER 
+  - PATH_PAYMENT_STRICT_SEND_NO_ISSUER
   - The issuer of one of the assets is missing.
 - OpTooFewOffers
   - PATH_PAYMENT_STRICT_SEND_TOO_FEW_OFFERS

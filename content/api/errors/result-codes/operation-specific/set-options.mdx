@@ -1,0 +1,46 @@
+---
+title: Set Options Result Codes
+order: 80
+---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { AttributeTable } from "components/AttributeTable";
+
+These are result codes that communicate success (200) or failure (400) specific to the `Set Options` operation.
+
+Learn more about the [`Set Options` operation](../../../../docs/glossary/operations/set-options.mdx).
+
+<AttributeTable>
+
+- OpSuccess
+  - SET_OPTIONS_SUCCESS
+  - Options successfully set
+- OpLowReserve
+  - SET_OPTIONS_LOW_RESERVE
+  - not enough funds to add a signer
+- op_too_many_signers
+  - SET_OPTIONS_TOO_MANY_SIGNERS
+  - max number of signers already reached
+- op_bad_flags
+  - SET_OPTIONS_BAD_FLAGS
+  - invalid combination of clear/set flags
+- op_invalid_inflation
+  - SET_OPTIONS_INVALID_INFLATION
+  - inflation account does not exist
+- op_cant_change
+  - SET_OPTIONS_CANT_CHANGE
+  - can no longer change this option
+- op_unknown_flag
+  - SET_OPTIONS_UNKNOWN_FLAG
+  - can't set an unknown flag
+- op_threshold_out_of_range
+  - SET_OPTIONS_THRESHOLD_OUT_OF_RANGE
+  - bad value for weight / threshold
+- op_bad_signer
+  - SET_OPTIONS_BAD_SIGNER
+  - signer cannot be masterkey
+- op_invalid_home_domain
+  - SET_OPTIONS_INVALID_HOME_DOMAIN
+  - malformed home domain
+
+</AttributeTable>

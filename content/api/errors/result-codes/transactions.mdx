@@ -25,6 +25,30 @@ These are Result Codes that communicate success (200) or failure (400) at the tr
 - tx_too_late
   - txTOO_LATE
   - The ledger closeTime was after the maxTime.
+- tx_missing_operation
+  - txMISSING_OPERATION
+  - No operation was specified
+- tx_bad_seq
+  - txBAD_SEQ
+  - sequence number does not match source account
+- tx_bad_auth
+  - txBAD_AUTH
+  - too few valid signatures / wrong network
+- tx_insufficient_balance
+  - txINSUFFICIENT_BALANCE
+  - fee would bring account below reserve
+- tx_no_source_account
+  - txNO_ACCOUNT
+  - source account not found
+- tx_insufficient_fee
+  - txINSUFFICIENT_FEE
+  - fee is too small
+- tx_bad_auth_extra
+  - txBAD_AUTH_EXTRA
+  - unused signatures attached to transaction
+- tx_internal_error
+  - txINTERNAL_ERROR
+  - an unknown error occured
 
 </AttributeTable>
 

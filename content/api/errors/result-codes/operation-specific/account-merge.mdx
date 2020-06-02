@@ -1,0 +1,37 @@
+---
+title: Account Merge Result Codes
+order: 110
+---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { AttributeTable } from "components/AttributeTable";
+
+These are result codes that communicate success (200) or failure (400) specific to the `Account Merge` operation.
+
+Learn more about the [`Account Merge` operation](../../../../docs/glossary/operations/account-merge.mdx).
+
+<AttributeTable>
+
+- OpSuccess
+  - ACCOUNT_MERGE_SUCCESS
+  - Account succesfully merged
+- OpMalformed
+  - ACCOUNT_MERGE_MALFORMED
+  - can't merge onto itself
+- op_no_account
+  - ACCOUNT_MERGE_NO_ACCOUNT
+  - destination does not exist
+- op_immutable_set
+  - ACCOUNT_MERGE_IMMUTABLE_SET
+  - source account has AUTH_IMMUTABLE set
+- op_has_sub_entries
+  - ACCOUNT_MERGE_HAS_SUB_ENTRIES
+  - account has trust lines/offers
+- op_seq_num_too_far
+  - ACCOUNT_MERGE_SEQNUM_TOO_FAR
+  - sequence number is over max allowed
+- op_dest_full
+  - ACCOUNT_MERGE_DEST_FULL
+  - can't add source balance to destination balance
+
+</AttributeTable>

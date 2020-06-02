@@ -1,0 +1,34 @@
+---
+title: Change Trust Result Codes
+order: 90
+---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { AttributeTable } from "components/AttributeTable";
+
+These are result codes that communicate success (200) or failure (400) specific to the `Change Trust` operation.
+
+Learn more about the [`Change Trust` operation](../../../../docs/glossary/operations/change-trust.mdx).
+
+<AttributeTable>
+
+- OpSuccess
+  - CHANGE_TRUST_SUCCESS
+  - Trust was successfully changed
+- OpMalformed
+  - CHANGE_TRUST_MALFORMED
+  - bad input
+- OpNoIssuer
+  - CHANGE_TRUST_NO_ISSUER
+  - could not find issuer
+- op_invalid_limit
+  - CHANGE_TRUST_INVALID_LIMIT
+  - cannot drop limit below balance, cannot create with a limit of 0
+- OpLowReserve
+  - CHANGE_TRUST_LOW_RESERVE
+  - not enough funds to create a new trust line
+- op_self_not_allowed
+  - CHANGE_TRUST_SELF_NOT_ALLOWED
+  - trusting self is not allowed
+
+</AttributeTable>
