@@ -17,18 +17,18 @@ Learn more about the [`Change Trust` operation](../../../../docs/glossary/operat
   - Trust was successfully changed
 - OpMalformed
   - CHANGE_TRUST_MALFORMED
-  - bad input
+  - The input to this operation is invalid.
 - OpNoIssuer
   - CHANGE_TRUST_NO_ISSUER
-  - could not find issuer
+  - The issuer of the asset cannot be found.
 - op_invalid_limit
   - CHANGE_TRUST_INVALID_LIMIT
-  - cannot drop limit below balance, cannot create with a limit of 0
+  - The limit is not sufficient to hold the current balance of the trustline and still satisfy its buying liabilities.
 - OpLowReserve
   - CHANGE_TRUST_LOW_RESERVE
-  - not enough funds to create a new trust line
+  - This account does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every new trustline added to an account, the minimum reserve of XLM that account must hold increases.
 - op_self_not_allowed
   - CHANGE_TRUST_SELF_NOT_ALLOWED
-  - trusting self is not allowed
+  - The source account attempted to create a trustline for itself, which is not allowed.
 
 </AttributeTable>

@@ -14,24 +14,24 @@ Learn more about the [`Account Merge` operation](../../../../docs/glossary/opera
 
 - OpSuccess
   - ACCOUNT_MERGE_SUCCESS
-  - Account succesfully merged
+  - Account succesfully merged.
 - OpMalformed
   - ACCOUNT_MERGE_MALFORMED
-  - can't merge onto itself
+  - The operation is malformed because the source account cannot merge with itself. The destination must be a different account.
 - op_no_account
   - ACCOUNT_MERGE_NO_ACCOUNT
-  - destination does not exist
+  - The destination account does not exist.
 - op_immutable_set
   - ACCOUNT_MERGE_IMMUTABLE_SET
-  - source account has AUTH_IMMUTABLE set
+  - The source account has AUTH_IMMUTABLE flag set.
 - op_has_sub_entries
   - ACCOUNT_MERGE_HAS_SUB_ENTRIES
-  - account has trust lines/offers
+  - The source account has trustlines and/or offers.
 - op_seq_num_too_far
   - ACCOUNT_MERGE_SEQNUM_TOO_FAR
-  - sequence number is over max allowed
+  - Source account sequence number is too high.
 - op_dest_full
   - ACCOUNT_MERGE_DEST_FULL
-  - can't add source balance to destination balance
+  - The destination account cannot receive the balance of the source account and still satisfy its lumen buying liabilities.
 
 </AttributeTable>
