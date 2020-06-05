@@ -124,7 +124,7 @@ const PageOutlineItem = ({ id, isActive, title }) => {
         e.preventDefault();
         onNavClick(true);
         setActiveNode(document.getElementById(id));
-        smoothScrollTo(document.getElementById(id), () => {
+        smoothScrollTo(document.getElementById(id), { duration: 0.55 }, () => {
           onNavClick(false);
         });
       }}

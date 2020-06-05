@@ -145,7 +145,7 @@ const isInViewport = (elem) => {
 const NavItem = ({ isActive, forwardedRef, children, depth }) => {
   const itemRef = React.useRef();
   const parentDom = forwardedRef;
-  const { isScrollingDown } = React.useContext(ScrollRouterContext);
+  const { isScrollingDown, onNavClick } = React.useContext(ScrollRouterContext);
   const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
 
   React.useLayoutEffect(() => {
@@ -187,7 +187,14 @@ const NavItem = ({ isActive, forwardedRef, children, depth }) => {
   }, [isActive, parentDom, isScrollingDown, isMobile]);
 
   return (
-    <NavItemEl isActive={isActive} depth={depth} ref={itemRef}>
+    <NavItemEl
+      isActive={isActive}
+      depth={depth}
+      ref={itemRef}
+      onClick={() => {
+        onNavClick(true);
+      }}
+    >
       {children}
     </NavItemEl>
   );

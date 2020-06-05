@@ -23,6 +23,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
     ref: null,
     id: initialActive,
   });
+  const [isNavClicked, onNavClick] = React.useState(false);
   const trackedElementsRef = React.useRef([]);
   const isScrollingDown = React.useRef(false);
 
@@ -36,16 +37,19 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
   React.useEffect(() => {
     const handler = throttle(() => {
       // If we haven't scrolled at least 100 pixels, just bail.
-      if (Math.abs(window.scrollTop - lastScrollPosition) < 100) {
+      if (Math.abs(window.scrollY - lastScrollPosition) < 100) {
         return;
       }
-      isScrollingDown.current = window.scrollTop > lastScrollPosition;
-      lastScrollPosition = window.scrollTop;
+      isScrollingDown.current = window.scrollY > lastScrollPosition;
+      lastScrollPosition = window.scrollY;
 
       const newActiveNode = findActiveNode(
         trackedElementsRef.current,
-        isScrollingDown.current,
+        isNavClicked ? true : isScrollingDown.current,
       );
+
+      if (isNavClicked) onNavClick(false);
+
       // If we've found an active node and it's not the same one as we had
       // before, update the route.
       if (newActiveNode && newActiveNode !== activeNode) {
@@ -60,7 +64,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
     return () => {
       window.removeEventListener("scroll", handler);
     };
-  }, [activeNode]);
+  }, [activeNode, isNavClicked]);
 
   // Tracked sections
   const trackElement = React.useCallback((ref, route) => {
@@ -91,8 +95,15 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       trackElement,
       onLinkClick,
       isScrollingDown,
+      onNavClick,
     }),
-    [stopTrackingElement, trackElement, onLinkClick, isScrollingDown],
+    [
+      stopTrackingElement,
+      trackElement,
+      onLinkClick,
+      isScrollingDown,
+      onNavClick,
+    ],
   );
   const sideNavContextValue = React.useMemo(
     () => ({
