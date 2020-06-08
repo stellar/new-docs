@@ -45,7 +45,7 @@ export const findActiveNode = (possibleNodes, isScrollingDown) => {
       // Display the last item when scrolled all the way to the bottom
       return isReachedBottom
         ? bottom + bottomEdge > window.innerHeight - topEdge
-        : top < bottomEdge && top >= -5;
+        : top < bottomEdge && top >= 0;
     }
 
     return bottom > topEdge && bottom < window.innerHeight;

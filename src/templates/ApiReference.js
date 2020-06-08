@@ -90,12 +90,13 @@ const activeStyles = `
 `;
 
 const ApiRefH1 = styled(H1)`
-  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  margin-top: 0;
   margin-bottom: 0;
 `;
 const ApiRefH2 = styled(H2)`
-  padding-top: 0;
-  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  margin-top: 0;
   margin-bottom: 0;
 `;
 const NavItemEl = styled.div`
