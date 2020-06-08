@@ -48,7 +48,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
         isNavClicked ? true : isScrollingDown.current,
       );
 
-      if (isNavClicked) onNavClick(false);
+      if (isNavClicked) onNavClick(!isNavClicked);
 
       // If we've found an active node and it's not the same one as we had
       // before, update the route.
