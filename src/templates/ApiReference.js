@@ -90,12 +90,13 @@ const activeStyles = `
 `;
 
 const ApiRefH1 = styled(H1)`
-  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  margin-top: 0;
   margin-bottom: 0;
 `;
 const ApiRefH2 = styled(H2)`
-  padding-top: 0;
-  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  margin-top: 0;
   margin-bottom: 0;
 `;
 const NavItemEl = styled.div`
@@ -145,7 +146,9 @@ const isInViewport = (elem) => {
 const NavItem = ({ isActive, forwardedRef, children, depth }) => {
   const itemRef = React.useRef();
   const parentDom = forwardedRef;
-  const { isScrollingDown } = React.useContext(ScrollRouterContext);
+  const { isScrollingDown, setIsNavClicked } = React.useContext(
+    ScrollRouterContext,
+  );
   const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
 
   React.useLayoutEffect(() => {
@@ -187,7 +190,14 @@ const NavItem = ({ isActive, forwardedRef, children, depth }) => {
   }, [isActive, parentDom, isScrollingDown, isMobile]);
 
   return (
-    <NavItemEl isActive={isActive} depth={depth} ref={itemRef}>
+    <NavItemEl
+      isActive={isActive}
+      depth={depth}
+      ref={itemRef}
+      onClick={() => {
+        setIsNavClicked(true);
+      }}
+    >
       {children}
     </NavItemEl>
   );

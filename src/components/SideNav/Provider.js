@@ -17,7 +17,7 @@ export const Provider = ({ children }) => {
   const [activeContent, setActiveNode] = React.useState({ id: "", ref: null });
   const [trackedElements, setTrackedElements] = React.useState([]);
 
-  const [isNavClicked, onNavClick] = React.useState(false);
+  const [isNavClicked, setIsNavClicked] = React.useState(false);
 
   // We need to search just the refs pretty frequently, so memoize it so we
   // don't generate a ton of garbage.
@@ -75,14 +75,14 @@ export const Provider = ({ children }) => {
       stopTrackingElement,
       trackElement,
       setActiveNode,
-      onNavClick,
+      setIsNavClicked,
     }),
     [
       activeContent,
       stopTrackingElement,
       trackElement,
       setActiveNode,
-      onNavClick,
+      setIsNavClicked,
     ],
   );
 

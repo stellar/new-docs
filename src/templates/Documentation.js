@@ -113,7 +113,7 @@ const ModifiedEl = styled.div`
 const SectionEl = styled.section``;
 
 const PageOutlineItem = ({ id, isActive, title }) => {
-  const { setActiveNode, onNavClick } = React.useContext(
+  const { setActiveNode, setIsNavClicked } = React.useContext(
     SideNavProgressContext,
   );
 
@@ -122,10 +122,10 @@ const PageOutlineItem = ({ id, isActive, title }) => {
       isActive={isActive}
       onClick={(e) => {
         e.preventDefault();
-        onNavClick(true);
+        setIsNavClicked(true);
         setActiveNode(document.getElementById(id));
-        smoothScrollTo(document.getElementById(id), () => {
-          onNavClick(false);
+        smoothScrollTo(document.getElementById(id), { duration: 0.55 }, () => {
+          setIsNavClicked(false);
         });
       }}
     >

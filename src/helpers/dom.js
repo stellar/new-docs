@@ -6,9 +6,9 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 // eslint-disable-next-line
 const scrollPlugin = ScrollToPlugin;
 
-export const smoothScrollTo = (node, onCompleteFn) => {
+export const smoothScrollTo = (node, options = {}, onCompleteFn) => {
   const offset = 0;
-  const duration = 0.55;
+  const { duration = 0.55 } = options;
 
   TweenLite.to(window, duration, {
     scrollTo: {
@@ -45,7 +45,7 @@ export const findActiveNode = (possibleNodes, isScrollingDown) => {
       // Display the last item when scrolled all the way to the bottom
       return isReachedBottom
         ? bottom + bottomEdge > window.innerHeight - topEdge
-        : top < bottomEdge && top > 0;
+        : top < bottomEdge && top >= 0;
     }
 
     return bottom > topEdge && bottom < window.innerHeight;
