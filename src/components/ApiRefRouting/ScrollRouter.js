@@ -23,7 +23,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
     ref: null,
     id: initialActive,
   });
-  const [isNavClicked, onNavClick] = React.useState(false);
+  const [isNavClicked, setIsNavClicked] = React.useState(false);
   const trackedElementsRef = React.useRef([]);
   const isScrollingDown = React.useRef(false);
 
@@ -48,7 +48,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
         isNavClicked ? true : isScrollingDown.current,
       );
 
-      if (isNavClicked) onNavClick(!isNavClicked);
+      if (isNavClicked) setIsNavClicked(!isNavClicked);
 
       // If we've found an active node and it's not the same one as we had
       // before, update the route.
@@ -95,14 +95,14 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       trackElement,
       onLinkClick,
       isScrollingDown,
-      onNavClick,
+      setIsNavClicked,
     }),
     [
       stopTrackingElement,
       trackElement,
       onLinkClick,
       isScrollingDown,
-      onNavClick,
+      setIsNavClicked,
     ],
   );
   const sideNavContextValue = React.useMemo(
