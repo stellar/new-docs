@@ -367,7 +367,11 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               </SideNavContainer>
             </SideNavColumn>
             <Column xs={9} xl={18}>
-              <BetaNotice />
+              <NestedRow>
+                <CustomColumn xs={9} xlColumn="2 / span 18">
+                  <BetaNotice />
+                </CustomColumn>
+              </NestedRow>
               {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
                 <ReferenceSection
                   relativePath={parent.relativePath}
