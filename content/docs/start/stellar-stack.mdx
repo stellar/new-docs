@@ -1,0 +1,32 @@
+---
+title: The Stellar Stack
+order: 10
+---
+
+## Big Picture: The Stellar Network
+
+Fundamentally, the Stellar network is a worldwide collection of Stellar Cores, each maintained by different people and organizations. The distributed nature of the network makes it reliable and safe.
+
+All these Stellar Cores — the network of nodes — eventually agree on sets of transactions. Each transaction on the network costs a small fee: 100 stroops (0.00001 <abbr title="Lumens">XLM</abbr>). This fee helps prevent bad actors from spamming the network. 
+
+To help you test your tools and applications, Stellar.org operates a small test network and Horizon instance. [Get started with the testnet.](../concepts/test-net.md)
+
+## Stellar SDKs
+Most Stellar developers work with a Stellar SDK to create their code and handle network queries and transaction submissions.  There are several SDKs listed here, and they're all robust, and have their own documentation showing you how to request data and create and submit transactions.  When you start developing on Stellar, the first step is usually to find the SDK in your language of choice, and to familiarize yourself with how it works.
+
+## API: Horizon
+
+Most applications interact with the Stellar network through [Horizon](https://www.stellar.org/developers/horizon/reference/), a RESTful HTTP API server. Horizon gives you a straightforward way to submit transactions, check accounts, and subscribe to events. Because it’s just HTTP, you can communicate with Horizon using your web browser, simple command line tools like cURL, or the Stellar SDK for your favorite programming language.
+
+Those SDKs tend to interact with Horizon, the Stellar API.  Horizon handles most queries — and will soon be able to handle them all as we increase its independence from Stellar Core — and submits transactions to the network by interacting with Stellar Core.
+
+## Network Backbone: Stellar Core
+
+Behind the scenes, every Horizon server connects to **[Stellar Core](https://www.stellar.org/developers/stellar-core/software/admin.html), the backbone of the Stellar network.** The Stellar Core software does the hard work of validating and agreeing with other instances of Core on the status of every transaction through the [Stellar Consensus Protocol](../concepts/scp.md) (SCP). The Stellar network itself is a collection of connected Stellar Cores run by various individuals and entities around the world. Some instances have a Horizon server you can communicate with, while others exist only to add reliability to the overall network.
+
+Stellar Core is the backbone of the network, but most developers never touch it directly.  Instead, they use SDKs that talk to Stellar Core via Horizon.  
+
+## Specs for Building on Stellar: Stellar Ecosystem Proposals
+In addition to Stellar infrastructure, many Stellar-based projects also require outside infrastructure, and the guidelines for building it are described in Stellar Ecosystem Proposals.  You can read about SEPs here.  
+
+One example of how SEPs work: when anchor services accept deposits and honor withdrawals of fiat currencies, they set up servers that interact with wallets to authenticate users, gather customer information necessary for compliance, and link it to Stellar accounts.  We have a whole section of these docs — Enable Deposits and Withdrawals — that explains how to set up those servers following relevant SEPS. 
