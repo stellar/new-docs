@@ -2,3 +2,67 @@
 title: "Overview"
 order: 0
 ---
+
+Javascript:
+Source: https://github.com/stellar/js-stellar-sdk
+Docs: https://stellar.github.io/js-stellar-sdk/
+
+Go:
+https://godoc.org/github.com/stellar/go/txnbuild
+https://godoc.org/github.com/stellar/go/clients/horizonclient
+
+Java:
+Source: https://github.com/stellar/java-stellar-sdk
+Docs: https://stellar.github.io/java-stellar-sdk/
+
+Python:
+Source: https://github.com/StellarCN/py-stellar-base
+Docs: https://stellar-sdk-zh-cn.readthedocs.io/en/latest/
+
+
+C# .NET
+Source: https://github.com/elucidsoft/dotnet-stellar-sdk
+Docs: https://elucidsoft.github.io/dotnet-stellar-sdk/api/index.html
+Tutorials https://elucidsoft.github.io/dotnet-stellar-sdk/tutorials/index.html
+
+Ruby
+Source: https://github.com/astroband/ruby-stellar-sdk
+Base Source: https://github.com/astroband/ruby-stellar-sdk/blob/master/base/README.md
+SDK Source: https://github.com/astroband/ruby-stellar-sdk/blob/master/sdk/README.md
+
+Docs: https://www.rubydoc.info/gems/stellar-sdk
+Base examples: https://github.com/astroband/ruby-stellar-sdk/tree/master/base/examples
+SDK examples: https://github.com/astroband/ruby-stellar-sdk/tree/master/sdk/examples
+
+
+iOS
+Source: https://github.com/Soneso/stellar-ios-mac-sdk
+Docs: https://github.com/Soneso/stellar-ios-mac-sdk/tree/master/docs
+
+Scala
+Source: https://github.com/Synesso/scala-stellar-sdk
+Docs: https://synesso.github.io/scala-stellar-sdk/
+
+Qt/C++
+Source: https://github.com/bnogalm/StellarQtSDK
+Docs: https://github.com/bnogalm/StellarQtSDK/wiki
+
+
+
+---
+title: Overview
+---
+
+The Go SDK is a set of packages for interacting with most aspects of the Stellar ecosystem. The primary component is the Horizon SDK, which provides convenient access to Horizon services. There are also packages for other Stellar services such as [TOML support](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) and [federation](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md).
+
+## Horizon SDK
+
+The Horizon SDK is composed of two complementary libraries: `txnbuild` + `horizonclient`.
+The `txnbuild` ([source](https://github.com/stellar/go/tree/master/txnbuild), [docs](https://godoc.org/github.com/stellar/go/txnbuild)) package enables the construction, signing and encoding of Stellar [transactions](https://www.stellar.org/developers/guides/concepts/transactions.html) and [operations](https://www.stellar.org/developers/guides/concepts/list-of-operations.html) in Go. The `horizonclient` ([source](https://github.com/stellar/go/tree/master/clients/horizonclient), [docs](https://godoc.org/github.com/stellar/go/clients/horizonclient)) package provides a web client for interfacing with [Horizon](https://www.stellar.org/developers/guides/get-started/) server REST endpoints to retrieve ledger information, and to submit transactions built with `txnbuild`.
+
+## List of major SDK packages
+
+- `horizonclient` ([source](https://github.com/stellar/go/tree/master/clients/horizonclient), [docs](https://godoc.org/github.com/stellar/go/clients/horizonclient)) - programmatic client access to Horizon
+- `txnbuild` ([source](https://github.com/stellar/go/tree/master/txnbuild), [docs](https://godoc.org/github.com/stellar/go/txnbuild)) - construction, signing and encoding of Stellar transactions and operations
+- `stellartoml` ([source](https://github.com/stellar/go/tree/master/clients/stellartoml), [docs](https://godoc.org/github.com/stellar/go/clients/stellartoml)) - parse [Stellar.toml](../../guides/concepts/stellar-toml.md) files from the internet
+- `federation` ([source](https://godoc.org/github.com/stellar/go/clients/federation)) - resolve federation addresses  into stellar account IDs, suitable for use within a transaction
