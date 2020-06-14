@@ -2,6 +2,14 @@
 title: "Overview"
 order: 0
 ---
+## Software
+
+### [Stellar Core](link)
+Stellar Core is the backbone of the Stellar network and does the hard work of validating and agreeing on the status of every transaction with other instances of Core through the Stellar Consensus Protocol.  The processes for installing, configuring, and maintaining a Stellar Core node are covered in great detail in the [Run a Core Node](link) section of the docs. You do not have to run your own core node to build on Stellar: you can start developing in your language of choice by installing one of the [Stellar SDKs](link) and interacting with a public Horizon instance. 
+
+### [Horizon](link)
+Horizon is the client-facing API server for the Stellar ecosystem. It acts as the interface between Stellar Core and applications that want to access the Stellar network. If you are running Stellar Core, you will probably also want to run Horizon.  To find out more about how to interact with Horizon, check out the [API Reference](link) section, which chronicles every Horizon endpoint, resource, aggregation, and error.
+
 ## SDKs
 There are a wide variety of Stellar SDKs, which means you can interact with the network in your language of choice.  The Javascript, Java, and Go SDKs are maintainted the the Stellar Development Foundation; the rest are maintained by dedicated community developers.  They're all open source, so if you have a question, suggestion, or contribution to make, you can file a Github issue or pull request in the relevant SDK repository.  You can also get in touch with SDK maintainers by joining the Stellar public Keybase team, and navigating to the #sdk-mainteners channel.  
 
@@ -16,48 +24,39 @@ Each SDK has its own source code and documentation, and we've linked to both in 
 * [Docs](https://stellar.github.io/java-stellar-sdk/)
 
 ### Go
-
-https://godoc.org/github.com/stellar/go/clients/horizonclient
+* https://godoc.org/github.com/stellar/go/clients/horizonclient
 * https://godoc.org/github.com/stellar/go/txnbuild
 
-
-Python:
-Source: https://github.com/StellarCN/py-stellar-base
-Docs: https://stellar-sdk-zh-cn.readthedocs.io/en/latest/
-
-
-C# .NET
-Source: https://github.com/elucidsoft/dotnet-stellar-sdk
-Docs: https://elucidsoft.github.io/dotnet-stellar-sdk/api/index.html
-Tutorials https://elucidsoft.github.io/dotnet-stellar-sdk/tutorials/index.html
-
-Ruby
-Source: https://github.com/astroband/ruby-stellar-sdk
-Base Source: https://github.com/astroband/ruby-stellar-sdk/blob/master/base/README.md
-SDK Source: https://github.com/astroband/ruby-stellar-sdk/blob/master/sdk/README.md
-
-Docs: https://www.rubydoc.info/gems/stellar-sdk
-Base examples: https://github.com/astroband/ruby-stellar-sdk/tree/master/base/examples
-SDK examples: https://github.com/astroband/ruby-stellar-sdk/tree/master/sdk/examples
+### Python
+* [Source](https://github.com/StellarCN/py-stellar-base)
+* [Docs](https://stellar-sdk-zh-cn.readthedocs.io/en/latest/)
 
 
-iOS
-Source: https://github.com/Soneso/stellar-ios-mac-sdk
-Docs: https://github.com/Soneso/stellar-ios-mac-sdk/tree/master/docs
+### C# .NET
+* [Source](https://github.com/elucidsoft/dotnet-stellar-sdk)
+* [Docs](https://elucidsoft.github.io/dotnet-stellar-sdk/api/index.html)
+* [Tutorials](https://elucidsoft.github.io/dotnet-stellar-sdk/tutorials/index.html)
 
-Scala
-Source: https://github.com/Synesso/scala-stellar-sdk
-Docs: https://synesso.github.io/scala-stellar-sdk/
+### Ruby
+* [Source](https://github.com/astroband/ruby-stellar-sdk)
+* [Base Source](https://github.com/astroband/ruby-stellar-sdk/blob/master/base/README.md)
+* [SDK Source](https://github.com/astroband/ruby-stellar-sdk/blob/master/sdk/README.md)
+* [Docs](https://www.rubydoc.info/gems/stellar-sdk)
+* [Base examples](https://github.com/astroband/ruby-stellar-sdk/tree/master/base/examples)
+* [SDK examples](https://github.com/astroband/ruby-stellar-sdk/tree/master/sdk/examples)
 
-Qt/C++
-Source: https://github.com/bnogalm/StellarQtSDK
-Docs: https://github.com/bnogalm/StellarQtSDK/wiki
+### iOS
+[Source](https://github.com/Soneso/stellar-ios-mac-sdk)
+[Docs](https://github.com/Soneso/stellar-ios-mac-sdk/tree/master/docs)
 
+### Scala
+[Source](https://github.com/Synesso/scala-stellar-sdk)
+[Docs](https://synesso.github.io/scala-stellar-sdk/)
 
+### Qt/C++
+[Source](https://github.com/bnogalm/StellarQtSDK)
+[Docs](https://github.com/bnogalm/StellarQtSDK/wiki)
 
----
-title: Overview
----
 
 The Go SDK is a set of packages for interacting with most aspects of the Stellar ecosystem. The primary component is the Horizon SDK, which provides convenient access to Horizon services. There are also packages for other Stellar services such as [TOML support](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) and [federation](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md).
 
@@ -74,40 +73,15 @@ The `txnbuild` ([source](https://github.com/stellar/go/tree/master/txnbuild), [d
 - `federation` ([source](https://godoc.org/github.com/stellar/go/clients/federation)) - resolve federation addresses  into stellar account IDs, suitable for use within a transaction
 
 
----
-title: Stellar Software
----
-# Software
+## Tools
 
-
-
-## [Stellar Core](../stellar-core/software/admin.md)
-Stellar Core is the backbone of the Stellar network and does the hard work of validating and agreeing on the status of every transaction with other instances of Core through the Stellar Consensus Protocol (SCP).
-
-## [Horizon](https://github.com/stellar/go/tree/master/services/horizon)
-Horizon is the client-facing API server for the Stellar ecosystem. It acts as the interface between Stellar Core and applications that want to access the Stellar network. If you are running Stellar Core, you will probably also want to run Horizon.
-
-# Reference Implementations
-
-## [Federation Server](https://github.com/stellar/go/tree/master/services/federation)
-A standalone Federation protocol server designed to be dropped in to your existing infrastructure. It can be configured to pull the data it needs out of your existing SQL database.
-
-
-
-
-
----
-title: Stellar Tools
----
-# Tools
-
-## [Laboratory](https://www.stellar.org/laboratory/)
+### [Laboratory](https://www.stellar.org/laboratory/)
 Interactive way to learn the Stellar API. The source is available [here](https://github.com/stellar/laboratory).
 
-## [Account Viewer](https://www.stellar.org/account-viewer/)
+### [Account Viewer](https://www.stellar.org/account-viewer/)
 Check your balance and send simple payments. This basic client is built on top of [Interstellar](https://github.com/stellar/interstellar) and connects to the live Stellar network. The source is available [here](https://github.com/stellar/account-viewer).
 
-## [Dashboard](http://dashboard.stellar.org)
+### [Dashboard](http://dashboard.stellar.org)
 Current status of the live and test networks. The source is available [here](https://github.com/stellar/dashboard).
 
 More tools: https://github.com/stellar/go/tree/master/tools
