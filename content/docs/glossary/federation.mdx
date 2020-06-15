@@ -4,13 +4,13 @@ order:
 ---
 
 The Stellar federation protocol maps Stellar addresses to more information about a given user. It's a way for Stellar client software
-to resolve email-like addresses such as `name*yourdomain.com` into account IDs like: `GCCVPYFOHY7ZB7557JKENAX62LUAPLMGIWNZJAFV2MITK6T32V37KEJU`. Stellar addresses provide
+to resolve email-like addresses such as `name*yourdomain.com` into account IDs like: `GCCVPYFOHY7ZB7557JKENAX62LUAPLMGIWNZJAFV2MITK6T32V37KEJU`. Federated addresses provide
 an easy way for users to share payment details by using a syntax that interoperates across different domains and providers.
 
 
-## Stellar addresses
+## Federated addresses
 
-Stellar addresses are divided into two parts separated by `*`, the username and the domain.
+Stellar federated addresses are divided into two parts separated by `*`: the username and the domain.
 
 For example:  `jed*stellar.org`:
 * `jed` is the username,
@@ -19,7 +19,7 @@ For example:  `jed*stellar.org`:
 The domain can be any valid RFC 1035 domain name.
 The username is limited to printable UTF-8 with whitespace and the following characters excluded: <*,> Although of course the domain administrator can place additional restrictions on usernames of its domain.
 
-Note that the `@` symbol is allowed in the username. This allows for using email addresses in the username of an address. For example: `maria@gmail.com*stellar.org`.
+Note that the `@` symbol is allowed in the username. This means you can use email addresses in the username of a federated address. For example: `maria@gmail.com*stellar.org`.
 
 ## Supporting Federation
 
