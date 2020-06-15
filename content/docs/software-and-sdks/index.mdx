@@ -4,16 +4,20 @@ order: 0
 ---
 ## Software
 
+There are two key pieces of network software: Stellar Core, which tracks and adds transaction sets to the ledger, and Horizon, an API that allows programmatic access to submit transactions and query network data.  To find out more about how they work together, visit the description of the [Stellar Stack](link). 
+
+You do not have to run a Stellar Core node or Horizon instance to build on Stellar: you can start developing in your language of choice by installing one of the [Stellar SDKs](link) below, and interacting with a public Horizon instance. To find out more about how to interact with Horizon, check out the [API Reference](link) section, which chronicles every Horizon endpoint, resource, aggregation, and error.
+
 ### Stellar Core
-Stellar Core is the backbone of the Stellar network and does the hard work of validating and agreeing on the status of every transaction with other instances of Core through the Stellar Consensus Protocol.  The processes for installing, configuring, and maintaining a Stellar Core node are covered in great detail in the [Run a Core Node](link) section of the docs. You do not have to run your own core node to build on Stellar: you can start developing in your language of choice by installing one of the [Stellar SDKs](link) and interacting with a public Horizon instance. 
+Stellar Core is the backbone of the Stellar network and does the hard work of validating and agreeing on the status of every transaction with other instances of Core through the Stellar Consensus Protocol.  The processes for installing, configuring, and maintaining a Stellar Core node are covered in great detail in the [Run a Core Node](link) section of the docs. 
 
 ### Horizon
-Horizon is the client-facing API server for the Stellar ecosystem. It acts as the interface between Stellar Core and applications that want to access the Stellar network. If you are running Stellar Core, you will probably also want to run Horizon.  To find out more about how to interact with Horizon, check out the [API Reference](link) section, which chronicles every Horizon endpoint, resource, aggregation, and error.
+Horizon is the client-facing API server for the Stellar ecosystem. It acts as the interface between Stellar Core and applications that want to access the Stellar network. If you're running Stellar Core, you will probably also want to run Horizon.  For more information on how to set up and operate a Horizon instance, see the [Run an API Server](link) section of the docs.  
 
 ## SDKs
-There are a wide variety of Stellar SDKs, which means you can interact with the network in your language of choice.  The Javascript, Java, and Go SDKs are maintainted the the Stellar Development Foundation; the rest are maintained by dedicated community developers.  They're all open source, so if you have a question, suggestion, or contribution to make, you can file a Github issue or pull request in the relevant SDK repository.  You can also get in touch with SDK maintainers by joining the Stellar public Keybase team, and navigating to the #sdk-mainteners channel.  
+There are a wide variety of Stellar SDKs, which means you can interact with the network in your language of choice.  The Javascript, Java, and Go SDKs are maintainted by the Stellar Development Foundation; the rest are maintained by dedicated community developers.  They're all open source, so if you have a question, suggestion, or contribution to make, you can file a Github issue or pull request in the relevant SDK repository.  You can also get in touch with SDK maintainers by joining the [Stellar public Keybase team](link), and navigating to the #sdk-mainteners channel.  
 
-Each SDK has its own source code and documentation, and we've linked to both in the list below.  Often, the best place to find out how to use a given SDK is to check the documentation specific to it.  Most offer practical examples that demonstate how to use the SDK to do...pretty much anything.
+Each SDK has its own source code and documentation, and we've linked to both in the list below.  Often, the best place to find out how to use a given SDK is to check the documentation specific to it.  Most offer practical examples that demonstate how to construct and submit transactions and interact with Horizon endpoints.
 
 ### Javascript
 * [Source](https://github.com/stellar/js-stellar-sdk)
@@ -24,8 +28,12 @@ Each SDK has its own source code and documentation, and we've linked to both in 
 * [Docs](https://stellar.github.io/java-stellar-sdk/)
 
 ### Go
-* https://godoc.org/github.com/stellar/go/clients/horizonclient
-* https://godoc.org/github.com/stellar/go/txnbuild
+The Go SDK is split up into a few separate packages, all of which you can find in [the Go monorepo README](https://github.com/stellar/go/blob/master/docs/reference/readme.md).  The two key libraries for interacting with Horizon are `txnbuild`, which enables the construction, signing, and encoding of Stellar transactions, and `horizonclient`, which provides a web client for interfacing with Horizon server REST endpoints to retrieve ledger information and submit transactions built with `txnbuild`.
+
+* `txnbuild` ([Source](https://github.com/stellar/go/tree/master/txnbuild)
+* `txnbuild` [Docs](https://godoc.org/github.com/stellar/go/txnbuild) 
+* `Horizonclient` ([Source](https://github.com/stellar/go/tree/master/clients/horizonclient)
+* `Horizonclient`[Docs](https://godoc.org/github.com/stellar/go/clients/horizonclient)) 
 
 ### Python
 * [Source](https://github.com/StellarCN/py-stellar-base)
@@ -58,32 +66,27 @@ Each SDK has its own source code and documentation, and we've linked to both in 
 [Docs](https://github.com/bnogalm/StellarQtSDK/wiki)
 
 
-The Go SDK is a set of packages for interacting with most aspects of the Stellar ecosystem. The primary component is the Horizon SDK, which provides convenient access to Horizon services. There are also packages for other Stellar services such as [TOML support](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) and [federation](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md).
-
-## Horizon SDK
-
-The Horizon SDK is composed of two complementary libraries: `txnbuild` + `horizonclient`.
-The `txnbuild` ([source](https://github.com/stellar/go/tree/master/txnbuild), [docs](https://godoc.org/github.com/stellar/go/txnbuild)) package enables the construction, signing and encoding of Stellar [transactions](https://www.stellar.org/developers/guides/concepts/transactions.html) and [operations](https://www.stellar.org/developers/guides/concepts/list-of-operations.html) in Go. The `horizonclient` ([source](https://github.com/stellar/go/tree/master/clients/horizonclient), [docs](https://godoc.org/github.com/stellar/go/clients/horizonclient)) package provides a web client for interfacing with [Horizon](https://www.stellar.org/developers/guides/get-started/) server REST endpoints to retrieve ledger information, and to submit transactions built with `txnbuild`.
-
-## List of major SDK packages
-
-- `horizonclient` ([source](https://github.com/stellar/go/tree/master/clients/horizonclient), [docs](https://godoc.org/github.com/stellar/go/clients/horizonclient)) - programmatic client access to Horizon
-- `txnbuild` ([source](https://github.com/stellar/go/tree/master/txnbuild), [docs](https://godoc.org/github.com/stellar/go/txnbuild)) - construction, signing and encoding of Stellar transactions and operations
-- `stellartoml` ([source](https://github.com/stellar/go/tree/master/clients/stellartoml), [docs](https://godoc.org/github.com/stellar/go/clients/stellartoml)) - parse [Stellar.toml](../../guides/concepts/stellar-toml.md) files from the internet
-- `federation` ([source](https://godoc.org/github.com/stellar/go/clients/federation)) - resolve federation addresses  into stellar account IDs, suitable for use within a transaction
-
-
 ## Tools
+The Stellar Development Foundation also maintains a small suite of tools to make it easier for developers to interact with the network.
 
 ### [Laboratory](https://www.stellar.org/laboratory/)
-Interactive way to learn the Stellar API. The source is available [here](https://github.com/stellar/laboratory).
+The Stellar laboaratory is a GUI that allows you to create accounts, construct and submit transactions, read XDRs, and query all of Horizon's endpoints.  It exposes the relevant calls to Horizon, so it's a great way to experiemnt with and learn more about the Stellar API. The source is available [here](https://github.com/stellar/laboratory).
 
 ### [Account Viewer](https://www.stellar.org/account-viewer/)
-Check your balance and send simple payments. This basic client is built on top of [Interstellar](https://github.com/stellar/interstellar) and connects to the live Stellar network. The source is available [here](https://github.com/stellar/account-viewer).
+The account viewer is a strippede-down wallet that you can use to check an account's XLM balance and send simple payments. It works on the testnet as well as the public network. The source is available [here](https://github.com/stellar/account-viewer).
 
 ### [Dashboard](http://dashboard.stellar.org)
-Current status of the live and test networks. The source is available [here](https://github.com/stellar/dashboard).
+The dashboard shows the current status of the public network and the test network. The source is available [here](https://github.com/stellar/dashboard).
 
-More tools: https://github.com/stellar/go/tree/master/tools
+### [Status Page](https://status.stellar.org/)
+The status page tracks network incidents and scheduled maintenance for both the public network and the test network.  We recommened that anyone building on Stellar subscribes to updates so they're notified about important events including protocol upgrades and testnet resets.
+
+There is a small suite of tools built in Go that can be useful for network admins and people wo https://github.com/stellar/go/tree/master/tools
+
+## Reference Implementations
+https://github.com/stellar/django-polaris
+https://github.com/stellar/sep24-demo-client
+https://github.com/stellar/go/tree/master/services/federation
+
 
 
