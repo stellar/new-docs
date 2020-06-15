@@ -94,6 +94,11 @@ const NavLinkEl = styled(BasicLink)`
 `;
 const SingleApiSideNavContainer = styled(SideNavContainer)`
   overflow: scroll;
+  height: calc(100vh - 8.75rem);
+`;
+const FixedNavFooterEl = styled(AbsoluteNavFooterEl)`
+  position: fixed;
+  bottom: 0;
 `;
 
 // This is a function, not a component
@@ -180,11 +185,11 @@ const SingleApiReference = React.memo(function ApiReference({
                     </Expansion>
                   </ExpansionContainerEl>
                 ))}
-                <AbsoluteNavFooterEl>
-                  <BasicLink href="/docs">Documentation</BasicLink>
-                </AbsoluteNavFooterEl>
               </SingleApiSideNavContainer>
             </SideNavProgressContext.Provider>
+            <FixedNavFooterEl>
+              <BasicLink href="/docs">Documentation</BasicLink>
+            </FixedNavFooterEl>
           </SideNavColumn>
           <Column xs={9} xl={18}>
             <NestedRow>
