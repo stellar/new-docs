@@ -12,8 +12,8 @@ This endpoint represents a single data for a given account.
 
 <Endpoint>
 
-|  |  |
-| --- | --- |
+|     |                                 |
+| --- | ------------------------------- |
 | GET | /accounts/:account_id/data/:key |
 
 </Endpoint>
@@ -39,20 +39,20 @@ curl "https://horizon.stellar.org/accounts/GCAXBKU3AKYJPLQ6PEJ6L47KOATCYCBJ2NFRG
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.loadAccount('GCAXBKU3AKYJPLQ6PEJ6L47KOATCYCBJ2NFRGAK7FUUA2DCEUC265SU2')
-.then(function(account) {
-  return account.data({key: 'config.memo_required'})
-})
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .loadAccount("GCAXBKU3AKYJPLQ6PEJ6L47KOATCYCBJ2NFRGAK7FUUA2DCEUC265SU2")
+  .then(function (account) {
+    return account.data({ key: "config.memo_required" });
+  })
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>

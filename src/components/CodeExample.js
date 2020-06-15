@@ -3,8 +3,9 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import ExternalLinkIcon from "assets/icons/icon-external-link.svg";
-import CopyIcon from "assets/icons/icon-copy.svg";
+import { BasicButton } from "basics/Buttons";
+import { CopyIcon, ExternalLinkIcon } from "basics/Icons";
+import { Code } from "basics/Text";
 
 import { PALETTE, FONT_FAMILY, FONT_WEIGHT } from "constants/styles";
 
@@ -16,8 +17,6 @@ import { Link } from "basics/Links";
 import { Select } from "basics/Inputs";
 
 import { Tooltip } from "components/Tooltip";
-import { DividerEl } from "components/Documentation/SharedStyles";
-import { Code } from "basics/Text";
 
 const CODE_LANGS = {
   bash: "bash",
@@ -43,7 +42,6 @@ const LangSelect = styled(Select)`
 
   select {
     display: inline-block;
-    margin: 0 1rem;
     padding: 0.5rem;
     font-size: 0.75rem;
     border: none;
@@ -60,7 +58,7 @@ const LangOptionEl = styled.div`
   line-height: 1.15;
 `;
 
-const OptionsContainer = styled.div`
+const OptionsContainerEl = styled.div`
   display: flex;
   position: relative;
   align-items: center;
@@ -111,23 +109,31 @@ const CodeExampleEl = styled.div`
   }
 `;
 
-const CopyIconWrapper = styled.div`
-  display: block;
-  position: relative;
-  cursor: pointer;
+const CopyButtonEl = styled(BasicButton).attrs({
+  "aria-label": "Copy snippet",
+})`
+  padding: 0.75rem 1rem;
 `;
 
 const TitleEl = styled.div`
   display: flex;
+  padding-left: 1rem;
   justify-content: ${(props) =>
     props.hasTitle ? "space-between" : "flex-end"};
   position: relative;
-  padding: 0.5rem 1rem;
   align-items: center;
   color: ${PALETTE.white};
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
+`;
+
+const DividerEl = styled.span`
+  display: inline-block;
+  width: 0.0625rem;
+  height: 1.5rem;
+  margin-left: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
 `;
 
 const mdxJsxToString = (jsx) => {
@@ -156,7 +162,6 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const [activeLang, setActiveLang] = React.useState("");
   const [isCopied, setCopy] = React.useState(false);
   const [isHovered, setHover] = React.useState(false);
-  const [position, setPosition] = React.useState({ right: 0, top: 0 });
 
   const contentsRef = React.useRef();
   useHighlighting(contentsRef);
@@ -167,18 +172,6 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
       (snippet) => snippet.props["data-language"] === activeLang,
     ) || codeSnippetsArr[0];
   const SelectedSnippetStr = mdxJsxToString(selectedSnippet);
-
-  const CopyToClipboardRef = React.useCallback(
-    (node) => {
-      if (node !== null && isHovered) {
-        setPosition({
-          right: Math.floor(node.getBoundingClientRect().right),
-          top: Math.floor(node.getBoundingClientRect().top),
-        });
-      }
-    },
-    [isHovered],
-  );
 
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
@@ -227,7 +220,7 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     <MethodContentEl>
       <TitleEl hasTitle={title}>
         {title}
-        <OptionsContainer>
+        <OptionsContainerEl>
           <LangOptionEl>
             {availableLangs.length > 1 ? (
               <LangSelect
@@ -248,38 +241,27 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
             )}
           </LangOptionEl>
           <DividerEl />
-          <CopyToClipboard
-            text={SelectedSnippetStr && SelectedSnippetStr}
-            onCopy={() => !isCopied && setCopy(true)}
-          >
-            <CopyIconWrapper
-              ref={CopyToClipboardRef}
-              onMouseEnter={() => {
-                setHover(true);
-              }}
-              onMouseLeave={() => {
-                setHover(false);
-              }}
+          <Tooltip message={isCopied ? "Copied" : "Click to copy"}>
+            <CopyToClipboard
+              text={SelectedSnippetStr}
+              onCopy={() => !isCopied && setCopy(true)}
             >
-              <CopyIcon />
-            </CopyIconWrapper>
-          </CopyToClipboard>
+              <CopyButtonEl>
+                <CopyIcon />
+              </CopyButtonEl>
+            </CopyToClipboard>
+          </Tooltip>
 
           {href && (
             <Link href={href} newTab>
               <ExternalLinkIcon />
             </Link>
           )}
-        </OptionsContainer>
+        </OptionsContainerEl>
       </TitleEl>
       <ContentEl className="line-numbers" ref={contentsRef}>
         {selectedSnippet}
       </ContentEl>
-      {isHovered && (
-        <Tooltip in={isHovered} isCopied={isCopied} parentPosition={position}>
-          {isCopied ? "Copied" : "Click to copy"}
-        </Tooltip>
-      )}
     </MethodContentEl>
   );
 };

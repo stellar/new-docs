@@ -236,7 +236,7 @@ Beyond defining title font sizes, line heights, and weights:
 Custom (React) components that are being used throughout Documentation and API
 Reference.
 
-**Make sure that there is an empty space within the wrapper**
+**Make sure that there is an empty line within the wrapper**
 
 For example,
 
@@ -290,6 +290,39 @@ import { AttributeTable } from "components/AttributeTable";
 
 </AttributeTable>
 ```
+
+#### Omitting Data Type
+
+`Data Type` is not required. If you want to skip it, simply add a text "skip" in
+it
+
+```
+import { AttributeTable } from "components/AttributeTable";
+
+<AttributeTable>
+
+- TYPE
+  - skip
+  - OPERATION(S)
+- Account Created
+  - skip
+  - create_account
+- Account Removed
+  - skip
+  - merge_account
+
+  </AttributeTable>
+```
+
+Example: `<AttributeTable/>` without type specified on
+[API's Manage Data Object](https://developers.stellar.org/api/resources/operations/object/manage-data/).
+
+<img src="./readme-imgs/attributetable-with-type.png" alt="AttributeTable with Type" width="500"/>
+
+Example: `<AttributeTable/>` with type specified on
+[API's Effect Types](https://developers.stellar.org/api/resources/effects/types/).
+
+<img src="./readme-imgs/attributetable-without-type.png" alt="AttributeTable without Type" width="500"/>
 
 ### Alert
 

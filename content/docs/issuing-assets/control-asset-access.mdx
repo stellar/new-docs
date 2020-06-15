@@ -7,25 +7,25 @@ import { CodeExample } from "components/CodeExample";
 
 ## High-level view of authorization flags
 
-When you issue an asset on Stellar, anyone can hold it by default.  In general, that’s a good thing: easy access means better reach and better liquidity, and most of the time, issuers with KYC requirements can handle those when an asset moves onto or off of the network.  Most fiat-backed token issuers, for instance, use the transfer server protocol specified in SEP-24 to decide whether to honor deposits and withdrawals rather than setting account-level flags.  You can read about how to do that in the [Enable Deposit and Withdrawal](../enabling-deposit-and-withdrawal/index.mdx) section.      
+When you issue an asset on Stellar, anyone can hold it by default. In general, that’s a good thing: easy access means better reach and better liquidity, and most of the time, issuers with KYC requirements can handle those when an asset moves onto or off of the network. Most fiat-backed token issuers, for instance, use the transfer server protocol specified in SEP-24 to decide whether to honor deposits and withdrawals rather than setting account-level flags. You can read about how to do that in the [Enable Deposit and Withdrawal](../enabling-deposit-and-withdrawal/index.mdx) section.
 
-However, if you need to control access to an asset to comply with regulations (or for any other reason), you can easily do so by enabling flags on your issuing account. 
+However, if you need to control access to an asset to comply with regulations (or for any other reason), you can easily do so by enabling flags on your issuing account.
 
-There are three possible flags, and they are created on the *account level* using a `set_options` operation.  They can be set at any time in the life cycle of an asset, not just when you issue it:
+There are three possible flags, and they are created on the _account level_ using a `set_options` operation. They can be set at any time in the life cycle of an asset, not just when you issue it:
 
-### Authorization Required 
+### Authorization Required
 
-When `auth_required` is enabled, an issuer must approve an account before that account can hold its asset.  This setting allows issuers to vet a potential token holders using whatever means they see fit, and to approve trustlines if and only if the holders pass muster. To allow access, the user creates a trustline, and the issuer approves it by setting the `Authorize` flag to **true** with the `allow_trust` operation.
+When `auth_required` is enabled, an issuer must approve an account before that account can hold its asset. This setting allows issuers to vet a potential token holders using whatever means they see fit, and to approve trustlines if and only if the holders pass muster. To allow access, the user creates a trustline, and the issuer approves it by setting the `Authorize` flag to **true** with the `allow_trust` operation.
 
-### Authorization Revocable 
+### Authorization Revocable
 
-When `auth_revocable` is enabled, an issuer can set the `Authorize` flag of an existing trustline to `false` with the `allow_trust` operation, thereby freezing the asset held by an account.  Doing so means that account can no longer trade or transfer the asset.  It can’t even send the asset back to the issuer. Revoking authorization also cancels an account’s open orders for an asset.  This setting allows the issuing account to revoke assets that it accidentally issued or that were obtained improperly. To use this setting, `AUTHORIZATION REQUIRED` must also be enabled.
+When `auth_revocable` is enabled, an issuer can set the `Authorize` flag of an existing trustline to `false` with the `allow_trust` operation, thereby freezing the asset held by an account. Doing so means that account can no longer trade or transfer the asset. It can’t even send the asset back to the issuer. Revoking authorization also cancels an account’s open orders for an asset. This setting allows the issuing account to revoke assets that it accidentally issued or that were obtained improperly. To use this setting, `AUTHORIZATION REQUIRED` must also be enabled.
 
-### Authorization Immutable 
+### Authorization Immutable
 
-With this setting, neither of the other authorization flags can be set, and the issuing account can’t be merged.  You set this flag to signal to potential token holders that your issuing account and its assets will persist on ledger in an open and accessible state.  It’s a fairly weak guarantee since it can be undone unless you lock the issuing account by setting the signing weight low enough to disable the `set_options` operation.
+With this setting, neither of the other authorization flags can be set, and the issuing account can’t be merged. You set this flag to signal to potential token holders that your issuing account and its assets will persist on ledger in an open and accessible state. It’s a fairly weak guarantee since it can be undone unless you lock the issuing account by setting the signing weight low enough to disable the `set_options` operation.
 
-### Example flow 
+### Example flow
 
 To get a sense of how authorization flags work, you can step through how an issuer would use `AUTHORIZATION REQUIRED` and `AUTHORIZATION REVOCABLE` to grant access to an asset, then to freeze it:
 
@@ -44,34 +44,36 @@ The following example sets authorization to be both required and revocable:
 <CodeExample title="Asset Authorization">
 
 ```js
-var StellarSdk = require('stellar-sdk');
-var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
 
 // Keys for issuing account
-var issuingKeys = StellarSdk.Keypair.fromSecret('SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4');
+var issuingKeys = StellarSdk.Keypair.fromSecret(
+  "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4",
+);
 
 server
   .loadAccount(issuingKeys.publicKey())
-  .then(function(issuer) {
+  .then(function (issuer) {
     var transaction = new StellarSdk.TransactionBuilder(issuer, {
       fee: 100,
-      networkPassphrase: StellarSdk.Networks.TESTNET
+      networkPassphrase: StellarSdk.Networks.TESTNET,
     })
       .addOperation(
         StellarSdk.Operation.setOptions({
-          setFlags: StellarSdk.AuthRevocableFlag | StellarSdk.AuthRequiredFlag
-        })
+          setFlags: StellarSdk.AuthRevocableFlag | StellarSdk.AuthRequiredFlag,
+        }),
       )
       // setTimeout is required for a transaction
       .setTimeout(100)
-      .build()
+      .build();
     transaction.sign(issuingKeys);
     return server.submitTransaction(transaction);
   })
   .then(console.log)
-  .catch(function(error) {
-    console.error('Error!', error);
-  })
+  .catch(function (error) {
+    console.error("Error!", error);
+  });
 ```
 
 ```java

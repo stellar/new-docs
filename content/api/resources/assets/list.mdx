@@ -12,8 +12,8 @@ This endpoint lists all assets.
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /assets?asset_code{:asset_code}&asset_issuer={:account_id}&cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
@@ -48,19 +48,19 @@ curl "https://horizon.stellar.org/assets?asset_code=CNY&limit=3"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.assets()
-.forCode('CNY')
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .assets()
+  .forCode("CNY")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -146,18 +146,18 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.assets()
-.forCode('CNY')
-.cursor('now')
-.stream({onmessage: callback})
+  .assets()
+  .forCode("CNY")
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>

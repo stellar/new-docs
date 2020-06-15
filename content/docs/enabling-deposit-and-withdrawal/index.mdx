@@ -3,23 +3,21 @@ title: Overview
 order: 10
 ---
 
-One of the main use cases for Stellar is the tokenization of fiat currency to optimize processes like cross-border payments, and this section of the docs details the technical and operational steps necessary to set up a service that does that.  
+One of the main use cases for Stellar is the tokenization of fiat currency to optimize processes like cross-border payments, and this section of the docs details the technical and operational steps necessary to set up a service that does that.
 
-This section doesn't cover the basic steps for issuing an asset on the network — you can find those [here](../issuing-assets/index.mdx) — rather, it explains how developers can *connect* the Stellar Network to their country's banking system and regulatory processes such as [KYC](https://en.wikipedia.org/wiki/Know_your_customer) and [AML](https://en.wikipedia.org/wiki/Money_laundering#Anti-money_laundering) by setting up a webapp and specific endpoints that allow users to make deposits and withdrawals.  It will walk through the flow, features, and protocol specifications for integrating with wallets and other clients, and offer examples and tools to make the process easier to implement and test.  
+This section doesn't cover the basic steps for issuing an asset on the network — you can find those [here](../issuing-assets/index.mdx) — rather, it explains how developers can _connect_ the Stellar Network to their country's banking system and regulatory processes such as [KYC](https://en.wikipedia.org/wiki/Know_your_customer) and [AML](https://en.wikipedia.org/wiki/Money_laundering#Anti-money_laundering) by setting up a webapp and specific endpoints that allow users to make deposits and withdrawals. It will walk through the flow, features, and protocol specifications for integrating with wallets and other clients, and offer examples and tools to make the process easier to implement and test.
 
-We will go over SDF's [Reference Implementations](./reference-implementations.mdx) and all three stages of the development process:
+We will go over SDF's [Tools and References](./reference-implementations.mdx) and all three stages of the development process:
 
-1. [Setting up a test server](./setting-up-test-server.mdx)
-1. [Setting up a production server](./setting-up-production-server.mdx)
+1. [Set up a test server](./setting-up-test-server.mdx)
+1. [Set up a production server](./setting-up-production-server.mdx)
 1. [Launch](./launch.mdx)
-
-
 
 ## The basic customer flow
 
-*Stellar Anchors* are the on/off ramps of the Stellar network: they accept deposits of fiat currencies (such USD, CNY, and BRL) via existing rails (such as bank deposits or cash-in points), and send a user the  equivalent digital tokens representing those deposits on the Stellar network.  On the flipside, they allow holders to redeem those tokens for the real-world assets they represent.  To read more about the kinds of things you can do with digital fiat currency, check out [this explainer](https://www.stellar.org/learn/the-power-of-stellar).
+_Stellar Anchors_ are the on/off ramps of the Stellar network: they accept deposits of fiat currencies (such USD, CNY, and BRL) via existing rails (such as bank deposits or cash-in points), and send a user the equivalent digital tokens representing those deposits on the Stellar network. On the flipside, they allow holders to redeem those tokens for the real-world assets they represent. To read more about the kinds of things you can do with digital fiat currency, check out [this explainer](https://www.stellar.org/learn/the-power-of-stellar).
 
-Stellar Anchors can issue their own assets (in which case, they earn the title *Issuing Anchors*), or they can honor assets that already exist on the network.  So if you want to build an on/off ramp for Stellar, you can consult the [Issue Assets](../issuing-assets/index.mdx) section and issue your own token to offer customers *or* you can find another organization that issues a Stellar-network asset and arrange to broker their token.   
+Stellar Anchors can issue their own assets (in which case, they earn the title _Issuing Anchors_), or they can honor assets that already exist on the network. So if you want to build an on/off ramp for Stellar, you can consult the [Issue Assets](../issuing-assets/index.mdx) section and issue your own token to offer customers _or_ you can find another organization that issues a Stellar-network asset and arrange to broker their token.
 
 The complete customer flow from deposit to withdrawal goes something like this:
 
@@ -28,16 +26,16 @@ The complete customer flow from deposit to withdrawal goes something like this:
 1. Receives the digital asset on the Stellar network from the asset distributer and/or issuer
 1. Uses the digital asset on the Stellar network (for remittance, payments, trading, store of value, etc)
 1. Redeems the digital asset by returning it to the issuer on the Stellar network
-1. Receives real fiat currency in return (e.g. receives a bank transfer) 
+1. Receives real fiat currency in return (e.g. receives a bank transfer)
 
 ## Interoperability and Stellar Ecosystem Proposals
 
 Since customers generally use wallets to hold their Stellar tokens, and since there are a lot of wallets to choose from, a crucial step in enabling that customer flow and making a fiat-backed token widely accessible is to set up infrastructure that enables wallets to offer in-app deposits and withdrawals, and to follow best practices when doing to allow any wallet to easily find and interact with it.
 
-Those best practices are specified in Stellar Ecosystem Proposals (SEPs), which are publicly created, open-source documents that live in a [Github repository](https://github.com/stellar/stellar-protocol/tree/master/ecosystem#stellar-ecosystem-proposals-seps).  They define how different institutions (such as asset issuers, wallets, exchanges, and service providers) should interact and interoperate. 
+Those best practices are specified in Stellar Ecosystem Proposals (SEPs), which are publicly created, open-source documents that live in a [Github repository](https://github.com/stellar/stellar-protocol/tree/master/ecosystem#stellar-ecosystem-proposals-seps). They define how different institutions (such as asset issuers, wallets, exchanges, and service providers) should interact and interoperate.
 
-There are many use cases covered by the existing SEPs — including regulated assets ([SEP-8](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0008.md)) and federated user identification ([SEP-2](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md)) — and new SEPs are proposed and discussed on Github all the time.  We encourage you to participate in those discussions and help build new standards that will make the financial services easier and more accessible.
+There are many use cases covered by the existing SEPs — including regulated assets ([SEP-8](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0008.md)) and federated user identification ([SEP-2](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md)) — and new SEPs are proposed and discussed on Github all the time. We encourage you to participate in those discussions and help build new standards that will make the financial services easier and more accessible.
 
-This guide will focus on the **Interactive Anchor/Wallet Asset Transfer Server** SEP (aka [SEP-24](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md)), since it defines the specs for deposit and withdrawal implementations. SEP-24 is focused on *interactive user flows*, meaning flows where users interact with an Anchor-hosted interface rendered inside a wallet. 
+This guide will focus on the **Interactive Anchor/Wallet Asset Transfer Server** SEP (aka [SEP-24](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md)), since it defines the specs for deposit and withdrawal implementations. SEP-24 is focused on _interactive user flows_, meaning flows where users interact with an Anchor-hosted interface rendered inside a wallet.
 
-To enable an interactive flow, fiat-backed Anchors (aka on/off ramps) should implement two SEPs in addition to SEP-24: [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), which links meta-information to organizations and assets (and which we go over in detail in [this guide](../issuing-assets/publishing-asset-info.mdx)), and [SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md), which creates authenticated user session.  In this guide, we'll walk through setting up all that infrastructure on both the testnet and the public network.
+To enable an interactive flow, fiat-backed Anchors (aka on/off ramps) should implement two SEPs in addition to SEP-24: [SEP-1](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), which links meta-information to organizations and assets (and which we go over in detail in [this guide](../issuing-assets/publishing-asset-info.mdx)), and [SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md), which creates authenticated user session. In this guide, we'll walk through setting up all that infrastructure on both the testnet and the public network.

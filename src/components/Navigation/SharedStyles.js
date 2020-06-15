@@ -61,6 +61,7 @@ export const El = styled.div`
     left: 0;
     width: 100%;
     height: 2.5rem;
+    pointer-events: none;
     background: rgb(250, 250, 250);
     background: linear-gradient(
       180deg,
@@ -150,6 +151,7 @@ export const AbsoluteNavFooterEl = styled.div`
     left: 0;
     width: 100%;
     height: 3.125rem;
+    pointer-events: none;
     background: rgb(250, 250, 250);
     background: linear-gradient(
       0deg,

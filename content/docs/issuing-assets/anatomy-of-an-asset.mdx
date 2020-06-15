@@ -79,11 +79,12 @@ For example, the integer amount value `25,123,456` equals `2.5123456` units of t
 
 The smallest non-zero amount unit is `0.0000001` (one ten-millionth) represented as an integer value of one. The largest amount unit possible is `((2^63)-1)/(10^7)` (derived from max int64 scaled down) which is `922,337,203,685.4775807`.
 
-The numbers are represented as `int64`s. Amount values are stored as only signed integers to avoid bugs that arise from mixing signed and unsigned integers. 
+The numbers are represented as `int64`s. Amount values are stored as only signed integers to avoid bugs that arise from mixing signed and unsigned integers.
 
-## Relevance in Horizon and Stellar Client Libraries 
+## Relevance in Horizon and Stellar Client Libraries
+
 In Horizon and client-side libraries such as `js-stellar-sdk`, the integer encoded value is abstracted away. Many APIs expect an amount in unit value (the scaled-up amount displayed to end users). Some programming languages (such as JavaScript) have problems with maintaining precision on a number amount. It is recommended to use "big number" libraries that can record arbitrary precision decimal numbers without a loss of precision.
 
 ## Lumens (XLM)
 
-Lumens (XLM) are the native currency of the Stellar network, and are the only asset that doesn't require an issuer or a trustline. Every account is required to hold a [minimum lumen balance](../glossary/minimum-balance.mdx), and all [transaction fees](../glossary/fees.mdx) are paid in lumens. The smallest unit of a lumen is a stroop, which is one ten-millionth of a lumen.  For more on lumens, check out the [Stellar.org explainer](https://www.stellar.org/lumens).
+Lumens (XLM) are the native currency of the Stellar network, and are the only asset that doesn't require an issuer or a trustline. Every account is required to hold a [minimum lumen balance](../glossary/minimum-balance.mdx), and all [transaction fees](../glossary/fees.mdx) are paid in lumens. The smallest unit of a lumen is a stroop, which is one ten-millionth of a lumen. For more on lumens, check out the [Stellar.org explainer](https://www.stellar.org/lumens).

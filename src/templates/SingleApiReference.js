@@ -36,6 +36,7 @@ import {
   ApiReferenceWrapper,
   SideNavColumn,
   NestedRow,
+  CustomColumn,
 } from "components/Documentation/SharedStyles";
 import {
   AbsoluteNavFooterEl,
@@ -87,10 +88,17 @@ const NavItemEl = styled(BasicButton)`
     color: ${PALETTE.lightGrey};
   }
 `;
-
 const NavLinkEl = styled(BasicLink)`
   color: inherit;
   font-weight: unset;
+`;
+const SingleApiSideNavContainer = styled(SideNavContainer)`
+  overflow: scroll;
+  height: calc(100vh - 8.75rem);
+`;
+const FixedNavFooterEl = styled(AbsoluteNavFooterEl)`
+  position: fixed;
+  bottom: 0;
 `;
 
 // This is a function, not a component
@@ -160,7 +168,7 @@ const SingleApiReference = React.memo(function ApiReference({
             <SideNavProgressContext.Provider
               value={{ activeContent: { id: path } }}
             >
-              <SideNavContainer>
+              <SingleApiSideNavContainer>
                 {Object.entries(docsBySubCategory).map((nav, i) => (
                   <ExpansionContainerEl
                     // eslint-disable-next-line react/no-array-index-key
@@ -177,24 +185,34 @@ const SingleApiReference = React.memo(function ApiReference({
                     </Expansion>
                   </ExpansionContainerEl>
                 ))}
-                <AbsoluteNavFooterEl>
-                  <BasicLink href="/docs">Documentation</BasicLink>
-                </AbsoluteNavFooterEl>
-              </SideNavContainer>
+              </SingleApiSideNavContainer>
             </SideNavProgressContext.Provider>
+            <FixedNavFooterEl>
+              <BasicLink href="/docs">Documentation</BasicLink>
+            </FixedNavFooterEl>
           </SideNavColumn>
           <Column xs={9} xl={18}>
-            <BetaNotice />
-            <section>
-              <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
-              <NestedRow>
-                <OriginalFileContext.Provider value={parent.relativePath}>
-                  <MDXRenderer>{body}</MDXRenderer>
-                </OriginalFileContext.Provider>
-              </NestedRow>
-              <HorizontalRule />
-            </section>
-            <Footer />
+            <NestedRow>
+              <CustomColumn xs={9} xlColumn="2 / span 8">
+                <BetaNotice />
+              </CustomColumn>
+            </NestedRow>
+            <NestedRow>
+              <CustomColumn xs={9} xlColumn="2 / span 8">
+                <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
+              </CustomColumn>
+            </NestedRow>
+            <NestedRow>
+              <OriginalFileContext.Provider value={parent.relativePath}>
+                <MDXRenderer>{body}</MDXRenderer>
+              </OriginalFileContext.Provider>
+            </NestedRow>
+            <HorizontalRule />
+            <NestedRow>
+              <CustomColumn xs={9} xlColumn="2 / span 18">
+                <Footer />
+              </CustomColumn>
+            </NestedRow>
           </Column>
         </ApiReferenceRow>
       </LayoutBase>

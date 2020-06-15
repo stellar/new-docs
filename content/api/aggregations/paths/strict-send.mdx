@@ -14,8 +14,8 @@ For this search, Horizon loads a list of assets that the recipient can recieve (
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /paths/strict-send?source_asset_type={native,credit_alphanum4,credit_alphanum12}&source_asset_code={:asset_code}&source_asset_issuer={:account_id}&source_amount={:amount}&destination_account={:account_id}&destination_assets={:asset_list} |
 
 </Endpoint>
@@ -53,22 +53,25 @@ curl "https://horizon.stellar.org/paths/strict-send?source_asset_type=credit_alp
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.strictSendPaths(
-  new StellarSdk.Asset('BRL', 'GDVKY2GU2DRXWTBEYJJWSFXIGBZV6AZNBVVSUHEPZI54LIS6BA7DVVSP'),
-  '400',
-  'GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA',
-)
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .strictSendPaths(
+    new StellarSdk.Asset(
+      "BRL",
+      "GDVKY2GU2DRXWTBEYJJWSFXIGBZV6AZNBVVSUHEPZI54LIS6BA7DVVSP",
+    ),
+    "400",
+    "GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA",
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -553,21 +556,24 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
 var es = server
-.strictSendPaths(
-  new StellarSdk.Asset('BRL', 'GDVKY2GU2DRXWTBEYJJWSFXIGBZV6AZNBVVSUHEPZI54LIS6BA7DVVSP'),
-  '400',
-  'GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA',
-)
-.cursor('now')
-.stream({onmessage: callback})
+  .strictSendPaths(
+    new StellarSdk.Asset(
+      "BRL",
+      "GDVKY2GU2DRXWTBEYJJWSFXIGBZV6AZNBVVSUHEPZI54LIS6BA7DVVSP",
+    ),
+    "400",
+    "GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA",
+  )
+  .cursor("now")
+  .stream({ onmessage: callback });
 ```
 
 </CodeExample>

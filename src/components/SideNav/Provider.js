@@ -17,6 +17,8 @@ export const Provider = ({ children }) => {
   const [activeContent, setActiveNode] = React.useState({ id: "", ref: null });
   const [trackedElements, setTrackedElements] = React.useState([]);
 
+  const [isNavClicked, setIsNavClicked] = React.useState(false);
+
   // We need to search just the refs pretty frequently, so memoize it so we
   // don't generate a ton of garbage.
   const elementRefs = React.useMemo(() => trackedElements.map((e) => e.ref), [
@@ -29,11 +31,18 @@ export const Provider = ({ children }) => {
       if (Math.abs(window.scrollY - lastScrollPosition) < 100) {
         return;
       }
+
       const isScrollingDown = window.scrollY > lastScrollPosition;
       lastScrollPosition = window.scrollY;
 
       const newActiveRef = findActiveNode(elementRefs, isScrollingDown);
+
+      if (isNavClicked) {
+        return;
+      }
+
       const newActiveNode = trackedElements.find((e) => e.ref === newActiveRef);
+
       if (newActiveNode && newActiveNode !== activeContent) {
         setActiveNode(newActiveNode);
       }
@@ -41,10 +50,11 @@ export const Provider = ({ children }) => {
 
     window.addEventListener("scroll", handler);
     handler();
+
     return () => {
       window.removeEventListener("scroll", handler);
     };
-  }, [activeContent, elementRefs, trackedElements]);
+  }, [activeContent, elementRefs, trackedElements, isNavClicked]);
 
   const trackElement = React.useCallback(
     (ref) => {
@@ -64,8 +74,16 @@ export const Provider = ({ children }) => {
       activeContent,
       stopTrackingElement,
       trackElement,
+      setActiveNode,
+      setIsNavClicked,
     }),
-    [activeContent, stopTrackingElement, trackElement],
+    [
+      activeContent,
+      stopTrackingElement,
+      trackElement,
+      setActiveNode,
+      setIsNavClicked,
+    ],
   );
 
   return (

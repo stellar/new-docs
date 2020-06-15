@@ -11,6 +11,7 @@ import { AttributeTable } from "components/AttributeTable";
 This endpoint lists all successful payment-related operations and can be used in [streaming](../introduction/streaming.mdx) mode. Streaming mode allows you to listen for new payments as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known payment unless a `cursor` is set, in which case it will start from that `cursor`. By setting the cursor value to `now`, you can stream payments created since your request time.
 
 Operations that can be returned by this endpoint include:
+
 - `create_account`
 - `payment`
 - `path_payment`
@@ -18,8 +19,8 @@ Operations that can be returned by this endpoint include:
 
 <Endpoint>
 
-|     |                              |
-| --- | ---------------------------- |
+|  |  |
+| --- | --- |
 | GET | /payments?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed={true,false}&join={transactions] |
 
 </Endpoint>
@@ -54,18 +55,18 @@ curl "https://horizon.stellar.org/payments?limit=3"
 ```
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
-.payments()
-.call()
-.then(function(resp) {
-  console.log(resp)
-})
-.catch(function(err) {
-  console.error(err)
-})
+  .payments()
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 ```
 
 </CodeExample>
@@ -188,17 +189,14 @@ server
 <CodeExample title="JavaScript Streaming Example">
 
 ```js
-var StellarSdk = require('stellar-sdk')
-var server = new StellarSdk.Server('https://horizon.stellar.org')
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
 
-var callback = function(resp) {
-  console.log(resp)
-}
+var callback = function (resp) {
+  console.log(resp);
+};
 
-var es = server
-.payments()
-.cursor('now')
-.stream({onmessage: callback})
+var es = server.payments().cursor("now").stream({ onmessage: callback });
 ```
 
 </CodeExample>

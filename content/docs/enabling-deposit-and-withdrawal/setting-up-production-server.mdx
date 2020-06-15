@@ -17,7 +17,7 @@ Since the distribution account will be managed programmatically, it should only 
 
 ## Connecting to Real KYC
 
-Most anchors need to collect  [Know Your Customer](https://en.wikipedia.org/wiki/Know_your_customer) information to comply with local regulations before honoring deposits and withdrawals. The KYC flow usually consists of a simple form that gathers relevant information about the user such as name, email, address, age, and government-issued ID number.
+Most anchors need to collect [Know Your Customer](https://en.wikipedia.org/wiki/Know_your_customer) information to comply with local regulations before honoring deposits and withdrawals. The KYC flow usually consists of a simple form that gathers relevant information about the user such as name, email, address, age, and government-issued ID number.
 
 How you handle KYC is up to you: there are many services that provide KYC solutions through APIs and iFrames, and validate the input data and sync with governmental databases to verify requirements. Each jurisdiction has specific KYC requirements, and they differ from jurisdiction to jurisdiction, so it's best to find a country-specific KYC provider that meets your needs.
 
@@ -29,22 +29,20 @@ Make sure the errors and validation messages are clear and include instructions 
 
 ## Pre-Filling the KYC Form
 
-Pre-filling the KYC form is a great way to reduce the friction of getting started using an anchor, and wallets usually provide a set of fields that are commonly used throughout the ecosystem. In summary, the anchor can render the KYC form with the user's values that were previously sent by the wallet in the /transactions/deposit/interactive and /transactions/withdraw/interactive endpoints.
-All fields from [SEP-9](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0009.md) can be sent by wallets in the previously mentioned endpoints, but the most common are: email, first name, last name and phone number. Also, you should still enable the pre-filled fields to be editable, since the user might have inputted a different name in the Wallet's sign-up process, and could want to edit it before finalizing the Anchor's KYC process.
-
+Pre-filling the KYC form is a great way to reduce the friction of getting started using an anchor, and wallets usually provide a set of fields that are commonly used throughout the ecosystem. In summary, the anchor can render the KYC form with the user's values that were previously sent by the wallet in the /transactions/deposit/interactive and /transactions/withdraw/interactive endpoints. All fields from [SEP-9](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0009.md) can be sent by wallets in the previously mentioned endpoints, but the most common are: email, first name, last name and phone number. Also, you should still enable the pre-filled fields to be editable, since the user might have inputted a different name in the Wallet's sign-up process, and could want to edit it before finalizing the Anchor's KYC process.
 
 ## Connecting to Real Banking Rails
 
-Fiat-backed token issuers are expected to manage a full reserve.  That means there's a 1:1 relationship between Stellar-network tokens and money in the bank.  Since each fiat token on Stellar is backed by, and can be redeemed for, an underlying, real-world asset, issuers of fiat-backed tokens need to connect to real banking rails to validate user deposits (through bank transfers, credit card payments, etc.) and to complete user withdrawals (generally through bank transfers).  If you're an anchor honoring deposits and withdrawals of a token another organization issues, you'll follow a similar process.
+Fiat-backed token issuers are expected to manage a full reserve. That means there's a 1:1 relationship between Stellar-network tokens and money in the bank. Since each fiat token on Stellar is backed by, and can be redeemed for, an underlying, real-world asset, issuers of fiat-backed tokens need to connect to real banking rails to validate user deposits (through bank transfers, credit card payments, etc.) and to complete user withdrawals (generally through bank transfers). If you're an anchor honoring deposits and withdrawals of a token another organization issues, you'll follow a similar process.
 
 In order to fetch (and identify) a user transfer, issuers usually take one of two approaches:
 
-* API Polling: this option consists of fetching the bank's API, through a cron job, to check for the updated status of the list of transfers received by (and sent from) the issuer's bank account. Once the system confirms a new transaction and identifies that it relates to a specific deposit, it can send the digital funds to that user's account
-* Webhook: not all banking rails support this option, but it's the leanest in terms of back-end logic. In this approach, the bank proactively hits an issuer's endpoint once it receives a new transfer, updating that information on the issuer's database. The issuer can then can match that transaction to an existing in-process deposit, and validate that the user can receive their digital funds
+- API Polling: this option consists of fetching the bank's API, through a cron job, to check for the updated status of the list of transfers received by (and sent from) the issuer's bank account. Once the system confirms a new transaction and identifies that it relates to a specific deposit, it can send the digital funds to that user's account
+- Webhook: not all banking rails support this option, but it's the leanest in terms of back-end logic. In this approach, the bank proactively hits an issuer's endpoint once it receives a new transfer, updating that information on the issuer's database. The issuer can then can match that transaction to an existing in-process deposit, and validate that the user can receive their digital funds
 
-There are many ways to identify that a specific bank transfer relates to a specific deposit (and, consequently, to a user). Some banks (and countries) have transfer infrastructure that allows the creation of a single bank account per transfer; others require users to add an identification parameter to their transfers.  Some banks provide the user ID number in the transaction information so issuers can match that with the information provided in the KYC form.
+There are many ways to identify that a specific bank transfer relates to a specific deposit (and, consequently, to a user). Some banks (and countries) have transfer infrastructure that allows the creation of a single bank account per transfer; others require users to add an identification parameter to their transfers. Some banks provide the user ID number in the transaction information so issuers can match that with the information provided in the KYC form.
 
-Make sure to do a full security audit on your systems when banking rails connections are in place. Some banks provide a testing API that can be used for development and deployment to testnet or staging environments, which means you can test and audit the codebase before moving to a final production-ready bank integration. For better security, some anchors also prefer to add a manual final step before approving withdrawal transfers. In terms of UX, this manual approval is acceptable as long as the wait times align with user expectations, which usually means they aren't longer than a couple of hours. 
+Make sure to do a full security audit on your systems when banking rails connections are in place. Some banks provide a testing API that can be used for development and deployment to testnet or staging environments, which means you can test and audit the codebase before moving to a final production-ready bank integration. For better security, some anchors also prefer to add a manual final step before approving withdrawal transfers. In terms of UX, this manual approval is acceptable as long as the wait times align with user expectations, which usually means they aren't longer than a couple of hours.
 
 ## Testing Edge Cases
 
@@ -52,42 +50,42 @@ Once your application is fully functional, it's a good idea to test different sc
 
 ### General Tests
 
-* Check to make sure the interactive interface follows our [UX Guidelines](https://github.com/stellar/anchor-ux-guidelines)
-* Test the interactive flow usability on really small and really large screens
-* Check that the issuing account is set up with the correct home domain, and that the website on that home domain has branding visuals, content about your company, clear language telling users how to report problems, and a method for contacting you to seek support.
-* Test the interface using different locale information, and check for translated content including error messages, responses, date formatting, and number formatting
+- Check to make sure the interactive interface follows our [UX Guidelines](https://github.com/stellar/anchor-ux-guidelines)
+- Test the interactive flow usability on really small and really large screens
+- Check that the issuing account is set up with the correct home domain, and that the website on that home domain has branding visuals, content about your company, clear language telling users how to report problems, and a method for contacting you to seek support.
+- Test the interface using different locale information, and check for translated content including error messages, responses, date formatting, and number formatting
 
 ### KYC Tests
 
-* Check that KYC appears with a new wallet SK
-* Check that KYC (and email, if it's being used to identify users) is not appearing when using a previous wallet SK
-* Check that KYC doesn't accept incorrectly formatted inputs, and that the error messages are comprehensible
-* Check that you can use the same KYC information (email, phone number, username, etc) multiple times
-* Check that you can go through KYC multiple times with the same Stellar SK.
+- Check that KYC appears with a new wallet SK
+- Check that KYC (and email, if it's being used to identify users) is not appearing when using a previous wallet SK
+- Check that KYC doesn't accept incorrectly formatted inputs, and that the error messages are comprehensible
+- Check that you can use the same KYC information (email, phone number, username, etc) multiple times
+- Check that you can go through KYC multiple times with the same Stellar SK.
 
 ### Deposit Test
 
-* Check that deposits are disabled for really small and really large values
-* Check that the deposit flow goes through, and that the banking rails are working
-* Check that the endpoint returns an error if the JWT token is missing
-* Check that all deposit response params conform to [protocols](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#deposit)
+- Check that deposits are disabled for really small and really large values
+- Check that the deposit flow goes through, and that the banking rails are working
+- Check that the endpoint returns an error if the JWT token is missing
+- Check that all deposit response params conform to [protocols](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#deposit)
 
 ### Withdraw Tests
 
-* Check that withdrawals are disabled for really small and really large values
-* Check that you cannot make a withdrawal with a value higher than the current balance
-* Check that the withdraw flow goes through, and that the banking rails are working
-* Check that  the endpoint returns an error if the JWT token is missing
-* Check that all withdraw params conform to [protocols](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#withdraw)
+- Check that withdrawals are disabled for really small and really large values
+- Check that you cannot make a withdrawal with a value higher than the current balance
+- Check that the withdraw flow goes through, and that the banking rails are working
+- Check that the endpoint returns an error if the JWT token is missing
+- Check that all withdraw params conform to [protocols](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#withdraw)
 
 ### Transaction(s) Tests
 
-* Check that the `/transaction` endpoint is working for a newly created transaction
-* Check that the `/transaction` endpoint is working for a completed transaction
-* Check that the `/transactions` endpoint returns all transactions from a specific user
+- Check that the `/transaction` endpoint is working for a newly created transaction
+- Check that the `/transaction` endpoint is working for a completed transaction
+- Check that the `/transactions` endpoint returns all transactions from a specific user
 
 ### Security Tests
 
-* Ensure distribution is done through a dedicated distribution account (not the issuing account)
-* Ensure market making is done through a dedicated account (not the issuing account)
-* Make sure all authenticated endpoints are not accessible without the JWT tokens
+- Ensure distribution is done through a dedicated distribution account (not the issuing account)
+- Ensure market making is done through a dedicated account (not the issuing account)
+- Make sure all authenticated endpoints are not accessible without the JWT tokens

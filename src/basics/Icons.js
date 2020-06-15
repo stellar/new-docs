@@ -7,9 +7,11 @@ import { THEME } from "constants/styles";
 import CloseSVG from "assets/icons/icon-close.svg";
 import ChevronSVG from "assets/icons/icon-chevron.svg";
 import CheckmarkSVG from "assets/icons/icon-checkmark.svg";
+import CopySVG from "assets/icons/icon-copy.svg";
 import EditSVG from "assets/icons/icon-edit.svg";
 import AlertSVG from "assets/icons/icon-alert.svg";
 import MenuSVG from "assets/icons/menu.svg";
+import ExternalLinkSVG from "assets/icons/icon-external-link.svg";
 
 const AlertEl = styled.div`
   display: inline-block;
@@ -147,3 +149,11 @@ CloseIcon.propTypes = {
 };
 
 export const Menu = MenuSVG;
+
+const CopyIconEl = styled(CopySVG)`
+  margin-top: -1px;
+`;
+
+export const CopyIcon = (props) => <CopyIconEl {...props} />;
+
+export const ExternalLinkIcon = ExternalLinkSVG;
