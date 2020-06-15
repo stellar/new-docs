@@ -1,5 +1,5 @@
 ---
-title: "Overview"
+title: "Software and SDKs"
 order: 0
 ---
 ## Software
@@ -15,9 +15,9 @@ Stellar Core is the backbone of the Stellar network and does the hard work of va
 Horizon is the client-facing API server for the Stellar ecosystem. It acts as the interface between Stellar Core and applications that want to access the Stellar network. If you're running Stellar Core, you will probably also want to run Horizon.  For more information on how to set up and operate a Horizon instance, see the [Run an API Server](link) section of the docs.  
 
 ## SDKs
-There are a wide variety of Stellar SDKs, which means you can interact with the network in your language of choice.  The Javascript, Java, and Go SDKs are maintainted by the Stellar Development Foundation; the rest are maintained by dedicated community developers.  They're all open source, so if you have a question, suggestion, or contribution to make, you can file a Github issue or pull request in the relevant SDK repository.  You can also get in touch with SDK maintainers by joining the [Stellar public Keybase team](link), and navigating to the #sdk-mainteners channel.  
+There are a wide variety of Stellar SDKs, which means you can interact with the network in your language of choice.  The Javascript, Java, and Go SDKs are maintained by the Stellar Development Foundation; the rest are maintained by dedicated community developers.  They're all open source, so if you have a question, suggestion, or contribution to make, you can file a Github issue or pull request in the relevant SDK repository.  You can also get in touch with SDK maintainers by joining the [Stellar public Keybase team](link), and navigating to the #sdk-mainteners channel.  
 
-Each SDK has its own source code and documentation, and we've linked to both in the list below.  Often, the best place to find out how to use a given SDK is to check the documentation specific to it.  Most offer practical examples that demonstate how to construct and submit transactions and interact with Horizon endpoints.
+Each SDK has its own source code and documentation, and we've linked to both in the list below.  Often, the best place to find out how to use a given SDK is to check the documentation specific to it.  Most offer practical examples that demonstrate how to construct and submit transactions and interact with Horizon endpoints.
 
 ### Javascript
 * [Source](https://github.com/stellar/js-stellar-sdk)
@@ -38,7 +38,6 @@ The Go SDK is split up into a few separate packages, all of which you can find i
 ### Python
 * [Source](https://github.com/StellarCN/py-stellar-base)
 * [Docs](https://stellar-sdk-zh-cn.readthedocs.io/en/latest/)
-
 
 ### C# .NET
 * [Source](https://github.com/elucidsoft/dotnet-stellar-sdk)
@@ -65,28 +64,26 @@ The Go SDK is split up into a few separate packages, all of which you can find i
 [Source](https://github.com/bnogalm/StellarQtSDK)
 [Docs](https://github.com/bnogalm/StellarQtSDK/wiki)
 
-
 ## Tools
-The Stellar Development Foundation also maintains a small suite of tools to make it easier for developers to interact with the network.
+The Stellar Development Foundation maintains a small suite of tools to make it easier for developers to interact with the network.
 
 ### [Laboratory](https://www.stellar.org/laboratory/)
-The Stellar laboaratory is a GUI that allows you to create accounts, construct and submit transactions, read XDRs, and query all of Horizon's endpoints.  It exposes the relevant calls to Horizon, so it's a great way to experiemnt with and learn more about the Stellar API. The source is available [here](https://github.com/stellar/laboratory).
+The Stellar laboratory is a GUI that allows you to create accounts, construct and submit transactions, read XDRs, and query all of Horizon's endpoints.  It exposes the relevant calls to Horizon, so it's a great way to experiment with and learn more about the Stellar API. The source is available [here](https://github.com/stellar/laboratory).
 
 ### [Account Viewer](https://www.stellar.org/account-viewer/)
-The account viewer is a strippede-down wallet that you can use to check an account's XLM balance and send simple payments. It works on the testnet as well as the public network. The source is available [here](https://github.com/stellar/account-viewer).
+The account viewer is a stripped-down wallet that you can use to check an account's XLM balance and send simple payments. It works on the testnet as well as the public network. The source is available [here](https://github.com/stellar/account-viewer).
 
 ### [Dashboard](http://dashboard.stellar.org)
 The dashboard shows the current status of the public network and the test network. The source is available [here](https://github.com/stellar/dashboard).
 
 ### [Status Page](https://status.stellar.org/)
-The status page tracks network incidents and scheduled maintenance for both the public network and the test network.  We recommened that anyone building on Stellar subscribes to updates so they're notified about important events including protocol upgrades and testnet resets.
+The status page tracks network incidents and scheduled maintenance for both the public network and the test network.  We recommend subscribing to updates so you're notified about important events including protocol upgrades and testnet resets.
 
-There is a small suite of tools built in Go that can be useful for network admins and people wo https://github.com/stellar/go/tree/master/tools
+There is also a small [suite of tools](https://github.com/stellar/go/tree/master/tools) built in Go that can be useful for Stellar Core and Horizon operators.  It includes things like Stellar Archivist, which is for Stellar Core archive maintenance, and Horizon cmp, which compares the responses of two Horizon servers and shows the diffs.    
 
 ## Reference Implementations
-https://github.com/stellar/django-polaris
-https://github.com/stellar/sep24-demo-client
-https://github.com/stellar/go/tree/master/services/federation
+The Stellar Development Foundation maintains reference implementations of some [Stellar Ecosystem Proposals](link) to jumpstart the process of building infrastructure on top of Stellar in a way that maximizes interoperabilit among ecosystem participants. 
 
-
-
+* [Polaris](https://github.com/stellar/django-polaris) is an extendable django app that makes it easy for anchors to [enable deposits and withdrawals](link).  Using Polaris, you can run a web server supporting any combination of SEP-1, 6, 10, 12, and 24.
+* The [SEP-24 demo client](https://github.com/stellar/sep24-demo-client) makes it easy for anchors to test their deposit and withdrawal flows by implementing the client side of a Stellar SEP24 interactive flow.
+* The [Federation Server](https://github.com/stellar/go/tree/master/services/federation) is a Go implementation of the federation protocol described in [SEP-2](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md).  It's designed to be dropped into your existing infrastructure.
