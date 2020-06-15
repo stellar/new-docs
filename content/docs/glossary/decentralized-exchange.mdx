@@ -3,28 +3,24 @@ title: Distributed Exchange
 order:
 ---
 
-In addition to supporting the issuing and movement of [assets](./assets.mdx), the Stellar network also acts as a decentralized **distributed exchange** of any type of asset that people have added to the network. Its ledger stores both balances held by user accounts and offers that user accounts make to buy or sell assets.
+In addition to supporting the issuing and movement of [assets](./assets.mdx), the Stellar network also acts as a decentralized **distributed exchange** that allows you to trade and asset on the network. The Stellar ledger stores both balances held by user accounts and offers that user accounts make to buy or sell assets.
 
 ## Offers
 An account can make offers to buy or sell assets using the [Manage Buy
 Offer](../start/list-of-operations.mdx#manage-buy-offer) or [Manage Sell
 Offer](../start/list-of-operations.mdx#manage-sell-offer) operation. In order to make an offer, the account
-must hold the asset it wants to sell. Similarly, the account must trust the issuer of the asset
+must hold the asset it wants to sell. The account must also trust the issuer of the asset
 it's trying to buy.
 
-When an account makes an offer, the offer is checked against the existing orderbook for that asset pair. If the offer crosses an existing offer, it is filled at the price of the existing offer. Let's say that you make an offer to buy 10 XLM for 2 BTC. If an offer already exists to sell 10 XLM for 2 BTC, your offer will take that offer--you'll be 2 BTC poorer but 10 XLM richer.
+Offers in Stellar behave like limit orders in traditional markets. When an account makes an offer, the offer is checked against the existing orderbook for that asset pair. If the offer crosses an existing offer, it is filled at the price of the existing offer. If the offer doesn't cross an existing offer, the offer is saved in the orderbook until it is either taken by another offer, taken by a path payment, or canceled by the account that created the offer.
 
-If the offer doesn't cross an existing offer, the offer is saved in the orderbook until it is either taken by another offer, taken by a payment, canceled by the account that created the offer, or invalidated because the account making the offer no longer has the asset for sale.
-
-Starting in protocol version 10, it is no longer possible for an offer to be invalidated because the account owning the offer no longer has the asset for sale. Each offer contributes selling liabilities for the selling asset and buying liabilities for the buying asset, which are aggregated in the account (for lumens) or trustline (for other assets) owned by the account creating the offer. Any operation that would cause an account to be unable to satisfy its liabilities, such as sending away too much balance, will fail. This guarantees that any offer in the orderbook can be executed entirely.
-
-Offers in Stellar behave like limit orders in traditional markets.
+Each offer contributes selling liabilities for the selling asset and buying liabilities for the buying asset, which are aggregated in the account (for lumens) or trustline (for other assets) owned by the account creating the offer. Any operation that would cause an account to be unable to satisfy its liabilities — such as sending away too much balance, will fail — This guarantees that any offer in the orderbook can be executed entirely.
 
 For offers placed at the same price, the older offer is filled before the newer one.
 
 ### Price
 
-Each offer in Stellar has an associated price with it, which is represented as a ratio of the
+Each offer in Stellar has an associated price, which is represented as a ratio of the
 two assets in the offer. This is to ensure there is no loss of precision when representing the
 price of the offer (as opposed to storing the fraction as a floating-point number).
 
@@ -33,41 +29,31 @@ represented as 32 bit signed integers. When expressing a price of "Asset A in te
 the amount of B is always the numerator, and A is always the denominator.
 
 When creating a "buy"/"bid" offer in Stellar via the [Manage Buy
-Offer](./list-of-operations.md#manage-buy-offer) operation, the price is specified as 1 unit of
-what you're _buying_ in terms of what you're _selling_. For example, if you were _buying_ 20 USD in
+Offer](../start/list-of-operations.mdx#manage-buy-offer) operation, the price is specified as 1 unit of
+what you're _buying_ in terms of what you're _selling_. For example, if you're _buying_ 20 USD in
 exchange for 100 XLM, you would specify the price as `{100, 20}`, which would be the equivalent of
 1 USD @ 5 XLM.
 
 When creating a "sell"/"offer"/"ask" offer in Stellar via the [Manage Sell
-Offer](./list-of-operations.md#manage-sell-offer) operation, the price is specified as 1
-unit of what you're _selling_ in terms of what you're _buying_. For example, if you were _selling_
+Offer](../start/list-of-operations.mdx#manage-sell-offer) operation, the price is specified as 1
+unit of what you're _selling_ in terms of what you're _buying_. For example, if you're _selling_
 10 USD in exchange for 100 XLM, you would specify the price as `{100, 10}`, which would be the
 equivalent of 1 USD @ 10 XLM (_nice profit_).
 
 #### Fees
 
 It's important to note that the price you set is unrelated to the fee you pay for submitting the
-offer as a part of a transaction. In fact, it's absolutely possible it's in a different asset! This
-is because on the Stellar network fees are always paid in the native currency of the network
+offer as a part of a transaction.  Fees are always paid in the native currency of the network
 (lumens), and are related to the transaction that you submit to the network (which contains your
 offer operation) as opposed to your offer itself.
 
-It's up to you to calculate fees into how you craft the price on your offer. Here's an example:
-
-* You place an offer to _buy_ 100 USD for 135 CAD with a fee of 1000
-  [stroops](./assets.md#one-stroop-multiple-stroops) (.0001 XLM). You immediately lose .0001
-  XLM.
-* When your offer is accepted by a seller, you receive 100 USD and exchange 135 CAD in return.
-* In total, your gain is 100 USD, and your loss is 135 CAD _and_ .0001 XLM.
-
-For more information, take a look at [our guide on fees in Stellar](./fees.md).
+For more information, take a look at [our guide on fees in Stellar](./fees.mdx).
 
 
 ## Orderbook
-An **orderbook** is a record of outstanding orders on the Stellar network. This record sits between any two assets. Abstractly, we often discuss assets using two _fictional placeholder_ assets traded in a market, which we call "**wheat**" or "**sheep**". The orderbook for that asset-pair therefore records every account wanting to sell wheat for sheep on one side _and_ every account wanting to sell sheep for wheat on the other side.
+An **orderbook** is a record of outstanding orders on the Stellar network. This record sits between any two assets. Abstractly, we often discuss assets using two _fictional placeholder_ assets traded in a market, which we call "**wheat**" and "**sheep**". The orderbook for that asset-pair therefore records every account wanting to sell wheat for sheep on one side _and_ every account wanting to sell sheep for wheat on the other side.
 
-(A bit of further market terminology: outside of Stellar, the concept of an "orderbook" normally contains two kinds of "**order**": buying is expressed by "**bid**" orders, and selling is expressed by "**ask**" orders, also called "**offers**". Within the Stellar network, the representation of orders is simplified: all orders are stored as **selling** -- i.e. the system automatically converts all bids to asks in the opposite direction -- and Stellar's documentation and code can therefore sometimes be a bit lax in using the words "offer" and "order" as synonyms. Since both words refer to the same thing in Stellar in all cases, they are occasionally used interchangably. This is harmless in the context of the Stellar ecosystem, but outside that context, an "offer" usually means an "ask" order _specifically_!)
-
+(A bit of further market terminology: outside of Stellar, the concept of an "orderbook" normally contains two kinds of "**order**": buying is expressed by "**bid**" orders, and selling is expressed by "**ask**" orders, also called "**offers**". Within the Stellar network, the representation of orders is simplified: all orders are stored as **selling** — i.e. the system automatically converts all bids to asks in the opposite direction — and Stellar's documentation and code can therefore sometimes be a bit lax in using the words "offer" and "order" as synonyms. Since both words refer to the same thing in Stellar in all cases, they are occasionally used interchangably. This is harmless in the context of the Stellar ecosystem, but outside that context, an "offer" usually means an "ask" order _specifically_!)
 
 An orderbook can be summarized by a diagram, as shown below. It is often visible on the trading interface of an exchange, though sometimes inverted left-to-right or drawn horizontally. But the idea is the same.
 
