@@ -58,7 +58,7 @@ export const H2 = styled.h2`
   ${headingBase};
   display: inline-block;
   font-size: 1.5rem;
-  padding-top: 2rem;
+  margin-top: 2rem;
   line-height: 1.5;
   letter-spacing: normal;
 `;
