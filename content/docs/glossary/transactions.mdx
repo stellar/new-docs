@@ -68,3 +68,98 @@ To determine if a transaction is valid, many checks take place over the course o
   - The combined weight of all signatures for the source account _of the transaction_ meets the low threshold for the source account. This is necessary in order for fees to be taken and the sequence number to be incremented later in the transaction lifecycle.
 - **Memo** — The memo type must be a valid type, and the memo itself must be adhere to the formatting of the memo type.
 - **Time Bounds** — The transaction must be submitted within the set time bounds of the transaction, otherwise it will be considered invalid.
+
+## Transaction Lifecycle
+
+1. **Creation (Transaction Creator)**: A user creates a transaction by setting the source
+   account, sequence number, list of operations and their respective parameters, fee, and
+   optionally a memo and timebounds.  You can try this out [using the Stellar
+   Laboratory][lab-tx-create].
+
+2. **Signing (Transaction Signers)**: Once the transaction is completely filled out, the
+   transaction is formed into a transaction envelope, which contains the transaction itself and a
+   list of signers. All the required signatures must be collected and added to the transaction
+   envelope's list of signers.  Commonly it's just the signature of the account doing the
+   transaction, but more complicated setups can require collecting [signatures from multiple
+   parties](./multi-sig.md).
+
+3. **Submitting (Transaction Submitter)**: After signing, the transaction must be valid and can now
+   be submitted to the Stellar network. If the transaction is invalid, it will be immediately
+   rejected by stellar-core based on [the validity rules of a
+   transaction](#validity-of-a-transaction), the account's sequence number will not be incremented,
+   and no fee will be consumed from the source account.  Multiple transactions for the same account
+   can be submitted, provided each of their sequence numbers are off by one. If they are all valid,
+   stellar-core will craft a transaction set with each of those transactions applied in sequence
+   number order. Transactions are typically submitted using [horizon][horizon-tx-create], but you
+   can also submit the transaction directly to an instance of
+   [stellar-core](https://github.com/stellar/stellar-core).
+
+4. **Propagating (Validator)**: Once stellar-core has determined that a transaction is valid, it
+   will then propagate the transaction to all of the other servers to which it's connected. In this
+   way, a valid transaction is flooded to the entire Stellar network.
+
+5. **Crafting a candidate transaction set (Validator)**: When it's time to close the ledger, each
+   stellar-core validator (a [stellar-core node][types-of-nodes] participating in consensus) takes
+   all valid transactions it is aware since the last ledger close and collects them into a
+   candidate transaction set. If it hears about any incoming transactions now, it puts them aside
+   for the next ledger close. If the number of operations in the candidate transaction set is
+   greater than the maximum number of operations per ledger, transactions will be prioritized by
+   their fee for inclusion in the set.
+
+6. **Nominating a transaction set (Validator)**: Once each validator has crafted a candidate
+   transaction set, the set is nominated to the network.
+
+7. **Stellar Consensus Protocol (SCP) determines the final transaction set (Validator Network)**:
+   SCP resolves any differences between candidate transaction sets, and ultimately determining a
+   single transaction set to apply, the close time of the ledger, and any upgrades to the protocol
+   that need to be applied network wide at apply time.
+   * If a transaction doesn't make it into the transaction set, it is kept around in memory in
+     order to be added to the next transaction set on a best effort basis.
+   * If a transaction is kept in memory after a certain number of ledger closes, it will be banned
+     for several additional ledgers. This means no attempt will be made to include it in a
+     candidate transaction set additional ledgers during this time.
+
+8. **Transaction apply order is determined (Validator Network)**: Once SCP agrees on a particular
+   transaction set, the apply order in computed for the transaction set. This both shuffles the
+   order of the set in order to create uncertainty for competing transactions, and maintains the
+   order of sequence numbers for multiple transactions per account.
+
+9. **Fees are collected (Validator)**: [Fees](./fees.md) are collected for all transactions
+   simultaneously.
+
+10. **Application (Validator)**: Each transaction is applied in the order previously determined.
+    For each transaction, the account's sequence number is consumed (increased by 1), the
+    transaction's validity is checked again, and each operation is applied in the order they occur
+    in the transaction. Operations may fail at this stage due to errors that can occur outside of
+    the transaction and operation validity checks. For example, an insufficient balance for a
+    payment is not checked at submission, and would fail at this time. If any operation fails, the
+    entire transaction will fail, and all previous operations will be rolled back.
+
+11. **Protocol Upgrades (Validator)**: Finally, upgrades are run if an upgrade took place. This
+    can include arbitrary logic[^1] to upgrade the ledger state for protocol upgrades, along with
+    ledger header modifications including the protocol version, base fee, maximum number of
+    operations per ledger, etc. Once this has completed, the life cycle begins anew.
+
+## Possible Errors
+
+Transaction can fail with one of the errors in a table below. Error reference for operations can be
+found in [List of operations](./list-of-operations.md) doc.
+
+| Error | Code | Description |
+| --- | --- | --- |
+| FAILED | -1 | One of the operations failed (check [List of operations](./list-of-operations.md) for errors). |
+| TOO_EARLY | -2 | Ledger `closeTime` before `minTime` value in the transaction. |
+| TOO_LATE | -3 | Ledger `closeTime` after `maxTime` value in the transaction. |
+| MISSING_OPERATION | -4 | No operation was specified. |
+| BAD_SEQ | -5 | Sequence number does not match source account. |
+| BAD_AUTH | -6 | Too few valid signatures / wrong network. |
+| INSUFFICIENT_BALANCE | -7 | Fee would bring account below [minimum reserve](./fees.md). |
+| NO_ACCOUNT | -8 | Source account not found. |
+| INSUFFICIENT_FEE | -9 | [Fee](./fees.md) is too small. |
+| BAD_AUTH_EXTRA | -10 | Unused signatures attached to transaction. |
+| INTERNAL_ERROR | -11 | An unknown error occured. |
+
+[horizon-tx-create]: https://www.stellar.org/developers/horizon/reference/transactions-create.html
+[lab-tx-create]: https://www.stellar.org/laboratory/#txbuilder?network=test
+[types-of-nodes]: https://www.stellar.org/developers/stellar-core/software/admin.html#level-of-participation-to-the-network
+[^1]: For an example of protocol upgrade logic, see [CAP-0003](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0003.md#upgrading-the-protocol-version).
