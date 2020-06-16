@@ -2,17 +2,15 @@
 title: Fee Bumps
 order:
 ---
-Fee Bump transactions enable any account to pay the fee for an existing transaction without the need to re-sign the existing transaction or manage sequence numbers.  If a transaction has insufficient fee, for example due to either surge pricing or an increase in the baseFee, that transaction will not be included in a transaction set. If the transaction is only signed by the party that wants to execute it then it is possible to simply craft a new transaction with higher fee, sign it, and submit it. But there are many circumstances where this is not possible, such as when pre-signed and pre-authorized transactions are involved.  
-
-Unlike regular transactions, which contain operations, a fee-bump transaction contains a transaction envelope.  
-
-To bump a fee, you create a fee-bump transaction which contains the transaction envelope that you want to submit, specifying the fee that you want to pay and the account that will pay it. If you control that account, then you can sign the fee-bump transaction and form a fee-bump transaction envelope from the fee-bump transaction and your signature. Now this can be submitted successfully if the new fee is sufficiently high.  
+Fee Bump transactions enable any account to pay the fee for an existing transaction without the need to re-sign the existing transaction or manage sequence numbers.  To bump a fee, you create a fee-bump transaction that contains the transaction envelope that you want to submit, specifying the fee that you want to pay and the account that will pay it. If you control that account, you can sign the fee-bump transaction and form a fee-bump transaction envelope from the fee-bump transaction and your signature, which you can submit to the network if the fee is sufficient.
 
 The fee and an account that will pay that fee override what was specified in the contained transaction. 
 
 ## Fee Bump Transaction Attributes
 
 Each fee bump transaction has the following attributes:
+
+### 
 
 ### Source Account
 
