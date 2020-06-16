@@ -143,7 +143,7 @@ To determine if a transaction is valid, many checks take place over the course o
 ## Possible Errors
 
 Transaction can fail with one of the errors in a table below. Error reference for operations can be
-found in [List of Operations](../start/list-of-operationsx.md) doc.
+found in [List of Operations](../start/list-of-operationsx.mdx) doc.
 
 | Error | Code | Description |
 | --- | --- | --- |
@@ -158,5 +158,7 @@ found in [List of Operations](../start/list-of-operationsx.md) doc.
 | INSUFFICIENT_FEE | -9 | [Fee](./fees.mdx) is too small. |
 | BAD_AUTH_EXTRA | -10 | Unused signatures attached to transaction. |
 | INTERNAL_ERROR | -11 | An unknown error occured. |
+| txNOT_SUPPORTED | -12 | The transaction type is not supported |
+| txFEE_BUMP_INNER_FAILED | -13 | The fee bump inner transaction failed.  See [Fee Bumps](./fee-bumps.mdx) for more info.|
 
 
