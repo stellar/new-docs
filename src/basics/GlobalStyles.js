@@ -4,6 +4,7 @@ import styledNormalize from "styled-normalize";
 
 import { FONTS } from "constants/fonts";
 import { FONT_FAMILY } from "constants/styles";
+import { expansionStyles } from "components/Expansion";
 
 const Styles = createGlobalStyle`
   body,
@@ -39,6 +40,7 @@ const Styles = createGlobalStyle`
   twitter-widget {
     margin: auto;
   }
+  ${expansionStyles}
 `;
 
 const fontStyles = FONTS.map(

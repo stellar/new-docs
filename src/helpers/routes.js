@@ -39,6 +39,8 @@ export const isRelativeUrl = (href) => {
   return true;
 };
 
+export const isHashUrl = (href) => href.startsWith("#");
+
 /**
  * resolveRelativeUrl takes a file path and a path relative to it, and returns a
  * well-formed URL.

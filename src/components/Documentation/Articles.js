@@ -177,7 +177,7 @@ const Articles = ({
         </TopicExpander>
       )}
 
-      <ExpandedSection isExpanded={isExpanded}>
+      <ExpandedSection isOpened={isExpanded}>
         <ArticleList>
           {Object.entries(articles)
             // Only get second arg

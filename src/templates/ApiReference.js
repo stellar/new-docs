@@ -120,7 +120,7 @@ const NavItemEl = styled.div`
 
 const StyledLink = components.a;
 
-const NavLinkEl = styled(BasicLink)`
+const NavLinkEl = styled(Link)`
   color: inherit;
   font-weight: unset;
   display: block;

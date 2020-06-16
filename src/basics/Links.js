@@ -13,6 +13,7 @@ import {
   resolveRelativePath,
   getLinkTarget,
   isRelativeUrl,
+  isHashUrl,
 } from "helpers/routes";
 
 import { Context as ScrollRouterContext } from "components/ApiRefRouting/ScrollRouter";
@@ -101,6 +102,12 @@ export const Link = ({ href, newTab, ...props }) => {
   const originalFilePath = React.useContext(OriginalFileContext);
 
   const { url, destinationType } = React.useMemo(() => {
+    if (isHashUrl(href)) {
+      return {
+        url: href,
+        destinationType: LINK_DESTINATIONS.hash,
+      };
+    }
     const destination = urlLib.parse(href);
 
     if (isRelativeUrl(href)) {
@@ -147,6 +154,7 @@ export const Link = ({ href, newTab, ...props }) => {
       }
       return <BasicLink href={url} {...props} />;
     case LINK_DESTINATIONS.docs:
+    case LINK_DESTINATIONS.hash:
       return <BasicLink href={url} {...props} />;
     case LINK_DESTINATIONS.external:
     default:
