@@ -90,7 +90,7 @@ To determine if a transaction is valid, many checks take place over the course o
    and no fee will be consumed from the source account.  Multiple transactions for the same account
    can be submitted, provided each of their sequence numbers are off by one. If they are all valid,
    Stellar Core will craft a transaction set with each of those transactions applied in sequence
-   number order. Transactions are typically submitted using [Horizon][.../api/introduction/index.mdx], but you
+   number order. Transactions are typically submitted using [Horizon](.../api/introduction/index.mdx), but you
    can also submit the transaction directly to an instance of
    [Stellar Core](..//run-core-node/index.mdx).
 
@@ -104,7 +104,7 @@ To determine if a transaction is valid, many checks take place over the course o
    candidate transaction set. If it hears about any incoming transactions now, it puts them aside
    for the next ledger close. If the number of operations in the candidate transaction set is
    greater than the maximum number of operations per ledger, transactions will be prioritized by
-   their fee for inclusion in the set.  See the [Fees](./fees.mdx) for more info.
+   their fee for inclusion in the set.  See the [Fees](./fees.mdx) doc for more info.
 
 6. **Nominating a transaction set (Validator)**: Once each validator has crafted a candidate
    transaction set, the set is nominated to the network.
@@ -153,7 +153,7 @@ found in [List of Operations](../start/list-of-operationsx.md) doc.
 | MISSING_OPERATION | -4 | No operation was specified. |
 | BAD_SEQ | -5 | Sequence number does not match source account. |
 | BAD_AUTH | -6 | Too few valid signatures / wrong network. |
-| INSUFFICIENT_BALANCE | -7 | Fee would bring account below [minimum reserve](./fminimum-balance.mdx). |
+| INSUFFICIENT_BALANCE | -7 | Fee would bring account below [minimum reserve](./minimum-balance.mdx). |
 | NO_ACCOUNT | -8 | Source account not found. |
 | INSUFFICIENT_FEE | -9 | [Fee](./fees.mdx) is too small. |
 | BAD_AUTH_EXTRA | -10 | Unused signatures attached to transaction. |
