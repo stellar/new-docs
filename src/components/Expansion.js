@@ -7,6 +7,12 @@ import { PALETTE, CSS_TRANSITION_SPEED } from "constants/styles";
 
 import { BasicButton } from "basics/Buttons";
 
+export const expansionStyles = css`
+  .ReactCollapse--collapse {
+    transition: height ${CSS_TRANSITION_SPEED.default};
+  }
+`;
+
 const ExpansionHeaderEl = styled(BasicButton)`
   cursor: pointer;
   display: flex;
@@ -23,10 +29,6 @@ const ExpansionEl = styled.div.attrs((props) => ({
 
   ${ExpansionHeaderEl} {
     padding: 1rem 0;
-  }
-
-  & .ReactCollapse--collapse {
-    transition: height ${CSS_TRANSITION_SPEED.default};
   }
 
   ${({ hasBorder }) =>
