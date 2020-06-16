@@ -50,7 +50,7 @@ const DescriptionEl = styled(Text)`
 `;
 const SubAttributesEl = styled.ul`
   min-width: 10rem;
-  padding: 0;
+  padding: 1rem;
 
   & ${ListItemEl}:first-child {
     padding-top: 0;

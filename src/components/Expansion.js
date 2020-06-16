@@ -1,25 +1,21 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import PropTypes from "prop-types";
+import { Collapse } from "react-collapse";
 
 import { PALETTE, CSS_TRANSITION_SPEED } from "constants/styles";
 
-const ExpansionHeaderEl = styled.div`
+import { BasicButton } from "basics/Buttons";
+
+const ExpansionHeaderEl = styled(BasicButton)`
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  height: auto;
-  overflow: hidden;
-  transition: transform ${CSS_TRANSITION_SPEED.default} ease-out;
 `;
 
-const ExpandedSectionEl = styled.div`
-  overflow: hidden;
-  height: ${(props) => (props.isExpanded ? "auto" : 0)};
-  display: ${(props) => (props.isExpanded ? "block" : "none")};
-`;
-
-const ExpansionEl = styled.div`
+const ExpansionEl = styled.div.attrs((props) => ({
+  "aria-expanded": props.isExpanded,
+}))`
   display: flex;
   flex-direction: column;
   border-radius: 4px;
@@ -28,8 +24,9 @@ const ExpansionEl = styled.div`
   ${ExpansionHeaderEl} {
     padding: 1rem 0;
   }
-  ${ExpandedSectionEl} {
-    padding: 0;
+
+  & .ReactCollapse--collapse {
+    transition: height ${CSS_TRANSITION_SPEED.default};
   }
 
   ${({ hasBorder }) =>
@@ -39,37 +36,18 @@ const ExpansionEl = styled.div`
         border: solid 1px ${PALETTE.white60};
         padding: 1rem;
       }
-      ${ExpandedSectionEl} {
-        padding: 1rem;
-        border-top: none;
-        border-right: solid 1px ${PALETTE.white60};
-        border-left: solid 1px ${PALETTE.white60};
-        border-bottom: solid 1px ${PALETTE.white60};
-      }
     `}
 `;
 
 const ExpansionIconEl = styled.div`
   display: block;
+
   width: auto;
   align-items: center;
   justify-content: space-between;
 `;
 
-const ExpandedSection = ({ children, isExpanded, ...props }) => {
-  const sectionRef = React.useRef(null);
-  const [height, setHeight] = React.useState(0);
-
-  React.useEffect(() => {
-    setHeight(sectionRef.current.scrollHeight);
-  }, [height]);
-
-  return (
-    <ExpandedSectionEl ref={sectionRef} isExpanded={isExpanded} {...props}>
-      {children}
-    </ExpandedSectionEl>
-  );
-};
+export const ExpandedSection = Collapse;
 
 ExpandedSection.propTypes = {
   /**
@@ -102,10 +80,10 @@ export const Expansion = React.forwardRef(function Expansion(
 
   return (
     <ExpansionEl
-      hasBorder={hasBorder}
-      aria-expanded={isExpanded}
-      ref={ref}
       {...props}
+      hasBorder={hasBorder}
+      isExpanded={isExpanded}
+      ref={ref}
     >
       <ExpansionHeaderEl onClick={onHandleClick}>
         {isExpanded ? expandedModeTitle : title}
@@ -113,7 +91,7 @@ export const Expansion = React.forwardRef(function Expansion(
           {isExpanded ? collapseIcon : expandIcon}
         </ExpansionIconEl>
       </ExpansionHeaderEl>
-      <ExpandedSection isExpanded={isExpanded}>{children}</ExpandedSection>
+      <Collapse isOpened={isExpanded}>{children}</Collapse>
     </ExpansionEl>
   );
 });

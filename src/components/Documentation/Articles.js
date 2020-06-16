@@ -9,6 +9,8 @@ import { ArrowIcon } from "basics/Icons";
 import { ListItem, List } from "basics/Text";
 import { BasicLink } from "basics/Links";
 
+import { ExpandedSection } from "components/Expansion";
+
 const topLevelNavItem = `
 color: ${PALETTE.black60};
 cursor: pointer;
@@ -34,7 +36,9 @@ const ModifiedArrowIcon = styled(ArrowIcon)`
   position: absolute;
   right: 0;
 `;
-const NestedArticleTopicExpander = styled(BasicButton)`
+const NestedArticleTopicExpander = styled(BasicButton).attrs({
+  type: "button",
+})`
   ${topLevelNavItem};
   text-align: left;
 
@@ -43,7 +47,7 @@ const NestedArticleTopicExpander = styled(BasicButton)`
   }
 `;
 
-const TopicExpander = styled(BasicButton)`
+const TopicExpander = styled(BasicButton).attrs({ type: "button" })`
   cursor: pointer;
   text-align: left;
   background: none;
@@ -59,21 +63,13 @@ const TopicExpander = styled(BasicButton)`
   }
   svg {
     margin-left: 0.5em;
-    transform: rotate(${(props) => (props.isCollapsed ? "90deg" : "0deg")});
+    transform: rotate(${(props) => (props.isExpanded ? "90deg" : "0deg")});
     transition: transform 0.25s ease-out;
   }
 `;
 
 const ArticleList = styled(List)`
-  max-height: ${({ isCollapsed }) => (isCollapsed ? "62.5rem" : "0")};
-  overflow: hidden;
   padding: 0;
-  transition: ${({ isCollapsed }) =>
-    isCollapsed ? "max-height 1s ease-in" : "max-height .25s ease-out"};
-
-  &:first-child {
-    padding-top: 0.5rem;
-  }
 
   li {
     list-style-type: none;
@@ -143,7 +139,7 @@ const Articles = ({
   activeItem,
 }) => {
   const [topicState, setTopicState] = React.useState(initialTopicsState);
-  const isCollapsed = topicState[topicPath];
+  const isExpanded = topicState[topicPath];
   const topicToggleHandler = () => {
     setTopicState({
       ...topicState,
@@ -161,7 +157,6 @@ const Articles = ({
       {isNested ? (
         indexArticle ? (
           <IndexArticle
-            isCollapsed={false}
             title={title}
             url={indexArticle.url}
             depth={depth}
@@ -174,9 +169,7 @@ const Articles = ({
         )
       ) : (
         <TopicExpander
-          isCollapsed={isCollapsed}
-          isNested={isNested}
-          type="button"
+          isExpanded={isExpanded}
           onClick={() => topicToggleHandler(topicPath)}
         >
           {title}
@@ -184,36 +177,37 @@ const Articles = ({
         </TopicExpander>
       )}
 
-      <ArticleList isCollapsed={isCollapsed}>
-        {Object.entries(articles)
-          // Only get second arg
-          .map(([, article]) =>
-            article.articles ? (
-              <Articles
-                articles={article.articles}
-                initialTopicsState={initialTopicsState}
-                isNested
-                key={article.id}
-                title={article.title}
-                topicPath={article.topicPath}
-                topicState={topicState}
-                topicToggleHandler={topicToggleHandler}
-                activeItem={activeItem}
-                depth={depth + 1}
-              />
-            ) : (
-              <Article
-                isIndexArticle={indexArticle && indexArticle.url}
-                key={article.id}
-                isCollapsed={isCollapsed}
-                title={article.title}
-                url={article.url}
-                depth={depth + 1}
-                activeItem={activeItem}
-              />
-            ),
-          )}
-      </ArticleList>
+      <ExpandedSection isExpanded={isExpanded}>
+        <ArticleList>
+          {Object.entries(articles)
+            // Only get second arg
+            .map(([, article]) =>
+              article.articles ? (
+                <Articles
+                  articles={article.articles}
+                  initialTopicsState={initialTopicsState}
+                  isNested
+                  key={article.id}
+                  title={article.title}
+                  topicPath={article.topicPath}
+                  topicState={topicState}
+                  topicToggleHandler={topicToggleHandler}
+                  activeItem={activeItem}
+                  depth={depth + 1}
+                />
+              ) : (
+                <Article
+                  isIndexArticle={indexArticle && indexArticle.url}
+                  key={article.id}
+                  title={article.title}
+                  url={article.url}
+                  depth={depth + 1}
+                  activeItem={activeItem}
+                />
+              ),
+            )}
+        </ArticleList>
+      </ExpandedSection>
     </El>
   );
 };
