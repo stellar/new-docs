@@ -10,11 +10,11 @@ import { Link } from "basics/Links";
 const ReadMoreLinkEl = styled(Link)`
   display: flex;
   color: ${PALETTE.purple};
-  padding-top: 1rem;
+  padding-top: 0.4rem;
 `;
 
 const InlineArrowIconEl = styled(ArrowIcon)`
-  padding-left: 1rem;
+  padding-left: 0.4rem;
 
   svg {
     stroke: ${PALETTE.purple};
