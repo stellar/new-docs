@@ -54,7 +54,7 @@ Here's a payment from A to B sandwiched between `allow_trust` operations:
 - Operation 4: Issuer uses `AllowTrust` to set account B, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
 - Operation 5: Issuer uses `AllowTrust` to set account A, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
 
-The authorization sandwich allows the issuer to inspect the specifc payment, and to grant authorization for it and it alone.  Since operations bundled in a transaction are simultaneous, A or B are only authorized for the specific, pre-approved payment operation.
+The authorization sandwich allows the issuer to inspect the specifc payment, and to grant authorization for it and it alone.  Since operations bundled in a transaction are simultaneous, A and B are only authorized for the specific, pre-approved payment operation.  Complete authorization does not extend beyond the specific transaction.
 
 ## Sample code
 
