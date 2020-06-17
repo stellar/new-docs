@@ -45,70 +45,14 @@ A fee-bump transaction goes through a series of checks in its lifecycle to deter
 The sole purpose of a fee-bump transaction is to get an inner transaction included in a transaction set. Since the fee-bump transaction has no side-effects other than paying a fee — and at the time the fee is paid the outer transaction must have been valid (otherwise nodes would not have voted for it) — there is no reason to check the validity of the fee-bump transaction at apply time. Therefore, the sequence number of the inner transaction is always consumed at apply time. The inner transaction, however, will still have its validity checked at apply time.
 
 Every fee-bump transaction result contains a complete inner transaction result. This inner-transaction result is exactly what would have been produced had there been no fee-bump transaction, except that the inner fee will always be 0.
- 
 
-## Fee-Bump Transaction Lifecycle
+
 A fee-bump transaction is essentially a wrapper around a transaction that has been bundled with requisite signatures into a transaction envelope.  Therefore, before creating a fee-bump transaction, you must first create a regular transaction and transacrtion envelope.  For more on regular transaction creation, see [Transactions](/transactions.mdx).   
 
-1. **Creation (Fee-bump Transaction Creator)**: A user creates fee-bump transaction by taking an existing transaction envelope and specifying a fee account and maximum fee amount.  
-   
-2. **Signing (Transaction Signers)**: The user forms a fee-bump transaction envelope, which contains the fee-bump transaction along with the signature of the fee account.
 
-3. **Submitting (Transaction Submitter)**: After signing, the fee-bump transaction is
-   submitted to the Stellar network. If the fee-bump transaction is invalid, it will be immediately
-   rejected by Stellar Core based on [the validity rules of a
-   fee-bump transaction](#validity-of-a-fee-bump-transaction).  No fee will be consumed from the fee account.  
-
-4. **Propagating (Validator)**: Once Stellar Core has determined that a fee-bump transaction is valid, it
-   will then propagate the transaction to all of the other servers to which it's connected. In this
-   way, a valid fee-bump transaction is flooded to the entire Stellar network.
-
-5. **Crafting a candidate transaction set (Validator)**: When it's time to close the ledger, each
-   Stellar Core validator (a Stellar Core node participating in consensus) takes
-   all valid transactions it is aware of since the last ledger close and collects them into a
-   candidate transaction set. If it hears about any incoming transactions now, it puts them aside
-   for the next ledger close. If the number of operations in the candidate transaction set is
-   greater than the maximum number of operations per ledger, transactions will be prioritized by
-   their fee for inclusion in the set.  See the [Fees](./fees.mdx) doc for more info.
-
-6. **Nominating a transaction set (Validator)**: Once each validator has crafted a candidate
-   transaction set, the set is nominated to the network.
-
-7. **Stellar Consensus Protocol (SCP) determines the final transaction set (Validator Network)**:
-   [SCP](./scp.mdx) resolves any differences between candidate transaction sets, and ultimately determines a
-   single transaction set to apply, the close time of the ledger, and any upgrades to the protocol
-   that need to be applied network wide at apply time.
-   * If a transaction doesn't make it into the transaction set, it is kept around in memory in
-     order to be added to the next transaction set on a best effort basis.
-   * If a transaction is kept in memory after a certain number of ledger closes, it will be banned
-     for several additional ledgers. This means no attempt will be made to include it in a
-     candidate transaction set additional ledgers during this time.
-
-8. **Transaction apply order is determined (Validator Network)**: Once SCP agrees on a particular
-   transaction set, the apply order is computed for the transaction set. This both shuffles the
-   order of the set to create uncertainty for competing transactions and maintains the
-   order of sequence numbers for multiple transactions per account.
-
-9. **Fees are collected (Validator)**: [Fees](./fees.mdx) are collected for all transactions
-   simultaneously.
-
-10. **Application (Validator)**: Each transaction is applied in the order previously determined.
-    For each transaction, the account's sequence number is consumed (increased by 1), the
-    transaction's validity is checked again, and each operation is applied in the order they occur
-    in the transaction. Operations may fail at this stage due to errors that can occur outside of
-    the transaction and operation validity checks. For example, an insufficient balance for a
-    payment is not checked at submission, and would fail at this time. If any operation fails, the
-    entire transaction will fail, and all previous operations will be rolled back.
-
-11. **Protocol Upgrades (Validator)**: Finally, upgrades are run if an upgrade took place. This
-    can include arbitrary logic to upgrade the ledger state for protocol upgrades, along with
-    ledger header modifications including the protocol version, base fee, maximum number of
-    operations per ledger, etc. Once this has completed, the life cycle begins anew.
 
 ## Result Codes
-
-Transaction return a result code listed in a table below. Error reference for operations can be
-found in [List of Operations](../start/list-of-operationsx.mdx) doc.
+Fee-bump transactions share result codes with regular transactions.  They're listed in a table below. Error reference for operations can be found in [List of Operations](../start/list-of-operationsx.mdx) doc.
 
 | Result | Code | Description |
 | --- | --- | --- |
