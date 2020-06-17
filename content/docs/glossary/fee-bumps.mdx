@@ -2,12 +2,12 @@
 title: Fee-Bump Transactions
 order:
 ---
-A fee-bump transaction enables any account to pay the fee for an existing [transaction](./transactions.mdx) without the need to re-sign the existing transaction or manage sequence numbers.  They're useful if you need to increase the fee on an pre-signed transaction, or if you want to build a service that covers user fees.  Unlike a regular transaction, which contains 1-100 [operations](./operations.mdx), a fee bump transaction contains a single [transaction enevelope](./transactions.mdx/#transaction-envelopes).     
+A fee-bump transaction enables any account to pay the fee for an existing [transaction](./transactions.mdx) without the need to re-sign the existing transaction or manage sequence numbers.  They're useful if you need to increase the fee on an pre-signed transaction, or if you want to build a service that covers user fees.  Unlike a regular transaction, which contains 1-100 [operations](./operations.mdx), a fee-bump transaction contains a single [transaction enevelope](./transactions.mdx/#transaction-envelopes).     
 
 ## Fee-Bump Transaction Attributes
 
 ### Existing Transaction Envelope
-Each fee-bump transaction encloses a single transaction envelope, which itself encloses a single inner transaction.  Before creating a fee bump transaction, in other words, you must first have a [transaction](./transactions.mdx) wrapped with requisite signatures in a [transaction envelope](./transactions.mdx/#transaction-envelopes). 
+Each fee-bump transaction encloses a single transaction envelope, which itself encloses a single inner transaction.  Before creating a fee-bump transaction, in other words, you must first have a [transaction](./transactions.mdx) wrapped with requisite signatures in a [transaction envelope](./transactions.mdx/#transaction-envelopes). 
 
 In addition to a transaction envelope, each fee-bump transaction has the following attributes:
 
@@ -21,7 +21,7 @@ A fee-bump transaction has an effective number of operations equal to one plus t
 the inner transaction, and the fee rate is normalized by one plus the number of operations in the inner transaction.  For more info on fee rate calculation, see [Fees](./fees.mdx).
 
 #### Replace-by-Fee
-You can use a fee bump transaction to increase the fee on a transaction originating from your own account — something you may want to consider if a transaction is failing to make the ledger due to surge pricing.  However, there is a condition: if you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if the fee bid of the second transaction is *at least 10x the fee bid of the first transaction*.  Though that limit may seem somewhat arbitrary, it was a deliberate design decision to limit DOS attacks without introducing too much complexity to the protocol.
+You can use a fee-bump transaction to increase the fee on a transaction originating from your own account — something you may want to consider if a transaction is failing to make the ledger due to surge pricing.  However, there is a condition: if you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if the fee bid of the second transaction is *at least 10x the fee bid of the first transaction*.  Though that limit may seem somewhat arbitrary, it was a deliberate design decision to limit DOS attacks without introducing too much complexity to the protocol.
 
 ## Fee-Bump Transaction Envelopes
 Once a fee-bump transaction is ready to be signed, it's wrapped in a transaction envelope, which contains the fee-bump transaction as well as the signature of the fee account specified in the fee-bump transaction. 
@@ -33,7 +33,7 @@ A fee-bump transaction goes through a series of checks in its lifecycle to deter
 
 - **Fee Account** — The fee account for the fee-bump transaction must exist on the ledger.
 
-- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.mdx) for the number of operations in the inner transaction, +1 for the fee bump.  It must also be greater than or equal to the fee specfied in the inner transaction.  Additionally, if the fee-bump transaction is taking advantage of the [replace-by-fee](#replace-by-fee) feature, in which a transaction envelope or fee-bump transaction envelope in the transaction queue is replaced by a fee-bump transaction envelope with the same sequence number and source account, the fee must be at least 10x higher. 
+- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.mdx) for the number of operations in the inner transaction, +1 for the fee bump.  It must also be greater than or equal to the fee specfied in the inner transaction.  Additionally, if the fee-bump transaction is taking advantage of the [replace-by-fee](#replace-by-fee) feature, in which a transaction envelope in the transaction queue is replaced by a fee-bump transaction envelope with the same sequence number and source account, the fee must be at least 10x higher. 
 
 - **Fee Account Signature** — The fee-bump transaction envelope must contain a valid signaure for the fee account.  Additionally, the weight of that signature must meet the low threshold for the fee account, and the appropriate network passphrase must be part of the transaction hash signed by the fee account. See [Network Passphrases](./network-passphrase.mdx) for more. 
 
@@ -48,26 +48,20 @@ Every fee-bump transaction result contains a complete inner transaction result. 
  
 
 ## Fee-Bump Transaction Lifecycle
+A fee-bump transaction is essentially a wrapper around a transaction that has been bundled with requisite signatures into a transaction envelope.  Therefore, before creating a fee-bump transaction, you must first create a regular transaction and transacrtion envelope.  For more on regular transaction creation, see [Transactions](/transactions.mdx).   
 
-1. **Creation (Transaction Creator)**: A user creates a fee-bump transaction by taking an existing transaction envelope and specifying a fee account and maximum fee amount.  For more on regular transaction creation, see [Transactions](/transactions.mdx)  
+1. **Creation (Fee-bump Transaction Creator)**: A user creates fee-bump transaction by taking an existing transaction envelope and specifying a fee account and maximum fee amount.  
    
-2. **Signing (Transaction Signers)**: Once the fee-bump transaction is completely filled out, it is formed into a fee-bump transaction envelope, which contains the fee-bump transaction along with the signature of the fee account.
+2. **Signing (Transaction Signers)**: The user forms a fee-bump transaction envelope, which contains the fee-bump transaction along with the signature of the fee account.
 
 3. **Submitting (Transaction Submitter)**: After signing, the fee-bump transaction is
    submitted to the Stellar network. If the fee-bump transaction is invalid, it will be immediately
    rejected by Stellar Core based on [the validity rules of a
    fee-bump transaction](#validity-of-a-fee-bump-transaction).  No fee will be consumed from the fee account.  
-   
-   Multiple transactions for the same account
-   can be submitted, provided each of their sequence numbers are off by one. If they are all valid,
-   Stellar Core will craft a transaction set with each of those transactions applied in sequence
-   number order. Transactions are typically submitted using [Horizon](../.././api/introduction/index.mdx), but you
-   can also submit the transaction directly to an instance of
-   [Stellar Core](..//run-core-node/index.mdx).
 
 4. **Propagating (Validator)**: Once Stellar Core has determined that a fee-bump transaction is valid, it
    will then propagate the transaction to all of the other servers to which it's connected. In this
-   way, a valid transaction is flooded to the entire Stellar network.
+   way, a valid fee-bump transaction is flooded to the entire Stellar network.
 
 5. **Crafting a candidate transaction set (Validator)**: When it's time to close the ledger, each
    Stellar Core validator (a Stellar Core node participating in consensus) takes
