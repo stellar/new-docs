@@ -28,18 +28,21 @@ Once a fee-bump transaction is ready to be signed, it's wrapped in a transaction
 Ultimately, transaction envelopes are passed around the network and are included in transaction sets, as opposed to raw transaction objects.   
 
 ## Validity of a Fee-Bump Transaction
-Like regular transactions, fee-bump transactions goe through a series of checks in their lifecycle to determine validity.
+Like regular transactions, fee-bump transactions goes through a series of checks in their lifecycle to determine validity.
 
 The following conditions determine whether a fee bump transaction is valid:
 
-- **Fee Account** — The fee account for the fee bump must exist on the ledger.
+- **Fee Account** — The fee account for the fee-bump transaction must exist on the ledger.
 
-`E.feeBump().tx.feeSource` has sufficient available native balance (see
-  CAP-0003) to pay `E.feeBump().tx.fee` in addition to fees that will be paid by
-  this account for other transactions, otherwise return `txINSUFFICIENT_BALANCE`  
+- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.mdx) for the number of operations in the inner transaction, +1 for the fee bump.  It must also be greater than or equal to the fee specfied in the inner transaction.  Additionally, if the fee-bump transaction is taking advantage of the [replace-by-fee](#replace-by-fee) feature, in which a transaction envelope or fee-bump transaction envelope in the transaction queue is replaced by a fee-bump transaction envelope with the same sequence number and source account, the fee must be at least 10x higher. 
+
+- **Fee Account Signature** - The fee-bump transaction envelope must contain a valid signaure for the fee account.
+
+- **Fee Account Balance** - The fee account must have a sufficient XLM balance to cover the fee.
+
+- **Inner Transaction Validity** - 
 
 
-- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.mdx) for the number of operations in the inner transaction, +1 for the fee bump.  It must also be greater than or equal to the fee specfied in the inner transaction. - 
 
 
 Submitted fee-bump transaction envelopes go through a similar validation process. But unlike transaction envelopes, fee-bump transaction envelopes support the replace-by-fee mechanism. When replace-by-fee occurs, a transaction envelope or fee-bump transaction envelope in the transaction queue is replaced by a fee-bump transaction envelope with the same sequence number and source account, but a fee that is at least 10x higher. 
