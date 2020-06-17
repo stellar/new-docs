@@ -23,6 +23,7 @@ export const H2 = styled(BasicH2)`
 export const NavAbsoluteEl = styled.div`
   overflow-y: scroll;
   flex-grow: 1;
+  overscroll-behavior: contain;
 
   // Suppress scrollbar on nav
   @media (${MEDIA_QUERIES.canHover}) {

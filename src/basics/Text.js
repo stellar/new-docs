@@ -167,9 +167,10 @@ export const Small = styled.small`
 `;
 export const Table = styled.table`
   display: block;
-  position: relative;
   word-break: normal;
   width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.375;
   overflow: auto;
   padding: 0 1px;
   margin: 0;
@@ -178,7 +179,6 @@ export const Table = styled.table`
 export const TableHead = styled.thead``;
 export const TableHeadCell = styled.th`
   text-transform: uppercase;
-  font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.bold};
   text-align: left;
   border-bottom: none;
@@ -191,9 +191,7 @@ export const TableHeadCell = styled.th`
   line-height: 1.5;
   vertical-align: middle;
 `;
-export const TableBody = styled.tbody`
-  font-size: 0.875rem;
-`;
+export const TableBody = styled.tbody``;
 export const TableRow = styled.tr`
   &:nth-child(even) {
     background-color: ${PALETTE.white80};
