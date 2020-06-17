@@ -14,6 +14,8 @@ In addition to a transaction envelope, each fee-bump transaction has the followi
 The account that provides the fee for the fee-bump transaction.  It incurs the fee instead of the source account specified in the inner transaction.  The sequence number for the fee-bump transaction, however, is still taken from the source account specified in the inner transaction.
 
 ### Fee
+The maximum fee you are willing to pay for the fee-bump transaction.  
+
 A fee-bump transaction has an effective number of operations equal to one plus the number of operations in the inner transaction. Therefore, the minimum fee for a fee-bump transaction is one base fee *more* than the minimum fee for
 the inner transaction, and the fee rate is normalized by one plus the number of operations in the inner transaction.  For more info, see [Fees](./fees.mdx).
 
@@ -24,6 +26,31 @@ You can use a fee bump transaction to increase the fee on a transaction originat
 Once a fee-bump transaction is ready to be signed, it's wrapped in a transaction envelope, which contains the fee-bump transaction as well as the signature of the Fee Account specified in the fee-bump transaction. 
 
 Ultimately, transaction envelopes are passed around the network and are included in transaction sets, as opposed to raw transaction objects.   
+
+## Validity of a Fee-Bump Transaction
+Like regular transactions, fee-bump transactions goe through a series of checks in their lifecycle to determine validity.
+
+The following conditions determine whether a fee bump transaction is valid:
+
+- **Fee Account** — The fee account for the fee bump must exist on the ledger.
+
+`E.feeBump().tx.feeSource` has sufficient available native balance (see
+  CAP-0003) to pay `E.feeBump().tx.fee` in addition to fees that will be paid by
+  this account for other transactions, otherwise return `txINSUFFICIENT_BALANCE`  
+
+
+- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.mdx) for the number of operations in the inner transaction, +1 for the fee bump.  It must also be greater than or equal to the fee specfied in the inner transaction. - 
+
+
+Submitted fee-bump transaction envelopes go through a similar validation process. But unlike transaction envelopes, fee-bump transaction envelopes support the replace-by-fee mechanism. When replace-by-fee occurs, a transaction envelope or fee-bump transaction envelope in the transaction queue is replaced by a fee-bump transaction envelope with the same sequence number and source account, but a fee that is at least 10x higher. 
+
+Imagine, for example, that you submit a transaction envelope to a Stellar-Core node which is accepted because its fee was above the minimum fee. But your transaction envelope does not get included in the ledger due to surge pricing, and you want to accelerate the process. Without the replace-by-fee mechanism, you would not be able to successfully submit a fee-bump transaction envelope with a higher fee because the sequence number would not be sequential. With it, however, you are actually able to to bump the fee.
+
+
+- **List of Signatures** — In addition to meeting the signature requirements of each operation in the transaction, the following requirements must be met for the transaction:
+  - The appropriate network passphrase was part of the transaction hash that was signed by each of the signers. See [Network Passphrases](./network-passphrase.mdx) for more.
+  - The combined weight of all signatures for the source account _of the fee bump transaction_ meets the low threshold for the source account. This is necessary in order for fees to be taken and the sequence number to be incremented later in the transaction lifecycle.
+
 
 #### Application and Results
 Even if the outer transaction of a fee-bump is invalid during application, we
@@ -59,54 +86,28 @@ The only purpose of an outer transaction is to get an inner transaction included
 
 
 
-## Validity of a Fee Bump Transaction
-
-Submitted fee-bump transaction envelopes go through a similar validation process. But unlike transaction envelopes, fee-bump transaction envelopes support the replace-by-fee mechanism. When replace-by-fee occurs, a transaction envelope or fee-bump transaction envelope in the transaction queue is replaced by a fee-bump transaction envelope with the same sequence number and source account, but a fee that is at least 10x higher. Imagine, for example, that you submit a transaction envelope to a Stellar-Core node which is accepted because its fee was above the minimum fee. But your transaction envelope does not get included in the ledger due to surge pricing, and you want to accelerate the process. Without the replace-by-fee mechanism, you would not be able to successfully submit a fee-bump transaction envelope with a higher fee because the sequence number would not be sequential. With it, however, you are actually able to to bump the fee.
-The following conditions determine whether a fee bump transaction is valid:
-
-- **Source Account** — The source account for the fee bump must exist on the ledger.
-
-`E.feeBump().tx.feeSource` has sufficient available native balance (see
-  CAP-0003) to pay `E.feeBump().tx.fee` in addition to fees that will be paid by
-  this account for other transactions, otherwise return `txINSUFFICIENT_BALANCE`  
-
-
-- **Fee** — The fee must be greater than or equal to the [network minimum fee](./fees.mdx) for the number of operations in the inner transaction, +1 for the fee bump.  It must also be greater than or equal to the fee specfied in the inner transaction. - 
-
-- **Sequence Number** — For the transaction to be valid, the sequence number must be 1 greater than the sequence number stored in the fee bump source account [account entry](./accounts.mdx) _when the transaction is applied_. This means when checking the validity of multiple transactions with the same source account in a candidate transaction set, they must all be valid transactions and their sequence numbers must be offset by 1 from each other. When it comes to apply time, they are ordered and applied according to their sequence number.
-
-- **List of Signatures** — In addition to meeting the signature requirements of each operation in the transaction, the following requirements must be met for the transaction:
-  - The appropriate network passphrase was part of the transaction hash that was signed by each of the signers. See [Network Passphrases](./network-passphrase.mdx) for more.
-  - The combined weight of all signatures for the source account _of the fee bump transaction_ meets the low threshold for the source account. This is necessary in order for fees to be taken and the sequence number to be incremented later in the transaction lifecycle.
 
 
 
-## Fee Bump Transaction Lifecycle
+## Fee-Bump Transaction Lifecycle
 
-1. **Creation (Transaction Creator)**: A user creates a transaction by setting the source
-   account, sequence number, list of operations and their respective parameters, fee, and
-   optionally a memo and timebounds.  You can try this out [using the Stellar
-   Laboratory](https://laboratory.stellar.org/#txbuilder?network=test).
+1. **Creation (Transaction Creator)**: A user creates a fee-bump transaction by taking an existing transaction envelope and specifying a fee account and maxium fee amount.  For more on regular transaction creation, see [Transactions](/transactions.mdx)  
+   
+2. **Signing (Transaction Signers)**: Once the fee-bump transaction is completely filled out, it is formed into a transaction envelope, which contains the fee-bump transaction along with the signature of the fee account.
 
-2. **Signing (Transaction Signers)**: Once the transaction is completely filled out, the
-   transaction is formed into a transaction envelope, which contains the transaction itself and a
-   list of signers. All the required signatures must be collected and added to the transaction
-   envelope's list of signers.  Commonly it's just the signature of the account doing the
-   transaction, but more complicated setups can require collecting [signatures from multiple
-   parties](./multisig.mdx).
-
-3. **Submitting (Transaction Submitter)**: After signing, the transaction must be valid and can now
-   be submitted to the Stellar network. If the transaction is invalid, it will be immediately
-   rejected by stellar-core based on [the validity rules of a
-   transaction](#validity-of-a-transaction), the account's sequence number will not be incremented,
-   and no fee will be consumed from the source account.  Multiple transactions for the same account
+3. **Submitting (Transaction Submitter)**: After signing, the fee-bump transaction is
+   submitted to the Stellar network. If the fee-bump transaction is invalid, it will be immediately
+   rejected by Stellar Core based on [the validity rules of a
+   fee-bump transaction](#validity-of-a-fee-bump-transaction).  No fee will be consumed from the fee account.  
+   
+   Multiple transactions for the same account
    can be submitted, provided each of their sequence numbers are off by one. If they are all valid,
    Stellar Core will craft a transaction set with each of those transactions applied in sequence
    number order. Transactions are typically submitted using [Horizon](../.././api/introduction/index.mdx), but you
    can also submit the transaction directly to an instance of
    [Stellar Core](..//run-core-node/index.mdx).
 
-4. **Propagating (Validator)**: Once Stellar Core has determined that a transaction is valid, it
+4. **Propagating (Validator)**: Once Stellar Core has determined that a fee-bump transaction is valid, it
    will then propagate the transaction to all of the other servers to which it's connected. In this
    way, a valid transaction is flooded to the entire Stellar network.
 
