@@ -381,11 +381,15 @@ Possible errors:
 ## Allow Trust
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.allowTrust) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/AllowTrustOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#AllowTrust)
 
-Updates the `authorized` flag of an existing trustline. This can only be called by the issuer of a trustline's [asset](./assets.md), and only when `AUTHORIZATION REQUIRED` (at the minimum) has been set on the issuer's account.
+Updates the `authorized` flag of an existing trustline. 
 
-The issuer can only clear the `authorized` flag if the issuer has the `AUTH_REVOCABLE_FLAG` set. Otherwise, the issuer can only set the `authorized` flag.
+This can only be called by the issuer of a trustline's [asset](./assets.md), and only when `AUTHORIZATION REQUIRED` has been set on the issuer's account.
 
-If the issuer clears the `authorized` flag, all offers owned by the `trustor` that are either selling `type` or buying `type` will be deleted. *(Protocol v10 and above)*
+There are two different kinds of asset authorization: complete authorization, which allows an account to transact with an asset (by making payments, creating offers, etc.) and limited authorization, which allows an account to maintain and reduce current offers, but not to perform other operations with the asset.    
+
+The issuer can only change a flag from complete to limited authorization or clear the `authorized` flag if the issuer has the `AUTH_REVOCABLE_FLAG` set. Otherwise, the issuer can only set the `authorized` flag.  For more on what toggling between authorization states allows an issuer to do, see the [Rationale](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0018.md#rationale) section of CAP-18.
+
+If the issuer clears the `authorized` flag, all offers owned by the `trustor` that are either selling `type` or buying `type` will be deleted.  
 
 Threshold: Low
 
@@ -395,7 +399,7 @@ Result: `AllowTrustResult`
 | --- | --- | --- |
 | Trustor | account ID | The account of the recipient of the trustline. |
 | Type | asset code | The 4 or 12 character-maximum asset code of the trustline the source account is authorizing. For example, if an issuing account wants to allow another account to hold its USD credit, the `type` is `USD`. |
-| Authorize | boolean | Flag indicating whether the trustline is authorized. |
+| Authorize | integer | Flag indicating whether the trustline is authorized. `1` if the account is authorized to transact with the asset. `2` if the account is authorized to maintain offers, but not to perform other transactions |
 
 Possible errors:
 
