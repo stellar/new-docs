@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
 import { BasicButton } from "basics/Buttons";
-import { ArrowIcon } from "basics/Icons";
+import { ChevronIcon } from "basics/Icons";
 import { ListItem, List } from "basics/Text";
 import { BasicLink } from "basics/Links";
 
@@ -32,7 +32,7 @@ const ArticleLink = styled(({ isActive, ...props }) => (
   font-weight: ${(props) =>
     props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
 `;
-const ModifiedArrowIcon = styled(ArrowIcon)`
+const ModifiedChevronIcon = styled(ChevronIcon)`
   position: absolute;
   right: 0;
 `;
@@ -173,7 +173,7 @@ const Articles = ({
           onClick={() => topicToggleHandler(topicPath)}
         >
           {title}
-          <ModifiedArrowIcon direction="right" />
+          <ModifiedChevronIcon direction="right" />
         </TopicExpander>
       )}
 

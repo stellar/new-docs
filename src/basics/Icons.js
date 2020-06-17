@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { THEME } from "constants/styles";
 
+import ArrowSVG from "assets/icons/icon-arrow.svg";
 import CloseSVG from "assets/icons/icon-close.svg";
 import ChevronSVG from "assets/icons/icon-chevron.svg";
 import CheckmarkSVG from "assets/icons/icon-checkmark.svg";
@@ -100,7 +101,7 @@ CheckmarkIcon.propTypes = {
   className: PropTypes.string,
 };
 
-const ArrowEl = styled.div`
+const ChevronEl = styled.div`
   position: relative;
 
   svg {
@@ -111,9 +112,30 @@ const ArrowEl = styled.div`
   }
 `;
 
+export const ChevronIcon = ({ direction, className }) => (
+  <ChevronEl direction={direction} className={className}>
+    <ChevronSVG />
+  </ChevronEl>
+);
+
+ChevronIcon.propTypes = {
+  direction: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
+
+const ArrowEl = styled(ChevronEl)`
+  display: flex;
+  align-items: center;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+`;
+
 export const ArrowIcon = ({ direction, className }) => (
   <ArrowEl direction={direction} className={className}>
-    <ChevronSVG />
+    <ArrowSVG />
   </ArrowEl>
 );
 

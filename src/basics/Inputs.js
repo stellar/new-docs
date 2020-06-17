@@ -4,9 +4,9 @@ import styled from "styled-components";
 
 import { FONT_WEIGHT, PALETTE } from "constants/styles";
 
-import { ArrowIcon } from "basics/Icons";
+import { ChevronIcon } from "basics/Icons";
 
-const WhiteArrowIcon = styled(ArrowIcon)`
+const WhiteChevronIcon = styled(ChevronIcon)`
   position: absolute;
   top: 50%;
   right: 0;
@@ -45,7 +45,7 @@ export const Select = React.forwardRef(
     <SelectWrapperEl className={className}>
       <LabelEl>
         {label}
-        <WhiteArrowIcon direction="down" />
+        <WhiteChevronIcon direction="down" />
         <SelectEl {...props} ref={ref}>
           {children}
         </SelectEl>
