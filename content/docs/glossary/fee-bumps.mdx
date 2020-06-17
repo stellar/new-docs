@@ -20,12 +20,12 @@ A fee-bump transaction has an effective number of operations equal to one plus t
 the inner transaction, and the fee rate is normalized by one plus the number of operations in the inner transaction.  For more info on fee rate calculation, see [Fees](./fees.mdx).
 
 #### Replace-by-Fee
-You can use a fee bump transaction to increase the fee on a transaction originating from your own account.  However, there is a condition: if you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if the fee bid of the second transaction is *at least 10x the fee bid of the first transaction*.  Though that limit may seem somewhat arbitrary, it was a deliberate design decision to limit DOS attacks without introducing too much complexity to the protocol.
+You can use a fee bump transaction to increase the fee on a transaction originating from your own account — something you may want to consider if a transaction is failing to make the ledger due to surge pricing.  However, there is a condition: if you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if the fee bid of the second transaction is *at least 10x the fee bid of the first transaction*.  Though that limit may seem somewhat arbitrary, it was a deliberate design decision to limit DOS attacks without introducing too much complexity to the protocol.
 
 ## Fee-Bump Transaction Envelopes
-Once a fee-bump transaction is ready to be signed, it's wrapped in a transaction envelope, which contains the fee-bump transaction as well as the signature of the fee account specified in the fee-bump transaction.  Fee-bump transaction envelopes behave just like regular [transaction envelopes](./transactions.mdx/#transaction-envelopes). 
+Once a fee-bump transaction is ready to be signed, it's wrapped in a transaction envelope, which contains the fee-bump transaction as well as the signature of the fee account specified in the fee-bump transaction. 
 
-Ultimately, transaction envelopes are passed around the network and are included in transaction sets, as opposed to raw transaction objects.   
+Ultimately, transaction envelopes are passed around the network and are included in transaction sets, as opposed to raw transaction objects.    
 
 ## Validity of a Fee-Bump Transaction
 A fee-bump transaction goes through a series of checks in its lifecycle to determine validity. For a fee-bump transaction to be valid, the following conditions must be met:   
@@ -38,10 +38,9 @@ A fee-bump transaction goes through a series of checks in its lifecycle to deter
 
 - **Fee Account Balance** — The fee account must have a sufficient XLM balance to cover the fee.
 
-## Validity of Inner Transaction
-For a fee bump to succeed, the inner transaction must be valid.  If validation of the inner transaction is successful, then the result is `FEE_BUMP_INNER_SUCCESS`, and the validation results from the validation of the inner transaction appear in the inner result.  If the inner transaction is invalid, the result is `FEE_BUMP_INNER_FAILED`, and the fee-bump transaction is invalid because the inner transaction is invalid.  For more on the validity of regular transactions, see [Validity of a Transaction](./transactions.mdx/#validity-of-a-transaction) 
+— **Inner Transaction** — For a fee-bump to succeed, the inner transaction must be valid, which means that it must meet the requirements described in the [Validity of a Transaction](./transactions.mdx/#validity-of-a-transaction). If validation of the inner transaction is successful, then the result is `FEE_BUMP_INNER_SUCCESS`, and the validation results from the validation of the inner transaction appear in the inner result.  If the inner transaction is invalid, the result is `FEE_BUMP_INNER_FAILED`, and the fee-bump transaction is invalid because the inner transaction is invalid.  
 
-## Application and Results
+## Application
 The sole purpose of a fee-bump transaction is to get an inner transaction included in a transaction set. Since the fee-bump transaction has no side-effects other than paying a fee — and at the time the fee is paid the outer transaction must have been valid (otherwise nodes would not have voted for it) — there is no reason to check the validity of the fee-bump transaction at apply time. Therefore, the sequence number of the inner transaction is always consumed at apply time. The inner transaction, however, will still have its validity checked at apply time.
 
 Every fee-bump transaction result contains a complete inner transaction result. This inner-transaction result is exactly what would have been produced had there been no fee-bump transaction, except that the inner fee will always be 0.
