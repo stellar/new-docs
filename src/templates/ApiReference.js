@@ -25,7 +25,7 @@ import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { Column } from "basics/Grid";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
-import { ArrowIcon, EditIcon } from "basics/Icons";
+import { ChevronIcon, EditIcon } from "basics/Icons";
 import { Link, BasicLink } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
@@ -348,8 +348,8 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                       <Expansion
                         title={<NavTitleEl>{nav[0]}</NavTitleEl>}
                         expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        collapseIcon={<ArrowIcon direction="up" />}
-                        expandIcon={<ArrowIcon direction="down" />}
+                        collapseIcon={<ChevronIcon direction="up" />}
+                        expandIcon={<ChevronIcon direction="down" />}
                         isDefaultExpanded={true}
                       >
                         <SideNavBody

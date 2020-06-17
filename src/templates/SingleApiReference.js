@@ -23,7 +23,7 @@ import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 import { BasicButton } from "basics/Buttons";
 import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
-import { ArrowIcon } from "basics/Icons";
+import { ChevronIcon } from "basics/Icons";
 import { OriginalFileContext, BasicLink } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
@@ -177,8 +177,8 @@ const SingleApiReference = React.memo(function ApiReference({
                     <Expansion
                       title={<NavTitleEl>{nav[0]}</NavTitleEl>}
                       expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                      collapseIcon={<ArrowIcon direction="up" />}
-                      expandIcon={<ArrowIcon direction="down" />}
+                      collapseIcon={<ChevronIcon direction="up" />}
+                      expandIcon={<ChevronIcon direction="down" />}
                       isDefaultExpanded={true}
                     >
                       <SideNavBody items={nav[1]} renderItem={renderItem} />
