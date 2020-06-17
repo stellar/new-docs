@@ -54,7 +54,7 @@ To add a home domain to an account, use the [Set Options](link) operation.
 Asset issuers set flags at the account level if they want to control access to the assets they issue. There are three flags:
 
 - **Authorization required (0x1)**: Requires the issuing account to grant an account permission to hold an asset.  With this flag set, an issuer can either grant full authorization to transact with its asset *or* it can grant limited authorization allowing the holder to maintain orders on the order books, but not to otherwise transact with the asset.  
-- **Authorization revocable (0x2)**: Allows the issuing account to revoke an asset held by other accounts, or to reduce authorization from full to partial.
+- **Authorization revocable (0x2)**: Allows the issuing account to reduce the authorization level of an account from full to partial, from full to none, or from partial to none.
 - **Authorization immutable (0x4)**: Prevents the issuer from setting either of the above flags or deleting the issuing account.
 
 ### Balances
