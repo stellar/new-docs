@@ -5,7 +5,7 @@ order: 40
 
 import { CodeExample } from "components/CodeExample";
 
-After you've [installed](link) Stellar Core, your next step is to complete a configuration file that specifies crucial things about your node — like whether it connects to the testnet or the public network, what database it writes to, and which other nodes are in its [quorum set](link). You do that using a [TOML](link), and by default Stellar Core loads that file from `./stellar-core.cfg`. You can specify a different file to load using the command line:
+After you've [installed](./installation.mdx) Stellar Core, your next step is to complete a configuration file that specifies crucial things about your node — like whether it connects to the testnet or the public network, what database it writes to, and which other nodes are in its [quorum set](#choosing-your-quorum-set). You do that using a [TOML](https://github.com/toml-lang/toml), and by default Stellar Core loads that file from `./stellar-core.cfg`. You can specify a different file to load using the command line:
 
 `$ stellar-core --conf betterfile.cfg <COMMAND>`
 
@@ -19,13 +19,13 @@ This doc works best in conjunction with concrete config examples, so as you read
 
 - If you want to connect to the tesnet, check out the [example test network config](https://github.com/stellar/docker-stellar-core-horizon/blob/master/testnet/core/etc/stellar-core.cfg). As you can see, most of the fields from the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) are omitted since the default settings work fine. You can easily tailor this config to meet your testnet needs.
 
-- If you want to connet to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg). It includes a properly crafted quorum set with all the current [Tier 1 validators](link), which is a good place to start for most configurations. This node is set up to both [validate](link) and write history to a [public archive](link), but you can disable either feature to adjust this config so it's a little lighter.
+- If you want to connet to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg). It includes a properly crafted quorum set with all the current [Tier 1 validators](./tier-1-orgs.mdx), which is a good place to start for most configurations. This node is set up to both [validate](#Validating) and write history to a [public archive](./publishing-history-archives.mdx), but you can disable either feature to adjust this config so it's a little lighter.
 
 - Here's a config for a [pubnet watcher](https://github.com/stellar/packages/blob/master/docs/stellar-core_pubnet_watcher.cfg). It's a little out of date — it still uses the old method for quorum set generation — but we'll fix it soon.
 
 ## Database
 
-Stellar Core stores two copies of the ledger: one in a SQL database and one in XDR files on local disk called [buckets](link). The database is consulted during consensus, and modified atomically when a transaction set is applied to the ledger. It's random access, fine-grained, and fast.
+Stellar Core stores two copies of the ledger: one in a SQL database and one in XDR files on local disk called [buckets](#buckets). The database is consulted during consensus, and modified atomically when a transaction set is applied to the ledger. It's random access, fine-grained, and fast.
 
 While a SQLite database works with Stellar Core, we generally recommend using a separate PostgreSQL server. Horizon, for instance, requires PostgreSQL. A Postgres database is the bread and butter of Stellar Core.
 
@@ -45,16 +45,16 @@ This command initializes the database and bucket directories, and then exits. Yo
 
 ## Network Passphrase
 
-Use the `NETWORK_PASSPHRASE` field to specify whether your node connects to the [testnet](liink) or the public network. Your choices:
+Use the `NETWORK_PASSPHRASE` field to specify whether your node connects to the [testnet](../glossary/testnet.mdx) or the public network. Your choices:
 
 - `NETWORK_PASSPHRASE="Test SDF Network ; September 2015"`
 - `NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"`
 
-For more about the Network Passphrase and how it works, check out the [glossary entry](link).
+For more about the Network Passphrase and how it works, check out the [glossary entry](../glossary/network-passphrases.mdx).
 
 ## Validating
 
-By default, Stellar Core isn't set up to validate. If you want your node to be a [Basic Validator](link) or a [Full Validator](liink), you need to configure it to do so, which means preparing it to take part in [SCP](link) and sign messages pledging that the network agrees to a particular transaction set.
+By default, Stellar Core isn't set up to validate. If you want your node to be a [Basic Validator](./index.mdx#basic-validator) or a [Full Validator](index.mdx#full-validator), you need to configure it to do so, which means preparing it to take part in [SCP](../glossary/scp.mdx) and sign messages pledging that the network agrees to a particular transaction set.
 
 Configuring a node to participate in SCP and sign messages is a three step process:
 
@@ -201,9 +201,6 @@ Once you add validators to your configuration, stellar core automatically genera
 - The combined weight of MEDIUM quality entities equals a single HIGH quality entity
 - The combined weight of LOW quality entities equals a single MEDIUM quality entity
 
-Here's a diagram depicting the nested quality levels and how they interact:
-
-[IMAGE](link)
 
 ### Quorum and Overlay Network
 
@@ -215,7 +212,7 @@ Without those settings, your validator depends on other nodes on the network to 
 
 ### Updating and Coordinating Your Quorum Set
 
-When you join the ranks of node operators, it's also important to join the conversation. The best way to do that: get on the #validators channel on the [Stellar Keybase](link) and sign up for the [validators google group](link). That way, you can and coordinate changes with the rest of the network.
+When you join the ranks of node operators, it's also important to join the conversation. The best way to do that: get on the #validators channel on the [Stellar Keybase](https://keybase.io/team/stellar.public) and sign up for the [validators google group](https://groups.google.com/forum/#!forum/stellar-validators). That way, you can and coordinate changes with the rest of the network.
 
 When you need to make changes to your validator or to your quorum set — say you take a validator down for maintenance or add new validators to your node's quorum set — it's crucial to stage the changes to preserve quorum intersection and general good health of the network:
 
@@ -227,11 +224,11 @@ When you want to add or remove nodes, start by making changes to your own nodes'
 
 ## History
 
-Stellar Core normally interacts with one or more history archive, which are configurable facilities where [Full Validators](link) and [Archivers](link) store flat files containing history checkpoints: bucket files and history logs. History archives are usually off-site commodity storage services such as Amazon S3, Google Cloud Storage, Azure Blob Storage, or custom SCP/SFTP/HTTP servers. To find out how to _publish_ a history archive, consult [Publishing History Archives](link).
+Stellar Core normally interacts with one or more history archive, which are configurable facilities where [Full Validators](index.mdx#full-validator) and [Archivers](index.mdx#archiver) store flat files containing history checkpoints: bucket files and history logs. History archives are usually off-site commodity storage services such as Amazon S3, Google Cloud Storage, Azure Blob Storage, or custom SCP/SFTP/HTTP servers. To find out how to _publish_ a history archive, consult [Publishing History Archives](./publishing-history-archives.mdx).
 
 No matter what kind of node you're running, you should configure it to `get` history from one or more public archives. You can configure any number of archives to download from: Stellar Core will automatically round-robin between them.
 
-When you're [choosing your quorum set](link), you should include [high-quality](link) nodes — which, by defintion, publish archives — and add the location for each node's archive in the `HISTORY` field in the [validators array](#validators-array).
+When you're [choosing your quorum set](#choosing-your-quorum-set), you should include high-quality nodes — which, by defintion, publish archives — and add the location for each node's archive in the `HISTORY` field in the [validators array](#validators-array).
 
 You can also use command templates in the config file to specify additional archives you'd like to use and how to access them. The [example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) shows how to configure a history archive through command templates.
 
