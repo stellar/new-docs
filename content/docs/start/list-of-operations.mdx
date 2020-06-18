@@ -435,25 +435,6 @@ Possible errors:
 |ACCOUNT_MERGE_SEQNUM_TOO_FAR | -5| Source's account sequence number is too high. It must be less than `(ledgerSeq << 32) = (ledgerSeq * 0x100000000)`. |
 |ACCOUNT_MERGE_DEST_FULL| -6| The `destination` account cannot receive the balance of the source account and still satisfy its lumen buying liabilities. |
 
-## Inflation
-[JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.inflation) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/InflationOperation.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#Inflation)
-
-Runs the inflation process for the entire Stellar network.
-
-Anyone can submit the Inflation operation that triggers the inflation process on the Stellar
-Network. Because it can only be run once a week, this operation will fail if the network has
-already had inflation processed within the past week.
-
-Threshold: Low
-
-Result: `InflationResult`
-
-Possible errors:
-
-| Error | Code | Description |
-| ----- | ---- | ------|
-|INFLATION_NOT_TIME| -1| Inflation only runs once a week. This failure means it is not time for a new inflation round yet.|
-
 ## Manage Data
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.manageData) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ManageDataOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#ManageData)
 
