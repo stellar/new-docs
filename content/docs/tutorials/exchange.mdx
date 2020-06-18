@@ -170,7 +170,7 @@ function handlePaymentResponse(record) {
 
 ## Submitting withdrawals
 
-When a user requests a lumen withdrawal from your exchange, you must generate a Stellar transaction to send them XLM. See [building transactions](https://www.stellar.org/developers/js-stellar-base/reference/building-transactions.html) for more information.
+When a user requests a lumen withdrawal from your exchange, you must generate a Stellar transaction to send them XLM. See [building transactions](https://github.com/stellar/js-stellar-base/blob/master/docs/reference/building-transactions.md) for more information.
 
 The function `handleRequestWithdrawal` will queue up a transaction in the exchange's `StellarTransactions` table whenever a withdrawal is requested.
 
@@ -296,7 +296,7 @@ For more information, check out the [federation guide](../glossary/federation.md
 
 If you're an exchange, it's easy to become a Stellar anchor as well. Anchors are entities people trust to hold their deposits and issue credits into the Stellar network. As such, they act a bridge between existing currencies and the Stellar network. Becoming a anchor could potentially expand your business.
 
-To learn more about what it means to be an anchor, see the [Enable Deposits and Withdrawals](enabling-deposit-and-withdrawal/index.mdx) guide.
+To learn more about what it means to be an anchor, see the [Enable Deposits and Withdrawals](../enabling-deposit-and-withdrawal/index.mdx) guide.
 
 ### Accepting Other Tokens
 
