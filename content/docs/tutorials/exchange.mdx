@@ -22,10 +22,10 @@ The two main integration points to Stellar for an exchange are:<br/>
 
 ### Operational
 
-- _(optional)_ Set up [Stellar Core](https://www.stellar.org/developers/stellar-core/software/admin.html)
-- _(optional)_ Set up [Horizon](https://www.stellar.org/developers/horizon/reference/index.html)
+- _(optional)_ Set up [Stellar Core](../run-core-node/index.mdx)
+- _(optional)_ Set up [Horizon](../run-api-server/index.mdxl)
 
-It's recommended, though not strictly necessary, to run your own instances of Stellar Core and Horizon - [this doc](https://www.stellar.org/developers/stellar-core/software/admin.html#why-run-a-node) lists more benefits. If you choose not to, it's possible to use the Stellar.org public-facing Horizon servers. Our test and live networks are listed below:
+It's recommended, though not strictly necessary, to run your own instances of Stellar Core and Horizon - [this doc](../run-core-node/index.mdx#types-of-nodes) explains the types of node you can run, and the advantages to running each. If you choose not to, it's possible to use the Stellar.org public-facing Horizon servers. Our test and live networks are listed below:
 
 ```
   test net: {hostname:'horizon-testnet.stellar.org', secure:true, port:443};
@@ -290,19 +290,19 @@ function submitPendingTransactions(exchangeAccount) {
 
 The federation protocol allows you to give your users easy addresses—e.g., bob\*yourexchange.com—rather than cumbersome raw addresses such as: GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ?19327
 
-For more information, check out the [federation guide](./concepts/federation.md).
+For more information, check out the [federation guide](../glossary/federation.mdx).
 
 ### Anchor
 
 If you're an exchange, it's easy to become a Stellar anchor as well. Anchors are entities people trust to hold their deposits and issue credits into the Stellar network. As such, they act a bridge between existing currencies and the Stellar network. Becoming a anchor could potentially expand your business.
 
-To learn more about what it means to be an anchor, see the [anchor guide](./anchor/).
+To learn more about what it means to be an anchor, see the [Enable Deposits and Withdrawals](enabling-deposit-and-withdrawal/index.mdx) guide.
 
 ### Accepting Other Tokens
 
 If you'd like to accept other non-lumen tokens follow these instructions.
 
-First, open a [trustline](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) with the issuing account of the token you'd like to list -- without this you cannot begin to accept the token.
+First, open a [trustline](../issuing-assets/anatomy-of-an-asset.mdx#trustlines) with the issuing account of the token you'd like to list — without this you cannot begin to accept the token.
 
 ```js
 var someAsset = new StellarSdk.Asset("ASSET_CODE", issuingKeys.publicKey());
@@ -314,7 +314,7 @@ transaction.addOperation(
 );
 ```
 
-If the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](https://www.stellar.org/developers/guides/concepts/assets.html#controlling-asset-holders).
+If the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](../issuing-assets/control-asset-access.mdx).
 
 Then, make a few changes to the example code above:
 
@@ -336,6 +336,6 @@ transaction.addOperation(
 );
 ```
 
-- In the `withdraw` function your customer must have opened a trustline with the issuing account of the token they are withdrawing. So you must take the following into consideration: _ Confirm the user receiving the token has a trustline _ Parse the [Horizon error](https://www.stellar.org/developers/guides/concepts/list-of-operations.html#payment) that will occur after sending a token to an account without a trustline
+- In the `withdraw` function your customer must have opened a trustline with the issuing account of the token they are withdrawing. So you must take the following into consideration: _ Confirm the user receiving the token has a trustline _ Parse the [Horizon error](../start/list-of-operations.mdx#payment) that will occur after sending a token to an account without a trustline
 
-For more information about tokens check out the [general asset guide](https://www.stellar.org/developers/guides/concepts/assets.html) and the [issuing asset guide](https://www.stellar.org/developers/guides/issuing-assets.html).
+For more information about tokens check out the [guide to issuing assets](../issuing-assets/anatomy-of-an-asset.mdx#trustlines).
