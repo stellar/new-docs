@@ -5,9 +5,9 @@ order: 30
 
 import { CodeExample } from "components/CodeExample";
 
-This is the canonical list of Stellar operations, which lists every Stellar operation along with parameters, error codes, and links to relevant documentation for key SDKs.  
+This is the canonical list of Stellar operations, which lists every Stellar operation along with parameters, error codes, and links to relevant documentation for key SDKs.    
 
-For a description of how operations work in Stellar, see [Operations](link).
+For a description of how operations work in Stellar, see [Operations](../glossary/operations.mdx).
 
 For the protocol specification, see [stellar-transactions.x](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-transaction.x).
 
@@ -77,7 +77,7 @@ Possible errors:
 |PAYMENT_SRC_NO_TRUST| -3| The source account does not trust the issuer of the asset it is trying to send.|
 |PAYMENT_SRC_NOT_AUTHORIZED| -4| The source account is not authorized to send this payment.|
 |PAYMENT_NO_DESTINATION| -5| The receiving account does not exist.|
-|PAYMENT_NO_TRUST| -6| The receiver does not trust the issuer of the asset being sent. For more information, see the [assets doc](./assets.md).|
+|PAYMENT_NO_TRUST| -6| The receiver does not trust the issuer of the asset being sent. For more information, see the [assets doc](../glossary/assets.mdx).|
 |PAYMENT_NOT_AUTHORIZED| -7| The destination account is not authorized by the asset's issuer to hold the asset.|
 |PAYMENT_LINE_FULL| -8| The destination account (receiver) does not have sufficient limits to receive `amount` and still satisfy its buying liabilities.|
 |PAYMENT_NO_ISSUER| -9| The issuer of the asset does not exist.|
@@ -119,7 +119,7 @@ Possible errors:
 |PATH_PAYMENT_STRICT_SEND_SRC_NO_TRUST| -3| The source account does not trust the issuer of the asset it is trying to send.|
 |PATH_PAYMENT_STRICT_SEND_SRC_NOT_AUTHORIZED| -4| The source account is not authorized to send this payment. |
 |PATH_PAYMENT_STRICT_SEND_NO_DESTINATION| -5| The destination account does not exist. |
-|PATH_PAYMENT_STRICT_SEND_NO_TRUST| -6| The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](./assets.md).|
+|PATH_PAYMENT_STRICT_SEND_NO_TRUST| -6| The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](../glossary/assets.mdx).|
 |PATH_PAYMENT_STRICT_SEND_NOT_AUTHORIZED| -7| The destination account is not authorized by the asset's issuer to hold the asset. |
 |PATH_PAYMENT_STRICT_SEND_LINE_FULL| -8| The destination account does not have sufficient limits to receive `destination amount` and still satisfy its buying liabilities.|
 |PATH_PAYMENT_STRICT_SEND_NO_ISSUER| -9| The issuer of one of the assets is missing.|
@@ -164,7 +164,7 @@ Possible errors:
 |PATH_PAYMENT_STRICT_RECEIVE_SRC_NO_TRUST| -3| The source account does not trust the issuer of the asset it is trying to send.|
 |PATH_PAYMENT_STRICT_RECEIVE_SRC_NOT_AUTHORIZED| -4| The source account is not authorized to send this payment. |
 |PATH_PAYMENT_STRICT_RECEIVE_NO_DESTINATION| -5| The destination account does not exist. |
-|PATH_PAYMENT_STRICT_RECEIVE_NO_TRUST| -6| The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](./assets.md).|
+|PATH_PAYMENT_STRICT_RECEIVE_NO_TRUST| -6| The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](../glossary/assets.mdx).|
 |PATH_PAYMENT_STRICT_RECEIVE_NOT_AUTHORIZED| -7| The destination account is not authorized by the asset's issuer to hold the asset. |
 |PATH_PAYMENT_STRICT_RECEIVE_LINE_FULL| -8| The destination account does not have sufficient limits to receive `destination amount` and still satisfy its buying liabilities.|
 |PATH_PAYMENT_STRICT_RECEIVE_NO_ISSUER| -9| The issuer of one the of assets is missing.|
@@ -274,8 +274,8 @@ Passive offers allow market makers to have zero spread. If you want to trade EUR
 price and USD for EUR also at 1:1, you can create two passive offers so the two offers don't
 immediately act on each other.
 
-Once the passive offer is created, you can manage it like any other offer using the [manage
-offer](#manage-offer) operation.
+Once the passive offer is created, you can manage it like any other offer using the [manage sell
+offer](#manage-sell-offer) operation.
 
 Threshold: Medium
 
@@ -316,7 +316,7 @@ Allows you to set multiple options on an account in a single operation, such as
 changing an operation threshold and setting the flags on an account at the same time.
 
 For more information on the options related to signing, see our docs on
-[multi-sig](./multi-sig.md).
+[multi-sig](../glossary/multisig.mdx).
 
 When updating signers or other thresholds, the threshold of this operation is High.
 
@@ -329,13 +329,13 @@ Parameters:
 |Parameters| Type| Description|
 | --- | --- | --- |
 |Inflation Destination| account ID| Account of the inflation destination.|
-|Clear flags| integer| Indicates which flags to clear. For details about the flags, please refer to the [accounts doc](./accounts.md). The bit mask integer subtracts from the existing flags of the account. This allows for setting specific bits without knowledge of existing flags.|
-|Set flags| integer| Indicates which flags to set. For details about the flags, please refer to the [accounts doc](./accounts.md). The bit mask integer adds onto the existing flags of the account. This allows for setting specific bits without knowledge of existing flags.|
+|Clear flags| integer| Indicates which flags to clear. For details about the flags, please refer to the [accounts doc](../glossary/accounts.mdx). The bit mask integer subtracts from the existing flags of the account. This allows for setting specific bits without knowledge of existing flags.|
+|Set flags| integer| Indicates which flags to set. For details about the flags, please refer to the [accounts doc](../glossary/accounts.mdx). The bit mask integer adds onto the existing flags of the account. This allows for setting specific bits without knowledge of existing flags.|
 |Master weight| integer| A number from 0-255 (inclusive) representing the weight of the master key. If the weight of the master key is updated to 0, it is effectively disabled.|
-|Low threshold| integer| A number from 0-255 (inclusive) representing the threshold this account sets on all operations it performs that have [a low threshold](./multi-sig.md).|
-|Medium threshold| integer| A number from 0-255 (inclusive) representing the threshold this account sets on all operations it performs that have [a medium threshold](./multi-sig.md).|
-|High threshold| integer| A number from 0-255 (inclusive) representing the threshold this account sets on all operations it performs that have [a high threshold](./multi-sig.md). |
-|Home domain| string| Sets the home domain of an account. See [Federation](./federation.md).|
+|Low threshold| integer| A number from 0-255 (inclusive) representing the threshold this account sets on all operations it performs that have [a low threshold](../glossary/multisig.mdx).|
+|Medium threshold| integer| A number from 0-255 (inclusive) representing the threshold this account sets on all operations it performs that have [a medium threshold](../glossary/multisig.mdx).|
+|High threshold| integer| A number from 0-255 (inclusive) representing the threshold this account sets on all operations it performs that have [a high threshold](../glossary/multisig.mdx). |
+|Home domain| string| Sets the home domain of an account. See [Federation](../glossary/federation.mdx).|
 |Signer| {Public Key, weight}| Add, update, or remove a signer from an account. Signer weight is a number from 0-255 (inclusive). The signer is deleted if the weight is 0.|
 
 Possible errors:
@@ -355,7 +355,7 @@ Possible errors:
 ## Change Trust
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.changeTrust) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ChangeTrustOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#ChangeTrust)
 
-Creates, updates, or deletes a trustline.  For more on trustlines, please refer to the [assets documentation](./assets.md).
+Creates, updates, or deletes a trustline.  For more on trustlines, please refer to the [assets documentation](../glossary/assets.mdx).
 
 To delete an existing trustline, set Line to the asset of the trustline, and Limit to `0`.
 
@@ -383,11 +383,11 @@ Possible errors:
 
 Updates the `authorized` flag of an existing trustline. 
 
-This can only be called by the issuer of a trustline's [asset](./assets.md), and only when `AUTHORIZATION REQUIRED` has been set on the issuer's account.
+This can only be called by the issuer of a trustline's [asset](../glossary/assets.mdx), and only when `AUTHORIZATION REQUIRED` has been set on the issuer's account.
 
 There are two different kinds of asset authorization: complete authorization, which allows an account to transact with an asset (by making payments, creating offers, etc.) and limited authorization, which allows an account to maintain and reduce current offers, but not to perform other operations with the asset.    
 
-The issuer can only change a flag from complete to limited authorization or clear the `authorized` flag if the issuer has the `AUTH_REVOCABLE_FLAG` set. Otherwise, the issuer can only set the `authorized` flag.  For more on what toggling between authorization states allows an issuer to do, see the [Rationale](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0018.md#rationale) section of CAP-18.
+The issuer can only change a flag from complete to limited authorization or clear the `authorized` flag if the issuer has the `AUTH_REVOCABLE_FLAG` set. Otherwise, the issuer can only set the `authorized` flag.  For more on what toggling between authorization states allows an issuer to do, see the [Control Access to an Asset](../issuing-assets/control-asset-access.mdx) doc.
 
 If the issuer clears the `authorized` flag, all offers owned by the `trustor` that are either selling `type` or buying `type` will be deleted.  
 
@@ -432,27 +432,8 @@ Possible errors:
 |ACCOUNT_MERGE_NO_ACCOUNT| -2| The `destination` account does not exist.|
 |ACCOUNT_MERGE_IMMUTABLE_SET| -3| The source account has `AUTH_IMMUTABLE` flag set.|
 |ACCOUNT_MERGE_HAS_SUB_ENTRIES | -4| The source account has trust lines/offers.|
-|ACCOUNT_MERGE_SEQNUM_TOO_FAR | -5| Source's account sequence number is too high. It must be less than `(ledgerSeq << 32) = (ledgerSeq * 0x100000000)`. *(protocol version 10 and above)*|
-|ACCOUNT_MERGE_DEST_FULL| -6| The `destination` account cannot receive the balance of the source account and still satisfy its lumen buying liabilities. *(protocol version 10 and above)*|
-
-## Inflation
-[JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.inflation) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/InflationOperation.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#Inflation)
-
-Runs the inflation process for the entire Stellar network.
-
-Anyone can submit the Inflation operation that triggers the inflation process on the Stellar
-Network. Because it can only be run once a week, this operation will fail if the network has
-already had inflation processed within the past week.
-
-Threshold: Low
-
-Result: `InflationResult`
-
-Possible errors:
-
-| Error | Code | Description |
-| ----- | ---- | ------|
-|INFLATION_NOT_TIME| -1| Inflation only runs once a week. This failure means it is not time for a new inflation round yet.|
+|ACCOUNT_MERGE_SEQNUM_TOO_FAR | -5| Source's account sequence number is too high. It must be less than `(ledgerSeq << 32) = (ledgerSeq * 0x100000000)`. |
+|ACCOUNT_MERGE_DEST_FULL| -6| The `destination` account cannot receive the balance of the source account and still satisfy its lumen buying liabilities. |
 
 ## Manage Data
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.manageData) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ManageDataOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#ManageData)
@@ -486,8 +467,6 @@ Possible errors:
 
 ## Bump Sequence
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.bumpSequence) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/BumpSequenceOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#BumpSequence)
-
-*Only available in Stellar Protocol >= v10*
 
 Bumps forward the sequence number of the source account to the given sequence number.
 
