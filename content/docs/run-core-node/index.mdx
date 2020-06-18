@@ -3,11 +3,11 @@ title: "Overview"
 order: 10
 ---
 
-Stellar is a peer-to-peer network made up of nodes, which are computers that keep a common distributed [ledger](link), and that communicate to validate and add [transactions](link) to it. Nodes use a program called Stellar Core — an implementation of the [Stellar Consensus Protocol](link) — to stay in sync as they work to agree on the validity of transaction sets and to apply them to the ledger. Generally, nodes reach consensus, apply a transaction set, and update the ledger every 3-5 seconds.
+Stellar is a peer-to-peer network made up of nodes, which are computers that keep a common distributed [ledger](../glossary/ledger.mdx), and that communicate to validate and add [transactions](../glossary/transactions.mdx) to it. Nodes use a program called Stellar Core — an implementation of the [Stellar Consensus Protocol](../glossary/scp.mdx) — to stay in sync as they work to agree on the validity of transaction sets and to apply them to the ledger. Generally, nodes reach consensus, apply a transaction set, and update the ledger every 3-5 seconds.
 
-You don’t need to run a node to build on Stellar: you can start developing with your [SDK of choice](link), and use public instances of Horizon to query the ledger and submit transactions right away. In fact, the Stellar Development Foundation offers two public instances of Horizon — one for the public network and one for the testnet — which you can read more about in our [API reference docs](link). [Lobstr](link) and [Satoshipay](link) also offer public Horizon instances.
+You don’t need to run a node to build on Stellar: you can start developing with your [SDK of choice](../software-and-sdks/index.mdx), and use public instances of Horizon to query the ledger and submit transactions right away. In fact, the Stellar Development Foundation offers two public instances of Horizon — one for the public network and one for the testnet — which you can read more about in our [API reference docs](../.././api/introduction/index.mdx). [Lobstr](https://horizon.stellar.lobstr.co), [Satoshipay](stellar-horizon.satoshipay.io), and [Coinqvest](https://horizon.stellar.coinqvest.com) also offer public Horizon instances.
 
-If you’re serious about building on Stellar, have a production-level product or service that requires high-availability access network, or want to help increase network health and decentralization, then you probably _do_ want to run a node, or even a trio of nodes (more on that in the [Tier 1 section](link)). At that point, you have a choice: you can pay a service provider like [Blockdaemon](link) to set up and run your node for you, or you can do it yourself.
+If you’re serious about building on Stellar, have a production-level product or service that requires high-availability access network, or want to help increase network health and decentralization, then you probably _do_ want to run a node, or even a trio of nodes (more on that in the [Tier 1 section](./tier-1-orgs.mdx)). At that point, you have a choice: you can pay a service provider like [Blockdaemon](https://app.blockdaemon.com/marketplace/categories/-/stellar-horizon) to set up and run your node for you, or you can do it yourself.
 
 If you’re going the DIY route, this section of the docs is for you. It explains the technical and operational aspects of installing, configuring, and maintaining a Stellar Core node, and should help you figure out the best way to set up your Stellar integration.
 
@@ -23,12 +23,12 @@ The basic flow, which you can navigate through using the menu on the left, goes 
 
 ## Types of nodes
 
-All nodes perform the same basic functions: they run Stellar Core, connect to peers, submit transactions, store the state of the ledger in a SQL [database](link), and keep a duplicate copy of the ledger in flat XDR files called [buckets](link). All nodes also support [Horizon](link), the Stellar API.
+All nodes perform the same basic functions: they run Stellar Core, connect to peers, submit transactions, store the state of the ledger in a SQL [database](./configuring.mdx#database), and keep a duplicate copy of the ledger in flat XDR files called [buckets](./configuring.mdx#buckets). All nodes also support [Horizon](../run-api-server/index.mdx), the Stellar API.
 
 In addition to those basic functions, there are two key configuration options that determine how a node behaves. A node can:
 
-- Participate in consensus to [validate transactions](link)
-- Publish an [archive](link) that other nodes can consult to find the complete history of the network.
+- Participate in consensus to [validate transactions](./configuring.mdx#validating)
+- Publish an [archive](./publishing-history-archives.mdx) that other nodes can consult to find the complete history of the network.
 
 To make things easier, we’ll define four types of nodes based on permutations of those two options: **Watcher**, **Basic Validator**, **Full Validator**, and **Archiver**. You’ll notice that they _all_ support Horizon and submit transactions to the network:
 
@@ -47,7 +47,7 @@ So why choose one type over another? Let’s break it down a bit and take a look
 
 A Watcher is the lightest node you can run. It keeps track of the ledger and submits transactions for possible inclusion, but it is _not_ configured to participate in validation or to publish a history archive, which means it doesn’t do anything to support the network or increase decentralization.
 
-Watchers pair well with Horizon, and if all you need is a Horizon instance to query the ledger or submit transactions, a Watcher is probably the right choice for you. While there are public instances of Horizon you can use — namely those maintained by [SDF](link), [Lobstr](link), and [Satoshipay](link) — they’re all rate limited, so they won’t work if you need to scale your project or you want to offer your customers an SLA — 99% uptime, for instance.
+Watchers pair well with Horizon, and if all you need is a Horizon instance to query the ledger or submit transactions, a Watcher is probably the right choice for you. While there are public instances of Horizon you can use — namely those maintained by [SDF](../.././api/introduction/index.mdx), [Lobstr](https://horizon.stellar.lobstr.co), [Satoshipay](stellar-horizon.satoshipay.io), and [Coinqvest](https://horizon.stellar.coinqvest.com) — they’re all rate limited, so they won’t work if you need to scale your project or you want to offer your customers an SLA — 99% uptime, for instance.
 
 **Use a Watcher to run Horizon, and to ensure reliable access to the network.**
 
@@ -55,7 +55,7 @@ Watchers pair well with Horizon, and if all you need is a Horizon instance to qu
 
 #### Validating, no public archive
 
-A Basic Validator is a lot like a Watcher, and has the same advantages and similar operational requirements. The difference between the two is that a Basic Validator requires a secret key, and is [configured to participate in consensus](link) by voting on — and signing off on — changes to the ledger.
+A Basic Validator is a lot like a Watcher, and has the same advantages and similar operational requirements. The difference between the two is that a Basic Validator requires a secret key, and is [configured to participate in consensus](./configuring.mdx#validating) by voting on — and signing off on — changes to the ledger.
 
 The advantage: signatures can serve as official endorsements of specific ledgers in real time. That’s important if, for instance, you issue an asset on Stellar that represents a real-world asset: you can let your customers know that you will only honor transactions and redeem assets from ledgers signed by your validator, and in the unlikely scenario that something happens to the network, you can use your node as the final arbiter of truth. Setting up your node as a validator allows you to resolve any questions _up front and in writing_ about how you plan to deal with disasters and disputes.
 
@@ -65,11 +65,11 @@ The advantage: signatures can serve as official endorsements of specific ledgers
 
 #### Validating, offers public archive
 
-A Full Validator is the same as a Basic Validator except that it also publishes a [History Archive](link) containing snapshots of the ledger, including all transactions and their results. A Full Validator writes to an internet-facing blob store — such as AWS or Azure — so it's a bit more expensive and complex to run, but it also does the most to support the network’s resilience and decentralization.
+A Full Validator is the same as a Basic Validator except that it also publishes a [History Archive](./publishing-history-archives.mdx) containing snapshots of the ledger, including all transactions and their results. A Full Validator writes to an internet-facing blob store — such as AWS or Azure — so it's a bit more expensive and complex to run, but it also does the most to support the network’s resilience and decentralization.
 
 When other nodes join the network — or experience difficulty and temporarily fall out of sync — they can consult archives offered by Full Validators to catch up on the history of the network. Redundant archives prevent a single point of failure, and allow network participants to verify the veracity of a given history.
 
-Full Validators can support Horizon, but generally, organizations that run them don’t use them to query network data or submit transactions. In fact, they often run a Watcher to handle Horizon _in addition_ to Full Validators. Most of those organizations are also part of — or on track to join — [Tier 1](link), which is a core group of network participants who run three Full Validators to contribute maximum redundancy.
+Full Validators can support Horizon, but generally, organizations that run them don’t use them to query network data or submit transactions. In fact, they often run a Watcher to handle Horizon _in addition_ to Full Validators. Most of those organizations are also part of — or on track to join — [Tier 1](./tier-1-orgs.mdx), which is a core group of network participants who run three Full Validators to contribute maximum redundancy.
 
 **Use a Full Validator to sign off on transactions, and to contribute to the health and decentralization of the network.**
 
