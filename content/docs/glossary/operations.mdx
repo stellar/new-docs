@@ -7,21 +7,7 @@ Operations are the bread and butter of Stellar: they’re the individual command
 
 Network capacity, which is determined by validator vote, is measured in terms of operations/ledger. Currently, it’s set to 1,000.
 
-There are thirteen possible operation types:
-
-- [Create Account](./list-of-operations.md#create-account)
-- [Payment](./list-of-operations.md#payment)
-- [Path Payment Strict Send](./list-of-operations.md#path-payment-strict-send)
-- [Path Payment Strict Receive](./list-of-operations.md#path-payment-strict-receive)
-- [Manage Buy Offer](./list-of-operations.md#manage-buy-offer)
-- [Manage Sell Offer](./list-of-operations.md#manage-sell-offer)
-- [Create Passive Sell Offer](./list-of-operations.md#create-passive-sell-offer)
-- [Set Options](./list-of-operations.md#set-options)
-- [Change Trust](./list-of-operations.md#change-trust)
-- [Allow Trust](./list-of-operations.md#allow-trust)
-- [Account Merge](./list-of-operations.md#account-merge)
-- [Manage Data](./list-of-operations.md#manage-data)
-- [Bump Sequence](./list-of-operations.md#bump-sequence)
+There are thirteen possible operation types, each of which is detailed along with parameters, errors, and links to SDK docs in the [List of Operations](../start/list-of-operations.mdx).
 
 Operations are executed on behalf of the source account specified in the transaction, unless there is an override defined for the operation.
 
@@ -49,7 +35,7 @@ When a transaction is submitted to a node, the node checks the validity of each 
    - For example, only positive values can be set for the amount of a payment operation.
 3. The operation must be valid in the current protocol version of the network. Deprecated operations, such as inflation, are invalid by design.
 
-For more details on this process, see the [lifecycle of a transaction][tx-lifecycle].
+For more details on this process, see the [lifecycle of a transaction][./transactions.mds#lifecycle-of-a-transaction].
 
 ## Result
 
