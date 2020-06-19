@@ -128,7 +128,7 @@ data: {"_links":{"effects":{"href":"/operations/713226564145153/effects/{?cursor
        "type":"create_account"}
 ```
 
-Every time you receive a new payment you will get a new row of data. Payments is not the only endpoint that supports streaming. You can also stream transactions [/transactions](../.././api/resources/transactions/index.mdx) and operations [/operations](../../reference/endpoints/operations-all.md).
+Every time you receive a new payment you will get a new row of data. Payments is not the only endpoint that supports streaming. You can also stream transactions [/transactions](../.././api/resources/transactions/index.mdx) and operations [/operations](../.././api/resources/operations/index.mdx).
 
 ## Following payments using `EventStream`
 
@@ -171,9 +171,9 @@ New payment:
 
 ## Testing it out
 
-We now know how to get a stream of transactions to an account. Let's check if our solution actually works and if new payments appear. Let's watch as we send a payment ([`create_account` operation](../../start/list-of-operations.mdx#create-account)) from our account to another account.
+We now know how to get a stream of transactions to an account. Let's check if our solution actually works and if new payments appear. Let's watch as we send a payment ([`create_account` operation](../start/list-of-operations.mdx#create-account)) from our account to another account.
 
-We use the `create_account` operation because we are sending payment to a new, unfunded account. If we were sending payment to an account that is already funded, we would use the [`payment` operation](../../start/list-of-operations.mdx#payment).
+We use the `create_account` operation because we are sending payment to a new, unfunded account. If we were sending payment to an account that is already funded, we would use the [`payment` operation](../start/list-of-operations.mdx#payment).
 
 First, let's check our account sequence number so we can create a payment transaction. To do this we send a request to horizon:
 
