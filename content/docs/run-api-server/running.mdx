@@ -15,7 +15,7 @@ INFO[0000] Starting horizon on :8000                     pid=29013
 
 </CodeExample>
 
-The log line above announces that Horizon is ready to serve client requests. Note: the numbers shown above may be different for your installation. Next you can confirm that Horizon is responding correctly by loading the root resource. In the example above, that URL would be [http://127.0.0.1:8000/], and simply running `curl http://127.0.0.1:8000/` shows you that the root resource can be loaded correctly.
+The log line above announces that Horizon is ready to serve client requests. Note: the numbers shown above may be different for your installation. Next you can confirm that Horizon is responding correctly by loading the root resource. In the example above, that URL would be http://127.0.0.1:8000/, and simply running `curl http://127.0.0.1:8000/` shows you that the root resource can be loaded correctly.
 
 If you didn't set up a Stellar Core node yet, you may see an error like this:
 
@@ -27,7 +27,7 @@ ERRO[2019-05-06T16:21:14.126+08:00] Error getting core latest ledger err="get fa
 
 </CodeExample>
 
-Horizon requires a functional Stellar Core node. Go back and set up Stellar Core as described in the [Run a Core Node guide](link). In particular, you need to initialise the database as [described here](link).
+Horizon requires a functional Stellar Core node. Go back and set up Stellar Core as described in the [Run a Core Node guide](../run-core-node/index.mdx). In particular, you need to initialise the database as [described here](run-core-node/configuring.mdx#buckets).
 
 ## Ingesting Live Stellar Core Data
 
@@ -37,7 +37,7 @@ To enable ingestion, you must either pass `--ingest=true` on the command line or
 
 ### Ingesting Historical Data
 
-To enable ingestion of historical data from Stellar Core, you need to run `horizon db backfill NUM_LEDGERS`. If you're running a [full validator](link) with published history archive, for example, you might want to ingest all of the network's history. In this case your `NUM_LEDGERS` should be slightly higher than the current ledger id on the network. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your /metrics endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
+To enable ingestion of historical data from Stellar Core, you need to run `horizon db backfill NUM_LEDGERS`. If you're running a [full validator](../run-core-node/index.mx#full-validator) with published history archive, for example, you might want to ingest all of the network's history. In this case your `NUM_LEDGERS` should be slightly higher than the current ledger id on the network. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your /metrics endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
 
 ### Ingesting Historical Data and Reingesting Ledgers
 
@@ -58,7 +58,7 @@ This allows reingestion to be split up and done in parallel by multiple Horizon 
 
 ### Managing Storage for Historical Data
 
-Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](link), you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, you may execute the command `horizon db reap` to force a collection.
+Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, you may execute the command `horizon db reap` to force a collection.
 
 ### Surviving Stellar Core Downtime
 
@@ -66,7 +66,7 @@ Horizon tries to maintain a gap-free window into the history of the Stellar netw
 
 To ensure that the metadata required by Horizon is maintained, you have several options: You may either set the `CATCHUP_COMPLETE` Stellar Core configuration option to `true` or configure `CATCHUP_RECENT` to determine the amount of time your Stellar Core can be offline without having to rebuild your Horizon database.
 
-Unless your node is a [Full Validator which publishes an archive](link) we _do not_ recommend using the `CATCHUP_COMPLETE` method, as this will force Stellar Core to apply every transaction from the beginning of the ledger, which will take an ever increasing amount of time. Instead, we recommend you set the `CATCHUP_RECENT` config value. To do this, determine how long of a downtime you would like to survive (expressed in seconds) and divide by ten. This roughly equates to the number of ledgers that occur within your desired grace period since ledgers roughly close at a rate of one every ten seconds. With this value set, Stellar Core will replay transactions for ledgers that are recent enough, ensuring that the metadata needed by Horizon is present.
+Unless your node is a [Full Validator which publishes an archive](../run-core-node/index.mdx#full-validator) we _do not_ recommend using the `CATCHUP_COMPLETE` method, as this will force Stellar Core to apply every transaction from the beginning of the ledger, which will take an ever increasing amount of time. Instead, we recommend you set the `CATCHUP_RECENT` config value. To do this, determine how long of a downtime you would like to survive (expressed in seconds) and divide by ten. This roughly equates to the number of ledgers that occur within your desired grace period since ledgers roughly close at a rate of one every ten seconds. With this value set, Stellar Core will replay transactions for ledgers that are recent enough, ensuring that the metadata needed by Horizon is present.
 
 ### Correcting Gaps in Historical Data
 
@@ -93,7 +93,7 @@ It's possible that the progress logs (see below) will not show anything new for 
 If you see that ingestion is not proceeding for a very long period of time:
 
 1. Check the RAM usage on the machine. It's possible that system ran out of RAM and it using swap memory that is extremely slow.
-2. If above is not the case, file a new issue in [the Horizon repository](link).
+2. If above is not the case, file a new issue in [the Horizon repository](https://github.com/stellar/go/tree/master/services/horizon).
 
 ### CPU usage goes high every few minutes
 
