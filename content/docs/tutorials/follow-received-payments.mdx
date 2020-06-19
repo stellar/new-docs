@@ -5,7 +5,7 @@ order: 30
 
 import { CodeExample } from "components/CodeExample";
 
-This tutorial shows how easy it is to use Horizon to watch for incoming payments on an [account](../glossary/account.mdx)
+This tutorial shows how easy it is to use Horizon to watch for incoming payments on an [account](../glossary/accounts.mdx)
 using JavaScript and `EventSource`.  We will eschew using [`js-stellar-sdk`](https://github.com/stellar/js-stellar-sdk), the
 high-level helper library, to show that it is possible for you to perform this
 task on your own, with whatever programming language you would like to use.
@@ -100,7 +100,7 @@ terminal.
 
 ## Following payments using `curl`
 
-To follow new payments connected to your account you simply need to send `Accept: text/event-stream` header to the [/payments](../../reference/endpoints/payments-all.md) endpoint.
+To follow new payments connected to your account you simply need to send `Accept: text/event-stream` header to the [/payments](../.././api/resources/operations/object/payments/index.mdx) endpoint.
 
 ```bash
 $ curl -H "Accept: text/event-stream" "https://horizon-testnet.stellar.org/accounts/GB7JFK56QXQ4DVJRNPDBXABNG3IVKIXWWJJRJICHRU22Z5R5PI65GAK3/payments"
@@ -128,7 +128,7 @@ data: {"_links":{"effects":{"href":"/operations/713226564145153/effects/{?cursor
        "type":"create_account"}
 ```
 
-Every time you receive a new payment you will get a new row of data. Payments is not the only endpoint that supports streaming. You can also stream transactions [/transactions](../../reference/endpoints/transactions-all.md) and operations [/operations](../../reference/endpoints/operations-all.md).
+Every time you receive a new payment you will get a new row of data. Payments is not the only endpoint that supports streaming. You can also stream transactions [/transactions](../.././api/resources/transactions/index.mdx) and operations [/operations](../../reference/endpoints/operations-all.md).
 
 ## Following payments using `EventStream`
 
@@ -171,9 +171,9 @@ New payment:
 
 ## Testing it out
 
-We now know how to get a stream of transactions to an account. Let's check if our solution actually works and if new payments appear. Let's watch as we send a payment ([`create_account` operation](../../../guides/concepts/list-of-operations.html#create-account)) from our account to another account.
+We now know how to get a stream of transactions to an account. Let's check if our solution actually works and if new payments appear. Let's watch as we send a payment ([`create_account` operation](../../start/list-of-operations.mdx#create-account)) from our account to another account.
 
-We use the `create_account` operation because we are sending payment to a new, unfunded account. If we were sending payment to an account that is already funded, we would use the [`payment` operation](../../../guides/concepts/list-of-operations.html#payment).
+We use the `create_account` operation because we are sending payment to a new, unfunded account. If we were sending payment to an account that is already funded, we would use the [`payment` operation](../../start/list-of-operations.mdx#payment).
 
 First, let's check our account sequence number so we can create a payment transaction. To do this we send a request to horizon:
 
