@@ -7,7 +7,7 @@ import { CodeExample } from "components/CodeExample";
 
 Once your node is up and running, it's important to keep an eye on it to make sure it stays afloat and continues to contribute to the health of the overall network. To help with that, Stellar Core exposes vital information that you can use to monitor your node and diagnose potential problems.
 
-You can access this information using commands and inspecting Stellar Core's output, which is what the first half of this doc covers. You can also connect [Prometheus](link) to make monitoring easier, combine it with [Alertmanager](link) to automate notification, and use pre-built [Grafana dashboards](link) to create visual representations of your node's well-being.
+You can access this information using commands and inspecting Stellar Core's output, which is what the first half of this doc covers. You can also connect [Prometheus](#using-prometheus) to make monitoring easier, combine it with [Alertmanager](#configure-notifications-using-alertmanager) to automate notification, and use pre-built [Grafana dashboards](#visualize-metrics-using-grafana) to create visual representations of your node's well-being.
 
 However you decide to monitor, the most important thing is that you have a system in place to ensure that your integration keeps ticking.
 
@@ -77,7 +77,7 @@ Some notable fields in `info` are:
   - `pending_count`: the number of connections that are not fully established yet
 - `protocol_version`: the maximum version of the protocol that this instance recognizes
 - `state`: the node's synchronization status relative to the network
-- `quorum`: summarizes the state of the SCP protocol participants, the same as the information returned by the `quorum` command ([see below](link)).
+- `quorum`: summarizes the state of the SCP protocol participants, the same as the information returned by the `quorum` command ([see below](#quorum-health)).
 
 ## Overlay information
 
@@ -311,7 +311,6 @@ Monitoring `stellar-core` using Prometheus is by far the simplest solution, espe
 
 In order for Prometheus to scrape `stellar-core` application metrics, you will need to install the stellar-core-prometheus-exporter (`apt-get install stellar-core-prometheus-exporter`) and configure your Prometheus server to scrape this exporter (default port: `9473`). On top of that grafana can be used to visualize metrics.
 
-[IMAGE](link)
 
 ### Install a Prometheus server within your infrastructure
 
