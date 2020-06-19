@@ -71,7 +71,7 @@ Some notable fields in `info` are:
   - `age`: time elapsed since this ledger closed (during normal operation less than 10 seconds)
   - `num`: ledger number
   - `version`: protocol version supported by this ledger
-- `network` is the [network passphrase](link) that this core instance is using to decide whether to connect to the testnet or the public network
+- `network` is the [network passphrase](../glossary/network-passphrase.mdx) that this core instance is using to decide whether to connect to the testnet or the public network
 - `peers`: information on the connectivity to the network
   - `authenticated_count`: the number of live connections
   - `pending_count`: the number of connections that are not fully established yet
@@ -199,8 +199,8 @@ In the example above, 6 nodes are functioning properly, one is down (`stronghold
 If a node is stuck in state `Joining SCP`, this command allows to quickly find the reason:
 
 - too many validators missing (down or without a good connectivity), solutions are:
-  - [adjust your quorum set](#crafting-a-quorum-set) based on the nodes that are not missing
-  - try to get a [better connectivity path](#quorum-and-overlay-network) to the missing validators
+  - [adjust your quorum set](./configuration.mdx#choosing-a-quorum-set) based on the nodes that are not missing
+  - try to get a [better connectivity path](./configuration.mdx#quorum-and-overlay-network) to the missing validators
 - network split would cause SCP to stick because of nodes that disagree. This would happen if either there is a bug in SCP, the network does not have quorum intersection, or the disagreeing nodes are misbehaving (compromised, etc).
 
 Note that the node not being able to reach consensus does not mean that the network as a whole will not be able to reach consensus (and the opposite is true: the network may fail because of a different set of validators failing).
@@ -387,7 +387,7 @@ Pointing your Prometheus instance to the exporter can be achieved by manually co
 
 ### Create Alerting Rules
 
-Once Prometheus scrapes metrics we can add alerting rules. Recommended rules are [**here**](stellar-core-alerting.rules) (require Prometheus 2.0 or later). Copy rules to _/etc/prometheus/stellar-core-alerting.rules_ on the Prometheus server and add the following to the prometheus configuration file to include the file:
+Once Prometheus scrapes metrics we can add alerting rules. Recommended rules are [**here**](https://github.com/stellar/packages/blob/master/docs/stellar-core-alerting.rules) (require Prometheus 2.0 or later). Copy rules to _/etc/prometheus/stellar-core-alerting.rules_ on the Prometheus server and add the following to the prometheus configuration file to include the file:
 
 <CodeExample>
 
