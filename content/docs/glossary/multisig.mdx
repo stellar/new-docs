@@ -22,7 +22,7 @@ Let's say Diyang sets the medium threshold on one of her accounts to 4. If that 
 
 Once the signature threshold is met, if there are any leftover signatures then the transaction will fail. This will happen even if the signatures are valid. For example, if your transaction requires 3 signatures, providing more than 3 signatures will result in a failed transaction with an `TX_BAD_AUTH_EXTRA` error (even if they are all valid). The reason for this error is performance related, as unnecessary signature verification has a large effect on performance before accepting transactions in consensus.
 
-Each account can set its own threshold values. By default all thresholds levels are set to 0, and the master key is set to weight 1. The [Set Options](../start/list-of-operations.md#set-options) operation allows you to change the weight of the master key and to add other signing keys with different weights.
+Each account can set its own threshold values. By default all thresholds levels are set to 0, and the master key is set to weight 1. The [Set Options](../start/list-of-operations.mdx#set-options) operation allows you to change the weight of the master key and to add other signing keys with different weights.
 
 Low Security:
 
@@ -30,24 +30,24 @@ Low Security:
   - Charging a fee or updating the sequence number for the source account
 - [Allow Trust](../start/list-of-operations.mdx#allow-trust) operation
   - Used to allow people to hold credit from this account without exposing the key that enables sending payments from this account.
-- [Bump Sequence](../start/list-of-operations.md#bump-sequence)
+- [Bump Sequence](../start/list-of-operations.mdx#bump-sequence)
   - Modify the account's sequence number directly
 
 High Security:
 
-- [Set Options](../start/list-of-operations.md#set-options) to change the signers or the thresholds
+- [Set Options](../start/list-of-operations.mdx#set-options) to change the signers or the thresholds
   - Allows you to create a set of signers that give or revoke access to the account.
-- [Account Merge](../start/list-of-operations.md#account-merge) to merge accounts
+- [Account Merge](../start/list-of-operations.mdx#account-merge) to merge accounts
 
 Medium Security:
 
-- All [other operations](../start/list-of-operations.md)
+- All [other operations](../start/list-of-operations.mdx)
 
 For most cases, it is recommended to set thresholds such that `low <= medium <= high`.
 
 ## Additional signing keys
 
-Accounts are identified by a public key. The private key that corresponds to this public key is called the **master key**. Additional signing keys can be added to the account using the [Set Options](../start/list-of-operations.md#set-options) operation.
+Accounts are identified by a public key. The private key that corresponds to this public key is called the **master key**. Additional signing keys can be added to the account using the [Set Options](../start/list-of-operations.mdx#set-options) operation.
 
 If the weight of the master key is updated to 0, it cannot be used to sign transactions (even for operations with a threshold value of 0), until restored by other signers meeting the high threshold. So be very, very careful if you're setting the master key weight to 0. If there are other signers listed on the account, they can still continue to sign transactions.
 
@@ -63,7 +63,7 @@ To enable some advanced smart contract features there are a couple of additional
 
 It is possible for an account to pre-authorize a particular transaction by adding the hash of the future transaction as a "signer" on the account. To do that you need to prepare the transaction beforehand with proper sequence number. Then you can obtain the hash of this transaction and add it as signer to account.
 
-Signers of this type are automatically removed from the account when a matching transaction is properly applied. In case of error, or when matching transaction is never submitted, the signer remains and must be manually removed using the [Set Options](../start/list-of-operations.md#set-options) operation.
+Signers of this type are automatically removed from the account when a matching transaction is properly applied. In case of error, or when matching transaction is never submitted, the signer remains and must be manually removed using the [Set Options](../start/list-of-operations.mdx#set-options) operation.
 
 This type of signer is especially useful in escrow accounts. You can pre-authorize two different transactions. Both could have the same sequence number but different destinations. This means that only one of them can be executed.
 
