@@ -5,7 +5,7 @@ order: 50
 
 import { CodeExample } from "components/CodeExample";
 
-If you want to run a [Full Validator](link) or an [Archiver](link), you need to set up your node to publish a history archive. You can host an archive using a blob store such as Amazon's s3 or Digital Ocean's spaces, or you can simply serve a local archive directly via an HTTP server such as Nginx or Apache. If you're setting up a [Watcher](link) or a [Basic Validator](link), you can skip this section. No matter what kind of node you're planning to run, make sure to set it up to `get` history, which is covered in [Configuration](link).
+If you want to run a [Full Validator](./index.mdx#full-validator) or an [Archiver](./index.mdx#archiver), you need to set up your node to publish a history archive. You can host an archive using a blob store such as Amazon's s3 or Digital Ocean's spaces, or you can simply serve a local archive directly via an HTTP server such as Nginx or Apache. If you're setting up a [Watcher](index.mdx#watcher) or a [Basic Validator](index.mdx#basic-validator), you can skip this section. No matter what kind of node you're planning to run, make sure to set it up to `get` history, which is covered in [Configuration](./configuring.mdx).
 
 ## Caching and History Archives
 
@@ -181,7 +181,7 @@ Given the choice, it's best to configure your history archive prior to your node
 
 However, if you have _not_ published an archive during the node's initial synch, it's still possible to use the [stellar-archivist](https://github.com/stellar/go/tree/master/tools/stellar-archivist) command line tool to mirror, scan, and repair existing archives.
 
-Using the [SDF package repositories](link) you can install `stellar-archivist` by running `apt-get install stellar-archivist`
+Using the [SDF package repositories](https://github.com/stellar/packages) you can install `stellar-archivist` by running `apt-get install stellar-archivist`
 
 The steps required to create a History archive for an existing validator — in other words, to upgrade a Basic Validator to a Full Validator — are straightforward:
 
