@@ -25,7 +25,7 @@ Public archives make the network more resilient: when new nodes come online, or 
 
 To maximize network resilience, we’re asking every Tier 1 node to use the same quorum set configuration, which is made up of subquorums of all validators from each Tier 1 Org.
 
-That way, the validator community can experiment with a larger quorum, and can analyze the results of those experiments without disrupting the network. Using existing Tier 1 Orgs as a safety net, we can work together to expand the quorum methodically and deliberately. To see what that quorum set currently looks like, check out the (example Full Validator config file) [https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg]
+That way, the validator community can experiment with a larger quorum, and can analyze the results of those experiments without disrupting the network. Using existing Tier 1 Orgs as a safety net, we can work together to expand the quorum methodically and deliberately. To see what that quorum set currently looks like, check out the [example Full Validator config file](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg).
 
 ## Declare Your Node
 
@@ -39,8 +39,8 @@ Running a validator requires vigilance. You need to keep an eye on your nodes, k
 
 The best two ways to do that:
 
-- Join the validators [email list](link)
-- download Keybase and join the [#validators channel](link) on the stellar.public team
+- Join the validators [email list](https://groups.google.com/forum/#!forum/stellar-validators)
+- download Keybase and join the [#validators channel](https://keybase.io/team/stellar.public) on the stellar.public team
 
 We always announce new Stellar Core releases in those channels. You can also find those releases on our github.
 
@@ -59,7 +59,7 @@ Letting other validators know when you plan to change your quorum set allows the
 
 ## Monitor your quorum set
 
-We recommend using Prometheus to to scrape and store your stellar-core metrics, and Grafana to render that data for human consumption. You can find step-by-step instructions for setting up monitoring and alerts in [Monitoring and Diagnostics](link), along with links to Grafana dashboards we’ve created to make things easier.
+We recommend using Prometheus to to scrape and store your stellar-core metrics, and Grafana to render that data for human consumption. You can find step-by-step instructions for setting up monitoring and alerts in [Monitoring and Diagnostics](./monitoring.mdx), along with links to Grafana dashboards we’ve created to make things easier.
 
 You can also use stellarbeat.io to view validators’ quorum configurations, and get information about their availability and uptime, and the quorum command to diagnose problems with the quorum set of the local node.
 
@@ -67,6 +67,6 @@ You should do regular check-ins on your quorum set. If nodes have bad uptime or 
 
 ## Get in touch
 
-If you think you can be a Tier 1 Org, let us know on the #validators channel on Keybase. We can help you through the process, and once you’re up and running, we’ll work to fold you into the quorum so that you can take your rightful place as a pillar of the network. Once you’ve proven that you are responsive, reliable, and maintain good uptime, we will adjust the quorum set recipe above to include your validators.
+If you think you can be a Tier 1 Org, let us know on the #validators channel on [Keybase](https://keybase.io/team/stellar.public). We can help you through the process, and once you’re up and running, we’ll work to fold you into the quorum so that you can take your rightful place as a pillar of the network. Once you’ve proven that you are responsive, reliable, and maintain good uptime, we will adjust the quorum set recipe above to include your validators.
 
 As Stellar grows, and more and more businesses build on the network, Tier 1 Orgs will be crucial to the methodical expansion of the network.

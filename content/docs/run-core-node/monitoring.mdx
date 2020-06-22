@@ -7,7 +7,7 @@ import { CodeExample } from "components/CodeExample";
 
 Once your node is up and running, it's important to keep an eye on it to make sure it stays afloat and continues to contribute to the health of the overall network. To help with that, Stellar Core exposes vital information that you can use to monitor your node and diagnose potential problems.
 
-You can access this information using commands and inspecting Stellar Core's output, which is what the first half of this doc covers. You can also connect [Prometheus](link) to make monitoring easier, combine it with [Alertmanager](link) to automate notification, and use pre-built [Grafana dashboards](link) to create visual representations of your node's well-being.
+You can access this information using commands and inspecting Stellar Core's output, which is what the first half of this doc covers. You can also connect [Prometheus](#using-prometheus) to make monitoring easier, combine it with [Alertmanager](#configure-notifications-using-alertmanager) to automate notification, and use pre-built [Grafana dashboards](#visualize-metrics-using-grafana) to create visual representations of your node's well-being.
 
 However you decide to monitor, the most important thing is that you have a system in place to ensure that your integration keeps ticking.
 
@@ -71,13 +71,13 @@ Some notable fields in `info` are:
   - `age`: time elapsed since this ledger closed (during normal operation less than 10 seconds)
   - `num`: ledger number
   - `version`: protocol version supported by this ledger
-- `network` is the [network passphrase](link) that this core instance is using to decide whether to connect to the testnet or the public network
+- `network` is the [network passphrase](../glossary/network-passphrase.mdx) that this core instance is using to decide whether to connect to the testnet or the public network
 - `peers`: information on the connectivity to the network
   - `authenticated_count`: the number of live connections
   - `pending_count`: the number of connections that are not fully established yet
 - `protocol_version`: the maximum version of the protocol that this instance recognizes
 - `state`: the node's synchronization status relative to the network
-- `quorum`: summarizes the state of the SCP protocol participants, the same as the information returned by the `quorum` command ([see below](link)).
+- `quorum`: summarizes the state of the SCP protocol participants, the same as the information returned by the `quorum` command ([see below](#quorum-health)).
 
 ## Overlay information
 
@@ -199,8 +199,8 @@ In the example above, 6 nodes are functioning properly, one is down (`stronghold
 If a node is stuck in state `Joining SCP`, this command allows to quickly find the reason:
 
 - too many validators missing (down or without a good connectivity), solutions are:
-  - [adjust your quorum set](#crafting-a-quorum-set) based on the nodes that are not missing
-  - try to get a [better connectivity path](#quorum-and-overlay-network) to the missing validators
+  - [adjust your quorum set](./configuring.mdx#choosing-a-quorum-set) based on the nodes that are not missing
+  - try to get a [better connectivity path](./configuring.mdx#quorum-and-overlay-network) to the missing validators
 - network split would cause SCP to stick because of nodes that disagree. This would happen if either there is a bug in SCP, the network does not have quorum intersection, or the disagreeing nodes are misbehaving (compromised, etc).
 
 Note that the node not being able to reach consensus does not mean that the network as a whole will not be able to reach consensus (and the opposite is true: the network may fail because of a different set of validators failing).
@@ -311,7 +311,6 @@ Monitoring `stellar-core` using Prometheus is by far the simplest solution, espe
 
 In order for Prometheus to scrape `stellar-core` application metrics, you will need to install the stellar-core-prometheus-exporter (`apt-get install stellar-core-prometheus-exporter`) and configure your Prometheus server to scrape this exporter (default port: `9473`). On top of that grafana can be used to visualize metrics.
 
-[IMAGE](link)
 
 ### Install a Prometheus server within your infrastructure
 
@@ -388,7 +387,7 @@ Pointing your Prometheus instance to the exporter can be achieved by manually co
 
 ### Create Alerting Rules
 
-Once Prometheus scrapes metrics we can add alerting rules. Recommended rules are [**here**](stellar-core-alerting.rules) (require Prometheus 2.0 or later). Copy rules to _/etc/prometheus/stellar-core-alerting.rules_ on the Prometheus server and add the following to the prometheus configuration file to include the file:
+Once Prometheus scrapes metrics we can add alerting rules. Recommended rules are [**here**](https://github.com/stellar/packages/blob/master/docs/stellar-core-alerting.rules) (require Prometheus 2.0 or later). Copy rules to _/etc/prometheus/stellar-core-alerting.rules_ on the Prometheus server and add the following to the prometheus configuration file to include the file:
 
 <CodeExample>
 

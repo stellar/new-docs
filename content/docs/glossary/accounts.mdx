@@ -41,13 +41,13 @@ Number of entries the account owns. This number is used to calculate the account
 
 ### Thresholds
 
-Operations have varying levels of access. This field specifies thresholds for low-, medium-, and high-access levels, as well as the weight of the master key. For more info, see [multi-sig](link).
+Operations have varying levels of access. This field specifies thresholds for low-, medium-, and high-access levels, as well as the weight of the master key. For more info, see [multi-sig](./multisig.mdx).
 
 ### Home domain
 
-A [fully qualified domain name](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) such as `example.com` linked to the account. A home domain is required of asset issuers, who use it to [publish meta-information](link) for Stellar wallets and potential token holders, and for organizations running validators, who use it to [self-identify their nodes](link).
+A [fully qualified domain name](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) such as `example.com` linked to the account. A home domain is required of asset issuers, who use it to [publish meta-information](../issuing-assets/publishing-asset-info.mdx) for Stellar wallets and potential token holders, and for organizations running validators, who use it to [self-identify their nodes](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md).
 
-To add a home domain to an account, use the [Set Options](link) operation.
+To add a home domain to an account, use the [Set Options](../start/list-of-operations.mdx#set-options) operation.
 
 ### Flags
 
@@ -69,4 +69,4 @@ An account must always have a balance sufficiently above the minimum reserve to 
 
 ### Signers
 
-You can add signers to an account, and this field lists other public keys and their weights that can be used to authorize transactions. For more info, see [multisig](link).
+You can add signers to an account, and this field lists other public keys and their weights that can be used to authorize transactions. For more info, see [multisig](./multisig.mdx).

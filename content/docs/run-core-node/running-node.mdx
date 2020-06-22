@@ -7,7 +7,7 @@ import { CodeExample } from "components/CodeExample";
 
 ## Starting Stellar Core
 
-Once you've [set up your environment](link), [configured your node](link), set up your [quorum set](link), and selected archives to `get` [history from](link), you're ready to start Stellar Core.
+Once you've [set up your environment](./prerequisites.mdx), [configured your node](./configuring.mdx), set up your [quorum set](./configuring.mdx#choosing-your-quorum-set), and selected archives to `get` [history from](./configuring.mdx#history), you're ready to start Stellar Core.
 
 Use a command equivalent to:
 
@@ -23,9 +23,9 @@ When your node is running, you can interact with Stellar Core via an administrat
 
 `$ stellar-core http-command <http-command>`
 
-That HTTP endpoint is [not intended to be exposed to the public internet](#interaction-with-other-internal-systems). It's typically accessed by administrators, or by a mid-tier application to submit transactions to the Stellar network.
+That HTTP endpoint is not intended to be exposed to the public internet. It's typically accessed by administrators, or by a mid-tier application to submit transactions to the Stellar network.
 
-See [commands](./commands.md) for a description of the available commands.
+See [commands](./commands.mdx) for a description of the available commands.
 
 ## Joining the Network
 

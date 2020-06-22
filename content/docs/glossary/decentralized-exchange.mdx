@@ -37,7 +37,7 @@ For more information, take a look at [our guide on fees in Stellar](./fees.mdx).
 
 A passive offer is an offer that does not take a counteroffer of equal price. It will only fill if the prices are not equal. For example, if the best offer to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer _does not_ take that existing offer. If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC.
 
-An account can place a passive sell offer via the [Create Passive Sell Offer](./list-of-operations.md#create-passive-sell-offer) operation.
+An account can place a passive sell offer via the [Create Passive Sell Offer](../start/list-of-operations.mdx#create-passive-sell-offer) operation.
 
 ## Orderbook
 
@@ -50,8 +50,6 @@ An orderbook can be summarized by a diagram, as shown below. It is often visible
 The diagram is split into two stacks of orders. Each stack is the set of orders related to selling an asset _in a trading pair_ with the other asset. So at the top of the diagram there are the orders of people trying to sell sheep (or, equivalently, buy wheat). At the bottom there are the orders of people trying to sell wheat (or, equivalently, buy sheep).
 
 For mnemonic purposes we've arranged the diagram with the sheep "on top" of the wheat here. If it helps you can picture a bunch of sheep standing on a field of wheat or some bushels of wheat, an arrangement less likely to cause chaos than trying to stack bushels of wheat on top of sheep.
-
-![diagram of orderbook](assets/orderbook.png)
 
 Looking at the diagram, there are a few orientation things to notice and think about:
 
