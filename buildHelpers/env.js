@@ -20,6 +20,7 @@ const FEATURE_FLAGS = {
   [FEATURES.docs]: !IS_PRODUCTION,
 };
 
+exports.AMPLITUDE_KEY = process.env.AMPLITUDE_KEY;
 exports.IS_LOCAL = IS_LOCAL;
 exports.IS_PRODUCTION = IS_PRODUCTION;
 exports.IS_BETA = IS_BETA;
