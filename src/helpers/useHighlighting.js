@@ -3,8 +3,8 @@ import Prism from "prismjs";
 
 export const useHighlighting = (ref) => {
   React.useEffect(() => {
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       Prism.highlightAllUnder(ref.current);
-    });
+    }, 0);
   });
 };
