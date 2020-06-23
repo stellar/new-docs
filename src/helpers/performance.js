@@ -1,14 +1,16 @@
-export const hasHighPrecision = Boolean(window.performance);
+const performance = typeof window !== "undefined" ? window.performance : null;
+
+export const hasHighPrecision = Boolean(performance);
 
 // Safari doesn't expose the performance API, so make a wrapper API and expose a
 // lower precision form of it if not available.
 let clear = (perfMark) => {
-  window.performance.clearMarks(perfMark);
-  window.performance.clearMeasures(perfMark);
+  performance.clearMarks(perfMark);
+  performance.clearMeasures(perfMark);
 };
-let internalMark = window.performance?.mark.bind(window.performance);
+let internalMark = performance?.mark.bind(performance);
 let internalMeasure = (perfMark) => {
-  const { duration } = window.performance.measure(null, perfMark);
+  const { duration } = performance.measure(null, perfMark);
   clear(perfMark);
   return { time: duration, hasHighPrecision };
 };
