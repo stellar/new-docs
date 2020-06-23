@@ -216,7 +216,7 @@ export const NavItem = styled.div`
 export const SideNavContainer = styled.div`
   height: calc(100vh - 4.5rem);
   width: 100%;
-  max-width: 18rem;
+  /* max-width: 18rem; */
   margin: 0 auto;
   display: flex;
   flex-direction: column;

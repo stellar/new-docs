@@ -72,7 +72,12 @@ export const components = {
       }
     }
   `,
-  h4: TextComponents.H4,
+  h4: styled(TextComponents.H4)`
+    color: ${PALETTE.darkGrey};
+    font-weight: ${FONT_WEIGHT.medium};
+    font-size: 1.125rem;
+    line-height: 1.5;
+  `,
   h5: TextComponents.H5,
   h6: TextComponents.H6,
   blockquote: TextComponents.Quote,

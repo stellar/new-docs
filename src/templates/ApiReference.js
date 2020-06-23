@@ -382,7 +382,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                 />
               ))}
               <NestedRow>
-                <CustomColumn xs={9} xlColumn="2 / span 18">
+                <CustomColumn xs={9} xlColumn="2 / span 10">
                   <Footer />
                 </CustomColumn>
               </NestedRow>
