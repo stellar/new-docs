@@ -4,6 +4,10 @@ import styled from "styled-components";
 import Helmet from "react-helmet";
 
 import { FONTS } from "constants/fonts";
+import { PERFORMANCE_MARKS } from "constants/performanceMarks";
+
+import { emitMetric } from "helpers/metrics";
+import { mark, measure } from "helpers/performance";
 
 import { BasicLink } from "basics/Links";
 
@@ -37,31 +41,41 @@ export const LayoutBase = ({
   previewImage,
   children,
   viewport = "width=device-width, initial-scale=1",
-}) => (
-  <>
-    <Helmet
-      link={FONTS.filter((font) => font.preload).flatMap((font) => ({
-        rel: "preload",
-        href: font.src[0].url,
-        as: "font",
-      }))}
-      meta={[
-        {
-          name: "viewport",
-          content: viewport,
-        },
-      ]}
-    />
-    <Seo
-      title={title}
-      description={description}
-      previewImage={previewImage}
-      path={pageContext.urlPath}
-    />
-    <SkipToContentEl />
-    <ContentEl>{children}</ContentEl>
-  </>
-);
+}) => {
+  mark(PERFORMANCE_MARKS.layout);
+  React.useEffect(() => {
+    const timing = measure(PERFORMANCE_MARKS.layout);
+    emitMetric("page rendered", {
+      ...timing,
+      page: window.location.pathname,
+    });
+  });
+  return (
+    <>
+      <Helmet
+        link={FONTS.filter((font) => font.preload).flatMap((font) => ({
+          rel: "preload",
+          href: font.src[0].url,
+          as: "font",
+        }))}
+        meta={[
+          {
+            name: "viewport",
+            content: viewport,
+          },
+        ]}
+      />
+      <Seo
+        title={title}
+        description={description}
+        previewImage={previewImage}
+        path={pageContext.urlPath}
+      />
+      <SkipToContentEl />
+      <ContentEl>{children}</ContentEl>
+    </>
+  );
+};
 
 LayoutBase.propTypes = {
   children: PropTypes.node.isRequired,
