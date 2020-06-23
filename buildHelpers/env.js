@@ -28,6 +28,3 @@ exports.IS_BUILD = IS_BUILD;
 exports.SITE_URL = SITE_URL;
 exports.FEATURES = FEATURES;
 exports.FEATURE_FLAGS = FEATURE_FLAGS;
-
-// eslint-disable-next-line no-console
-console.log(JSON.stringify(exports, null, 2));
