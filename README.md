@@ -565,3 +565,15 @@ sequenceDiagram
       Note over A: Deposit
 ```
 ````
+
+### Performance metrics
+
+We have support for simple, anonymous metrics, emitted to Amplitude via
+`helpers/metrics.js`.
+
+We also have a simple performance tracking system, `helpers/performance.js`.
+`mark(string)` will begin measuring, and `measure(string)` will stop measuring
+and return timing information—an object with a `duration` and
+`hasHighPrecision`. Some browsers don't expose the high-precision APIs, and we
+definitely want to know if they're used (especially if not usable). Make sure to
+use a `constants/performanceMarks` constant, not just a raw string.
