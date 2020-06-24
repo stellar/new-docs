@@ -1,5 +1,4 @@
 import throttle from "lodash/throttle";
-import { AMPLITUDE_KEY } from "constants/env";
 
 const METRICS_ENDPOINT = "https://api.amplitude.com/2/httpapi";
 let cache = [];
@@ -7,7 +6,7 @@ let cache = [];
 const uploadMetrics = throttle(() => {
   const toUpload = cache;
   cache = [];
-  if (!AMPLITUDE_KEY) {
+  if (!process.env.AMPLITUDE_KEY) {
     // eslint-disable-next-line no-console
     console.log("No metrics API key present, not uploading events", toUpload);
     return;
@@ -18,7 +17,7 @@ const uploadMetrics = throttle(() => {
       "Content-Type": "application/json",
     },
     body: {
-      apiKey: AMPLITUDE_KEY,
+      apiKey: process.env.AMPLITUDE_KEY,
       events: toUpload,
     },
   });

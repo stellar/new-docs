@@ -5,7 +5,11 @@ const {
 } = require("./buildHelpers/serializeSitemap");
 
 // Determine what environment we're running in and what the URL is.
-const { IS_BUILD, SITE_URL } = require("./buildHelpers/env");
+const IS_BUILD = process.env.npm_lifecycle_event === "build";
+const IS_LOCAL = process.env.PWD !== "/app/src";
+const SITE_URL = IS_LOCAL
+  ? "http://localhost:8000"
+  : process.env.URL || "https://developers.stellar.org";
 
 // Gatsby config
 module.exports = {
