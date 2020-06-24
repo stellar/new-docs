@@ -8,7 +8,7 @@
     "test": "jest",
     "build": "gatsby build",
     "check-not-master": "[ \"$(git rev-parse --abbrev-ref HEAD)\" = \"master\" ] && echo \"\\033[31mDon't commit to master\" && exit 1 || exit 0",
-    "prod:build": "docker image build -t new-docs:localbuild .",
+    "prod:build": "cross-env TAG=new-docs:localbuild AMPLITUDE_KEY=$AMPLITUDE_KEY make docker-build",
     "prod:serve": "docker run -p 8000:80 new-docs:localbuild",
     "production": "yarn prod:build && yarn prod:serve"
   },
@@ -42,6 +42,7 @@
     "babel-preset-gatsby": "^0.4.2",
     "concurrently": "^4.1.0",
     "core-js": "2",
+    "cross-env": "^7.0.2",
     "dotenv": "^7.0.0",
     "eslint": "6.x",
     "eslint-config-prettier": "^6.9.0",

@@ -31,6 +31,7 @@ COPY content /app/src/content
 COPY plugins /app/src/plugins
 COPY src /app/src/src
 
+ARG AMPLITUDE_KEY
 RUN yarn build
 
 FROM nginx:1.17
