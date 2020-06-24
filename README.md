@@ -54,6 +54,9 @@ yarn prod:build
 yarn prod:serve
 ```
 
+To run a complete simulation of a production build, make sure to set an
+`AMPLITUDE_KEY` environment variable.
+
 # Structure
 
 - `/content` contains

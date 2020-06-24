@@ -1,7 +1,7 @@
 import React from "react";
 import * as Sentry from "@sentry/browser";
 
-import { IS_BUILD } from "constants/env";
+import { IS_PRODUCTION } from "constants/env";
 import { GlobalStyles } from "basics/GlobalStyles";
 import Providers from "components/Providers";
 
@@ -14,7 +14,7 @@ export const wrapRootElement = ({ element }) => (
 );
 
 export const onInitialClientRender = () => {
-  if (IS_BUILD) {
+  if (IS_PRODUCTION) {
     // Set up Sentry
     Sentry.init({
       dsn: "https://efc31f19f9c54082b8d993bfb62eee57@sentry.io/1531056",

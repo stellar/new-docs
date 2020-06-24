@@ -20,24 +20,18 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 
 WORKDIR /app/src
 
-ADD package.json /app/src
-ADD yarn.lock /app/src
+ADD package.json yarn.lock /app/src/
 
 RUN yarn
 
 # Enumerate specific files for better docker build caching
-COPY .eslintrc.js /app/src
-COPY .babelrc /app/src
-COPY gatsby-browser.js /app/src
-COPY gatsby-config.js /app/src
-COPY gatsby-node.js /app/src
-COPY gatsby-ssr.js /app/src
-COPY jsconfig.json /app/src
+COPY .eslintrc.js .babelrc gatsby-browser.js gatsby-config.js gatsby-node.js gatsby-ssr.js jsconfig.json /app/src/
 COPY buildHelpers /app/src/buildHelpers
 COPY content /app/src/content
 COPY plugins /app/src/plugins
 COPY src /app/src/src
 
+ARG AMPLITUDE_KEY
 RUN yarn build
 
 FROM nginx:1.17

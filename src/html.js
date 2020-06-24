@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { PORTAL_TARGETS } from "constants/domNodes";
-import { IS_BUILD } from "constants/env";
+import { IS_PRODUCTION } from "constants/env";
 
 export default function HTML(props) {
   return (
@@ -9,7 +9,7 @@ export default function HTML(props) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-        {IS_BUILD && (
+        {IS_PRODUCTION && (
           <script async src="https://www.google-analytics.com/analytics.js" />
         )}
         {props.headComponents}

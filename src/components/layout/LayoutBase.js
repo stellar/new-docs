@@ -42,9 +42,9 @@ export const LayoutBase = ({
   children,
   viewport = "width=device-width, initial-scale=1",
 }) => {
-  mark(PERFORMANCE_MARKS.layout);
+  mark(PERFORMANCE_MARKS.renderLayout);
   React.useEffect(() => {
-    const timing = measure(PERFORMANCE_MARKS.layout);
+    const timing = measure(PERFORMANCE_MARKS.renderLayout);
     emitMetric("page rendered", {
       ...timing,
       page: window.location.pathname,
