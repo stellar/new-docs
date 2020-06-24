@@ -16,16 +16,16 @@ const uploadMetrics = throttle(() => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: {
-      apiKey: process.env.AMPLITUDE_KEY,
+    body: JSON.stringify({
+      api_key: process.env.AMPLITUDE_KEY,
       events: toUpload,
-    },
+    }),
   });
 }, 500);
 
 export const emitMetric = (name, body) => {
   cache.push({
-    event_name: name,
+    event_type: name,
     event_properties: body,
     // user_id is required
     user_id: "00000",
