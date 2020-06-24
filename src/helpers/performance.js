@@ -6,11 +6,18 @@ export const hasHighPrecision = Boolean(performance);
 // lower precision form of it if not available.
 let clear = (perfMark) => {
   performance.clearMarks(perfMark);
-  performance.clearMeasures(perfMark);
+  performance.clearMarks(`${perfMark} end`);
+  performance.clearMeasures(`${perfMark} measure`);
 };
 let internalMark = performance?.mark.bind(performance);
 let internalMeasure = (perfMark) => {
-  const { duration } = performance.measure(null, perfMark);
+  const endMark = `${perfMark} end`;
+  const measureName = `${perfMark} measure`;
+  performance.mark(endMark);
+  performance.measure(measureName, perfMark, endMark);
+  const results = performance.getEntriesByName(measureName);
+  // Get the duration off the last (most recent measurement)
+  const { duration } = results[results.length - 1];
   clear(perfMark);
   return { time: duration, hasHighPrecision };
 };
