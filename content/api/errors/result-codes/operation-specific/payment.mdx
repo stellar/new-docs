@@ -17,36 +17,33 @@ Learn more about the [`Payment` operation](../../../../docs/glossary/operations/
   - DESCRIPTION
 - OpSuccess
   - PAYMENT_SUCCESS
-  - The account was created.
+  - The payment was successfully completed.
 - OpMalformed
   - PAYMENT_MALFORMED
-  - The destination was invalid.
+  - The input to the payment is invalid.
 - OpUnderfunded
   - PAYMENT_UNDERFUNDED
-  - There were not enough funds in the source account.
-- OpLowReserve
-  - PAYMENT_LOW_RESERVE
-  - The source account did not have the necessary trustline.
+  - The source account (sender) does not have enough lumens to send the payment amount while maintaining its own minimum reserve.
+- OpSrcNoTrust
+  - PAYMENT_SRC_NO_TRUST
+  - The source account does not have a trustline for the asset it is tring to send.
+- OpSrcNotAuthorized
+  - PAYMENT_SRC_NOT_AUTHORIZED
+  - The source account is not authorized to send this asset.
+- OpNoDestination
+  - PAYMENT_NO_DESTINATION
+  - The destination account does not exist.
+- OpNoTrust
+  - PAYMENT_NO_TRUST
+  - The destination account does not have a trustline for the asset being sent.
+- OpNotAuthorized
+  - PAYMENT_NOT_AUTHORIZED
+  - The destination account is not authorized to hold this asset.
+- OpLineFull
+  - PAYMENT_LINE_FULL
+  - The destination account (receiver) does not have sufficient limits to receive amount and still satisfy its buying liabilities.
+- OpNoIssuer
+  - PAYMENT_NO_ISSUER
+  - The issuer of the asset does not exist.
 
 </AttributeTable>
-
-<ExampleResponse title="Example Response for an “op_underfunded” Result Code">
-
-```json
-{
-  "type": "https://stellar.org/horizon-errors/transaction_failed",
-  "title": "Transaction Failed",
-  "status": 400,
-  "detail": "The transaction failed when submitted to the stellar network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://www.stellar.org/developers/learn/concepts/list-of-operations.html",
-  "extras": {
-    "envelope_xdr": "AAAAANPRjCD1iCti3hovsrrz6aSAjmp263grVr6+mI3SQSkcAAAAZAAPRLgAAAACAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAArki/TnIipBc7Y+Hd87mnZdtBxzm7vu6iXpwcRz6zGskAAAB0alKIAAAAAAAAAAAB0kEpHAAAAECoD+aG3RAfxFEW2b5VcARoxVc+ovimyQOQzQbLc7Y613j/x2H92aGwQzfPWjZyWBqQpoEjooAKmyAFANP74UAC",
-    "result_codes": {
-      "transaction": "tx_failed",
-      "operations": ["op_underfunded"]
-    },
-    "result_xdr": "AAAAAAAAAGT/////AAAAAQAAAAAAAAAA/////gAAAAA="
-  }
-}
-```
-
-</ExampleResponse>

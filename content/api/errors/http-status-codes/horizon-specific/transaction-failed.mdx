@@ -1,0 +1,32 @@
+---
+title: Transaction Failed
+order: 10
+---
+
+import { ExampleResponse } from "components/ExampleResponse";
+import { AttributeTable } from "components/AttributeTable";
+
+The `transaction_failed` error returns a [`400` error code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400) and occurs when a client submits a transaction that was well-formed but was not included in the ledger due to some other failure. 
+
+For example, a transaction may fail if:
+1. The source account for transaction cannot pay the minimum fee.
+2. The sequence number is incorrect.
+3. Tne of the contained operations has failed such as a payment operation that overdraws on the paying account. 
+
+In almost every case, this error indicates that the transaction submitted in the initial request will never succeed. There is one exception: a transaction that fails with the `tx_bad_seq` result code (as expressed in the `result_code` field of the error) may become valid in the future if the sequence number it used was too high.
+
+<ExampleResponse title="Example Response for a 'Transaction Failed' Status Code">
+
+```json
+{
+  "type": "https://stellar.org/horizon-errors/transaction_malformed",
+  "title": "Transaction Malformed",
+  "status": 400,
+  "detail": "Horizon could not decode the transaction envelope in this request. A transaction should be an XDR TransactionEnvelope struct encoded using base64.  The envelope read from this request is echoed in the `extras.envelope_xdr` field of this response for your convenience.",
+  "extras": {
+    "envelope_xdr": "BBBBBPORy3CoX6ox2ilbeiVjBA5WlpCSZRcjZ7VE9Wf4QVk7AAAAZAAAQz0AAAACAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAA85HLcKhfqjHaKVt6JWMEDlaWkJJlFyNntUT1Z/hBWTsAAAAAAAAAAAL68IAAAAAAAAAAARN17BEAAABAA9Ad7OKc7y60NT/JuobaHOfmuq8KbZqcV6G/es94u9yT84fi0aI7tJsFMOyy8cZ4meY3Nn908OU+KfRWV40UCw=="
+  }
+}
+```
+
+</ExampleResponse>

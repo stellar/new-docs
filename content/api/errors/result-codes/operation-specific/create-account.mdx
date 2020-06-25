@@ -17,36 +17,18 @@ Learn more about the [`Create Account` operation](../../../../docs/glossary/oper
   - DESCRIPTION
 - OpSuccess
   - CREATE_ACCOUNT_SUCCESS
-  - The inner object result is valid and the operation was a success.
+  - The inner object result is valid, the operation was a success, and an acount was created.
 - OpMalformed
   - CREATE_ACCOUNT_MALFORMED
-  - There are too few valid signatures, or the transaction was submitted to the wrong network.
+  - The destination was invalid.
 - OpUnderfunded
   - CREATE_ACCOUNT_UNDERFUNDED
-  - The source account was not found.
+  - The source account performing the command does not have enough funds to give the destination account the necessary mininum reserve and still maintain its own minimum reserve.
 - OpLowReserve
   - CREATE_ACCOUNT_LOW_RESERVE
-  - The operation is not supported at this time.
+  - The operation would create an account below the minimum reserve.
+- OpAlreadyExists
+  - CREATE_ACCOUNT_ALREADY_EXIST
+  - The destination account already exists.
 
 </AttributeTable>
-
-<ExampleResponse title="Example Response for an “op_low_reserve” Result Code">
-
-```json
-{
-  "type": "https://stellar.org/horizon-errors/transaction_failed",
-  "title": "Transaction Failed",
-  "status": 400,
-  "detail": "The transaction failed when submitted to the stellar network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://www.stellar.org/developers/learn/concepts/list-of-operations.html",
-  "extras": {
-    "envelope_xdr": "AAAAANPRjCD1iCti3hovsrrz6aSAjmp263grVr6+mI3SQSkcAAAAyAAPRLgAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAArki/TnIipBc7Y+Hd87mnZdtBxzm7vu6iXpwcRz6zGskAAAAAATEtAAAAAAAAAAAAAAAAAIGSJ37hgqXXrIqnus4A7142mjj3+9Vlg3alUICjxuBUAAAAAAAAdTAAAAAAAAAAAdJBKRwAAABAou657z1OKvjF8d2QSKKGJEQZUeHvqK+Vdciz478h5KAr/M7fUxxafUqZFkBgx8WcxrsiMZ03ygloZi3NaQm3Cg==",
-    "result_codes": {
-      "transaction": "tx_failed",
-      "operations": ["op_success", "op_low_reserve"]
-    },
-    "result_xdr": "AAAAAAAAAMj/////AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAA/////QAAAAA="
-  }
-}
-```
-
-</ExampleResponse>
