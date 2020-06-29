@@ -49,7 +49,7 @@ import DevelopersPreview from "assets/images/og_developers.jpg";
 import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 
 const contentId = "content";
-const { h1: H1, h2: H2, td: TD } = components;
+const { h1: H1, h2: H2, h3: H3, h4: H4, td: TD } = components;
 
 const RightNavEl = styled.div`
   font-size: 0.875rem;
@@ -168,8 +168,19 @@ const componentMapping = {
     has a <Code/> to highlight "/info" */
     const id = slugify(loopAndExtractString(children));
 
-    // eslint-disable-next-line react/prop-types
     return <H2 id={id}>{children}</H2>;
+  },
+  // eslint-disable-next-line react/prop-types
+  h3: ({ children }) => {
+    const id = slugify(loopAndExtractString(children));
+
+    return <H3 id={id}>{children}</H3>;
+  },
+  // eslint-disable-next-line react/prop-types
+  h4: ({ children }) => {
+    const id = slugify(loopAndExtractString(children));
+
+    return <H4 id={id}>{children}</H4>;
   },
   // eslint-disable-next-line react/prop-types
   td: ({ children }) => {

@@ -62,7 +62,7 @@ export const components = {
       }
     }
   `,
-  h3: styled(TextComponents.H3)`
+  h3: styled(TextComponents.LinkedH3)`
     a {
       color: ${({ theme }) => theme.text};
       @media (${MEDIA_QUERIES.canHover}) {
@@ -72,11 +72,20 @@ export const components = {
       }
     }
   `,
-  h4: styled(TextComponents.H4)`
+  h4: styled(TextComponents.LinkedH4)`
     color: ${PALETTE.darkGrey};
     font-weight: ${FONT_WEIGHT.medium};
     font-size: 1.125rem;
     line-height: 1.5;
+
+    a {
+      color: ${({ theme }) => theme.text};
+      @media (${MEDIA_QUERIES.canHover}) {
+        &:hover {
+          color: ${({ theme }) => theme.darkGrey};
+        }
+      }
+    }
   `,
   h5: TextComponents.H5,
   h6: TextComponents.H6,

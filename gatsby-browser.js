@@ -40,9 +40,32 @@ export const onInitialClientRender = () => {
 const isApiReference = (routerProps) =>
   /\/api/.test(routerProps.location.pathname);
 
+const getTargetOffset = (hash) => {
+  const offsetY = 0;
+  const id = window.decodeURI(hash.replace("#", ""));
+
+  if (id) {
+    const element = document.getElementById(id);
+
+    if (element) {
+      return element.offsetTop - offsetY;
+    }
+  }
+  return null;
+};
+
 export const shouldUpdateScroll = ({ routerProps }) => {
   if (isApiReference(routerProps)) {
     return routerProps.location.pathname;
   }
+
+  const offset = getTargetOffset(location.hash);
+
+  if (offset) {
+    window.scrollTo(0, offset);
+
+    return false;
+  }
+
   return true;
 };

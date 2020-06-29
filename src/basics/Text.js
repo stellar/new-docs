@@ -79,6 +79,8 @@ export const H6 = styled.h6`
 `;
 
 export const LinkedH2 = makeLinkedHeader(H2);
+export const LinkedH3 = makeLinkedHeader(H3);
+export const LinkedH4 = makeLinkedHeader(H4);
 
 export const Quote = styled.blockquote`
   margin: 1rem 0;
