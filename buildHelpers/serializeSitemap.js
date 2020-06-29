@@ -34,7 +34,11 @@ const checkIsBlogPostRegex = /blog\/.+/;
 const serializeLocale = (locale) => {
   return ({ site, allSitePage }) => {
     const { edges } = allSitePage;
-    const pages = edges.map(({ node }) => getPathInfo(node));
+    const pages = edges
+      .map(({ node }) => getPathInfo(node))
+      // Technically "/api" doesn't have any content, it's just a filler page for
+      // other content to live on. Strip it from the sitemap.
+      .filter(({ originalPath }) => originalPath !== "/api/");
     const byPath = groupBy(pages, "path");
     const pagesWithAlternates = Object.values(byPath).reduce(
       (accum, pageVersions) => {
