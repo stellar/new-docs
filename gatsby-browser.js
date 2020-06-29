@@ -23,8 +23,14 @@ export const onInitialClientRender = () => {
     // Set up Google Analytics
     /* eslint-disable */
     if (typeof ga === "function") {
-      ga("create", "UA-53373928-1", "auto", {});
+      ga("create", "UA-53373928-1", "auto");
       ga("set", "anonymizeIp", true);
+
+      // We want developers.stellar.org and www.stellar.org to use the same
+      // session
+      ga("require", "linker");
+      ga("linker:autolink", ["www.stellar.org", "stellar.org"]);
+
       ga("send", "pageview");
     }
     /* eslint-enable */
