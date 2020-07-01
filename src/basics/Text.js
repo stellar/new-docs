@@ -167,6 +167,7 @@ export const ListItem = styled.li`
 export const Small = styled.small`
   font-size: 75%;
 `;
+export const Section = styled.section``;
 export const Table = styled.table`
   display: block;
   word-break: normal;

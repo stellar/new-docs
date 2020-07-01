@@ -6,7 +6,10 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
 import { FONT_WEIGHT, THEME, PALETTE } from "constants/styles";
-import { components } from "constants/docsComponentMapping";
+import {
+  components,
+  documentationComponents,
+} from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
 import { slugify } from "helpers/slugify";
@@ -16,26 +19,20 @@ import {
   findInitialOpenTopics,
   findArticle,
   buildDocsContents,
-  consolidateToSection,
 } from "helpers/documentation";
 import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
-import { loopAndExtractString } from "helpers/extractStringChildren";
 
 import { BetaNotice } from "components/BetaNotice";
 import { BasicButton } from "basics/Buttons";
-import { EditIcon, CheckmarkIcon } from "basics/Icons";
+import { EditIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
 import { OriginalFileContext, BasicLink } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 import { Text } from "basics/Text";
 
 import { LayoutBase } from "components/layout/LayoutBase";
-import {
-  SideNavBody,
-  Provider as SideNavProvider,
-  TrackedContent,
-} from "components/SideNav";
+import { SideNavBody, Provider as SideNavProvider } from "components/SideNav";
 
 import { SideNavProgressContext } from "components/SideNav/Provider";
 
@@ -49,7 +46,7 @@ import DevelopersPreview from "assets/images/og_developers.jpg";
 import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 
 const contentId = "content";
-const { h1: H1, h2: H2, h3: H3, h4: H4, td: TD } = components;
+const { h1: H1 } = components;
 
 const RightNavEl = styled.div`
   font-size: 0.875rem;
@@ -110,8 +107,6 @@ const ModifiedEl = styled.div`
   }
 `;
 
-const SectionEl = styled.section``;
-
 const PageOutlineItem = ({ id, isActive, title }) => {
   const { setActiveNode, setIsNavClicked } = React.useContext(
     SideNavProgressContext,
@@ -132,67 +127,6 @@ const PageOutlineItem = ({ id, isActive, title }) => {
       {title}
     </NavItemEl>
   );
-};
-
-const componentMapping = {
-  ...components,
-  // eslint-disable-next-line react/prop-types
-  wrapper: ({ children }) => {
-    const DocSections = React.Children.toArray(children).reduce(
-      consolidateToSection(),
-      [],
-    );
-
-    return DocSections.map((docSection, index) => (
-      // eslint-disable-next-line react/no-array-index-key
-      <SectionEl key={index}>
-        {docSection.length > 0 ? (
-          <TrackedContent
-            identifier={slugify(
-              loopAndExtractString(docSection[0].props.children),
-            )}
-          >
-            {docSection}
-          </TrackedContent>
-        ) : (
-          docSection
-        )}
-      </SectionEl>
-    ));
-  },
-  // eslint-disable-next-line react/prop-types
-  h2: ({ children }) => {
-    /* For cases when <H2/> has an element besides strings.
-    For example, "Implementing the /info Endpoint" from
-    '/docs/enabling-deposit-and-withdrawal/setting-up-test-server/
-    has a <Code/> to highlight "/info" */
-    const id = slugify(loopAndExtractString(children));
-
-    return <H2 id={id}>{children}</H2>;
-  },
-  // eslint-disable-next-line react/prop-types
-  h3: ({ children }) => {
-    const id = slugify(loopAndExtractString(children));
-
-    return <H3 id={id}>{children}</H3>;
-  },
-  // eslint-disable-next-line react/prop-types
-  h4: ({ children }) => {
-    const id = slugify(loopAndExtractString(children));
-
-    return <H4 id={id}>{children}</H4>;
-  },
-  // eslint-disable-next-line react/prop-types
-  td: ({ children }) => {
-    if (children === ":heavy_check_mark:") {
-      return (
-        <TD>
-          <CheckmarkIcon />
-        </TD>
-      );
-    }
-    return <TD>{children}</TD>;
-  },
 };
 
 const Documentation = ({ data, pageContext, location }) => {
@@ -276,7 +210,7 @@ const Documentation = ({ data, pageContext, location }) => {
   );
 
   return (
-    <MDXProvider components={componentMapping}>
+    <MDXProvider components={documentationComponents}>
       <LayoutBase
         title={
           normalizeRoute(location.pathname) === "/docs/"
