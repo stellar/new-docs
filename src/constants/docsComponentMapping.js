@@ -4,11 +4,15 @@ import styled from "styled-components";
 
 import { FONT_WEIGHT, MEDIA_QUERIES, PALETTE } from "constants/styles";
 
+import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+
+import { CheckmarkIcon } from "basics/Icons";
 import { BasicImage } from "basics/Images";
-import { Link } from "basics/Links";
+import { Link, BasicLink } from "basics/Links";
 import { Mermaid } from "basics/Mermaid";
 import * as TextComponents from "basics/Text";
 
+import { WrapperApiReference } from "components/WrapperApiReference";
 import { WrapperDocumentation } from "components/WrapperDocumentation";
 
 const ListItem = (props) => {
@@ -171,3 +175,28 @@ const GreenTableCell = styled.td`
 const OrangeTableCell = styled.td`
   color: ${PALETTE.lightOrage};
 `;
+
+export const apiReferenceComponents = {
+  ...components,
+  wrapper: WrapperApiReference,
+  h1: styled(components.h1).attrs(() => ({
+    as: makeLinkedHeader(ApiRefH1, headerOptions),
+  }))``,
+  h2: styled(components.h2).attrs(() => ({
+    as: makeLinkedHeader(ApiRefH2, headerOptions),
+  }))``,
+  h3: TextComponents.H3,
+  h4: TextComponents.H4,
+  h5: TextComponents.H5,
+  h6: TextComponents.H6,
+  // eslint-disable-next-line react/prop-types
+  td: ({ children }) => {
+    if (children === "GET") {
+      return <GreenTableCell>{children}</GreenTableCell>;
+    }
+    if (children === "POST") {
+      return <OrangeTableCell>{children}</OrangeTableCell>;
+    }
+    return <td>{children}</td>;
+  },
+};

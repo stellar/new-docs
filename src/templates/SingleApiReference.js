@@ -5,23 +5,16 @@ import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
-import {
-  CSS_TRANSITION_SPEED,
-  FONT_WEIGHT,
-  PALETTE,
-  DEFAULT_COLUMN_WIDTH,
-} from "constants/styles";
-import { components } from "constants/docsComponentMapping";
+import { FONT_WEIGHT, DEFAULT_COLUMN_WIDTH } from "constants/styles";
+import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
-import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
-import { BasicButton } from "basics/Buttons";
-import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
+import { H1, H5, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ChevronIcon } from "basics/Icons";
 import { OriginalFileContext, BasicLink } from "basics/Links";
@@ -33,7 +26,6 @@ import { Expansion } from "components/Expansion";
 import { SideNavProgressContext, SideNavBody } from "components/SideNav";
 import {
   ApiReferenceRow,
-  ApiReferenceWrapper,
   SideNavColumn,
   NestedRow,
   CustomColumn,
@@ -48,12 +40,6 @@ import {
 import DevelopersPreview from "assets/images/og_developers.jpg";
 import { BetaNotice } from "components/BetaNotice";
 
-const GreenTableCell = styled.td`
-  color: ${PALETTE.lightGreen};
-`;
-const OrangeTableCell = styled.td`
-  color: ${PALETTE.lightOrage};
-`;
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
   max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
@@ -112,29 +98,6 @@ const renderItem = ({ depth, id, isActive, title }) => (
 const headerOptions = {
   treatIdAsHref: true,
   LinkComponent: BasicLink,
-};
-const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
-const ApiRefLinkedH2 = makeLinkedHeader(H2, headerOptions);
-
-const componentMap = {
-  ...components,
-  wrapper: ApiReferenceWrapper,
-  h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
-  h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
-  h3: H3,
-  h4: H4,
-  h5: H5,
-  h6: H6,
-  // eslint-disable-next-line react/prop-types
-  td: ({ children }) => {
-    if (children === "GET") {
-      return <GreenTableCell>{children}</GreenTableCell>;
-    }
-    if (children === "POST") {
-      return <OrangeTableCell>{children}</OrangeTableCell>;
-    }
-    return <td>{children}</td>;
-  },
 };
 
 // eslint-disable-next-line react/no-multi-comp

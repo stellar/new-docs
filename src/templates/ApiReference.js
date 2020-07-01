@@ -13,12 +13,11 @@ import {
   PALETTE,
   MEDIA_QUERIES,
 } from "constants/styles";
-import { components } from "constants/docsComponentMapping";
+import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
-import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
 import { useMatchMedia } from "helpers/useMatchMedia";
@@ -47,7 +46,6 @@ import {
 import { Route } from "components/ApiRefRouting/Route";
 import {
   ApiReferenceRow,
-  ApiReferenceWrapper,
   NestedRow,
   SideNavColumn,
   CustomColumn,
@@ -56,15 +54,6 @@ import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
-const NAV_BAR_HEIGHT = 89;
-const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
-
-const GreenTableCell = styled.td`
-  color: ${PALETTE.lightGreen};
-`;
-const OrangeTableCell = styled.td`
-  color: ${PALETTE.lightOrage};
-`;
 const SectionEl = styled.section`
   &:first-child {
     margin-top: 5rem;
@@ -88,17 +77,6 @@ const activeStyles = `
   color: ${PALETTE.purpleBlue};
   font-weight: ${FONT_WEIGHT.bold};
 `;
-
-const ApiRefH1 = styled(H1)`
-  padding-top: 0.25rem;
-  margin-top: 0;
-  margin-bottom: 0;
-`;
-const ApiRefH2 = styled(H2)`
-  padding-top: 0.25rem;
-  margin-top: 0;
-  margin-bottom: 0;
-`;
 const NavItemEl = styled.div`
   display: block;
   text-align: left;
@@ -117,8 +95,6 @@ const NavItemEl = styled.div`
         `
       : ""}
 `;
-
-const StyledLink = components.a;
 
 const NavLinkEl = styled(Link)`
   color: inherit;
@@ -226,34 +202,7 @@ const renderItem = ({
   );
 };
 
-const headerOptions = {
-  treatIdAsHref: true,
-  LinkComponent: BasicLink,
-};
-
-const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
-const ApiRefLinkedH2 = makeLinkedHeader(ApiRefH2, headerOptions);
-
-const componentMap = {
-  ...components,
-  wrapper: ApiReferenceWrapper,
-  h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
-  h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
-  h3: H3,
-  h4: H4,
-  h5: H5,
-  h6: H6,
-  // eslint-disable-next-line react/prop-types
-  td: ({ children }) => {
-    if (children === "GET") {
-      return <GreenTableCell>{children}</GreenTableCell>;
-    }
-    if (children === "POST") {
-      return <OrangeTableCell>{children}</OrangeTableCell>;
-    }
-    return <td>{children}</td>;
-  },
-};
+const { h1: H1, h2: H2, a: StyledLink } = apiReferenceComponents;
 
 const ReferenceSection = React.memo(
   ({ body, relativePath, title, githubLink }) => {
@@ -266,9 +215,9 @@ const ReferenceSection = React.memo(
       splitRelativePath[splitRelativePath.length - 1] !== "index.mdx";
 
     const SectionHeader = isNestedSection ? (
-      <ApiRefH2 id={path}>{title}</ApiRefH2>
+      <H2 id={path}>{title}</H2>
     ) : (
-      <ApiRefH1 id={path}>{title}</ApiRefH1>
+      <H1 id={path}>{title}</H1>
     );
 
     return (
@@ -325,7 +274,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           {`<meta http-equiv="refresh" content="0;url=?javascript=false" />`}
         </noscript>
       </Helmet>
-      <MDXProvider components={componentMap}>
+      <MDXProvider components={apiReferenceComponents}>
         <LayoutBase
           previewImage={DevelopersPreview}
           title="Stellar API Reference"
