@@ -1,18 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 
-import {
-  CSS_TRANSITION_SPEED,
-  FONT_WEIGHT,
-  DEFAULT_COLUMN_WIDTH,
-  PALETTE,
-  MEDIA_QUERIES,
-} from "constants/styles";
+import { FONT_WEIGHT, DEFAULT_COLUMN_WIDTH, PALETTE } from "constants/styles";
 import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
@@ -20,12 +14,11 @@ import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
-import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { Column } from "basics/Grid";
-import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
+import { H5, HorizontalRule } from "basics/Text";
 import { ChevronIcon, EditIcon } from "basics/Icons";
-import { Link, BasicLink } from "basics/Links";
+import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
 import { BetaNotice } from "components/BetaNotice";
@@ -39,10 +32,7 @@ import {
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
 import { SideNavBody, TrackedContent } from "components/SideNav";
-import {
-  ScrollRouter,
-  Context as ScrollRouterContext,
-} from "components/ApiRefRouting/ScrollRouter";
+import { ScrollRouter } from "components/ApiRefRouting/ScrollRouter";
 import { Route } from "components/ApiRefRouting/Route";
 import {
   ApiReferenceRow,
@@ -53,6 +43,7 @@ import {
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
+import { NavItem } from "components/ApiReference/NavItem";
 
 const SectionEl = styled.section`
   &:first-child {
@@ -73,28 +64,6 @@ const NavTitleEl = styled(H5)`
   font-weight: ${FONT_WEIGHT.bold};
   text-transform: uppercase;
 `;
-const activeStyles = `
-  color: ${PALETTE.purpleBlue};
-  font-weight: ${FONT_WEIGHT.bold};
-`;
-const NavItemEl = styled.div`
-  display: block;
-  text-align: left;
-  white-space: nowrap;
-  font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
-  color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
-  padding: 0.25rem 0;
-  padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
-  transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${FONT_WEIGHT.normal};
-
-  ${(props) =>
-    props.isActive
-      ? css`
-          ${activeStyles}
-        `
-      : ""}
-`;
 
 const NavLinkEl = styled(Link)`
   color: inherit;
@@ -105,79 +74,6 @@ const NavLinkEl = styled(Link)`
     color: ${PALETTE.lightGrey};
   }
 `;
-
-const isInViewport = (elem) => {
-  const bounding = elem.getBoundingClientRect();
-  return (
-    bounding.top >= 0 &&
-    bounding.left >= 0 &&
-    bounding.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    bounding.right <=
-      (window.innerWidth || document.documentElement.clientWidth)
-  );
-};
-
-// eslint-disable-next-line react/prop-types
-const NavItem = ({ isActive, forwardedRef, children, depth }) => {
-  const itemRef = React.useRef();
-  const parentDom = forwardedRef;
-  const { isScrollingDown, setIsNavClicked } = React.useContext(
-    ScrollRouterContext,
-  );
-  const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
-
-  React.useLayoutEffect(() => {
-    if (isActive && parentDom && !isMobile) {
-      const activeItemSize = itemRef.current.getBoundingClientRect();
-
-      /* If the active navigation is not in view
-      For cases when a user scrolled the nav to the point
-      the active nav is out of viewport */
-      if (!isInViewport(itemRef.current)) {
-        itemRef.current.scrollIntoView();
-      }
-
-      /* If scroll direction is down and its active item's top value
-       is bigger than FIXED_NAV_DISTANCE (229px), subtract that amount
-       from scrollTop to keep the consistent top value
-       Its top value gets inconsistent when it hits the separate dropdown category
-      */
-      if (isScrollingDown.current && activeItemSize.top > FIXED_NAV_DISTANCE) {
-        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
-          /* Reset the distance between the active nav and its offset top */
-          parentDom.current.scrollTop +=
-            activeItemSize.top - FIXED_NAV_DISTANCE;
-        } else {
-          parentDom.current.scrollTop += activeItemSize.height;
-        }
-      } else if (
-        !isScrollingDown.current &&
-        activeItemSize.top < FIXED_NAV_DISTANCE
-      ) {
-        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
-          parentDom.current.scrollTop -=
-            activeItemSize.top - FIXED_NAV_DISTANCE;
-        } else {
-          parentDom.current.scrollTop -= activeItemSize.height;
-        }
-      }
-    }
-  }, [isActive, parentDom, isScrollingDown, isMobile]);
-
-  return (
-    <NavItemEl
-      isActive={isActive}
-      depth={depth}
-      ref={itemRef}
-      onClick={() => {
-        setIsNavClicked(true);
-      }}
-    >
-      {children}
-    </NavItemEl>
-  );
-};
 
 // This is a function, not a component
 const renderItem = ({

@@ -17,7 +17,7 @@ import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 import { H1, H5, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ChevronIcon } from "basics/Icons";
-import { OriginalFileContext, BasicLink } from "basics/Links";
+import { OriginalFileContext, Link } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -36,9 +36,10 @@ import {
   SideNavBackground,
   NavLogo,
 } from "components/Navigation/SharedStyles";
+import { BetaNotice } from "components/BetaNotice";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { BetaNotice } from "components/BetaNotice";
+import { NavItem } from "components/ApiReference/NavItem";
 
 const ExpansionContainerEl = styled.div`
   margin-top: 1rem;
@@ -58,47 +59,35 @@ const NavTitleEl = styled(H5)`
   font-weight: ${FONT_WEIGHT.bold};
   text-transform: uppercase;
 `;
-const NavItemEl = styled(BasicButton)`
-  text-align: left;
-  white-space: nowrap;
-  font-size: 1rem;
-  color: #333;
-  padding: 0.375rem 0;
-  padding-left: ${(props) => props.depth}rem;
-  line-height: 1.25;
-  transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${({ isActive }) =>
-    isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
-
-  &:hover {
-    color: ${PALETTE.lightGrey};
-  }
-`;
-const NavLinkEl = styled(BasicLink)`
+const NavLinkEl = styled(Link)`
   color: inherit;
   font-weight: unset;
+  display: block;
 `;
-const SingleApiSideNavContainer = styled(SideNavContainer)`
+const SingleApiSideNavContainerEl = styled(SideNavContainer)`
   overflow: scroll;
   height: calc(100vh - 8.75rem);
 `;
-const FixedNavFooterEl = styled(AbsoluteNavFooterEl)`
-  position: fixed;
-  bottom: 0;
-`;
 
 // This is a function, not a component
-// eslint-disable-next-line react/prop-types
-const renderItem = ({ depth, id, isActive, title }) => (
-  <NavItemEl depth={depth} isActive={isActive}>
-    <NavLinkEl href={normalizeRoute(`/no-js/${id}`)}>{title}</NavLinkEl>
-  </NavItemEl>
+/* eslint-disable react/prop-types */
+const renderItem = ({
+  depth,
+  id,
+  isActive,
+  title,
+  forwardedRef,
+  isFirstItem,
+  /* eslint-disable react/prop-types */
+}) => (
+  <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
+    <NavLinkEl href={normalizeRoute(`/no-js/${id}`)}>
+      {isFirstItem ? "Overview" : title}
+    </NavLinkEl>
+  </NavItem>
 );
 
-const headerOptions = {
-  treatIdAsHref: true,
-  LinkComponent: BasicLink,
-};
+const { a: StyledLink } = apiReferenceComponents;
 
 // eslint-disable-next-line react/no-multi-comp
 const SingleApiReference = React.memo(function ApiReference({
@@ -118,7 +107,7 @@ const SingleApiReference = React.memo(function ApiReference({
   );
 
   return (
-    <MDXProvider components={componentMap}>
+    <MDXProvider components={apiReferenceComponents}>
       <LayoutBase
         previewImage={DevelopersPreview}
         description={description}
@@ -131,7 +120,7 @@ const SingleApiReference = React.memo(function ApiReference({
             <SideNavProgressContext.Provider
               value={{ activeContent: { id: path } }}
             >
-              <SingleApiSideNavContainer>
+              <SingleApiSideNavContainerEl>
                 {Object.entries(docsBySubCategory).map((nav, i) => (
                   <ExpansionContainerEl
                     // eslint-disable-next-line react/no-array-index-key
@@ -148,11 +137,11 @@ const SingleApiReference = React.memo(function ApiReference({
                     </Expansion>
                   </ExpansionContainerEl>
                 ))}
-              </SingleApiSideNavContainer>
+              </SingleApiSideNavContainerEl>
             </SideNavProgressContext.Provider>
-            <FixedNavFooterEl>
-              <BasicLink href="/docs">Documentation</BasicLink>
-            </FixedNavFooterEl>
+            <AbsoluteNavFooterEl>
+              <StyledLink href="/docs">Documentation</StyledLink>
+            </AbsoluteNavFooterEl>
           </SideNavColumn>
           <Column xs={9} xl={18}>
             <NestedRow>

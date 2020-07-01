@@ -5,7 +5,13 @@ import throttle from "lodash/throttle";
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
 import { SideNavProgressContext } from "components/SideNav/Provider";
 
-export const Context = React.createContext();
+export const Context = React.createContext({
+  isScrollingDown: false,
+  stopTrackingElement: () => {},
+  trackElement: () => {},
+  onLinkClick: () => {},
+  setIsNavClicked: () => {},
+});
 
 const sortByPosition = (a, b) => {
   const aY = a.current.getBoundingClientRect().top;
