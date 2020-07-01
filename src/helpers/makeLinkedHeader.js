@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { MEDIA_QUERIES } from "constants/styles";
 
+import { loopAndExtractString } from "helpers/extractStringChildren";
 import { slugify } from "helpers/slugify";
 
 import { Link } from "basics/Links";
@@ -41,8 +42,7 @@ export const makeLinkedHeader = (
 
   const WrappedComponent = (props) => {
     const { children } = props;
-    const id =
-      props.id || slugify(Array.isArray(children) ? children.join() : children);
+    const id = props.id || slugify(loopAndExtractString(children));
 
     return (
       <El {...props} id={id}>
