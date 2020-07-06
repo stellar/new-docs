@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
-import { FONT_WEIGHT, DEFAULT_COLUMN_WIDTH } from "constants/styles";
 import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
@@ -14,15 +13,21 @@ import { groupByCategory } from "helpers/documentation";
 import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
-import { H1, H5, HorizontalRule } from "basics/Text";
+import { H1, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ChevronIcon } from "basics/Icons";
-import { OriginalFileContext, Link } from "basics/Links";
+import { OriginalFileContext } from "basics/Links";
 
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
+import { NavItem } from "components/ApiReference/NavItem";
+import {
+  ExpansionContainer,
+  NavTitle,
+  NavLink,
+} from "components/ApiReference/SharedStyles";
 import { SideNavProgressContext, SideNavBody } from "components/SideNav";
 import {
   ApiReferenceRow,
@@ -39,30 +44,10 @@ import {
 import { BetaNotice } from "components/BetaNotice";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { NavItem } from "components/ApiReference/NavItem";
 
-const ExpansionContainerEl = styled.div`
-  margin-top: 1rem;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-
-  &:last-child {
-    padding-bottom: 2.25rem;
-  }
-`;
 const ApiRefH1 = styled(H1)`
   margin-top: 0.25rem;
   margin-bottom: 0;
-`;
-const NavTitleEl = styled(H5)`
-  margin: 0;
-  line-height: normal;
-  font-weight: ${FONT_WEIGHT.bold};
-  text-transform: uppercase;
-`;
-const NavLinkEl = styled(Link)`
-  color: inherit;
-  font-weight: unset;
-  display: block;
 `;
 const SingleApiSideNavContainerEl = styled(SideNavContainer)`
   overflow: scroll;
@@ -81,9 +66,9 @@ const renderItem = ({
   /* eslint-disable react/prop-types */
 }) => (
   <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
-    <NavLinkEl href={normalizeRoute(`/no-js/${id}`)}>
+    <NavLink href={normalizeRoute(`/no-js/${id}`)}>
       {isFirstItem ? "Overview" : title}
-    </NavLinkEl>
+    </NavLink>
   </NavItem>
 );
 
@@ -122,20 +107,20 @@ const SingleApiReference = React.memo(function ApiReference({
             >
               <SingleApiSideNavContainerEl>
                 {Object.entries(docsBySubCategory).map((nav, i) => (
-                  <ExpansionContainerEl
+                  <ExpansionContainer
                     // eslint-disable-next-line react/no-array-index-key
                     key={i}
                   >
                     <Expansion
-                      title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                      expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                      title={<NavTitle>{nav[0]}</NavTitle>}
+                      expandedModeTitle={<NavTitle>{nav[0]}</NavTitle>}
                       collapseIcon={<ChevronIcon direction="up" />}
                       expandIcon={<ChevronIcon direction="down" />}
                       isDefaultExpanded={true}
                     >
                       <SideNavBody items={nav[1]} renderItem={renderItem} />
                     </Expansion>
-                  </ExpansionContainerEl>
+                  </ExpansionContainer>
                 ))}
               </SingleApiSideNavContainerEl>
             </SideNavProgressContext.Provider>

@@ -6,7 +6,7 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 
-import { FONT_WEIGHT, DEFAULT_COLUMN_WIDTH, PALETTE } from "constants/styles";
+import { PALETTE } from "constants/styles";
 import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
@@ -16,11 +16,17 @@ import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
 
 import { Column } from "basics/Grid";
-import { H5, HorizontalRule } from "basics/Text";
+import { HorizontalRule } from "basics/Text";
 import { ChevronIcon, EditIcon } from "basics/Icons";
 import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
+import { NavItem } from "components/ApiReference/NavItem";
+import {
+  NavLink,
+  NavTitle,
+  ExpansionContainer,
+} from "components/ApiReference/SharedStyles";
 import { BetaNotice } from "components/BetaNotice";
 import { Footer } from "components/Documentation/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -43,35 +49,10 @@ import {
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { NavItem } from "components/ApiReference/NavItem";
 
 const SectionEl = styled.section`
   &:first-child {
     margin-top: 5rem;
-  }
-`;
-const ExpansionContainerEl = styled.div`
-  margin-top: 1rem;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-
-  &:last-child {
-    padding-bottom: 2.25rem;
-  }
-`;
-const NavTitleEl = styled(H5)`
-  margin: 0;
-  line-height: normal;
-  font-weight: ${FONT_WEIGHT.bold};
-  text-transform: uppercase;
-`;
-
-const NavLinkEl = styled(Link)`
-  color: inherit;
-  font-weight: unset;
-  display: block;
-
-  &:hover {
-    color: ${PALETTE.lightGrey};
   }
 `;
 
@@ -93,7 +74,7 @@ const renderItem = ({
   const navTitle = isFirstItem ? "Overview" : title;
   return (
     <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
-      <NavLinkEl href={id}>{navTitle}</NavLinkEl>
+      <NavLink href={id}>{navTitle}</NavLink>
     </NavItem>
   );
 };
@@ -186,13 +167,13 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
               <SideNavContainer>
                 <NavAbsoluteEl ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
-                    <ExpansionContainerEl
+                    <ExpansionContainer
                       // eslint-disable-next-line react/no-array-index-key
                       key={i}
                     >
                       <Expansion
-                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        title={<NavTitle>{nav[0]}</NavTitle>}
+                        expandedModeTitle={<NavTitle>{nav[0]}</NavTitle>}
                         collapseIcon={<ChevronIcon direction="up" />}
                         expandIcon={<ChevronIcon direction="down" />}
                         isDefaultExpanded={true}
@@ -203,7 +184,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                           forwardedRef={sideNavRef}
                         />
                       </Expansion>
-                    </ExpansionContainerEl>
+                    </ExpansionContainer>
                   ))}
                 </NavAbsoluteEl>
                 <AbsoluteNavFooterEl>
