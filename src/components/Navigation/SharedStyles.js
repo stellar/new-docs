@@ -14,8 +14,6 @@ import Logo from "assets/icons/stellar-logo.svg";
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
 
-import { DividerEl } from "components/Documentation/SharedStyles";
-
 export const H2 = styled(BasicH2)`
   font-weight: ${FONT_WEIGHT.normal};
   color: ${({ theme }) => theme.medium};
@@ -82,7 +80,10 @@ const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
 `};
 `;
 
-export const NavDivider = styled(DividerEl)`
+export const NavDivider = styled.span`
+  display: inline-block;
+  width: 0.0625rem;
+  margin: 0 1rem;
   height: 2.75rem;
   background-color: ${PALETTE.white60};
 `;

@@ -16,13 +16,6 @@ export const SideNavColumn = styled(Column)`
   height: 100vh;
   top: 0;
 `;
-export const DividerEl = styled.span`
-  display: inline-block;
-  width: 0.0625rem;
-  height: 1.5rem;
-  margin: 0 1rem;
-  background-color: rgba(255, 255, 255, 0.1);
-`;
 export const Content = styled.article`
   position: relative;
   margin: 0 auto;
