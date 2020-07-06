@@ -12,7 +12,7 @@ import {
 import { isInViewport } from "helpers/dom";
 import { useMatchMedia } from "helpers/useMatchMedia";
 
-import { Context as ScrollRouterContext } from "components/ApiRefRouting/ScrollRouter";
+import { Context as ScrollRouterContext } from "components/ApiReference/ScrollRouter";
 
 const activeStyles = `
   color: ${PALETTE.purpleBlue};

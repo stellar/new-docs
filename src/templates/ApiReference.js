@@ -22,6 +22,8 @@ import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
 import { NavItem } from "components/ApiReference/NavItem";
+import { Route } from "components/ApiReference/Route";
+import { ScrollRouter } from "components/ApiReference/ScrollRouter";
 import {
   NavLink,
   NavTitle,
@@ -38,8 +40,6 @@ import {
   SideNavBackground,
 } from "components/Navigation/SharedStyles";
 import { SideNavBody, TrackedContent } from "components/SideNav";
-import { ScrollRouter } from "components/ApiRefRouting/ScrollRouter";
-import { Route } from "components/ApiRefRouting/Route";
 import {
   ApiReferenceRow,
   NestedRow,
