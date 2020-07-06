@@ -28,7 +28,7 @@ import {
   ExpansionContainer,
 } from "components/ApiReference/SharedStyles";
 import { BetaNotice } from "components/BetaNotice";
-import { Footer } from "components/Documentation/Footer";
+import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import {
   AbsoluteNavFooterEl,

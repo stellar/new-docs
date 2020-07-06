@@ -30,7 +30,7 @@ import { H1, Text } from "basics/Text";
 import { BetaNotice } from "components/BetaNotice";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
-import { Footer } from "components/Documentation/Footer";
+import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 import { SideNavBody, Provider as SideNavProvider } from "components/SideNav";

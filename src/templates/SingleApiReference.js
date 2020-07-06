@@ -18,7 +18,7 @@ import { Column } from "basics/Grid";
 import { ChevronIcon } from "basics/Icons";
 import { OriginalFileContext } from "basics/Links";
 
-import { Footer } from "components/Documentation/Footer";
+import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 

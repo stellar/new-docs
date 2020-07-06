@@ -42,7 +42,7 @@ RegexErrorMessage.propTypes = {
   errorMessage: PropTypes.string.isRequired,
 };
 
-const MessageBlock = (props) => {
+export const MessageBlock = (props) => {
   const { response, email } = props;
   const ERROR_MESSAGE =
     response.message.split(" ")[0] === "0" ? (
@@ -59,8 +59,6 @@ const MessageBlock = (props) => {
     </ResponseStatusEl>
   );
 };
-
-export default MessageBlock;
 
 MessageBlock.propTypes = {
   response: PropTypes.shape({

@@ -10,11 +10,10 @@ import {
   MEDIA_QUERIES,
 } from "constants/styles";
 import { URL_ENDPOINTS } from "constants/endpoints";
-import { Text } from "basics/Text";
-
-import { CloseIcon } from "basics/Icons";
-import MessageBlock from "components/Footer/MessageBlock";
 import { BasicButton } from "basics/Buttons";
+import { Text } from "basics/Text";
+import { CloseIcon } from "basics/Icons";
+import { MessageBlock } from "components/Footer/MessageBlock";
 
 const FormContainerEl = styled.div``;
 const Form = styled.form.attrs(() => ({
