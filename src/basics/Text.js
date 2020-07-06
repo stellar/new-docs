@@ -16,6 +16,10 @@ const textStyles = css`
   color: ${({ theme }) => theme.text};
 `;
 
+export const Article = styled.article`
+  position: relative;
+  margin: 0 auto;
+`;
 export const Text = styled.p`
   ${textStyles}
 `;

@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { CustomColumn, Content } from "components/Documentation/SharedStyles";
+import { Article } from "basics/Text";
+import { CustomColumn } from "components/Documentation/SharedStyles";
 
 const RIGHT_COLUMN_COMPONENTS_NAME = {
   CodeExample: "CodeExample",
@@ -34,7 +35,7 @@ export const WrapperApiReference = ({ children, ...props }) => {
       skip the 1st column to use it as column-gap, start at the 2nd column and
       span through then next 8 columns (ends at column 9) */}
       <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
-        <Content {...props}>{MiddleColumnContent}</Content>
+        <Article {...props}>{MiddleColumnContent}</Article>
       </CustomColumn>
       {/* Hack to make it look appear as if we had a column-gap
       4rem in between <CustomColumn/> on a large screen (min-width: 1440px)

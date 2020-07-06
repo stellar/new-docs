@@ -16,10 +16,6 @@ export const SideNavColumn = styled(Column)`
   height: 100vh;
   top: 0;
 `;
-export const Content = styled.article`
-  position: relative;
-  margin: 0 auto;
-`;
 export const CustomColumn = styled(Column)`
   @media (${MEDIA_QUERIES.gtXlDesktop}) {
     grid-column: ${(props) => (props.xlColumn ? props.xlColumn : "inherit")};

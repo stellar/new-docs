@@ -25,10 +25,10 @@ import { EditIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
 import { OriginalFileContext, BasicLink } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
-import { H1, Text } from "basics/Text";
+import { Article, H1, Text } from "basics/Text";
 
 import { BetaNotice } from "components/BetaNotice";
-import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
+import { SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
@@ -169,7 +169,7 @@ const Documentation = ({ data, pageContext, location }) => {
   const center = (
     <OriginalFileContext.Provider value={originalFilePath}>
       <BetaNotice />
-      <Content>
+      <Article>
         <H1>{header}</H1>
         {githubLink && (
           <BasicLink href={githubLink} newTab>
@@ -192,7 +192,7 @@ const Documentation = ({ data, pageContext, location }) => {
             </BasicLink>
           </NextUpEl>
         )}
-      </Content>
+      </Article>
       <Footer />
     </OriginalFileContext.Provider>
   );
