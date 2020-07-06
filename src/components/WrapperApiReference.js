@@ -8,7 +8,7 @@ const RIGHT_COLUMN_COMPONENTS_NAME = {
   CodeExample: "CodeExample",
   EndpointsTable: "EndpointsTable",
   ExampleResponse: "ExampleResponse",
-  NavTable: "NavTable",
+  MethodTable: "MethodTable",
 };
 // API reference has 2 columns, with certain types of content always being in one
 // or the other. This component sorts through its children to separate them.
