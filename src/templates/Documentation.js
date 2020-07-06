@@ -6,10 +6,7 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
 import { FONT_WEIGHT, THEME, PALETTE } from "constants/styles";
-import {
-  components,
-  documentationComponents,
-} from "constants/docsComponentMapping";
+import { documentationComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
 import { slugify } from "helpers/slugify";
@@ -23,30 +20,27 @@ import {
 import { getDescriptionFromAst } from "helpers/mdx";
 import { normalizeRoute } from "helpers/routes";
 
-import { BetaNotice } from "components/BetaNotice";
 import { BasicButton } from "basics/Buttons";
 import { EditIcon } from "basics/Icons";
 import { Column, Container, Row } from "basics/Grid";
 import { OriginalFileContext, BasicLink } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
-import { Text } from "basics/Text";
+import { H1, Text } from "basics/Text";
 
-import { LayoutBase } from "components/layout/LayoutBase";
-import { SideNavBody, Provider as SideNavProvider } from "components/SideNav";
-
-import { SideNavProgressContext } from "components/SideNav/Provider";
-
+import { BetaNotice } from "components/BetaNotice";
 import { Content, SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Documentation/Footer";
+import { LayoutBase } from "components/layout/LayoutBase";
+import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
+import { SideNavBody, Provider as SideNavProvider } from "components/SideNav";
+import { SideNavProgressContext } from "components/SideNav/Provider";
 import { SideNavBackground, NavLogo } from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
-import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 
 const contentId = "content";
-const { h1: H1 } = components;
 
 const RightNavEl = styled.div`
   font-size: 0.875rem;
