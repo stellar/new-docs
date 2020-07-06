@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { Article } from "basics/Text";
-import { CustomColumn } from "components/Documentation/SharedStyles";
+import { CustomColumn } from "components/ApiReference/SharedStyles";
 
 const RIGHT_COLUMN_COMPONENTS_NAME = {
   CodeExample: "CodeExample",

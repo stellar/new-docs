@@ -28,14 +28,17 @@ import { PrismStyles } from "basics/Prism";
 import { Article, H1, Text } from "basics/Text";
 
 import { BetaNotice } from "components/BetaNotice";
-import { SideNavColumn } from "components/Documentation/SharedStyles";
 import { LeftNav } from "components/Documentation/LeftNav";
 import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { MobileLeftNav } from "components/Documentation/MobileLeftNav";
 import { SideNavBody, Provider as SideNavProvider } from "components/SideNav";
 import { SideNavProgressContext } from "components/SideNav/Provider";
-import { SideNavBackground, NavLogo } from "components/Navigation/SharedStyles";
+import {
+  SideNavBackground,
+  NavLogo,
+  NavColumn,
+} from "components/Navigation/SharedStyles";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
@@ -225,11 +228,11 @@ const Documentation = ({ data, pageContext, location }) => {
         <SideNavProvider>
           <Container id={contentId}>
             <Row>
-              <SideNavColumn xs={{ hide: true }} sm={3} lg={3}>
+              <NavColumn xs={{ hide: true }} sm={3} lg={3}>
                 <NavLogo pageName={docType.doc} />
                 <SideNavBackground />
                 {left}
-              </SideNavColumn>
+              </NavColumn>
               <Column sm={5} md={7}>
                 {center}
               </Column>

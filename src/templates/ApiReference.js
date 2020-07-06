@@ -25,9 +25,12 @@ import { NavItem } from "components/ApiReference/NavItem";
 import { Route } from "components/ApiReference/Route";
 import { ScrollRouter } from "components/ApiReference/ScrollRouter";
 import {
+  ApiReferenceRow,
+  CustomColumn,
+  ExpansionContainer,
   NavLink,
   NavTitle,
-  ExpansionContainer,
+  NestedRow,
 } from "components/ApiReference/SharedStyles";
 import { BetaNotice } from "components/BetaNotice";
 import { Footer } from "components/Footer";
@@ -38,14 +41,9 @@ import {
   SideNavContainer,
   NavLogo,
   SideNavBackground,
+  NavColumn,
 } from "components/Navigation/SharedStyles";
 import { SideNavBody, TrackedContent } from "components/SideNav";
-import {
-  ApiReferenceRow,
-  NestedRow,
-  SideNavColumn,
-  CustomColumn,
-} from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
@@ -161,7 +159,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         >
           <PrismStyles />
           <ApiReferenceRow>
-            <SideNavColumn xs={3} lg={3} xl={4}>
+            <NavColumn xs={3} lg={3} xl={4}>
               <NavLogo pageName={docType.api} />
               <SideNavBackground />
               <SideNavContainer>
@@ -191,7 +189,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   <StyledLink href="/docs">Documentation</StyledLink>
                 </AbsoluteNavFooterEl>
               </SideNavContainer>
-            </SideNavColumn>
+            </NavColumn>
             <Column xs={9} xl={18}>
               <NestedRow>
                 <CustomColumn xs={9} xlColumn="2 / span 18">

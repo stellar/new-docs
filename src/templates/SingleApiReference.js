@@ -24,22 +24,20 @@ import { Expansion } from "components/Expansion";
 
 import { NavItem } from "components/ApiReference/NavItem";
 import {
+  ApiReferenceRow,
+  CustomColumn,
   ExpansionContainer,
-  NavTitle,
   NavLink,
+  NavTitle,
+  NestedRow,
 } from "components/ApiReference/SharedStyles";
 import { SideNavProgressContext, SideNavBody } from "components/SideNav";
-import {
-  ApiReferenceRow,
-  SideNavColumn,
-  NestedRow,
-  CustomColumn,
-} from "components/Documentation/SharedStyles";
 import {
   AbsoluteNavFooterEl,
   SideNavContainer,
   SideNavBackground,
   NavLogo,
+  NavColumn,
 } from "components/Navigation/SharedStyles";
 import { BetaNotice } from "components/BetaNotice";
 
@@ -99,7 +97,7 @@ const SingleApiReference = React.memo(function ApiReference({
         pageContext={pageContext}
       >
         <ApiReferenceRow>
-          <SideNavColumn xs={3} lg={3} xl={4}>
+          <NavColumn xs={3} lg={3} xl={4}>
             <NavLogo pageName={docType.api} />
             <SideNavBackground />
             <SideNavProgressContext.Provider
@@ -127,7 +125,7 @@ const SingleApiReference = React.memo(function ApiReference({
             <AbsoluteNavFooterEl>
               <StyledLink href="/docs">Documentation</StyledLink>
             </AbsoluteNavFooterEl>
-          </SideNavColumn>
+          </NavColumn>
           <Column xs={9} xl={18}>
             <NestedRow>
               <CustomColumn xs={9} xlColumn="2 / span 8">
