@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import partition from "lodash/partition";
 
 import { Article } from "basics/Text";
 import { CustomColumn } from "components/ApiReference/SharedStyles";
@@ -13,17 +14,11 @@ const RIGHT_COLUMN_COMPONENTS_NAME = {
 // API reference has 2 columns, with certain types of content always being in one
 // or the other. This component sorts through its children to separate them.
 export const WrapperApiReference = ({ children, ...props }) => {
-  const rightColumnContent = React.useMemo(
+  const [rightColumnContent, middleColumnContent] = React.useMemo(
     () =>
-      React.Children.toArray(children).filter(
+      partition(
+        React.Children.toArray(children),
         (child) => RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
-      ),
-    [children],
-  );
-  const MiddleColumnContent = React.useMemo(
-    () =>
-      React.Children.toArray(children).filter(
-        (child) => !RIGHT_COLUMN_COMPONENTS_NAME[child.props.mdxType],
       ),
     [children],
   );
@@ -35,7 +30,7 @@ export const WrapperApiReference = ({ children, ...props }) => {
       skip the 1st column to use it as column-gap, start at the 2nd column and
       span through then next 8 columns (ends at column 9) */}
       <CustomColumn xs={5} xl={9} xlColumn="2 / span 8">
-        <Article {...props}>{MiddleColumnContent}</Article>
+        <Article {...props}>{middleColumnContent}</Article>
       </CustomColumn>
       {/* Hack to make it look appear as if we had a column-gap
       4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
