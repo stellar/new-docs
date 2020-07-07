@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
+import { useLocation } from "@reach/router";
 
 import { PALETTE } from "constants/styles";
 import { apiReferenceComponents } from "constants/docsComponentMapping";
@@ -13,7 +14,7 @@ import { docType } from "constants/docType";
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
 import { normalizeMdx } from "helpers/mdx";
-import { buildPathFromFile } from "helpers/routes";
+import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
 import { Column } from "basics/Grid";
 import { HorizontalRule } from "basics/Text";
@@ -80,8 +81,7 @@ const renderItem = ({
 const { h1: H1, h2: H2, a: StyledLink } = apiReferenceComponents;
 
 const ReferenceSection = React.memo(
-  ({ body, relativePath, title, githubLink }) => {
-    const path = buildPathFromFile(relativePath);
+  ({ body, relativePath, title, githubLink, path }) => {
     const splitRelativePath = relativePath.split("/");
 
     /* Check to see if a section is a nested item */
@@ -139,6 +139,9 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
   );
   const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
+  const location = useLocation();
+  const needsSingle = location.search?.includes("javascript=false");
+  const loadedPath = normalizeRoute(location.pathname);
 
   return (
     <ScrollRouter>
@@ -196,15 +199,32 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   <BetaNotice />
                 </CustomColumn>
               </NestedRow>
-              {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
-                <ReferenceSection
-                  relativePath={parent.relativePath}
-                  key={id}
-                  title={title}
-                  githubLink={githubLink}
-                  body={body}
-                />
-              ))}
+              {referenceDocs
+                .map((doc) => ({
+                  ...doc,
+                  path: buildPathFromFile(doc.parent.relativePath),
+                }))
+                .filter((doc) =>
+                  // For SEO reasons, we attempt to direct all search crawlers to
+                  // a `?javascript=false` form of the page. This will fetch the /
+                  // no-js/api/* form of the static HTML, but at least some of
+                  // them will still execute JS once the page loads. The JS
+                  // populates the rest of the content, which isn't what we want
+                  // to happen. This is our latest attempt at forcing SEO to
+                  // properly associate the content for an /api/* URL with
+                  // _exclusively_ that URL.
+                  needsSingle ? normalizeRoute(doc.path) === loadedPath : true,
+                )
+                .map(({ body, id, parent, title, githubLink, path }) => (
+                  <ReferenceSection
+                    relativePath={parent.relativePath}
+                    key={id}
+                    title={title}
+                    githubLink={githubLink}
+                    body={body}
+                    path={path}
+                  />
+                ))}
               <NestedRow>
                 <CustomColumn xs={9} xlColumn="2 / span 10">
                   <Footer />

@@ -60,7 +60,11 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       // before, update the route.
       if (newActiveNode && newActiveNode !== activeNode) {
         setActiveNode(newActiveNode);
-        window.history.replaceState(null, null, routeMap.get(newActiveNode));
+        window.history.replaceState(
+          null,
+          null,
+          `${routeMap.get(newActiveNode)}${window.location.search}`,
+        );
       }
     }, 60);
 
