@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { OriginalFileContext } from "basics/Links";
-import { Context as ScrollRouterContext } from "components/ApiRefRouting/ScrollRouter";
+import { Context as ScrollRouterContext } from "components/ApiReference/ScrollRouter";
 
 const El = styled.div``;
 

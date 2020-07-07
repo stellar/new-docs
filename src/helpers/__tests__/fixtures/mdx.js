@@ -4,7 +4,7 @@ mdxAsts.basic = {
   children: [
     {
       type: "import",
-      value: 'import { NavTable } from "components/NavTable";',
+      value: 'import { MethodTable } from "components/MethodTable";',
       position: {},
     },
     {

@@ -16,7 +16,7 @@ import {
   isHashUrl,
 } from "helpers/routes";
 
-import { Context as ScrollRouterContext } from "components/ApiRefRouting/ScrollRouter";
+import { Context as ScrollRouterContext } from "components/ApiReference/ScrollRouter";
 
 const basicLinkStyles = css`
   text-decoration: none;

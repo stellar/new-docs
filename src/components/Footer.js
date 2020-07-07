@@ -6,7 +6,7 @@ import { PALETTE, FONT_WEIGHT, MEDIA_QUERIES } from "constants/styles";
 import { Link } from "basics/Links";
 import { H4, H6 } from "basics/Text";
 
-import { Subscribe } from "./Subscribe";
+import { Subscribe } from "components/Footer/Subscribe";
 
 const El = styled.div`
   display: flex;

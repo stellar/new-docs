@@ -3,7 +3,7 @@ title: Streaming
 order: 30
 ---
 
-import { NavTable } from "components/NavTable";
+import { MethodTable } from "components/MethodTable";
 
 Horizon provides a streaming mechanism for receiving events in near real time. Instead of repeatedly sending requests to Horizon for batch updates, a connection is established between a client and Horizon with updates to an endpoint response streaming as new ledgers close and updates occur.
 
@@ -11,7 +11,7 @@ This reduces requests that return no data and allows near instantaneous updates 
 
 All attributes for the endpoints that allow streaming are the same as regular responses. A caller can initiate streaming by setting ‘Accept: text/event-stream’ in the HTTP header when making the request. Study an example of using streaming in the [Follow Received Payments tutorial](../../docs/tutorials/follow-received-payments.mdx).
 
-<NavTable title="Endpoints with Streaming">
+<MethodTable title="Endpoints with Streaming">
 
 |                                                         |
 | ------------------------------------------------------- |
@@ -25,4 +25,4 @@ All attributes for the endpoints that allow streaming are the same as regular re
 | [Trades](../resources/trades/index.mdx)                 |
 | [Order Books](../aggregations/order-books/index.mdx)    |
 
-</NavTable>
+</MethodTable>

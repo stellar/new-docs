@@ -11,10 +11,9 @@ import {
 
 import Logo from "assets/icons/stellar-logo.svg";
 
+import { Column } from "basics/Grid";
 import { Image } from "basics/Images";
 import { H2 as BasicH2 } from "basics/Text";
-
-import { DividerEl } from "components/Documentation/SharedStyles";
 
 export const H2 = styled(BasicH2)`
   font-weight: ${FONT_WEIGHT.normal};
@@ -82,7 +81,15 @@ const LogoEl = styled(Logo).attrs({ width: 100, height: 24 })`
 `};
 `;
 
-export const NavDivider = styled(DividerEl)`
+export const NavColumn = styled(Column)`
+  position: sticky;
+  height: 100vh;
+  top: 0;
+`;
+export const NavDivider = styled.span`
+  display: inline-block;
+  width: 0.0625rem;
+  margin: 0 1rem;
   height: 2.75rem;
   background-color: ${PALETTE.white60};
 `;

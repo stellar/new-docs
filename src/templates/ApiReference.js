@@ -1,36 +1,39 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 
-import {
-  CSS_TRANSITION_SPEED,
-  FONT_WEIGHT,
-  DEFAULT_COLUMN_WIDTH,
-  PALETTE,
-  MEDIA_QUERIES,
-} from "constants/styles";
-import { components } from "constants/docsComponentMapping";
+import { PALETTE } from "constants/styles";
+import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
 import { sortReference } from "helpers/sortReference";
 import { groupByCategory } from "helpers/documentation";
-import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile } from "helpers/routes";
-import { useMatchMedia } from "helpers/useMatchMedia";
 
 import { Column } from "basics/Grid";
-import { H1, H2, H3, H4, H5, H6, HorizontalRule } from "basics/Text";
+import { HorizontalRule } from "basics/Text";
 import { ChevronIcon, EditIcon } from "basics/Icons";
-import { Link, BasicLink } from "basics/Links";
+import { Link } from "basics/Links";
 import { PrismStyles } from "basics/Prism";
 
+import { NavItem } from "components/ApiReference/NavItem";
+import { Route } from "components/ApiReference/Route";
+import { ScrollRouter } from "components/ApiReference/ScrollRouter";
+import {
+  ApiReferenceRow,
+  CustomColumn,
+  ExpansionContainer,
+  NavLink,
+  NavTitle,
+  NestedRow,
+} from "components/ApiReference/SharedStyles";
 import { BetaNotice } from "components/BetaNotice";
-import { Footer } from "components/Documentation/Footer";
+import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import {
   AbsoluteNavFooterEl,
@@ -38,170 +41,18 @@ import {
   SideNavContainer,
   NavLogo,
   SideNavBackground,
+  NavColumn,
 } from "components/Navigation/SharedStyles";
 import { SideNavBody, TrackedContent } from "components/SideNav";
-import {
-  ScrollRouter,
-  Context as ScrollRouterContext,
-} from "components/ApiRefRouting/ScrollRouter";
-import { Route } from "components/ApiRefRouting/Route";
-import {
-  ApiReferenceRow,
-  ApiReferenceWrapper,
-  NestedRow,
-  SideNavColumn,
-  CustomColumn,
-} from "components/Documentation/SharedStyles";
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
-const NAV_BAR_HEIGHT = 89;
-const FIXED_NAV_DISTANCE = 140 + NAV_BAR_HEIGHT;
-
-const GreenTableCell = styled.td`
-  color: ${PALETTE.lightGreen};
-`;
-const OrangeTableCell = styled.td`
-  color: ${PALETTE.lightOrage};
-`;
 const SectionEl = styled.section`
   &:first-child {
     margin-top: 5rem;
   }
 `;
-const ExpansionContainerEl = styled.div`
-  margin-top: 1rem;
-  max-width: ${DEFAULT_COLUMN_WIDTH.leftColumn}rem;
-
-  &:last-child {
-    padding-bottom: 2.25rem;
-  }
-`;
-const NavTitleEl = styled(H5)`
-  margin: 0;
-  line-height: normal;
-  font-weight: ${FONT_WEIGHT.bold};
-  text-transform: uppercase;
-`;
-const activeStyles = `
-  color: ${PALETTE.purpleBlue};
-  font-weight: ${FONT_WEIGHT.bold};
-`;
-
-const ApiRefH1 = styled(H1)`
-  padding-top: 0.25rem;
-  margin-top: 0;
-  margin-bottom: 0;
-`;
-const ApiRefH2 = styled(H2)`
-  padding-top: 0.25rem;
-  margin-top: 0;
-  margin-bottom: 0;
-`;
-const NavItemEl = styled.div`
-  display: block;
-  text-align: left;
-  white-space: nowrap;
-  font-size: ${(props) => (props.depth > 0 ? "0.875rem" : "1rem")};
-  color: ${(props) => (props.depth === 0 ? PALETTE.black80 : PALETTE.black60)};
-  padding: 0.25rem 0;
-  padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
-  transition: opacity ${CSS_TRANSITION_SPEED.default} ease-out;
-  font-weight: ${FONT_WEIGHT.normal};
-
-  ${(props) =>
-    props.isActive
-      ? css`
-          ${activeStyles}
-        `
-      : ""}
-`;
-
-const StyledLink = components.a;
-
-const NavLinkEl = styled(Link)`
-  color: inherit;
-  font-weight: unset;
-  display: block;
-
-  &:hover {
-    color: ${PALETTE.lightGrey};
-  }
-`;
-
-const isInViewport = (elem) => {
-  const bounding = elem.getBoundingClientRect();
-  return (
-    bounding.top >= 0 &&
-    bounding.left >= 0 &&
-    bounding.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    bounding.right <=
-      (window.innerWidth || document.documentElement.clientWidth)
-  );
-};
-
-// eslint-disable-next-line react/prop-types
-const NavItem = ({ isActive, forwardedRef, children, depth }) => {
-  const itemRef = React.useRef();
-  const parentDom = forwardedRef;
-  const { isScrollingDown, setIsNavClicked } = React.useContext(
-    ScrollRouterContext,
-  );
-  const isMobile = useMatchMedia(`(${MEDIA_QUERIES.ltLaptop})`);
-
-  React.useLayoutEffect(() => {
-    if (isActive && parentDom && !isMobile) {
-      const activeItemSize = itemRef.current.getBoundingClientRect();
-
-      /* If the active navigation is not in view
-      For cases when a user scrolled the nav to the point
-      the active nav is out of viewport */
-      if (!isInViewport(itemRef.current)) {
-        itemRef.current.scrollIntoView();
-      }
-
-      /* If scroll direction is down and its active item's top value
-       is bigger than FIXED_NAV_DISTANCE (229px), subtract that amount
-       from scrollTop to keep the consistent top value
-       Its top value gets inconsistent when it hits the separate dropdown category
-      */
-      if (isScrollingDown.current && activeItemSize.top > FIXED_NAV_DISTANCE) {
-        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
-          /* Reset the distance between the active nav and its offset top */
-          parentDom.current.scrollTop +=
-            activeItemSize.top - FIXED_NAV_DISTANCE;
-        } else {
-          parentDom.current.scrollTop += activeItemSize.height;
-        }
-      } else if (
-        !isScrollingDown.current &&
-        activeItemSize.top < FIXED_NAV_DISTANCE
-      ) {
-        if (activeItemSize.top > FIXED_NAV_DISTANCE) {
-          parentDom.current.scrollTop -=
-            activeItemSize.top - FIXED_NAV_DISTANCE;
-        } else {
-          parentDom.current.scrollTop -= activeItemSize.height;
-        }
-      }
-    }
-  }, [isActive, parentDom, isScrollingDown, isMobile]);
-
-  return (
-    <NavItemEl
-      isActive={isActive}
-      depth={depth}
-      ref={itemRef}
-      onClick={() => {
-        setIsNavClicked(true);
-      }}
-    >
-      {children}
-    </NavItemEl>
-  );
-};
 
 // This is a function, not a component
 const renderItem = ({
@@ -221,39 +72,12 @@ const renderItem = ({
   const navTitle = isFirstItem ? "Overview" : title;
   return (
     <NavItem depth={depth} forwardedRef={forwardedRef} isActive={isActive}>
-      <NavLinkEl href={id}>{navTitle}</NavLinkEl>
+      <NavLink href={id}>{navTitle}</NavLink>
     </NavItem>
   );
 };
 
-const headerOptions = {
-  treatIdAsHref: true,
-  LinkComponent: BasicLink,
-};
-
-const ApiRefLinkedH1 = makeLinkedHeader(ApiRefH1, headerOptions);
-const ApiRefLinkedH2 = makeLinkedHeader(ApiRefH2, headerOptions);
-
-const componentMap = {
-  ...components,
-  wrapper: ApiReferenceWrapper,
-  h1: styled(components.h1).attrs({ as: ApiRefLinkedH1 }),
-  h2: styled(components.h2).attrs({ as: ApiRefLinkedH2 }),
-  h3: H3,
-  h4: H4,
-  h5: H5,
-  h6: H6,
-  // eslint-disable-next-line react/prop-types
-  td: ({ children }) => {
-    if (children === "GET") {
-      return <GreenTableCell>{children}</GreenTableCell>;
-    }
-    if (children === "POST") {
-      return <OrangeTableCell>{children}</OrangeTableCell>;
-    }
-    return <td>{children}</td>;
-  },
-};
+const { h1: H1, h2: H2, a: StyledLink } = apiReferenceComponents;
 
 const ReferenceSection = React.memo(
   ({ body, relativePath, title, githubLink }) => {
@@ -266,9 +90,9 @@ const ReferenceSection = React.memo(
       splitRelativePath[splitRelativePath.length - 1] !== "index.mdx";
 
     const SectionHeader = isNestedSection ? (
-      <ApiRefH2 id={path}>{title}</ApiRefH2>
+      <H2 id={path}>{title}</H2>
     ) : (
-      <ApiRefH1 id={path}>{title}</ApiRefH1>
+      <H1 id={path}>{title}</H1>
     );
 
     return (
@@ -325,7 +149,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           {`<meta http-equiv="refresh" content="0;url=?javascript=false" />`}
         </noscript>
       </Helmet>
-      <MDXProvider components={componentMap}>
+      <MDXProvider components={apiReferenceComponents}>
         <LayoutBase
           previewImage={DevelopersPreview}
           title="Stellar API Reference"
@@ -335,19 +159,19 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         >
           <PrismStyles />
           <ApiReferenceRow>
-            <SideNavColumn xs={3} lg={3} xl={4}>
+            <NavColumn xs={3} lg={3} xl={4}>
               <NavLogo pageName={docType.api} />
               <SideNavBackground />
               <SideNavContainer>
                 <NavAbsoluteEl ref={sideNavRef}>
                   {Object.entries(docsBySubCategory).map((nav, i) => (
-                    <ExpansionContainerEl
+                    <ExpansionContainer
                       // eslint-disable-next-line react/no-array-index-key
                       key={i}
                     >
                       <Expansion
-                        title={<NavTitleEl>{nav[0]}</NavTitleEl>}
-                        expandedModeTitle={<NavTitleEl>{nav[0]}</NavTitleEl>}
+                        title={<NavTitle>{nav[0]}</NavTitle>}
+                        expandedModeTitle={<NavTitle>{nav[0]}</NavTitle>}
                         collapseIcon={<ChevronIcon direction="up" />}
                         expandIcon={<ChevronIcon direction="down" />}
                         isDefaultExpanded={true}
@@ -358,14 +182,14 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                           forwardedRef={sideNavRef}
                         />
                       </Expansion>
-                    </ExpansionContainerEl>
+                    </ExpansionContainer>
                   ))}
                 </NavAbsoluteEl>
                 <AbsoluteNavFooterEl>
                   <StyledLink href="/docs">Documentation</StyledLink>
                 </AbsoluteNavFooterEl>
               </SideNavContainer>
-            </SideNavColumn>
+            </NavColumn>
             <Column xs={9} xl={18}>
               <NestedRow>
                 <CustomColumn xs={9} xlColumn="2 / span 18">

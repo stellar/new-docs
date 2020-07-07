@@ -24,7 +24,7 @@
     - [`<Endpoint/>`](#endpoint)
     - [`<EndpointsTable/>`](#endpointstable)
     - [`<ExampleResponse/>`](#example-json-response)
-    - [`<NavTable/>`](#navtable)
+    - [`<MethodTable/>`](#MethodTable)
     - [Diagrams (Mermaid)](#diagrams-mermaid)
 
 # How to Run
@@ -512,11 +512,11 @@ import { ExampleResponse } from "components/ExampleResponse";
 </ExampleResponse>
 ````
 
-### NavTable
+### MethodTable
 
-<img src="./readme-imgs/navtable.png" alt="NavTable Component" width="389"/>
+<img src="./readme-imgs/MethodTable.png" alt="MethodTable Component" width="389"/>
 
-`<NavTable/>` is used to display navigation sections and its description.
+`<MethodTable/>` is used to display navigation sections and its description.
 
 - PropTypes
   - `title` (required)
@@ -525,9 +525,9 @@ import { ExampleResponse } from "components/ExampleResponse";
 For example, [Introduction](https://developers.stellar.org/api/introduction/).
 
 ```
-import { NavTable } from "components/NavTable";
+import { MethodTable } from "components/MethodTable";
 
-<NavTable title="API Reference Sections">
+<MethodTable title="API Reference Sections">
 
 |  |  |
 | --- | --- |
@@ -536,7 +536,7 @@ import { NavTable } from "components/NavTable";
 | [Aggregations](../aggregations/index.mdx) | Descriptions of specialized endpoints. |
 | [Errors](../errors/index.mdx) | Potential errors and what they mean. |
 
-</NavTable>
+</MethodTable>
 ```
 
 ### Diagrams (Mermaid)

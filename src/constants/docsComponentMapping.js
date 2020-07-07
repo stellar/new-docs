@@ -4,10 +4,16 @@ import styled from "styled-components";
 
 import { FONT_WEIGHT, MEDIA_QUERIES, PALETTE } from "constants/styles";
 
+import { makeLinkedHeader } from "helpers/makeLinkedHeader";
+
+import { CheckmarkIcon } from "basics/Icons";
 import { BasicImage } from "basics/Images";
-import { Link } from "basics/Links";
+import { Link, BasicLink } from "basics/Links";
 import { Mermaid } from "basics/Mermaid";
 import * as TextComponents from "basics/Text";
+
+import { WrapperApiReference } from "components/WrapperApiReference";
+import { WrapperDocumentation } from "components/WrapperDocumentation";
 
 const ListItem = (props) => {
   const firstChild = React.Children.toArray(props.children)[0];
@@ -24,7 +30,7 @@ ListItem.propTypes = {
 
 const Div = styled.div``;
 
-export const components = {
+const components = {
   // eslint-disable-next-line react/prop-types
   div: ({ children, className, ...props }) => {
     if (className === "mermaid") {
@@ -93,6 +99,7 @@ export const components = {
   ul: TextComponents.List,
   ol: TextComponents.OrderedList,
   li: ListItem,
+  section: TextComponents.Section,
   table: TextComponents.Table,
   thead: TextComponents.TableHead,
   th: TextComponents.TableHeadCell,
@@ -123,4 +130,73 @@ export const components = {
   script: () => null,
   br: styled.br``,
   small: TextComponents.Small,
+};
+
+/**
+ * Template-specific overrides to these default styles
+ */
+
+const { td: TD } = components;
+
+export const documentationComponents = {
+  ...components,
+  wrapper: WrapperDocumentation,
+  // eslint-disable-next-line react/prop-types
+  td: ({ children }) => {
+    if (children === ":heavy_check_mark:") {
+      return (
+        <TD>
+          <CheckmarkIcon />
+        </TD>
+      );
+    }
+    return <TD>{children}</TD>;
+  },
+};
+
+const headerOptions = {
+  treatIdAsHref: true,
+  LinkComponent: BasicLink,
+};
+
+const ApiRefH1 = styled(TextComponents.H1)`
+  padding-top: 0.25rem;
+  margin-top: 0;
+  margin-bottom: 0;
+`;
+const ApiRefH2 = styled(TextComponents.H2)`
+  padding-top: 0.25rem;
+  margin-top: 0;
+  margin-bottom: 0;
+`;
+const GreenTableCell = styled.td`
+  color: ${PALETTE.lightGreen};
+`;
+const OrangeTableCell = styled.td`
+  color: ${PALETTE.lightOrage};
+`;
+
+export const apiReferenceComponents = {
+  ...components,
+  wrapper: WrapperApiReference,
+  h1: styled(components.h1).attrs(() => ({
+    as: makeLinkedHeader(ApiRefH1, headerOptions),
+  }))``,
+  h2: styled(components.h2).attrs(() => ({
+    as: makeLinkedHeader(ApiRefH2, headerOptions),
+  }))``,
+  h3: TextComponents.H3,
+  h4: TextComponents.H4,
+  h5: TextComponents.H5,
+  h6: TextComponents.H6,
+  // eslint-disable-next-line react/prop-types
+  td: ({ children }) => {
+    if (children === "GET") {
+      return <GreenTableCell>{children}</GreenTableCell>;
+    }
+    if (children === "POST") {
+      return <OrangeTableCell>{children}</OrangeTableCell>;
+    }
+    return <td>{children}</td>;
+  },
 };
