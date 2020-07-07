@@ -119,8 +119,9 @@ export const Link = ({ href, newTab, ...props }) => {
     // If the page is being generated with a /no-js url, then we need to make
     // sure the links render with the right querystring so they load correctly
     // when clicked.
-    if (destination.pathname?.startsWith("/no-js")) {
-      destination.query = destination.query
+    if (destination.path?.startsWith("/no-js")) {
+      destination.pathname = destination.path.split("/no-js")[1];
+      destination.search = destination.search
         ? `${destination.query}&javascript=false`
         : "javascript=false";
     }
