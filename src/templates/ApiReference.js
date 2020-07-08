@@ -100,7 +100,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
         >
           <PrismStyles />
           <ApiReferenceRow>
-            <NavColumn xs={3} lg={3} xl={4}>
+            <NavColumn forwardedAs="nav" xs={3} lg={3} xl={4}>
               <NavLogo pageName={docType.api} />
               <SideNavBackground />
               <SideNavContainer>
@@ -151,7 +151,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   // to happen. This is our latest attempt at forcing SEO to
                   // properly associate the content for an /api/* URL with
                   // _exclusively_ that URL.
-                  needsSingle ? normalizeRoute(doc.path) === loadedPath : true,
+                  needsSingle ? doc.path === loadedPath : true,
                 )
                 .map(({ body, id, parent, title, githubLink, path }) => (
                   <ReferenceSection
