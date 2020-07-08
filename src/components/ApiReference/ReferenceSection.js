@@ -13,15 +13,46 @@ import { Link } from "basics/Links";
 import { Route } from "components/ApiReference/Route";
 import { CustomColumn, NestedRow } from "components/ApiReference/SharedStyles";
 import { TrackedContent } from "components/SideNav";
+import { useLocation } from "@reach/router";
+import { Context as ScrollRouterContext } from "./ScrollRouter";
 
 const { h1: H1, h2: H2 } = apiReferenceComponents;
 
-const SectionEl = styled.article`
+const MainEl = styled.main`
+  display: block;
+`;
+const ArticleEl = styled.article`
   display: block;
   &:first-child {
     margin-top: 5rem;
   }
 `;
+
+const Article = ({ children, path }) => {
+  // The scroll router overrules Reach Router once the page loads, but we need
+  // Reach router's location to get initial path
+  const { pathname } = useLocation();
+  const [isActive, setIsActive] = React.useState(pathname);
+  const { subscribe } = React.useContext(ScrollRouterContext);
+
+  React.useEffect(
+    () =>
+      subscribe((newPath) => {
+        setIsActive(path === newPath);
+      }),
+    [subscribe, path],
+  );
+
+  return (
+    <MainEl name={path} hidden={!isActive}>
+      <ArticleEl>{children}</ArticleEl>
+    </MainEl>
+  );
+};
+Article.propTypes = {
+  children: PropTypes.node.isRequired,
+  path: PropTypes.string.isRequired,
+};
 
 export const ReferenceSection = React.memo(
   ({ body, relativePath, title, githubLink, path }) => {
@@ -39,7 +70,7 @@ export const ReferenceSection = React.memo(
     );
 
     return (
-      <SectionEl>
+      <Article path={path}>
         <Route originalFilePath={relativePath} path={path}>
           <TrackedContent identifier={path}>
             <NestedRow>
@@ -62,7 +93,7 @@ export const ReferenceSection = React.memo(
             <HorizontalRule />
           </TrackedContent>
         </Route>
-      </SectionEl>
+      </Article>
     );
   },
 );
@@ -71,5 +102,4 @@ ReferenceSection.propTypes = {
   relativePath: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   githubLink: PropTypes.string,
-  path: PropTypes.string.isRequired,
 };

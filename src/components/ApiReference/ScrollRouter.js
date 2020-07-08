@@ -4,6 +4,7 @@ import throttle from "lodash/throttle";
 
 import { smoothScrollTo, findActiveNode } from "helpers/dom";
 import { SideNavProgressContext } from "components/SideNav/Provider";
+import { useSubscription } from "helpers/useSubscription";
 
 export const Context = React.createContext({
   isScrollingDown: false,
@@ -11,6 +12,7 @@ export const Context = React.createContext({
   trackElement: () => {},
   onLinkClick: () => {},
   setIsNavClicked: () => {},
+  subscribe: () => {},
 });
 
 const sortByPosition = (a, b) => {
@@ -24,6 +26,7 @@ const routeMap = new Map();
 const elementMap = new Map();
 
 export const ScrollRouter = ({ children, initialActive = "" }) => {
+  const { subscribe, emit } = useSubscription();
   const initialLoadCheck = React.useRef(false);
   const [activeNode, setActiveNode] = React.useState({
     ref: null,
@@ -34,10 +37,14 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
   const isScrollingDown = React.useRef(false);
 
   // Navigation
-  const onLinkClick = React.useCallback(function onLinkClick(route) {
-    window.history.pushState(null, null, route);
-    smoothScrollTo(elementMap.get(route).current, { duration: 0 });
-  }, []);
+  const onLinkClick = React.useCallback(
+    function onLinkClick(route) {
+      emit(route);
+      window.history.pushState(null, null, route);
+      smoothScrollTo(elementMap.get(route).current, { duration: 0 });
+    },
+    [emit],
+  );
 
   // Scroll listener
   React.useEffect(() => {
@@ -60,11 +67,11 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       // before, update the route.
       if (newActiveNode && newActiveNode !== activeNode) {
         setActiveNode(newActiveNode);
-        window.history.replaceState(
-          null,
-          null,
-          `${routeMap.get(newActiveNode)}${window.location.search}`,
-        );
+        const newUrl = `${routeMap.get(newActiveNode)}${
+          window.location.search
+        }`;
+        emit(newUrl);
+        window.history.replaceState(null, null, newUrl);
       }
     }, 60);
 
@@ -74,22 +81,26 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
     return () => {
       window.removeEventListener("scroll", handler);
     };
-  }, [activeNode, isNavClicked]);
+  }, [activeNode, isNavClicked, emit]);
 
   // Tracked sections
-  const trackElement = React.useCallback((ref, route) => {
-    routeMap.set(ref, route);
-    elementMap.set(route, ref);
-    trackedElementsRef.current.push(ref);
-    trackedElementsRef.current.sort(sortByPosition);
+  const trackElement = React.useCallback(
+    (ref, route) => {
+      routeMap.set(ref, route);
+      elementMap.set(route, ref);
+      trackedElementsRef.current.push(ref);
+      trackedElementsRef.current.sort(sortByPosition);
 
-    // We want to scroll to the element associated with the route _once_.
-    if (!initialLoadCheck.current && window.location.pathname === route) {
-      initialLoadCheck.current = true;
-      // Our navbar is 90px tall
-      smoothScrollTo(ref.current, { duration: 0 });
-    }
-  }, []);
+      // We want to scroll to the element associated with the route _once_.
+      if (!initialLoadCheck.current && window.location.pathname === route) {
+        emit(route);
+        initialLoadCheck.current = true;
+        // Our navbar is 90px tall
+        smoothScrollTo(ref.current, { duration: 0 });
+      }
+    },
+    [emit],
+  );
   const stopTrackingElement = React.useCallback((ref) => {
     const route = routeMap.get(ref);
     routeMap.delete(ref);
@@ -106,6 +117,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       onLinkClick,
       isScrollingDown,
       setIsNavClicked,
+      subscribe,
     }),
     [
       stopTrackingElement,
@@ -113,6 +125,7 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
       onLinkClick,
       isScrollingDown,
       setIsNavClicked,
+      subscribe,
     ],
   );
   const sideNavContextValue = React.useMemo(
