@@ -1,13 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
-import styled from "styled-components";
-import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
 import { useLocation } from "@reach/router";
 
-import { PALETTE } from "constants/styles";
 import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
 
@@ -17,13 +14,11 @@ import { normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
 import { Column } from "basics/Grid";
-import { HorizontalRule } from "basics/Text";
-import { ChevronIcon, EditIcon } from "basics/Icons";
-import { Link } from "basics/Links";
+import { ChevronIcon } from "basics/Icons";
 import { PrismStyles } from "basics/Prism";
 
 import { NavItem } from "components/ApiReference/NavItem";
-import { Route } from "components/ApiReference/Route";
+import { ReferenceSection } from "components/ApiReference/ReferenceSection";
 import { ScrollRouter } from "components/ApiReference/ScrollRouter";
 import {
   ApiReferenceRow,
@@ -44,16 +39,10 @@ import {
   SideNavBackground,
   NavColumn,
 } from "components/Navigation/SharedStyles";
-import { SideNavBody, TrackedContent } from "components/SideNav";
+import { SideNavBody } from "components/SideNav";
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
-
-const SectionEl = styled.section`
-  &:first-child {
-    margin-top: 5rem;
-  }
-`;
 
 // This is a function, not a component
 const renderItem = ({
@@ -78,59 +67,7 @@ const renderItem = ({
   );
 };
 
-const { h1: H1, h2: H2, a: StyledLink } = apiReferenceComponents;
-
-const ReferenceSection = React.memo(
-  ({ body, relativePath, title, githubLink, path }) => {
-    const splitRelativePath = relativePath.split("/");
-
-    /* Check to see if a section is a nested item */
-    const isNestedSection =
-      relativePath.split("/").length > 3 &&
-      splitRelativePath[splitRelativePath.length - 1] !== "index.mdx";
-
-    const SectionHeader = isNestedSection ? (
-      <H2 id={path}>{title}</H2>
-    ) : (
-      <H1 id={path}>{title}</H1>
-    );
-
-    return (
-      <SectionEl>
-        <Route originalFilePath={relativePath} path={path}>
-          <TrackedContent identifier={path}>
-            <NestedRow>
-              {/* Hack to make it look appear as if we had a column-gap
-              4rem in between <CustomColumn/> on a large screen (min-width: 1440px)
-              skip the 1st column to use it as column-gap, start at the 2nd column and
-              span through then next 8 columns (ends at column 9)
-              */}
-              <CustomColumn xs={9} xlColumn="2 / span 8">
-                {SectionHeader}
-                {githubLink && (
-                  <Link href={githubLink} newTab>
-                    <EditIcon color={PALETTE.purpleBlue} />
-                  </Link>
-                )}
-              </CustomColumn>
-            </NestedRow>
-            <NestedRow>
-              <MDXRenderer>{body}</MDXRenderer>
-            </NestedRow>
-            <HorizontalRule />
-          </TrackedContent>
-        </Route>
-      </SectionEl>
-    );
-  },
-);
-
-ReferenceSection.propTypes = {
-  body: PropTypes.node.isRequired,
-  relativePath: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  githubLink: PropTypes.string,
-};
+const { a: StyledLink } = apiReferenceComponents;
 
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
