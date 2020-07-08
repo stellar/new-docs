@@ -12,7 +12,6 @@ import { groupByCategory } from "helpers/documentation";
 import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
-import { H1 } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ChevronIcon } from "basics/Icons";
 
@@ -42,10 +41,6 @@ import { BetaNotice } from "components/BetaNotice";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
-const ApiRefH1 = styled(H1)`
-  margin-top: 0.25rem;
-  margin-bottom: 0;
-`;
 const SingleApiSideNavContainerEl = styled(SideNavContainer)`
   overflow: scroll;
   height: calc(100vh - 8.75rem);
