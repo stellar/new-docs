@@ -159,6 +159,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
           pageContext={pageContext}
           viewport="width=1366, initial-scale=.1"
+          omitSeoHeadersPredicate={(header) => !header.rel === "canonical"}
         >
           <PrismStyles />
           <ApiReferenceRow>

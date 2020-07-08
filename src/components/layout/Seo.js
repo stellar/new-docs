@@ -12,7 +12,14 @@ import favicon192 from "assets/favicon/android-chrome-192x192.png";
 import favicon512 from "assets/favicon/android-chrome-512x512.png";
 import StellarDocsImage from "assets/images/og_developers.jpg";
 
-export const Seo = ({ title, description = "", path }) => {
+export const Seo = ({
+  title,
+  description = "",
+  path,
+  omitPredicate = () => true,
+  meta = [],
+  link = [],
+}) => {
   const data = useStaticQuery(graphql`
     query Metadata {
       site {
@@ -49,7 +56,9 @@ export const Seo = ({ title, description = "", path }) => {
         { name: "twitter:card", content: "summary" },
         { property: "twitter:site", content: "@StellarOrg" },
         { property: "twitter:creator", content: "@StellarOrg" },
-      ]}
+      ]
+        .filter(omitPredicate)
+        .concat(meta)}
       link={[
         { rel: "canonical", href: url },
         {
@@ -67,7 +76,9 @@ export const Seo = ({ title, description = "", path }) => {
         },
         { rel: "icon", href: favicon192, type: "image/x-icon" },
         { rel: "icon", href: favicon512, type: "image/x-icon" },
-      ]}
+      ]
+        .filter(omitPredicate)
+        .concat(link)}
     />
   );
 };
@@ -76,4 +87,7 @@ Seo.propTypes = {
   path: PropTypes.string.isRequired,
   title: PropTypes.node,
   description: PropTypes.node,
+  omitPredicate: PropTypes.func,
+  link: PropTypes.arrayOf(PropTypes.object),
+  meta: PropTypes.arrayOf(PropTypes.object),
 };
