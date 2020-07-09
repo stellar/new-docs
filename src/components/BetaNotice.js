@@ -14,9 +14,6 @@ const BetaNoticeEl = styled(Text)`
     display: none;
   }
 `;
-const HrEl = styled(HorizontalRule)`
-  margin-bottom: 0;
-`;
 const LinkEl = styled(Link)`
   color: ${PALETTE.purpleBlue};
 `;
@@ -30,6 +27,6 @@ export const BetaNotice = () => (
       </LinkEl>
       .
     </BetaNoticeEl>
-    <HrEl />
+    <HorizontalRule />
   </>
 );
