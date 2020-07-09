@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import styled from "styled-components";
-import { MDXRenderer } from "gatsby-plugin-mdx";
 import { MDXProvider } from "@mdx-js/react";
 
 import { apiReferenceComponents } from "constants/docsComponentMapping";
@@ -13,16 +12,15 @@ import { groupByCategory } from "helpers/documentation";
 import { getDescriptionFromAst, normalizeMdx } from "helpers/mdx";
 import { buildPathFromFile, normalizeRoute } from "helpers/routes";
 
-import { H1, HorizontalRule } from "basics/Text";
 import { Column } from "basics/Grid";
 import { ChevronIcon } from "basics/Icons";
-import { OriginalFileContext } from "basics/Links";
 
 import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import { Expansion } from "components/Expansion";
 
 import { NavItem } from "components/ApiReference/NavItem";
+import { ReferenceSection } from "components/ApiReference/ReferenceSection";
 import {
   ApiReferenceRow,
   CustomColumn,
@@ -43,10 +41,6 @@ import { BetaNotice } from "components/BetaNotice";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
 
-const ApiRefH1 = styled(H1)`
-  margin-top: 0.25rem;
-  margin-bottom: 0;
-`;
 const SingleApiSideNavContainerEl = styled(SideNavContainer)`
   overflow: scroll;
   height: calc(100vh - 8.75rem);
@@ -82,7 +76,14 @@ const SingleApiReference = React.memo(function ApiReference({
   );
   const docsBySubCategory = groupByCategory(referenceDocs);
 
-  const { parent, frontmatter, body, mdxAST: mdxAst } = data.doc;
+  const {
+    parent,
+    frontmatter,
+    body,
+    mdxAST: mdxAst,
+    title,
+    githubLink,
+  } = normalizeMdx(data.doc);
   const path = buildPathFromFile(parent.relativePath);
   const description = React.useMemo(
     () => frontmatter.description || getDescriptionFromAst(mdxAst),
@@ -132,17 +133,13 @@ const SingleApiReference = React.memo(function ApiReference({
                 <BetaNotice />
               </CustomColumn>
             </NestedRow>
-            <NestedRow>
-              <CustomColumn xs={9} xlColumn="2 / span 8">
-                <ApiRefH1 id={path}>{frontmatter.title}</ApiRefH1>
-              </CustomColumn>
-            </NestedRow>
-            <NestedRow>
-              <OriginalFileContext.Provider value={parent.relativePath}>
-                <MDXRenderer>{body}</MDXRenderer>
-              </OriginalFileContext.Provider>
-            </NestedRow>
-            <HorizontalRule />
+            <ReferenceSection
+              relativePath={parent.relativePath}
+              title={title}
+              githubLink={githubLink}
+              body={body}
+              path={path}
+            />
             <NestedRow>
               <CustomColumn xs={9} xlColumn="2 / span 18">
                 <Footer />

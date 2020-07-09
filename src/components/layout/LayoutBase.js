@@ -35,12 +35,14 @@ const SkipToContentEl = styled(BasicLink).attrs({
 `;
 
 export const LayoutBase = ({
-  pageContext,
+  path,
   title,
   description = "",
   previewImage,
   children,
   viewport = "width=device-width, initial-scale=1",
+  omitSeoHeadersPredicate,
+  seo = {},
 }) => {
   mark(PERFORMANCE_MARKS.renderLayout);
   React.useEffect(() => {
@@ -69,7 +71,10 @@ export const LayoutBase = ({
         title={title}
         description={description}
         previewImage={previewImage}
-        path={pageContext.urlPath}
+        path={path}
+        omitPredicate={omitSeoHeadersPredicate}
+        link={seo.link}
+        meta={seo.meta}
       />
       <SkipToContentEl />
       <ContentEl>{children}</ContentEl>
@@ -83,8 +88,10 @@ LayoutBase.propTypes = {
   previewImage: PropTypes.string,
   viewport: PropTypes.string,
   description: PropTypes.node,
-  pageContext: PropTypes.shape({
-    locale: PropTypes.string.isRequired,
-    urlPath: PropTypes.string.isRequired,
-  }).isRequired,
+  path: PropTypes.string.isRequired,
+  omitSeoHeadersPredicate: PropTypes.func,
+  seo: PropTypes.shape({
+    link: PropTypes.array,
+    meta: PropTypes.array,
+  }),
 };

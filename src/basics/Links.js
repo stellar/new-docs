@@ -116,11 +116,19 @@ export const Link = ({ href, newTab, ...props }) => {
         destination.pathname || "",
       );
     }
-    // If the page is being generated with a /no-js url, then we need to make
-    // sure the links render with the right querystring so they load correctly
-    // when clicked.
-    if (destination.pathname?.startsWith("/no-js")) {
-      destination.query = destination.query
+    // If the page is being generated with a /no-js url, or if we're currently on
+    // an /api page and `javascript=false` is in the query string, then we need
+    // to make sure the links render with the right path and querystring so they
+    // load correctly when clicked.
+    const fromNoJs = destination.path?.startsWith("/no-js");
+    const fromApiNoJs =
+      location.pathname.startsWith("/api") &&
+      location.search.includes("javascript=false");
+    if (fromNoJs) {
+      destination.pathname = destination.path.split("/no-js")[1];
+    }
+    if (fromNoJs || fromApiNoJs) {
+      destination.search = destination.search
         ? `${destination.query}&javascript=false`
         : "javascript=false";
     }
@@ -129,7 +137,7 @@ export const Link = ({ href, newTab, ...props }) => {
       url: finalUrl,
       destinationType: getLinkTarget(finalUrl),
     };
-  }, [href, originalFilePath]);
+  }, [href, originalFilePath, location.pathname, location.search]);
 
   switch (destinationType) {
     case LINK_DESTINATIONS.api:
@@ -141,9 +149,13 @@ export const Link = ({ href, newTab, ...props }) => {
             {({ onLinkClick }) => (
               <BasicLink
                 onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onLinkClick(url);
+                  // Only use the scroll router logic if the visitor hasn't
+                  // opted-out of JS. This is only expected for search crawlers.
+                  if (!url.includes("javascript=false")) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onLinkClick(url);
+                  }
                 }}
                 href={url}
                 {...props}

@@ -11,7 +11,13 @@ const sortByPosition = (a, b) => {
 };
 let lastScrollPosition = 0;
 
-export const SideNavProgressContext = React.createContext({});
+export const SideNavProgressContext = React.createContext({
+  activeContent: null,
+  stopTrackingElement: () => {},
+  trackElement: () => {},
+  setActiveNode: () => {},
+  setIsNavClicked: () => {},
+});
 
 export const Provider = ({ children }) => {
   const [activeContent, setActiveNode] = React.useState({ id: "", ref: null });
