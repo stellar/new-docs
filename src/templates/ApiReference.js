@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { graphql } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import Helmet from "react-helmet";
-import { useLocation } from "@reach/router";
+import { useLocation, Redirect } from "@reach/router";
 
 import { apiReferenceComponents } from "constants/docsComponentMapping";
 import { docType } from "constants/docType";
@@ -43,6 +43,7 @@ import { SideNavBody } from "components/SideNav";
 import { Expansion } from "components/Expansion";
 
 import DevelopersPreview from "assets/images/og_developers.jpg";
+import SingleApiReference from "./SingleApiReference";
 
 // This is a function, not a component
 const renderItem = ({
@@ -71,14 +72,38 @@ const { a: StyledLink } = apiReferenceComponents;
 
 // eslint-disable-next-line react/no-multi-comp
 const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
+  const sideNavRef = React.useRef();
+  const location = useLocation();
+
+  // For SEO reasons, we attempt to direct all search crawlers to a
+  // `?javascript=false` form of the page. This will fetch the / no-js/api/* form
+  // of the static HTML, but at least some of them will still execute JS once the
+  // page loads. The JS populates the rest of the content, which isn't what we
+  // want to happen. This is our latest attempt at forcing SEO to properly
+  // associate the content for an /api/* URL with _exclusively_ that URL.
+  if (location.search?.includes("javascript=false")) {
+    const { node: doc } =
+      data.referenceDocs.edges.find(
+        ({ node }) =>
+          buildPathFromFile(node.parent.relativePath) ===
+          normalizeRoute(location.pathname),
+      ) || {};
+    if (!doc) {
+      return <Redirect to="/api/introduction" />;
+    }
+    return (
+      <SingleApiReference
+        data={{ ...data, doc }}
+        pageContext={pageContext}
+        isClientRendered={true}
+      />
+    );
+  }
+
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
   );
-  const sideNavRef = React.useRef();
   const docsBySubCategory = groupByCategory(referenceDocs);
-  const location = useLocation();
-  const needsSingle = location.search?.includes("javascript=false");
-  const loadedPath = normalizeRoute(location.pathname);
 
   return (
     <ScrollRouter>
@@ -96,6 +121,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           description="The complete API reference for the Stellar network. Includes descriptions of Horizon endpoints, network concepts, and example code for some languages."
           pageContext={pageContext}
           viewport="width=1366, initial-scale=.1"
+          path="/api/"
           omitSeoHeadersPredicate={(header) => !header.rel === "canonical"}
         >
           <PrismStyles />
@@ -137,32 +163,16 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   <BetaNotice />
                 </CustomColumn>
               </NestedRow>
-              {referenceDocs
-                .map((doc) => ({
-                  ...doc,
-                  path: buildPathFromFile(doc.parent.relativePath),
-                }))
-                .filter((doc) =>
-                  // For SEO reasons, we attempt to direct all search crawlers to
-                  // a `?javascript=false` form of the page. This will fetch the /
-                  // no-js/api/* form of the static HTML, but at least some of
-                  // them will still execute JS once the page loads. The JS
-                  // populates the rest of the content, which isn't what we want
-                  // to happen. This is our latest attempt at forcing SEO to
-                  // properly associate the content for an /api/* URL with
-                  // _exclusively_ that URL.
-                  needsSingle ? doc.path === loadedPath : true,
-                )
-                .map(({ body, id, parent, title, githubLink, path }) => (
-                  <ReferenceSection
-                    relativePath={parent.relativePath}
-                    key={id}
-                    title={title}
-                    githubLink={githubLink}
-                    body={body}
-                    path={path}
-                  />
-                ))}
+              {referenceDocs.map(({ body, id, parent, title, githubLink }) => (
+                <ReferenceSection
+                  relativePath={parent.relativePath}
+                  key={id}
+                  title={title}
+                  githubLink={githubLink}
+                  body={body}
+                  path={buildPathFromFile(parent.relativePath)}
+                />
+              ))}
               <NestedRow>
                 <CustomColumn xs={9} xlColumn="2 / span 10">
                   <Footer />

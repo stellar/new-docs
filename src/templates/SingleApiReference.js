@@ -70,6 +70,7 @@ const { a: StyledLink } = apiReferenceComponents;
 const SingleApiReference = React.memo(function ApiReference({
   data,
   pageContext,
+  isClientRendered = false,
 }) {
   const referenceDocs = sortReference(
     data.referenceDocs.edges.map(({ node }) => normalizeMdx(node)),
@@ -85,10 +86,15 @@ const SingleApiReference = React.memo(function ApiReference({
     githubLink,
   } = normalizeMdx(data.doc);
   const path = buildPathFromFile(parent.relativePath);
-  const description = React.useMemo(
-    () => frontmatter.description || getDescriptionFromAst(mdxAst),
-    [mdxAst, frontmatter.description],
-  );
+  const description = React.useMemo(() => {
+    // If the page is loaded as `/api/…?javascript=false`, then we won't have the
+    // MDX AST from which to pull a description, but we also don't need it -- the
+    // description is only for metadata.
+    if (isClientRendered) {
+      return "";
+    }
+    return frontmatter.description || getDescriptionFromAst(mdxAst);
+  }, [mdxAst, frontmatter.description, isClientRendered]);
 
   return (
     <MDXProvider components={apiReferenceComponents}>

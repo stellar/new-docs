@@ -21,12 +21,7 @@ const { h1: H1, h2: H2 } = apiReferenceComponents;
 const MainEl = styled.main`
   display: block;
 `;
-const ArticleEl = styled.article`
-  display: block;
-  &:first-child {
-    margin-top: 5rem;
-  }
-`;
+const ArticleEl = styled.article``;
 
 const Article = ({ children, path }) => {
   // The scroll router overrules Reach Router once the page loads, but we need
