@@ -102,6 +102,7 @@ const SingleApiReference = React.memo(function ApiReference({
         previewImage={DevelopersPreview}
         description={description}
         pageContext={pageContext}
+        path={path}
       >
         <ApiReferenceRow>
           <NavColumn xs={3} lg={3} xl={4}>
