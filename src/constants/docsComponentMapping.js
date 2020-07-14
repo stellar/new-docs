@@ -179,12 +179,8 @@ const OrangeTableCell = styled.td`
 export const apiReferenceComponents = {
   ...components,
   wrapper: WrapperApiReference,
-  h1: styled(components.h1).attrs(() => ({
-    as: makeLinkedHeader(ApiRefH1, headerOptions),
-  }))``,
-  h2: styled(components.h2).attrs(() => ({
-    as: makeLinkedHeader(ApiRefH2, headerOptions),
-  }))``,
+  h1: makeLinkedHeader(ApiRefH1, headerOptions),
+  h2: makeLinkedHeader(ApiRefH2, headerOptions),
   h3: TextComponents.H3,
   h4: TextComponents.H4,
   h5: TextComponents.H5,
