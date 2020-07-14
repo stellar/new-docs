@@ -27,7 +27,6 @@ const elementMap = new Map();
 
 export const ScrollRouter = ({ children, initialActive = "" }) => {
   const { subscribe, emit } = useSubscription();
-  const initialLoadCheck = React.useRef(false);
   const [activeNode, setActiveNode] = React.useState({
     ref: null,
     id: initialActive,
@@ -84,23 +83,12 @@ export const ScrollRouter = ({ children, initialActive = "" }) => {
   }, [activeNode, isNavClicked, emit]);
 
   // Tracked sections
-  const trackElement = React.useCallback(
-    (ref, route) => {
-      routeMap.set(ref, route);
-      elementMap.set(route, ref);
-      trackedElementsRef.current.push(ref);
-      trackedElementsRef.current.sort(sortByPosition);
-
-      // We want to scroll to the element associated with the route _once_.
-      if (!initialLoadCheck.current && window.location.pathname === route) {
-        emit(route);
-        initialLoadCheck.current = true;
-        // Our navbar is 90px tall
-        smoothScrollTo(ref.current, { duration: 0 });
-      }
-    },
-    [emit],
-  );
+  const trackElement = React.useCallback((ref, route) => {
+    routeMap.set(ref, route);
+    elementMap.set(route, ref);
+    trackedElementsRef.current.push(ref);
+    trackedElementsRef.current.sort(sortByPosition);
+  }, []);
   const stopTrackingElement = React.useCallback((ref) => {
     const route = routeMap.get(ref);
     routeMap.delete(ref);
