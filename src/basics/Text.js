@@ -54,7 +54,6 @@ export const H1 = styled.h1`
   display: inline-block;
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  margin-top: 5.25rem;
   line-height: 1.25;
   letter-spacing: normal;
 `;
