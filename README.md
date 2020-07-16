@@ -580,3 +580,9 @@ and return timing information—an object with a `duration` and
 `hasHighPrecision`. Some browsers don't expose the high-precision APIs, and we
 definitely want to know if they're used (especially if not usable). Make sure to
 use a `constants/performanceMarks` constant, not just a raw string.
+
+### Testing requests as a crawler
+
+Chrome allows you to
+[override the user agent](https://developers.google.com/web/tools/chrome-devtools/device-mode/override-user-agent)
+with DevTools, which enables us to test how Google will see pages.
