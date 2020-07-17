@@ -76,7 +76,6 @@ const OutlineTitleEl = styled.div`
   font-weight: ${FONT_WEIGHT.bold};
   padding: 0.75rem 0;
 `;
-
 const NextUpEl = styled.div`
   font-weight: ${FONT_WEIGHT.bold};
   font-size: 0.875rem;
@@ -84,8 +83,11 @@ const NextUpEl = styled.div`
   border-radius: 2px;
   background-color: rgba(62, 27, 219, 0.04);
   padding: 1em;
-`;
 
+  a {
+    color: ${PALETTE.purpleBlue};
+  }
+`;
 const ModifiedEl = styled.div`
   color: ${THEME.lightGrey};
   font-size: 0.875rem;
