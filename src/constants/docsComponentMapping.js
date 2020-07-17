@@ -100,7 +100,9 @@ const components = {
   ol: TextComponents.OrderedList,
   li: ListItem,
   section: TextComponents.Section,
-  table: TextComponents.Table,
+  table: styled(TextComponents.Table)`
+    margin: 1rem 0;
+  `,
   thead: TextComponents.TableHead,
   th: TextComponents.TableHeadCell,
   tbody: TextComponents.TableBody,
