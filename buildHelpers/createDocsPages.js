@@ -45,6 +45,7 @@ const createDocsPages = ({ actions, docs }) => {
         urlPath: docPath,
         locale: defaultLocale,
         name: doc.name,
+        lastModified: doc.modifiedTime,
         relativeDirectory: doc.relativeDirectory,
         rootDir: DOCS_ROOT,
         // None of these have translations set up. If we translate them in
@@ -79,6 +80,7 @@ const createDocsPages = ({ actions, docs }) => {
         urlPath: refPath,
         docId: ref.childMdx.id,
         ids: apiRefDocIds,
+        lastModified: ref.modifiedTime,
         locale: defaultLocale,
       },
     });
@@ -95,6 +97,7 @@ const queryFragment = `
         childMdx {
           id
         }
+        modifiedTime(formatString: "YYYY-MM-DD")
         name
         relativePath
         relativeDirectory

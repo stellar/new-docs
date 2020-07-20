@@ -74,6 +74,7 @@ const serializeLocale = (locale) => {
         // so highlighting them in the sitemap isn't what we want.
         url:
           site.siteMetadata.siteUrl + main.originalPath.replace("no-js/", ""),
+        lastmod: main.context.lastModified,
         links: alternates.map((a) => ({
           lang: a.locale,
           url: site.siteMetadata.siteUrl + a.originalPath,
@@ -94,6 +95,9 @@ const query = `
     edges {
       node {
         path
+        context {
+          lastModified
+        }
       }
     }
   }
