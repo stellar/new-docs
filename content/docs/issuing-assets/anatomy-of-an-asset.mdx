@@ -69,6 +69,12 @@ KeyPair issuer = StellarSdk.Keypair.fromAccountId(
 Asset astroDollar = Asset.createNonNativeAsset("AstroDollar", issuer);
 ```
 
+```python
+from stellar_sdk.asset import Asset
+
+astro_dollar = Asset("AstroDollar", "GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF")
+```
+
 </CodeExample>
 
 ## Amount Precision
