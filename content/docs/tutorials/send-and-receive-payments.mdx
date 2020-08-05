@@ -129,28 +129,46 @@ try {
 package main
 
 import (
-    "github.com/stellar/go/build"
-    "github.com/stellar/go/clients/horizon"
+    "github.com/stellar/go/txnbuild"
+    "github.com/stellar/go/clients/horizonclient"
     "fmt"
 )
 
 func main () {
     source := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
     destination := "GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5"
+    client := horizonclient.DefaultTestNetClient
 
     // Make sure destination account exists
-    if _, err := horizon.DefaultTestNetClient.LoadAccount(destination); err != nil {
+    destAccountRequest := horizonclient.AccountRequest{AccountID: destination}
+    destinationAccount, err := client.Accounts(destAccountRequest)
+    if err != nil {
         panic(err)
     }
 
-    tx, err := build.Transaction(
-        build.TestNetwork,
-        build.SourceAccount{source},
-        build.AutoSequence{horizon.DefaultTestNetClient},
-        build.Payment(
-            build.Destination{destination},
-            build.NativeAmount{"10"},
-        ),
+    // Load the source account
+    sourceKP := keypair.MustParseFull(source)
+    sourceAccountRequest := horizonclient.AccountRequest{AccountID: sourceKP.Address()}
+    sourceAccount, err := client.Accounts(sourceAccountRequest)
+    if err != nil {
+        panic(err)
+    }
+
+    // Build transaction
+    tx, err := txnbuild.NewTransaction(
+      txnbuild.TransactionParams{
+        SourceAccount:        &sourceAccount,
+        IncrementSequenceNum: true,
+        BaseFee:              MinBaseFee,
+        Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
+        Operations: []txnbuild.Operation{
+          &txnbuild.Payment{
+            Destination: destination,
+            Amount:      "10",
+            Asset:       txnbuild.NativeAsset{},
+          },
+        },
+      },
     )
 
     if err != nil {
@@ -158,18 +176,13 @@ func main () {
     }
 
     // Sign the transaction to prove you are actually the person sending it.
-    txe, err := tx.Sign(source)
-    if err != nil {
-        panic(err)
-    }
-
-    txeB64, err := txe.Base64()
+    tx, err = tx.Sign(network.TestNetworkPassphrase, sourceKP)
     if err != nil {
         panic(err)
     }
 
     // And finally, send it off to Stellar!
-    resp, err := horizon.DefaultTestNetClient.SubmitTransaction(txeB64)
+    resp, err := horizonclient.DefaultTestNetClient.SubmitTransaction(tx)
     if err != nil {
         panic(err)
     }
@@ -254,9 +267,11 @@ server.accounts().account(destination);
 ```
 
 ```go
-    if _, err := horizon.DefaultTestNetClient.LoadAccount(destination); err != nil {
-        panic(err)
-    }
+destAccountRequest := horizonclient.AccountRequest{AccountID: destination}
+destinationAccount, err := client.Accounts(destAccountRequest)
+if err != nil {
+    panic(err)
+}
 ```
 
 ```python
@@ -277,6 +292,15 @@ return server.loadAccount(sourceKeys.publicKey());
 
 ```java
 AccountResponse sourceAccount = server.accounts().account(source);
+```
+
+```go
+sourceKP := keypair.MustParseFull(source)
+sourceAccountRequest := horizonclient.AccountRequest{AccountID: sourceKP.Address()}
+sourceAccount, err := client.Accounts(sourceAccountRequest)
+if err != nil {
+  panic(err)
+}
 ```
 
 ```python
@@ -300,9 +324,19 @@ Transaction transaction = new Transaction.Builder(sourceAccount)
 ```
 
 ```go
-    tx, err := build.Transaction(
-    // ...
-    )
+tx, err := txnbuild.NewTransaction(
+  txnbuild.TransactionParams{
+    SourceAccount:        &sourceAccount,
+    IncrementSequenceNum: true,
+    BaseFee:              MinBaseFee,
+    Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
+    ...
+  },
+)
+
+if err != nil {
+    panic(err)
+}
 ```
 
 ```python
@@ -332,16 +366,13 @@ transaction = TransactionBuilder(
 ```
 
 ```go
-tx, err := build.Transaction(
-    build.TestNetwork,
-    build.SourceAccount{source},
-    build.AutoSequence{horizon.DefaultTestNetClient},
-    build.MemoText{"Test Transaction"},
-    build.Payment(
-        build.Destination{destination},
-        build.NativeAmount{"10"},
-    ),
-)
+Operations: []txnbuild.Operation{
+    &txnbuild.Payment{
+      Destination: destination,
+      Amount:      "10",
+      Asset:       txnbuild.NativeAsset{},
+    },
+  },
 ```
 
 ```python
@@ -365,7 +396,7 @@ You should also note that the amount is a string rather than a number. When work
 ```
 
 ```go
-build.MemoText{"Test Transaction"},
+Memo: txnbuild.MemoText("Test Transaction")
 ```
 
 ```python
@@ -387,8 +418,10 @@ transaction.sign(source);
 ```
 
 ```go
-txe, err := tx.Sign(source)
-txeB64, err := txe.Base64()
+tx, err = tx.Sign(network.TestNetworkPassphrase, sourceKP)
+if err != nil {
+    panic(err)
+}
 ```
 
 ```python
@@ -410,7 +443,10 @@ server.submitTransaction(transaction);
 ```
 
 ```go
-resp, err := horizon.DefaultTestNetClient.SubmitTransaction(txeB64)
+resp, err := horizonclient.DefaultTestNetClient.SubmitTransaction(tx)
+if err != nil {
+    panic(err)
+}
 ```
 
 ```python
@@ -547,32 +583,26 @@ package main
 import (
     "context"
     "fmt"
-    "github.com/stellar/go/clients/horizon"
+    "github.com/stellar/go/clients/horizonclient"
 )
 
 func main() {
-    const address = "GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF"
-    ctx := context.Background()
+    client := horizonclient.DefaultTestNetClient
+    opRequest := horizonclient.OperationRequest{ForAccount: "GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF", Cursor: "now"}
 
-    cursor := horizon.Cursor("now")
+    ctx, cancel := context.WithCancel(context.Background())
+    go func() {
+        // Stop streaming after 60 seconds.
+        time.Sleep(60 * time.Second)
+        cancel()
+    }()
 
-    fmt.Println("Waiting for a payment...")
-
-    err := horizon.DefaultTestNetClient.StreamPayments(ctx, address, &cursor, func(payment horizon.Payment) {
-        fmt.Println("Payment type", payment.Type)
-        fmt.Println("Payment Paging Token", payment.PagingToken)
-        fmt.Println("Payment From", payment.From)
-        fmt.Println("Payment To", payment.To)
-        fmt.Println("Payment Asset Type", payment.AssetType)
-        fmt.Println("Payment Asset Code", payment.AssetCode)
-        fmt.Println("Payment Asset Issuer", payment.AssetIssuer)
-        fmt.Println("Payment Amount", payment.Amount)
-        fmt.Println("Payment Memo Type", payment.Memo.Type)
-        fmt.Println("Payment Memo", payment.Memo.Value)
-    })
-
+    printHandler := func(op operations.Operation) {
+        fmt.Println(op)
+    }
+    err := client.StreamPayments(ctx, opRequest, printHandler)
     if err != nil {
-        panic(err)
+        fmt.Println(err)
     }
 
 }
@@ -648,6 +678,11 @@ if (lastToken != null) {
 }
 ```
 
+```go
+client := horizonclient.DefaultTestNetClient
+opRequest := horizonclient.OperationRequest{ForAccount: "GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF", Cursor: "now"}
+```
+
 ```python
 payments = server.payments().for_account(account_id)
 last_token = load_last_paging_token()
@@ -678,6 +713,23 @@ paymentsRequest.stream(new EventListener<OperationResponse>() {
     // Handle a payment
   }
 });
+```
+
+```go
+ctx, cancel := context.WithCancel(context.Background())
+go func() {
+    // Stop streaming after 60 seconds.
+    time.Sleep(60 * time.Second)
+    cancel()
+}()
+
+printHandler := func(op operations.Operation) {
+    fmt.Println(op)
+}
+err := client.StreamPayments(ctx, opRequest, printHandler)
+if err != nil {
+    fmt.Println(err)
+}
 ```
 
 ```python
