@@ -84,7 +84,6 @@ server
 ```
 
 ```java
-Network.useTestNetwork();
 Server server = new Server("https://horizon-testnet.stellar.org");
 
 KeyPair source = KeyPair.fromSecretSeed("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
@@ -94,14 +93,14 @@ KeyPair destination = KeyPair.fromAccountId("GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKS
 // You could skip this, but if the account does not exist, you will be charged
 // the transaction fee when the transaction fails.
 // It will throw HttpResponseException if account does not exist or there was another error.
-server.accounts().account(destination);
+server.accounts().account(destination.getAccountId());
 
 // If there was no error, load up-to-date information on your account.
-AccountResponse sourceAccount = server.accounts().account(source);
+AccountResponse sourceAccount = server.accounts().account(source.getAccountId());
 
 // Start building the transaction.
-Transaction transaction = new Transaction.Builder(sourceAccount)
-        .addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), "10").build())
+Transaction transaction = new Transaction.Builder(sourceAccount, Network.TESTNET)
+        .addOperation(new PaymentOperation.Builder(destination.getAccountId(), new AssetTypeNative(), "10").build())
         // A memo allows you to add your own metadata to a transaction. It's
         // optional and does not affect how Stellar treats the transaction.
         .addMemo(Memo.text("Test Transaction"))
@@ -263,7 +262,7 @@ server.loadAccount(destinationId).then(function (account) {
 ```
 
 ```java
-server.accounts().account(destination);
+server.accounts().account(destination.getAccountId());
 ```
 
 ```go
@@ -291,7 +290,7 @@ return server.loadAccount(sourceKeys.publicKey());
 ```
 
 ```java
-AccountResponse sourceAccount = server.accounts().account(source);
+AccountResponse sourceAccount = server.accounts().account(source.getAccountId());
 ```
 
 ```go
@@ -320,7 +319,7 @@ var transaction = new StellarSdk.TransactionBuilder(sourceAccount);
 ```
 
 ```java
-Transaction transaction = new Transaction.Builder(sourceAccount)
+Transaction transaction = new Transaction.Builder(sourceAccount, Network.TESTNET)
 ```
 
 ```go
@@ -362,7 +361,7 @@ transaction = TransactionBuilder(
 ```
 
 ```java
-.addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), "10").build())
+.addOperation(new PaymentOperation.Builder(destination.getAccountId(), new AssetTypeNative(), "10").build())
 ```
 
 ```go
@@ -526,7 +525,7 @@ Server server = new Server("https://horizon-testnet.stellar.org");
 KeyPair account = KeyPair.fromAccountId("GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF");
 
 // Create an API call to query payments involving the account.
-PaymentsRequestBuilder paymentsRequest = server.payments().forAccount(account);
+PaymentsRequestBuilder paymentsRequest = server.payments().forAccount(account.getAccountId());
 
 // If some payments have already been handled, start the results from the
 // last seen payment. (See below in `handlePayment` where it gets saved.)
@@ -560,7 +559,7 @@ paymentsRequest.stream(new EventListener<OperationResponse>() {
         StringBuilder assetNameBuilder = new StringBuilder();
         assetNameBuilder.append(((AssetTypeCreditAlphaNum) asset).getCode());
         assetNameBuilder.append(":");
-        assetNameBuilder.append(((AssetTypeCreditAlphaNum) asset).getIssuer().getAccountId());
+        assetNameBuilder.append(((AssetTypeCreditAlphaNum) asset).getIssuer());
         assetName = assetNameBuilder.toString();
       }
 
@@ -569,10 +568,14 @@ paymentsRequest.stream(new EventListener<OperationResponse>() {
       output.append(" ");
       output.append(assetName);
       output.append(" from ");
-      output.append(((PaymentOperationResponse) payment).getFrom().getAccountId());
+      output.append(((PaymentOperationResponse) payment).getFrom());
       System.out.println(output.toString());
     }
-
+  }
+  
+  @Override
+  public void onFailure(Optional<Throwable> optional, Optional<Integer> optional1) {
+  
   }
 });
 ```
@@ -671,7 +674,7 @@ if (lastToken) {
 ```
 
 ```java
-PaymentsRequestBuilder paymentsRequest = server.payments().forAccount(account)
+PaymentsRequestBuilder paymentsRequest = server.payments().forAccount(account.getAccountId());
 String lastToken = loadLastPagingToken();
 if (lastToken != null) {
   paymentsRequest.cursor(lastToken);

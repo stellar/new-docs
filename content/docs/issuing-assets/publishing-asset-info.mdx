@@ -170,21 +170,19 @@ server
 ```
 
 ```java
-Network.useTestNetwork();
 Server server = new Server("https://horizon-testnet.stellar.org");
 
 // Keys for issuing account
 KeyPair issuingKeys = KeyPair
   .fromSecretSeed("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
-AccountResponse sourceAccount = server.accounts().account(issuingKeys);
+AccountResponse sourceAccount = server.accounts().account(issuingKeys.getAccountId());
 
-Transaction setHomeDomain = new Transaction.Builder(sourceAccount)
+Transaction setHomeDomain = new Transaction.Builder(sourceAccount, Network.TESTNET)
   .addOperation(new SetOptionsOperation.Builder()
-    .setHomeDomain("yourdomain.com").build()
+    .setHomeDomain("yourdomain.com").build())
   .build();
 setHomeDomain.sign(issuingKeys);
 server.submitTransaction(setHomeDomain);
-
 ```
 
 </CodeExample>
