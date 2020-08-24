@@ -5,13 +5,13 @@ order: 30
 
 import { CodeExample } from "components/CodeExample";
 
-This tutorial shows how easy it is to use Horizon to watch for incoming payments on an [account](../glossary/accounts.mdx) using JavaScript and `EventSource`. We will eschew using [`js-stellar-sdk`](https://github.com/stellar/js-stellar-sdk), the high-level helper library, to show that it is possible for you to perform this task on your own, with whatever programming language you would like to use.
+This tutorial shows how easy it is to use Horizon to watch for incoming payments on an [account](../glossary/accounts.mdx) using JavaScript and `EventSource`. We will eschew using [`js-stellar-sdk`](https://github.com/stellar/js-stellar-sdk), the high-level helper library, to show that it is possible for you to perform this task on your own with whatever programming language you would like to use.
 
 This tutorial assumes that you:
 
 - Have node.js installed locally on your machine.
 - Have curl installed locally on your machine.
-- Are running on Linux, OS X, or any other system that has access to a bash-like shell.
+- Are running on Linux, macOS, or any other system that has access to a bash-like shell.
 - Are familiar with launching and running commands in a terminal.
 
 In this tutorial we will learn:
@@ -45,7 +45,7 @@ $ node -e "require('stellar-base')"
 
 </CodeExample>
 
-Everything was successful if no output it generated from the above command. Now let's write a script to create a new account.
+Everything was successful if no output was generated from the above command. Now let's write a script to create a new account.
 
 ## Creating an account
 
@@ -111,7 +111,7 @@ After a few seconds, the Stellar network will perform consensus, close the ledge
 
 ## Following payments using `curl`
 
-To follow new payments connected to your account you simply need to send `Accept: text/event-stream` header to the [/payments](../.././api/resources/operations/object/payment.mdx) endpoint.
+To follow new payments connected to your account you simply need to send the `Accept: text/event-stream` header to the [/payments](../.././api/resources/operations/object/payment.mdx) endpoint.
 
 <CodeExample>
 
@@ -215,9 +215,9 @@ $ curl "https://horizon-testnet.stellar.org/accounts/GB7JFK56QXQ4DVJRNPDBXABNG3I
 
 </CodeExample>
 
-Sequence number can be found under the `sequence` field. The current sequence number is `713226564141056`. Save this value somewhere.
+Sequence number can be found under the `sequence` field. For our example, the current sequence number is `713226564141056`. Save your value somewhere.
 
-Now, create `make_payment.js` file and paste the following code into it:
+Now, create `make_payment.js` file and paste the following code into it, replacing the sequence number accordingly:
 
 <CodeExample>
 
