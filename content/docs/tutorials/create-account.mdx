@@ -11,7 +11,7 @@ _Before we get started with working with Stellar in code, consider going through
 
 ## Create a Keypair
 
-Stellar uses public key cryptography to ensure that every transaction is secure: every Stellar account has a keypair consisting of a **public key** and a **secret secret key**. The public key is always safe to share — other people need it to identify your account and verify that you authorized a transaction. It's like an email address. The secret key, however, is private information that proves you own — and gives you access to — your account. It's like a password, and you should never share it with anyone.
+Stellar uses public key cryptography to ensure that every transaction is secure: every Stellar account has a keypair consisting of a **public key** and a **secret key**. The public key is always safe to share — other people need it to identify your account and verify that you authorized a transaction. It's like an email address. The secret key, however, is private information that proves you own — and gives you access to — your account. It's like a password, and you should never share it with anyone.
 
 Before creating an account, you need to generate your own keypair:
 
@@ -170,7 +170,7 @@ else:
 
 </CodeExample>
 
-Now for the last step: Getting the account’s details and checking its balance. Accounts can carry multiple balances — one for each type of currency they hold.
+Now for the last step: getting the account’s details and checking its balance. Accounts can carry multiple balances — one for each type of currency they hold.
 
 <CodeExample>
 
@@ -237,4 +237,4 @@ for balance in account['balances']:
 
 </CodeExample>
 
-Now that you’ve got an account, you can [start sending and receiving payments](send-and-receive-payments.mdx), or, if you're ready to hunker down, you can skip ahead and [build an wallet](../building-apps/index.mdx) or [issue a Stellar-network asset](../issuing-assets/index.mdx).
+Now that you’ve got an account, you can [start sending and receiving payments](send-and-receive-payments.mdx), or, if you're ready to hunker down, you can skip ahead and [build a wallet](../building-apps/index.mdx) or [issue a Stellar-network asset](../issuing-assets/index.mdx).
