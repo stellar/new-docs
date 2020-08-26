@@ -39,6 +39,9 @@ const Styles = createGlobalStyle`
   twitter-widget {
     margin: auto;
   }
+  [hidden] {
+    display: block !important;
+  }
   ${expansionStyles}
 `;
 
