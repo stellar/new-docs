@@ -205,19 +205,22 @@ for (AccountResponse.Balance balance : account.getBalances()) {
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/stellar/go/clients/horizonclient"
 )
 
 func main() {
-	account, err := horizon.DefaultTestNetClient.LoadAccount(pair.Address())
+	// Replace this with the output from earlier, or use pair.Address()
+	address := "GCFXHS4GXL6BVUCXBWXGTITROWLVYXQKQLF4YH5O5JT3YZXCYPAFBJZB"
+
+	request := horizonclient.AccountRequest{AccountID: address}
+	account, err := horizonclient.DefaultTestNetClient.AccountDetail(request)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Balances for account:", pair.Address())
+	log.Println("Balances for account:", address)
 
 	for _, balance := range account.Balances {
 		log.Println(balance)
