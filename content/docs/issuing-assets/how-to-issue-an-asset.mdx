@@ -130,7 +130,6 @@ server
 ```
 
 ```java
-Network.useTestNetwork();
 Server server = new Server("https://horizon-testnet.stellar.org");
 
 // Keys for accounts to issue and receive the new asset
@@ -140,11 +139,11 @@ KeyPair receivingKeys = KeyPair
   .fromSecretSeed("SDSAVCRE5JRAI7UFAVLE5IMIZRD6N6WOJUWKY4GFN34LOBEEUS4W2T2D");
 
 // Create an object to represent the new asset
-Asset astroDollar = Asset.createNonNativeAsset("AstroDollar", issuingKeys);
+Asset astroDollar = Asset.createNonNativeAsset("AstroDollar", issuingKeys.getAccountId());
 
 // First, the receiving account must trust the asset
-AccountResponse receiving = server.accounts().account(receivingKeys);
-Transaction allowAstroDollars = new Transaction.Builder(receiving)
+AccountResponse receiving = server.accounts().account(receivingKeys.getAccountId());
+Transaction allowAstroDollars = new Transaction.Builder(receiving, Network.TESTNET)
   .addOperation(
     // The `ChangeTrust` operation creates (or alters) a trustline
     // The second parameter limits the amount the account can hold
@@ -154,10 +153,10 @@ allowAstroDollars.sign(receivingKeys);
 server.submitTransaction(allowAstroDollars);
 
 // Second, the issuing account actually sends a payment using the asset
-AccountResponse issuing = server.accounts().account(issuingKeys);
-Transaction sendAstroDollars = new Transaction.Builder(issuing)
+AccountResponse issuing = server.accounts().account(issuingKeys.getAccountId());
+Transaction sendAstroDollars = new Transaction.Builder(issuing, Network.TESTNET)
   .addOperation(
-    new PaymentOperation.Builder(receivingKeys, astroDollar, "10").build())
+    new PaymentOperation.Builder(receivingKeys.getAccountId(), astroDollar, "10").build())
   .build();
 sendAstroDollars.sign(issuingKeys);
 server.submitTransaction(sendAstroDollars);
