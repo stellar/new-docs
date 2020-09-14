@@ -2,6 +2,8 @@
 
 # Contents
 
+- [Stellar Documentation and [API Reference](https://developers.stellar.org/api/)](#stellar-documentation-and-api-reference)
+- [Contents](#contents)
 - [How to Run](#how-to-run)
   - [Dependencies](#dependencies)
   - [Local Development](#local-development)
@@ -18,14 +20,17 @@
     - [Quote](#quote)
     - [Paragraph and Headings](#paragraph-and-headings)
   - [Custom Components](#custom-components)
-    - [`<AttributeTable/>`](#attributetable)
-    - [`<Alert/>`](#alert)
-    - [`<CodeExample/>`](#codeexample)
-    - [`<Endpoint/>`](#endpoint)
-    - [`<EndpointsTable/>`](#endpointstable)
-    - [`<ExampleResponse/>`](#example-json-response)
-    - [`<MethodTable/>`](#MethodTable)
+    - [AttributeTable](#attributetable)
+      - [Omitting Data Type](#omitting-data-type)
+    - [Alert](#alert)
+    - [CodeExample](#codeexample)
+    - [Endpoint](#endpoint)
+    - [EndpointsTable](#endpointstable)
+    - [Example (JSON) Response](#example-json-response)
+    - [MethodTable](#methodtable)
     - [Diagrams (Mermaid)](#diagrams-mermaid)
+    - [Performance metrics](#performance-metrics)
+    - [Testing requests as a crawler](#testing-requests-as-a-crawler)
 
 # How to Run
 
@@ -234,7 +239,7 @@ Beyond defining title font sizes, line heights, and weights:
 - **H1** tags are reserved for the page’s title and should not be used; that
   said, if they are used, they will still show up on the front end as H1 tags
 - **H2** tags populate the ride-side page
-  [table of contents](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
+  [table of contents](https://developers.stellar.org/docs/anchoring-assets/enabling-deposit-and-withdrawal/setting-up-test-server/)
   in Documentation
 
 ## Custom Components
@@ -340,7 +345,7 @@ Example: `<AttributeTable/>` with type specified on
   - `children` (required)
 
 For example,
-[Setting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
+[Setting Up Test Server](https://developers.stellar.org/docs/anchoring-assets/enabling-deposit-and-withdrawal/setting-up-test-server/)
 
 ```
 import { Alert } from "components/Alert";
@@ -367,7 +372,7 @@ than one language. See an example of including a snippet for `curl` and
   - `href` (optional)
 
 For example,
-[Setting Up Test Server](https://developers.stellar.org/docs/enabling-deposit-and-withdrawal/setting-up-test-server/)
+[Setting Up Test Server](https://developers.stellar.org/docs/anchoring-assets/enabling-deposit-and-withdrawal/setting-up-test-server/)
 in Documentation and
 [Resources > Transaction > Retrieve a Transaction](https://developers.stellar.org/api/resources/transactions/single/)
 in API Reference.

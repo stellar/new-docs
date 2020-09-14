@@ -27,11 +27,19 @@ Stellar is a multi-currency network by design. The ability to issue assets is fu
 
 <ReadMore url="./issuing-assets/index" />
 
-## Enable Deposit and Withdrawal
+## Anchor Assets
 
-Many Stellar assets represent real-world currencies such as dollars, euros, or naira. Companies that accept deposits and honor withdrawals of those currencies — **anchors** in Stellar terminology — set up standard infrastructure connecting Stellar to banking rails so Stellar interfaces can initiate transactions on behalf of users. If you want to set up an on/off ramp that interoperates with Stellar wallets, this section is for you.
+Organizations can connect assets issued on Stellar with external banking and payment systems, allowing users and businesses to transfer assets onto or through the Stellar network. Specifically, organizations can **anchor** assets issued on the Stellar network by facilitating 1-1 trades for the off-chain representation of the tokenized asset. 
 
-<ReadMore url="./enabling-deposit-and-withdrawal/index" />
+For example, a USD anchor could accept $1000 USD from a customer's wire transfer and send 1000 USDX tokens to the customer's Stellar account. Conversely, another customer could send USDX tokens to the anchor on Stellar and expect an incoming $1000 USD wire transfer from the anchor. These kinds of deposit and withdrawal operations are facilitated by wallet applications and SEP-24 anchor servers.
+
+<ReadMore url="./anchoring-assets/enabling-deposits-and-withdrawal/index" />
+
+Anchors can also facilitate payments made through Stellar instead of simply on Stellar. 
+
+For example, a customer could want to send $1000 USD worth of EUR to a friend's bank account in Germany. Anchor A could collect the sending and receiving customer's info, make a USD->EUR path payment on Stellar to Anchor B (in Germany), and Anchor B could deposit the funds into the recipent's bank account.
+
+<ReadMore url="./anchoring-assets/enabling-cross-border-payments/index" />
 
 ## Build Apps
 
