@@ -33,7 +33,7 @@
 
 To build this project, you must have the following dependencies installed:
 
-- `node v13.12.0`
+- A modern version of node. We recommend the current LTS.
   - We have some binary dependencies, `sharp` for image processing and
     `puppeteer` to render Mermaid charts, which are both somewhat flaky. It's
     possible that one of these will ship a change that mandates a more modern
