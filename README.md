@@ -33,8 +33,11 @@
 
 To build this project, you must have the following dependencies installed:
 
-- `node 10.16.3`
-  - The latest node version may not be compatible with the "sharp" module
+- A modern version of node. We recommend the current LTS.
+  - We have some binary dependencies, `sharp` for image processing and
+    `puppeteer` to render Mermaid charts, which are both somewhat flaky. It's
+    possible that one of these will ship a change that mandates a more modern
+    version in the future.
 - `yarn`
 
 ## Local Development
