@@ -11,7 +11,7 @@ Before setting up a server that connects to live banking rails and real money, y
 <Alert>
 
 
-Note: the testnet is reset every three months, so when building on it, make sure you have a plan to recreate necessary accounts and other data. For more info, check out the [best practices for using the testnet](../glossary/testnet.mdx#best-practices-for-using-testnet).
+Note: the testnet is reset every three months, so when building on it, make sure you have a plan to recreate necessary accounts and other data. For more info, check out the [best practices for using the testnet](../../glossary/testnet.mdx#best-practices-for-using-testnet).
 
 </Alert>
 
@@ -24,7 +24,7 @@ You can also find an outline of the basic steps anchors need to complete in the 
 
 Before you start building infrastructure to connect a Stellar-network token to banking rails, you need to:
 
-1. Issue an asset on the network – which you can find out how to do in the [Issue Assets](../issuing-assets/index.mdx/) section — or find another trustworthy issuer and coordinate with them to broker their asset.
+1. Issue an asset on the network – which you can find out how to do in the [Issue Assets](../../issuing-assets/index.mdx/) section — or find another trustworthy issuer and coordinate with them to broker their asset.
 1. Add meta-information about the asset (if you issue one) and define the location of your `DIRECT_PAYMENT_SERVER` in your `stellar.toml` so that wallets know where to find the server and relevant endpoints. You can consult [this guide](../../issuing-assets/index.mdx/) for help completing your `stellar.toml`.
 
 Once you've taken those steps, you're ready to implement an `/info` endpoint.
@@ -83,11 +83,11 @@ Note: Generally, **RA**s should require the KYC fields of the **SU** and **RU** 
 
 ## Authentication
 
-To provide a simpler experience for wallet users, anchors (aka on/off ramps) can authenticate individuals with their Stellar accounts instead of requiring usernames and passwords. The method for doing that is specified in the Stellar Web Authentication SEP (aka [SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md)).
+Stellar Web Authentication ([SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md)) is a protocol for verifying that a user controls a Stellar private key for a given account, and for creating a persistent session for that user. It relies on a variation of mutual challenge-response, and uses Stellar transactions to encode challenges and responses: the auth server provides a 'challenge' transaction; the client signs it on behalf of the user and returns it to the anchor; the anchor checks that the signature is valid, and if it is, issues a JWT.
 
-Stellar Web Authentication is a protocol for verifying that a user controls a Stellar private key for a given account, and for creating a persistent session for that user. It relies on a variation of mutual challenge-response, and uses Stellar transactions to encode challenges and responses: an asset issuer provides a 'challenge' transaction; the client signs it on behalf of the user and returns it to the issuer; the issuer checks that the signature is valid, and if it is, issues a JWT.
+In the context of SEP-31, the client _and_ key holder is the sending anchor (**SA**). Receiving anchors (**RA**s) should have a list of approved sending anchors and their public keys used in SEP-10 authentication. If an authentication request is made with an unknown Stellar public key address, the receiving anchor should reject the request.
 
-The JWT then acts as a reusable key for a client to perform an action on behalf of a user. It can contain an arbitrary amount of information, and is signed by the provider — in this case the asset issuer — to ensure validity. You can read the full spec [here](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md).
+Once received, the JWT then acts as a reusable key for the **SA** to perform an action on behalf of a **SU**. It can contain an arbitrary amount of information, and is signed by the provider — in this case the asset anchor — to ensure validity.
 
 ### Requesting a Challenge
 
@@ -97,7 +97,7 @@ The only information needed to request a challenge is the client's public key, p
 
 ### Exchanging the Signed Challenge
 
-Once the client signs the challenge transaction on behalf of the user using standard [Stellar SDK tools](../software-and-sdks/index.mdx), it sends the signed transaction back to the provider. Using those same Stellar SDKs, the provider then checks to see if the transaction is properly signed, and if it is, offers the client a JWT.
+Once the client signs the challenge transaction on behalf of the user using standard [Stellar SDK tools](../../software-and-sdks/index.mdx), it sends the signed transaction back to the provider. Using those same Stellar SDKs, the provider then checks to see if the transaction is properly signed, and if it is, offers the client a JWT.
 
 This JWT should be created with the claims that are appropriate given the account that signed the challenge. It can be created with any existing JWT library.
 
@@ -111,9 +111,117 @@ Since the `sub` field contains the address of the authenticated user, it's kind 
 
 Since some tokens are used in less secure environments, such as as query parameters in URLs, you may want to create a short-lived or one-time use token to prevent a JWT from falling into the wrong hands.
 
-## Deposit Flow
+## Customer Registration
 
-Once you have implemented an `/info` endpoint and set up for user authentication, your next step is to set up a deposit flow. The deposit flow is the on-ramp to the Stellar Network. In it, a user transfers funds via local rails to a stablecoin issuer in return for a digital version of those funds on the Stellar Network. This section will go through all the steps necessary to implement a working deposit functionality.
+Once you have implemented an `/info` endpoint and set up SEP-10 authentication, your next step is to build out [SEP-12](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0012.md). This SEP is a standard for communicating user KYC information between clients and servers running Stellar services.
+
+In the context of SEP-31, the **SA** collects the information the **RA** specifies as required in the response to `GET /customer?type=<sender/receiver SEP-12 type from /info>` and makes a `PUT /customer` request containing that information back to the **RA**.
+
+SEP-12 uses the standardized fields defined in [SEP-9](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0009.md), so **SA**s should be familiar with the descriptions and formats of the fields used by the **RA**.
+
+On testnet, KYC validation is discouraged in order to lower the barrier for other to test your service. However, if information passed to an **RA** turns out to be invalid after attempting to validate it on mainnet, specific customers (**SU**s or **RU**s) can be placed in a `pending_customer_info_update` status.
+
+This signals to the **SA** that the fields should be updated by the **SU** and resent. The problematic fields can be identified using the `GET /customer?id=<customer ID returned from the initial PUT call>` API call. These fields should be included in the future `PUT /customer` request.
+
+**RA**s should also respect the `DELETE /customer` requests made by the **SA**.
+
+<Alert>
+
+
+Note: Ideally, **RA**s validate KYC data passed by **SA**s during the request/response cycle instead of reporting KYC issues via the transaction's status later in the process.
+
+</Alert>
+
+
+**SA**s should poll the `GET /transactions` endpoint(s) provided by their partner **RA**(s) and ensure the transactions initiated are always carried out to completion by fetching updated info from the **SU** when necessary.
+
+The two diagram below outline a potential flow between a **SA** and **RA** including all possible SEP-12 states:
+
+```mermaid
+sequenceDiagram
+    participant SU
+    participant SA Client
+    participant RA Server
+    note right of SA Client: After SEP-10 auth
+    SA Client->>RA Server: [SEP-31 GET /info]
+    activate RA Server
+    RA Server-->>SA Client: sender_sep12_type, receiver_sep12_type
+    deactivate RA Server
+    SA Client->>RA Server: [SEP-12 GET /customer?type={sender_sep12_type value}]
+    activate RA Server
+    RA Server-->>SA Client: NEEDS_INFO, fields
+    deactivate RA Server
+    SA Client->>RA Server: [SEP-12 GET /customer?type={receiver_sep12_type value}]
+    activate RA Server
+    RA Server-->>SA Client: NEEDS_INFO, fields
+    deactivate RA Server
+    SA Client->>SU: Requests fields returned from [SEP-12 GET]s
+    activate SU
+    SU-->>SA Client: Provides field values
+    deactivate SU
+    note right of SA Client: Register SU KYC
+    SA Client->>RA Server: [SEP-12 PUT /customer]
+    activate RA Server
+    RA Server-->>SA Client: ID, 202 Accepted
+    deactivate RA Server
+    note right of SA Client: Register RU KYC
+    SA Client->>RA Server: [SEP-12 PUT /customer]
+    activate RA Server
+    RA Server-->>SA Client: 400 Bad Request
+    deactivate RA Server
+    SA Client->>SU: Requests field(s) returned from [SEP-12 GET receiver]
+    activate SU
+    SU-->>SA Client: Provides field values
+    deactivate SU
+    note right of SA Client: Retry RU registration
+    SA Client->>RA Server: [SEP-12 PUT /customer]
+    activate RA Server
+    RA Server-->>SA Client: ID, 202 Accepted
+    deactivate RA Server
+```
+
+Now that both the **SU** and **RU** are registered with the **RA**, the **SA** must initiate the transaction request with the **RA**. This process is described in the section below. Assuming the **SA** made a successful `POST /transaction` request after collecting the KYC and transaction info, a potential update-flow could look something this:
+
+```mermaid
+sequenceDiagram
+    participant SU
+    participant SA Client
+    participant RA Server
+    participant RU
+    note right of RA Server: After [SEP-31 POST /transaction]
+    RA Server->>RU: [SEP-31 off-chain transfer attempt]
+    activate RU
+    RU-->>RA Server: transfer failed due to KYC field X, Y
+    deactivate RU
+    note right of SA Client: After failed transfer attempt
+    SA Client->>RA Server: [SEP-31 GET /transaction]
+    activate RA Server
+    RA Server-->>SA Client: receiver pending_customer_info_update
+    deactivate RA Server
+    SA Client->>RA Server: [SEP-12 GET /customer?id={receiver ID}]
+    activate RA Server
+    RA Server-->>SA Client: NEEDS_INFO, fields
+    deactivate RA Server
+    SA Client->>SU: Requests updated field values
+    activate SU
+    SU-->>SA Client: Provides updated values
+    deactivate SU
+    SA Client->>RA Server: [SEP-12 PUT /customer]
+    activate RA Server
+    RA Server-->>SA Client: ID, 202 Accepted
+    deactivate RA Server
+    RA Server->>RU: [SEP-31 off-chain transfer retry]
+    activate RU
+    RU-->>RA Server: transfer successful!
+    note right of SA Client: Detect success & notify SU
+    SA Client->>RA Server: [SEP-31 GET /transaction]
+    activate RA Server
+    RA Server-->>SA Client: completed
+    deactivate RA Server
+    SA Client->>SU: transfer successful!
+```
+
+## Transaction Processing
 
 Deposit flows involve a back-and-forth between an issuer's server and a wallet's client that starts with the wallet polling the `/info` endpoint and setting up an authenticated user session as described in the previous sections. The general sequence of deposit events looks like this:
 
@@ -177,7 +285,7 @@ Wallets poll the `/transaction` endpoint when waiting for a transaction’s stat
 
 Wallets need access to the transactions associated with the user’s account for displaying history or past activity. This can be accomplished with a `/transactions` endpoint. Wallets may also use this endpoint after making a POST request to `/transactions/deposit/interactive` to make sure a transaction was successfully created.
 
-![Status Diagram of SEP-24 transactions](../web-assets/SEP24-state-diagram.png)
+![Status Diagram of SEP-24 transactions](../../web-assets/SEP24-state-diagram.png)
 
 ### Transactions History Endpoint
 
@@ -245,3 +353,12 @@ There are a number of UI pages that should be served to the user while walking t
 The wallet then submits the transaction to the Stellar network that sends tokens from the user’s Stellar account to the issuer’s Stellar account, andl begins polling the issuer’s `/transaction` endpoint until the relevant transaction has the expected status. For withdrawals, the expected status is “complete.”
 
 The issuer should detect that the wallet has submitted a withdrawal transaction by streaming transaction events for the user’s account. Once a matching transaction has been detected, the issuer should mark the transaction as “complete” if it succeeds on the Stellar network, or “error” if there was a problem.
+
+## POST /transactions
+
+### Streaming Incoming Path Payments
+
+Receving anchors (**RA**s) must be able to detect and match incoming Stellar path payment transactions with receiving users. This can be done one of two ways:
+
+- Polling: this option consists of periodically fetching the transactions submitted _after_ an already-seen transaction's `paging_id` that should be updated after each iteration.
+- Streaming: this option consists of maintaining a persistent process that streams incoming transactions from the anchored asset's distribution account, which allows detection and transaction matching in close to real time.
