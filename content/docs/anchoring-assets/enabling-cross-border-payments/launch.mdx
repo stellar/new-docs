@@ -5,19 +5,11 @@ order: 50
 
 Once the testnet and mainnet servers are deployed, KYC collection conforms to regulations, banking rails are integrated, and the whole system is audited, it's time to prepare for launch.
 
-## Polishing and Internationalization
-
-Supporting two languages (English and the fiat currency country language) allows users to have a seamless experience while navigating through screens, and supports international institutions (like wallets) that need to test the product before starting new integrations.
-
-You can support multiple languages in your webapp by using the `Accept-Language` parameter from the http request headers to localize the content and allowing users to change that in a simple way (e.g. a flag icon on the top bar). If a specific wallet doesn't send the header parameter, we recommend showing the user a language selection screen in the beginning of the deposit and withdraw processes. Once a user chooses a language, you can store their selection so you only need to ask them once. In addition to localizing text, make sure to check number formatting, dates, etc.
-
-Having a group of beta testers is a great way to check if there are any edge cases that need polishing, and to confirm that the system is working well with a variety of user inputs. You can beta test using a soft launch stage before you start putting effort into marketing and distribution. Documenting the testing process with screenshots and videos is very helpful for future security audits, and gives new partners and potential users clarity and confidence in the product.
-
 ## Market Making
 
-Once your asset is available for in - app deposit and withdrawal, its order book will start to fill up with user buy and sell orders. To make sure these orders have liquidity — in other words, to make sure people can actually buy and sell your asset if and when they want to—it's essential to have a healthy market with a small spread and a deep set of orders on both sides.
+It is critical for an anchored asset to have liquid trading markets with XLM and ideally partner **SA** assets. Without a deep orderbook, its impossible to facilitate path payments at rates competivtive with equivalent off-chain fiat assets.
 
-SDF maintains a trading bot called [Kelp](https://kelpbot.io/) that supports many trading and market making strategies out of the box, all of which are described in [Kelp's Github Repo](https://github.com/stellar/kelp#kelp). You can use Kelp for free and start automating the order placement process in a matter of minutes.
+The SDF maintains a trading bot called [Kelp](https://kelpbot.io/) that supports many trading and market making strategies out of the box, all of which are described in [Kelp's Github Repo](https://github.com/stellar/kelp#kelp). You can use Kelp for free and start automating the order placement process in a matter of minutes.
 
 Once the order placement is automatic, you should track the health of your token's market with these two parameters:
 
@@ -50,8 +42,8 @@ Your webpage is also where users will go to report problems and reach out with q
 
 You should also have a contact email so customers can get in touch, report inconsistencies, and open tickets. Once you get those tickets, you need to answer them in a reasonable amount of time.
 
-## Connecting to Wallets
+## Connecting to Sending Anchors
 
-All Anchor user interactions are done through a Wallet (or Exchange), so it's vital for Anchors to be connected to Wallets that have a good market penetration in the region where the business is most focused. Connecting to Wallets is a simple process, since both ends of that integration are already compliant with SEPs.
+All **RA**s must connect with **SA**s that have transaction volume to send. The SDF works with strategic partners to build and improve these relationships, and the ultimate goal is for there to be an entire ecosystem (or network) of **SA**s and **RA**s globally.
 
-Stellar.org maintains a [list of wallets](https://www.stellar.org/ecosystem/projects), many of which currently support SEP-24 Sending them a message with more information on an asset and an issuer account is a great way to start getting some real users to the Anchor.
+Stellar.org does not yet host any resources documenting existing SEP-31 anchors, but it is coming.
