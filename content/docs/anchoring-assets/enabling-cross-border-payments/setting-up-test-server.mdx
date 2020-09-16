@@ -1,5 +1,5 @@
 ---
-title: Set Up a Test Server
+title: Build a SEP-31 Anchor on Testnet
 order: 30
 ---
 
@@ -18,64 +18,48 @@ Note: the testnet is reset every three months, so when building on it, make sure
 
 At the end of this section, you should have a sandboxed system capable of interfacing with the Stellar testnet that you can easily convert into a production-ready deployment on the main Stellar network. You should always keep a testnet deployment up and running — even once you have a production version — so that wallets can test your implementation without the risk of losing real user funds.
 
-You can also find an outline of the basic steps anchors need to complete in the [intro to SEP-24](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#basic-anchor-implementation), the interactive deposit and withdrawal specification.
+You can also find an outline of the basic steps anchors need to complete in the [intro to SEP-31](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0031.md#payment-flow) section of the cross-border payment standard.
 
 ## Prerequisites
 
 Before you start building infrastructure to connect a Stellar-network token to banking rails, you need to:
 
 1. Issue an asset on the network – which you can find out how to do in the [Issue Assets](../issuing-assets/index.mdx/) section — or find another trustworthy issuer and coordinate with them to broker their asset.
-1. Add meta-information about the asset (if you issue one) and define the location of your `TRANSFER_SERVER_SEP0024` in your `stellar.toml` so that wallets know where to find the server and relevant endpoints. You can consult [this guide](../issuing-assets/index.mdx/) for help completing your `stellar.toml`.
+1. Add meta-information about the asset (if you issue one) and define the location of your `DIRECT_PAYMENT_SERVER` in your `stellar.toml` so that wallets know where to find the server and relevant endpoints. You can consult [this guide](../../issuing-assets/index.mdx/) for help completing your `stellar.toml`.
 
 Once you've taken those steps, you're ready to implement an `/info` endpoint.
 
 ## Implementing the `/info` Endpoint
 
-The `/info` endpoint allows anchors to communicate basic information to wallets, exchange interfaces, and other Stellar apps. It responds to client queries with a JSON object detailing which currencies the anchor supports for deposit and withdrawal, and laying out the fee structure for each currency.
+The `/info` endpoint allows receiving anchors to communicate basic information to sending anchors, exchange interfaces, and other Stellar apps. It responds to client queries with a JSON object detailing which currencies the anchor supports and specifically what pieces of information are required for the sender to collect and provide to the receiver in future requests.
 
-Generally, anchors structure fees one of two ways:
+For example, the SDF's reference server has the following `/info` response:
 
-- Fixed Fees: a fixed value that is applied to the transactions
-- Fee Percent: a percentage of the transaction value
-
-Since those are both pretty straightforward, the `/info` endpoint can convey those structures directly. If, however, you use a more complicated fee structure, you’ll need to use the `/fee` endpoint, and indicate it’s enabled in the `/info` response.
-
-Here's an example `/info` response:
-
-<CodeExample title="Example Info Response">
+<CodeExample title="The SDF-maintained SEP-31 reference server's /info response">
 
 
 ```json
 {
-  "deposit": {
-    "USD": {
+  "receive": {
+    "SRT": {
       "enabled": true,
-      "fee_fixed": 5,
-      "fee_percent": 1,
-      "min_amount": 0.1,
-      "max_amount": 1000
-    },
-    "ETH": {
-      "enabled": true,
-      "fee_fixed": 0.002,
-      "fee_percent": 0
+      "min_amount": 10.0,
+      "max_amount": 10000.0,
+      "sender_sep12_type": "sep31-sender",
+      "receiver_sep12_type": "sep31-receiver",
+      "fee_fixed": 1.0,
+      "fee_percent": 0.01,
+      "fields": {
+        "transaction": {
+          "routing_number": {
+            "description": "routing number of the destination bank account"
+          },
+          "account_number": {
+            "description": "bank account number of the destination"
+          }
+        }
+      }
     }
-  },
-  "withdraw": {
-    "USD": {
-      "enabled": true,
-      "authentication_required": true,
-      "fee_minimum": 5,
-      "fee_percent": 0.5,
-      "min_amount": 0.1,
-      "max_amount": 1000
-    },
-    "ETH": {
-      "enabled": false
-    }
-  },
-  "fee": {
-    "enabled": false
   }
 }
 ```
@@ -83,7 +67,19 @@ Here's an example `/info` response:
 </CodeExample>
 
 
-You can find the complete parameters for the `/info` endpoint in the Interactive Anchor/Wallet Asset Transfer Server spec (aka [SEP-24](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md)).
+It has a single `SRT` asset enabled with minimum and maximum amounts and both fixed rate and percetage fees taken from the amount received. If the receiving anchor has a complex fee structure that can't be expressed with the fee attributes from `/info`, sending anchors can support a `/fee` endpoint. Unfortunately, this endpoint is a pending change to the SEP that has not yet been approved. An update will be made when the `/fee` endpoint specification is finalized.
+
+The `sender_sep12_type` and `receiver_sep12_type` keys signal to the to the **SA** application that [SEP-12](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0012.md) customer registration is required for both the **SU** and **RU**. The values of these attributes are the values the **SA** should include in the `GET /customer?type=<SEP-12 type value>` request for each user. In this context, users are synonymous with customers.
+
+The `fields` object contains the single `transaction` key-value pair, which contains the custom fields the **RA** requires from the **SA**. Typically, these attributes are off-chain rails-related attributes like routing and banking numbers. **SA**s should be aware of their partner **RA**'s `fields.transaction` required attributes and should ideally validate the collected information from the **SU** prior to making the `POST /transaction` API call on the **RA**'s server.
+
+<Alert>
+
+
+Note: Generally, **RA**s should require the KYC fields of the **SU** and **RU** to be sent via SEP-12 and per-transaction information via SEP-31's `POST /transaction` endpoint in the `forms.transactions` object. Be aware that **SU**s must be able to understand what fields to collect for your service and ideally how to validate. Vauge descriptions or poorly named attributes will cause confusion.
+
+</Alert>
+
 
 ## Authentication
 
