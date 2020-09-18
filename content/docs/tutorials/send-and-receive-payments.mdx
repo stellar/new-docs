@@ -140,7 +140,7 @@ func main () {
 
     // Make sure destination account exists
     destAccountRequest := horizonclient.AccountRequest{AccountID: destination}
-    destinationAccount, err := client.Accounts(destAccountRequest)
+    destinationAccount, err := client.AccountData(destAccountRequest)
     if err != nil {
         panic(err)
     }
@@ -148,7 +148,7 @@ func main () {
     // Load the source account
     sourceKP := keypair.MustParseFull(source)
     sourceAccountRequest := horizonclient.AccountRequest{AccountID: sourceKP.Address()}
-    sourceAccount, err := client.Accounts(sourceAccountRequest)
+    sourceAccount, err := client.AccountData(sourceAccountRequest)
     if err != nil {
         panic(err)
     }
