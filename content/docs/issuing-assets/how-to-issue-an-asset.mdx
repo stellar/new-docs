@@ -39,20 +39,20 @@ Rule of thumb for production: don’t skirt too close to the minimum network bal
 
 ### Why Have Separate Accounts for Issuing and Distribution?
 
-Distributing assets through a distribution account is a design pattern. Functionally, you can do away with the distribution account and distribute directly from the issuer account. A less know fact is that you can even create a market directly from the issuing account and issue by trading.
+Distributing assets through a distribution account is a design pattern. Functionally, you can do away with the distribution account and distribute directly from the issuer account. A less-known fact is that you can even create a market directly from the issuing account and issue by trading.
 
 With that said, there are two main reasons to use a distribution account:
 
 1. Security
 2. Auditing
 
-The account you use to distribute your asset from is going to be a _hot_ account, meaning that some web service out there has direct access to sign it's transactions.
+The account you use to distribute your asset from is going to be a _hot_ account, meaning that some web service out there has direct access to sign its transactions.
 
 If the account you use to distribute your asset _is also the issuing account_ and is compromised by a malicious actor, _that actor can now issue as much of your asset as they want_. This is a hostile takeover of the asset and can increase your potential off-chain liabilities. If the malicous actor redeems these newly issued tokens with the anchor service, the anchor may not have the liquidity to support customers' withdrawals.
 
 If the account you use to distribute your asset _is not the issuing account_, then the stakes are lower. Once discovered, the issuer account can effectively freeze the compromised account's asset balance and start fresh with a new distribution account. This is possible without changing the issuing account.
 
-The second reason is book keeping or auditability. The issuer account can't actually hold a balance of their own asset. If you have standing inventory of your own asset in a seprate account it is easier to track. This is a common pattern in various ledgering solutions.
+The second reason is bookkeeping or auditability. The issuing account can't actually hold a balance of their own asset. If you have standing inventory of your own asset in a separate account, it is easier to track. This is a common pattern in various ledgering solutions.
 
 As an added bonus, distribution accounts decouple our ecosystem standards from issuance. This allows ecosystem participants to come up with interesting concepts like non-issuing anchors _without_ actually changing protocols.
 
