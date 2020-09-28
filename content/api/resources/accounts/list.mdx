@@ -1,0 +1,202 @@
+---
+title: List All Accounts
+order: 15
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { AttributeTable } from "components/AttributeTable";
+
+This endpoint lists accounts by one of three filters: `signer`, `asset`, or `sponsor`.
+
+<Endpoint>
+
+
+|  |  |
+| --- | --- |
+| GET | /accounts?sponsor={:sponsor}&asset={:asset}&signer={:signer}&cursor={paging_token}&order={asc,desc}&limit={1-200} |
+
+</Endpoint>
+
+
+<AttributeTable>
+
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- sponsor
+  - string (optional)
+  - Account ID of the sponsor. Every account in the response will either be sponsored by the given account ID or have a subentry (trustline, offer, or data entry) which is sponsored by the given account ID.
+- asset
+  - string (optional)
+  - An issued asset represented as "Code:IssuerAccountID". Every account in the response will have a trustline for the given asset.
+- signer
+  - string (optional)
+  - Account ID of the signer. Every account in the response will have the given account ID as a signer.
+- cursor
+  - string (optional)
+  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+- order
+  - string (optional)
+  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+- limit
+  - integer (optional)
+  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+
+</AttributeTable>
+
+
+<CodeExample title="Example Request">
+
+
+```curl
+curl "https://horizon.stellar.org/accounts?signer=GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K"
+```
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+server
+  .accounts()
+  .forSigner("GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
+```
+
+</CodeExample>
+
+
+<ExampleResponse title="Example Response">
+
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/accounts?cursor=\u0026limit=10\u0026order=asc\u0026signer=GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K"
+    },
+    "next": {
+      "href": "https://horizon.stellar.org/accounts?cursor=GDRREYWHQWJDICNH4SAH4TT2JRBYRPTDYIMLK4UWBDT3X3ZVVYT6I4UQ\u0026limit=10\u0026order=asc\u0026signer=GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K"
+    },
+    "prev": {
+      "href": "https://horizon.stellar.org/accounts?cursor=GDRREYWHQWJDICNH4SAH4TT2JRBYRPTDYIMLK4UWBDT3X3ZVVYT6I4UQ\u0026limit=10\u0026order=desc\u0026signer=GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K"
+    }
+  },
+  "_embedded": {
+    "records": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB"
+          },
+          "transactions": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/transactions{?cursor,limit,order}",
+            "templated": true
+          },
+          "operations": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/operations{?cursor,limit,order}",
+            "templated": true
+          },
+          "payments": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/payments{?cursor,limit,order}",
+            "templated": true
+          },
+          "effects": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/effects{?cursor,limit,order}",
+            "templated": true
+          },
+          "offers": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/offers{?cursor,limit,order}",
+            "templated": true
+          },
+          "trades": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/trades{?cursor,limit,order}",
+            "templated": true
+          },
+          "data": {
+            "href": "https://horizon.stellar.org/accounts/GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB/data/{key}",
+            "templated": true
+          }
+        },
+        "id": "GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB",
+        "paging_token": "",
+        "account_id": "GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB",
+        "sequence": 7275146318446606,
+        "last_modified_ledger": 22379074,
+        "subentry_count": 4,
+        "num_sponsoring": 0,
+        "num_sponsored": 0,
+        "thresholds": {
+          "low_threshold": 0,
+          "med_threshold": 0,
+          "high_threshold": 0
+        },
+        "flags": {
+          "auth_required": false,
+          "auth_revocable": false,
+          "auth_immutable": false
+        },
+        "balances": [
+          {
+            "balance": "1000000.0000000",
+            "limit": "922337203685.4775807",
+            "buying_liabilities": "0.0000000",
+            "selling_liabilities": "0.0000000",
+            "last_modified_ledger": 632070,
+            "asset_type": "credit_alphanum4",
+            "asset_code": "FOO",
+            "asset_issuer": "GAGLYFZJMN5HEULSTH5CIGPOPAVUYPG5YSWIYDJMAPIECYEBPM2TA3QR",
+            "is_authorized": true
+          },
+          {
+            "balance": "10000.0000000",
+            "buying_liabilities": "0.0000000",
+            "selling_liabilities": "0.0000000",
+            "asset_type": "native"
+          }
+        ],
+        "signers": [
+          {
+            "public_key": "GDLEPBJBC2VSKJCLJB264F2WDK63X4NKOG774A3QWVH2U6PERGDPUCS4",
+            "weight": 1,
+            "key": "GDLEPBJBC2VSKJCLJB264F2WDK63X4NKOG774A3QWVH2U6PERGDPUCS4",
+            "type": "ed25519_public_key"
+          },
+          {
+            "public_key": "GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K",
+            "weight": 1,
+            "key": "GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K",
+            "type": "sha256_hash"
+          },
+          {
+            "public_key": "GDUDIN23QQTB23Q3Q6GUL6I7CEAQY4CWCFVRXFWPF4UJAQO47SPUFCXG",
+            "weight": 1,
+            "key": "GDUDIN23QQTB23Q3Q6GUL6I7CEAQY4CWCFVRXFWPF4UJAQO47SPUFCXG",
+            "type": "preauth_tx"
+          },
+          {
+            "public_key": "GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB",
+            "weight": 1,
+            "key": "GD42RQNXTRIW6YR3E2HXV5T2AI27LBRHOERV2JIYNFMXOBA234SWLQQB",
+            "type": "ed25519_public_key"
+          }
+        ],
+        "data": {
+          "best_friend": "c3Ryb29weQ=="
+        }
+      }
+    ]
+  }
+}
+```
+
+</ExampleResponse>
+

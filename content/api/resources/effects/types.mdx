@@ -6,11 +6,12 @@ order: 10
 import { ExampleResponse } from "components/ExampleResponse";
 import { AttributeTable } from "components/AttributeTable";
 
-There are six groups of effect types. Each effect type has its own set of attributes.
+There are eight groups of effect types. Each effect type has its own set of attributes.
 
 ### Account Effects
 
 <AttributeTable>
+
 
 - TYPE
   - skip
@@ -42,9 +43,11 @@ There are six groups of effect types. Each effect type has its own set of attrib
 
 </AttributeTable>
 
+
 ### Signer Effects
 
 <AttributeTable>
+
 
 - TYPE
   - skip
@@ -61,9 +64,11 @@ There are six groups of effect types. Each effect type has its own set of attrib
 
 </AttributeTable>
 
+
 ### Trustline Effects
 
 <AttributeTable>
+
 
 - TYPE
   - skip
@@ -86,9 +91,11 @@ There are six groups of effect types. Each effect type has its own set of attrib
 
 </AttributeTable>
 
+
 ### Trading Effects
 
 <AttributeTable>
+
 
 - TYPE
   - skip
@@ -108,9 +115,11 @@ There are six groups of effect types. Each effect type has its own set of attrib
 
 </AttributeTable>
 
+
 ### Data Effects
 
 <AttributeTable>
+
 
 - TYPE
   - skip
@@ -127,9 +136,89 @@ There are six groups of effect types. Each effect type has its own set of attrib
 
 </AttributeTable>
 
+
+### Claimable Balance Effects
+
+<AttributeTable>
+
+
+- TYPE
+  - skip
+  - OPERATION(S)
+- Claimable Balance Created
+  - skip
+  - create_claimable_balance
+- Claimable Balance Claimant Created
+  - skip
+  - create_claimable_balance
+- Claimable Balance Claimed
+  - skip
+  - claim_claimable_balance
+
+</AttributeTable>
+
+
+### Sponsorship Effects
+
+<AttributeTable>
+
+
+- TYPE
+  - skip
+  - OPERATION(S)
+- Account Sponsorship Created
+  - skip
+  - create_account
+- Account Sponsorship Updated
+  - skip
+  - revoke_sponsorship
+- Account Sponsorship Removed
+  - skip
+  - revoke_sponsorship
+- Trustline Sponsorship Created
+  - skip
+  - change_trust
+- Trustline Sponsorship Updated
+  - skip
+  - revoke_sponsorship
+- Trustline Sponsorship Removed
+  - skip
+  - revoke_sponsorship
+- Account Data Sponsorship Created
+  - skip
+  - manage_data
+- Account Data Sponsorship Updated
+  - skip
+  - revoke_sponsorship
+- Account Data Sponsorship Removed
+  - skip
+  - revoke_sponsorship
+- Claimable Balance Sponsorship Created
+  - skip
+  - create_claimable_balance
+- Claimable Balance Sponsorship Updated
+  - skip
+  - revoke_sponsorship
+- Claimable Balance Sponsorship Removed
+  - skip
+  - revoke_sponsorship
+- Account Signer Sponsorship Created
+  - skip
+  - set_options
+- Account Signer Sponsorship Updated
+  - skip
+  - revoke_sponsorship
+- Account Signer Sponsorship Removed
+  - skip
+  - revoke_sponsorship
+
+</AttributeTable>
+
+
 ### Miscellaneous Effects
 
 <AttributeTable>
+
 
 - TYPE
   - skip
@@ -139,3 +228,4 @@ There are six groups of effect types. Each effect type has its own set of attrib
   - bump_sequence
 
 </AttributeTable>
+
