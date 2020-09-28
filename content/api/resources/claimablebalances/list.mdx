@@ -1,0 +1,191 @@
+---
+title: List Claimable Balances
+order: 30
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { AttributeTable } from "components/AttributeTable";
+
+This endpoint lists all available claimable balances.
+
+<Endpoint>
+
+
+|  |  |
+| --- | --- |
+| GET | /claimable_balances?sponsor={:sponsor}&asset={:asset}&claimant={:claimant}&cursor={paging_token}&order={asc,desc}&limit={1-200} |
+
+</Endpoint>
+
+
+<AttributeTable>
+
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- sponsor
+  - string (optional)
+  - Account ID of the sponsors. Only include claimable balances in the response which are sponsored by the given account ID.
+- asset
+  - string (optional)
+  - An issued asset represented as "Code:IssuerAccountID". Only include claimable balances in the response which provide a balance for the given asset.
+- claimant
+  - string (optional)
+  - Account ID of the destination address. Only include claimable balances which can be claimed by the given account ID.
+- cursor
+  - string (optional)
+  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+- order
+  - string (optional)
+  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+- limit
+  - integer (optional)
+  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+
+</AttributeTable>
+
+
+<CodeExample title="Example Request">
+
+
+```curl
+curl "https://horizon.stellar.org/claimable_balances?asset=native"
+```
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+server
+  .claimableBalances()
+  .forAsset("native")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
+```
+
+</CodeExample>
+
+
+<ExampleResponse title="Example Response">
+
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/claimable_balances?cursor=\u0026limit=10\u0026order=asc"
+    },
+    "next": {
+      "href": "https://horizon.stellar.org/claimable_balances?cursor=66835-00000000c582697b67cbec7f9ce64f4dc67bfb2bfd26318bb9f964f4d70e3f41f650b1e6\u0026limit=10\u0026order=asc"
+    },
+    "prev": {
+      "href": "https://horizon.stellar.org/claimable_balances?cursor=38888-00000000929b20b72e5890ab51c24f1cc46fa01c4f318d8d33367d24dd614cfdf5491072\u0026limit=10\u0026order=desc"
+    }
+  },
+  "_embedded": {
+    "records": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/claimable_balances/00000000929b20b72e5890ab51c24f1cc46fa01c4f318d8d33367d24dd614cfdf5491072"
+          }
+        },
+        "id": "00000000929b20b72e5890ab51c24f1cc46fa01c4f318d8d33367d24dd614cfdf5491072",
+        "asset": "native",
+        "amount": "200.0000000",
+        "sponsor": "GBVFLWXYCIGPO3455XVFIKHS66FCT5AI64ZARKS7QJN4NF7K5FOXTJNL",
+        "last_modified_ledger": 38888,
+        "last_modified_time": "2020-02-26T19:29:16Z"
+        "claimants": [
+          {
+            "destination": "GBVFLWXYCIGPO3455XVFIKHS66FCT5AI64ZARKS7QJN4NF7K5FOXTJNL",
+            "predicate": {
+              "unconditional": true
+            }
+          }
+        ],
+        "paging_token": "38888-00000000929b20b72e5890ab51c24f1cc46fa01c4f318d8d33367d24dd614cfdf5491072"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/claimable_balances/00000000be7e37b24927c095e2292d5d0e6db8b0f2dbeb1355847c7fccb458cbdd61bfd0"
+          }
+        },
+        "id": "00000000be7e37b24927c095e2292d5d0e6db8b0f2dbeb1355847c7fccb458cbdd61bfd0",
+        "asset": "native",
+        "amount": "1.0000000",
+        "sponsor": "GD2I2F7SWUHBAD7XBIZTF7MBMWQYWJVEFMWTXK76NSYVOY52OJRYNTIY",
+        "last_modified_ledger": 49645,
+        "last_modified_time": "2020-03-26T19:29:16Z"
+        "claimants": [
+          {
+            "destination": "GAEJ2UF46PKAPJYED6SQ45CKEHSXV63UQEYHVUZSVJU6PK5Y4ZVA4ELU",
+            "predicate": {
+              "not": {
+                "absBefore": "2020-10-01T19:27:10Z"
+              }
+            }
+          }
+        ],
+        "paging_token": "49645-00000000be7e37b24927c095e2292d5d0e6db8b0f2dbeb1355847c7fccb458cbdd61bfd0"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/claimable_balances/0000000084ec48a1c44df5396625e4560bdc1d48d2371dece73cbe7e790d2b7b277347b7"
+          }
+        },
+        "id": "0000000084ec48a1c44df5396625e4560bdc1d48d2371dece73cbe7e790d2b7b277347b7",
+        "asset": "native",
+        "amount": "13.1200000",
+        "sponsor": "GAEJ2UF46PKAPJYED6SQ45CKEHSXV63UQEYHVUZSVJU6PK5Y4ZVA4ELU",
+        "last_modified_ledger": 64339,
+        "last_modified_time": "2020-04-26T19:29:16Z"
+        "claimants": [
+          {
+            "destination": "GD2I2F7SWUHBAD7XBIZTF7MBMWQYWJVEFMWTXK76NSYVOY52OJRYNTIY",
+            "predicate": {
+              "unconditional": true
+            }
+          }
+        ],
+        "paging_token": "64339-0000000084ec48a1c44df5396625e4560bdc1d48d2371dece73cbe7e790d2b7b277347b7"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/claimable_balances/00000000c582697b67cbec7f9ce64f4dc67bfb2bfd26318bb9f964f4d70e3f41f650b1e6"
+          }
+        },
+        "id": "00000000c582697b67cbec7f9ce64f4dc67bfb2bfd26318bb9f964f4d70e3f41f650b1e6",
+        "asset": "native",
+        "amount": "13.1200000",
+        "sponsor": "GB5N4275ETC6A77K4DTDL3EFAQMN66PC7UITDUZUBM7Y6LDJP7EYSGOB",
+        "last_modified_ledger": 66835,
+        "last_modified_time": "2020-04-27T19:29:16Z"
+        "claimants": [
+          {
+            "destination": "GD2I2F7SWUHBAD7XBIZTF7MBMWQYWJVEFMWTXK76NSYVOY52OJRYNTIY",
+            "predicate": {
+              "unconditional": true
+            }
+          }
+        ],
+        "paging_token": "66835-00000000c582697b67cbec7f9ce64f4dc67bfb2bfd26318bb9f964f4d70e3f41f650b1e6"
+      }
+    ]
+  }
+}
+```
+
+</ExampleResponse>
+
