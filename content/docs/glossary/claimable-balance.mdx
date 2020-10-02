@@ -49,29 +49,113 @@ This operation will load the ClaimableBalanceEntry that corresponds to the Balan
 Once a ClaimableBalanceEntry has been claimed, it will be deleted.
 
 ## Example
+The below code uses the [Go SDK](../software-and-sdks/index.mdx) to demonstrate how an account ("Account A") can create a `ClaimableBalanceEntry` with two Claimants, Account A (itself) and "Account B", another recipient.
 
-The below pseudocode details how AccountA can create a ClaimableBalanceEntry with two Claimants, AccountA (itself) and AccountB, that can claim the balance under different conditions.
+Each of these accounts can only claim the balance under certain, individual conditions. Namely, Account B has a full minute to claim the balance, after which Account A can "reclaim" the balance back for itself.
 
 <CodeExample>
 
+```go
+package main
 
-```cpp
-// In this scenario, AccountB has not been created yet, but we know the public key
-Claimants = [Claimant(AccountA, CLAIM_PREDICATE_NOT(CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME(100))), Claimant(AccountB, CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME(50))]
+import (
+	"fmt"
+	"time"
 
-BalanceID = AccountA.CreateClaimableBalance(100, XLM, Claimants)
+	sdk "github.com/stellar/go/clients/horizonclient"
+	"github.com/stellar/go/keypair"
+	"github.com/stellar/go/network"
+	"github.com/stellar/go/txnbuild"
+	"github.com/stellar/go/xdr"
+)
 
-// Now one of two successful claims can happen -
+func main() {
+	client := sdk.DefaultTestNetClient
 
-// Before time=50, accountB can be created and claim the balance
-CreateAccount(AccountB)
-AccountB.ClaimClaimableBalance(BalanceID)
+	// Suppose that these accounts exist and are funded accordingly:
+	A := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
+	B := "GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5"
 
-// OR
+	// NOTE: Error checks are omitted for brevity; always check return values!
 
-// After time=100, AccountA can claim the balance
-AccountA.ClaimClaimableBalance(BalanceID)
+	// Load the corresponding account for A.
+	aKeys := keypair.MustParseFull(A)
+	aAccount, err := client.AccountDetail(sdk.AccountRequest{
+		AccountID: aKeys.Address(),
+	})
+
+	// Create a claimable balance with our two above-described conditions.
+	soon := time.Now().Add(time.Second * 60)
+	bCanClaim := txnbuild.BeforeRelativeTimePredicate(60)
+	aCanReclaim := txnbuild.NotPredicate(
+		txnbuild.BeforeAbsoluteTimePredicate(soon.Unix()),
+	)
+
+	claimants := []txnbuild.Claimant{
+		txnbuild.NewClaimant(B, &bCanClaim),
+		txnbuild.NewClaimant(aKeys.Address(), &aCanReclaim),
+	}
+
+	// Create the operation and submit it in a transaction.
+	claimableBalanceEntry := &txnbuild.CreateClaimableBalance{
+		Destinations: claimants,
+		Asset:        txnbuild.NativeAsset{},
+		Amount:       "420",
+	}
+
+	// Build, sign, and submit the transaction
+	tx, err := txnbuild.NewTransaction(
+		txnbuild.TransactionParams{
+			SourceAccount:        &aAccount,
+			IncrementSequenceNum: true,
+			BaseFee:              txnbuild.MinBaseFee,
+			Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
+			Operations:           []txnbuild.Operation{claimableBalanceEntry},
+		},
+	)
+	tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
+	txResp, err := client.SubmitTransaction(tx)
+
+	fmt.Println("Claimable balance created!")
 ```
 
 </CodeExample>
 
+At this point, the claimable balance exists in the ledger. We can now claim it
+by its Balance ID. This can be acquired in two ways:
+ 1. the submitter of the entry (Account A in this case) parses the XDR of the transaction result's operations, **or**
+ 2. someone queries the list of claimable balances (filtering accordingly, if necessary)
+
+<CodeExample>
+
+```go
+// Suppose `txResp` comes from the transaction submission above.
+var txResult xdr.TransactionResult
+err = xdr.SafeUnmarshalBase64(txResp.ResultXdr, &txResult)
+results, ok := txResult.OperationResults()
+operationResult := results[0].MustTr().CreateClaimableBalanceResult
+balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
+fmt.Println("Balance ID:", balanceId)
+
+// Alternatively, Account B could do something like:
+balances, err := client.ClaimableBalances(sdk.ClaimableBalanceRequest{Claimant: B})
+balanceId = balances.Embedded.Records[0].BalanceID
+
+// Now Account B can actually claim the balance, provided too much time hasn't elapsed!
+claimBalance := txnbuild.ClaimClaimableBalance{BalanceID: balanceId}
+
+// Build, sign, and submit the transaction
+tx, err = txnbuild.NewTransaction(
+	txnbuild.TransactionParams{
+		SourceAccount:        &aAccount, // or Account B, depending on the condition!
+		IncrementSequenceNum: true,
+		BaseFee:              txnbuild.MinBaseFee,
+		Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
+		Operations:           []txnbuild.Operation{&claimBalance},
+	},
+)
+tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
+client.SubmitTransaction(tx)
+```
+
+</CodeExample>
