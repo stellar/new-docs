@@ -499,7 +499,7 @@ Result: `CreateClaimableBalanceResult`
 
 | Parameters | Type | Description |
 | --- | --- | --- |
-| Asset | asset | Asset that will be held in the ClaimableBalanceEntry. |
+| Asset | asset | Asset that will be held in the ClaimableBalanceEntry in the form `asset_code:issuing_address` or `native` (XLM). |
 | Amount | integer | Amount of `asset` stored in the ClaimableBalanceEntry. |
 | Claimants | list of claimants | List of Claimants (account address and ClaimPredicate pair) that can claim this ClaimableBalanceEntry. |
 
