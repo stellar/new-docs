@@ -33,35 +33,6 @@ Anything that increases the minimum balance can be sponsored (Accounts, Offers, 
 
 At the end of any transaction, there must be no ongoing is-sponsoring-future-reserves-for relationships. This is why these two operations must be used together in a single transaction.
 
-### Simple Example
-
-In the example below, `A` is sponsoring a trustline for `B`. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations.
-
-```
-sourceAccount: B
-operations[0]:
-    sourceAccount: A
-    body:
-        type: BEGIN_SPONSORING_FUTURE_RESERVES
-        sponsoredID: B
-operations[1]:
-    sourceAccount: B
-    body:
-        type: CHANGE_TRUST
-        line: X
-        limit: INT64_MAX
-operations[2]:
-    sourceAccount: B
-    body:
-        type: END_SPONSORING_FUTURE_RESERVES
-```
-
-#### Other Examples
-
-https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-sponsoring-account-creation
-
-https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-two-trust-lines-with-different-sponsors
-
 ### Revoke Sponsorship
 
 [Revoke Sponsorship](../start/list-of-operations.mdx#revoke-sponsorship) is the third and final operation relevant to sponsorships. It allows the sponsoring account to remove/transfer sponsorships of existing ledgerEntries and signers. If the ledgerEntry/signer is not sponsored, the owner of the ledgerEntry/signer can establish a sponsorship if it is the beneficiary of a is-sponsoring-future-reserves-for relationship.
@@ -85,8 +56,130 @@ See [Revoke Sponsorship](../start/list-of-operations.mdx#revoke-sponsorship) for
 
 The logic above does not detail any of the error cases, which are specified [here](../start/list-of-operations.mdx#revoke-sponsorship).
 
-#### Examples
+## Examples
+### Simple Example
 
-https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship
+In the example below, `A` is sponsoring a trustline for `B`. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations.
 
-https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-transfer-sponsorship
+```
+sourceAccount: B
+operations[0]:
+    sourceAccount: A
+    body:
+        type: BEGIN_SPONSORING_FUTURE_RESERVES
+        sponsoredID: B
+operations[1]:
+    sourceAccount: B
+    body:
+        type: CHANGE_TRUST
+        line: X
+        limit: INT64_MAX
+operations[2]:
+    sourceAccount: B
+    body:
+        type: END_SPONSORING_FUTURE_RESERVES
+```
+
+### Transferring and Revoking Sponsorship
+The below code uses the [Go SDK](../software-and-sdks/index.mdx) to demonstrate both the **transfer** and subsequent **revocation** of a sponsorship; refer to [CAP-0033](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship) for more-generic pseudocode for this process.
+
+
+<CodeExample>
+
+```go
+package sdk
+
+import (
+	sdk "github.com/stellar/go/clients/horizonclient"
+	"github.com/stellar/go/keypair"
+	"github.com/stellar/go/network"
+	"github.com/stellar/go/txnbuild"
+)
+
+func revocation() {
+	client := sdk.DefaultTestNetClient
+
+	// Suppose that these accounts exist and are funded accordingly:
+	A, B, C := keypair.MustRandom(), keypair.MustRandom(), keypair.MustRandom()
+	sponsoredAccount := B.Address()
+
+	// NOTE: Error checks are omitted for brevity; always check return values!
+
+	// Load the corresponding account for both A and C.
+	aAccount, err := client.AccountDetail(sdk.AccountRequest{AccountID: A.Address()})
+	cAccount, err := client.AccountDetail(sdk.AccountRequest{AccountID: B.Address()})
+
+	// We presuppose that Account B has previously been sponsored for some
+	// operation by Account A (here, we refer to a `ManageData` operation).
+
+	//
+	// 1. Transfer sponsorship of B from A to C.
+	//
+
+	transferOps := []txnbuild.Operation{
+		&txnbuild.BeginSponsoringFutureReserves{
+			SourceAccount: &cAccount,
+			SponsoredID:   sponsoredAccount,
+		},
+		&txnbuild.RevokeSponsorship{
+			SponsorshipType: txnbuild.RevokeSponsorshipTypeData,
+			Account:         &sponsoredAccount,
+		},
+		&txnbuild.RevokeSponsorship{
+			SourceAccount:   &aAccount,
+			SponsorshipType: txnbuild.RevokeSponsorshipTypeAccount,
+			Account:         &sponsoredAccount,
+		},
+		&txnbuild.EndSponsoringFutureReserves{},
+	}
+
+	// Build, sign, and submit the transaction
+	tx, err := txnbuild.NewTransaction(
+		txnbuild.TransactionParams{
+			SourceAccount:        &cAccount,
+			IncrementSequenceNum: true,
+			BaseFee:              txnbuild.MinBaseFee,
+			// As always, use a real timeout in production!
+			Timebounds: txnbuild.NewInfiniteTimeout(),
+			Operations: transferOps,
+		},
+	)
+
+	// Notice that *both* A and C have to approve the sponsorship transfer.
+	tx, err = tx.Sign(network.TestNetworkPassphrase, A)
+	tx, err = tx.Sign(network.TestNetworkPassphrase, C)
+	client.SubmitTransaction(tx)
+
+	//
+	// 2. Revoke sponsorship of B entirely.
+	//
+	revokeOp := txnbuild.RevokeSponsorship{
+		SponsorshipType: txnbuild.RevokeSponsorshipTypeData,
+		Account:         &sponsoredAccount,
+	}
+
+	// Build, sign, and submit the transaction
+	tx, err = txnbuild.NewTransaction(
+		txnbuild.TransactionParams{
+			SourceAccount:        &cAccount,
+			IncrementSequenceNum: true,
+			BaseFee:              txnbuild.MinBaseFee,
+			Timebounds:           txnbuild.NewInfiniteTimeout(),
+			Operations:           []txnbuild.Operation{&revokeOp},
+		},
+	)
+
+	// Notice that *both* A and C have to approve the sponsorship transfer.
+	tx, err = tx.Sign(network.TestNetworkPassphrase, C)
+	client.SubmitTransaction(tx)
+}
+```
+
+</CodeExample>
+
+
+### Other Examples
+
+https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-sponsoring-account-creation
+
+https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-two-trust-lines-with-different-sponsors
