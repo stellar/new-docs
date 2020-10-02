@@ -97,7 +97,7 @@ func main() {
 	}
 
 	// Create the operation and submit it in a transaction.
-	claimableBalanceEntry := &txnbuild.CreateClaimableBalance{
+	claimableBalanceEntry := txnbuild.CreateClaimableBalance{
 		Destinations: claimants,
 		Asset:        txnbuild.NativeAsset{},
 		Amount:       "420",
@@ -109,8 +109,9 @@ func main() {
 			SourceAccount:        &aAccount,
 			IncrementSequenceNum: true,
 			BaseFee:              txnbuild.MinBaseFee,
-			Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
-			Operations:           []txnbuild.Operation{claimableBalanceEntry},
+			// Use a real timeout in production!
+			Timebounds:           txnbuild.NewInfiniteTimeout(),
+			Operations:           []txnbuild.Operation{&claimableBalanceEntry},
 		},
 	)
 	tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
@@ -138,20 +139,18 @@ operationResult := results[0].MustTr().CreateClaimableBalanceResult
 balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
 fmt.Println("Balance ID:", balanceId)
 
-// Alternatively, Account B could do something like:
+// Alternatively, Account B would do something like:
 balances, err := client.ClaimableBalances(sdk.ClaimableBalanceRequest{Claimant: B})
 balanceId = balances.Embedded.Records[0].BalanceID
 
 // Now Account B can actually claim the balance, provided too much time hasn't elapsed!
 claimBalance := txnbuild.ClaimClaimableBalance{BalanceID: balanceId}
-
-// Build, sign, and submit the transaction
 tx, err = txnbuild.NewTransaction(
 	txnbuild.TransactionParams{
 		SourceAccount:        &aAccount, // or Account B, depending on the condition!
 		IncrementSequenceNum: true,
 		BaseFee:              txnbuild.MinBaseFee,
-		Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
+		Timebounds:           txnbuild.NewInfiniteTimeout(),
 		Operations:           []txnbuild.Operation{&claimBalance},
 	},
 )
