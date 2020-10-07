@@ -6,6 +6,9 @@ import { FONTS } from "constants/fonts";
 import { FONT_FAMILY, MEDIA_QUERIES } from "constants/styles";
 import { expansionStyles } from "components/Expansion";
 
+// Nested styled-component styles in makeLinkedHeader helper were not rendering
+// as expected in production (fine in development). Class style works and
+// nesting is not necessary.
 const linkedHeadingStyles = css`
   position: relative;
   scroll-margin-top: 5rem;
