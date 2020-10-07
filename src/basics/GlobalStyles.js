@@ -1,10 +1,34 @@
 import React from "react";
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, css } from "styled-components";
 import styledNormalize from "styled-normalize";
 
 import { FONTS } from "constants/fonts";
-import { FONT_FAMILY } from "constants/styles";
+import { FONT_FAMILY, MEDIA_QUERIES } from "constants/styles";
 import { expansionStyles } from "components/Expansion";
+
+// Nested styled-component styles in makeLinkedHeader helper were not rendering
+// as expected in production (fine in development). Class style works and
+// nesting is not necessary.
+const linkedHeadingStyles = css`
+  position: relative;
+  scroll-margin-top: 5rem;
+  padding-left: 1.25rem;
+  margin-left: -1.25rem;
+
+  @media (${MEDIA_QUERIES.canHover}) {
+    &:hover svg {
+      visibility: visible;
+    }
+  }
+
+  & svg {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    visibility: hidden;
+  }
+`;
 
 const Styles = createGlobalStyle`
   body,
@@ -43,6 +67,9 @@ const Styles = createGlobalStyle`
     display: block !important;
   }
   ${expansionStyles}
+  .linkedHeading {
+    ${linkedHeadingStyles}
+  }
 `;
 
 const fontStyles = FONTS.map(
