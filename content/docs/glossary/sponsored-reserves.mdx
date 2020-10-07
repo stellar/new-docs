@@ -57,129 +57,243 @@ See [Revoke Sponsorship](../start/list-of-operations.mdx#revoke-sponsorship) for
 The logic above does not detail any of the error cases, which are specified [here](../start/list-of-operations.mdx#revoke-sponsorship).
 
 ## Examples
-### Simple Example
+Each example builds on itself, referencing variables from previous snippets. We'll demonstrate a few different things you can do with sponsoring:
+ - Sponsor creation of a trustline for another account.
+ - Sponsor **two** trustlines for an account via two *different* sponsors.
+ - Transfer sponsorship responsibility from one account to another.
+ - Revoke sponsorship by an account entirely.
 
-In the example below, `A` is sponsoring a trustline for `B`. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations.
+(For brevity, we'll assume the existence of a `SignAndSend(account, []signers, operations...)` method exists which will create a transaction containing `operations...` and sign it with each of the `signers`.)
 
-```
-sourceAccount: B
-operations[0]:
-    sourceAccount: A
-    body:
-        type: BEGIN_SPONSORING_FUTURE_RESERVES
-        sponsoredID: B
-operations[1]:
-    sourceAccount: B
-    body:
-        type: CHANGE_TRUST
-        line: X
-        limit: INT64_MAX
-operations[2]:
-    sourceAccount: B
-    body:
-        type: END_SPONSORING_FUTURE_RESERVES
-```
-
-### Transferring and Revoking Sponsorship
-The below code uses the [Go SDK](../software-and-sdks/index.mdx) to demonstrate both the **transfer** and subsequent **revocation** of a sponsorship; refer to [CAP-0033](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship) for more-generic pseudocode for this process.
-
+### Preamble
+We'll start by including the boilerplate of account and asset creation.
 
 <CodeExample>
 
 ```go
-package sdk
+package main
 
 import (
+	"fmt"
+	"net/http"
+
 	sdk "github.com/stellar/go/clients/horizonclient"
 	"github.com/stellar/go/keypair"
 	"github.com/stellar/go/network"
+	protocol "github.com/stellar/go/protocols/horizon"
 	"github.com/stellar/go/txnbuild"
 )
 
-func revocation() {
+func main() {
 	client := sdk.DefaultTestNetClient
 
-	// Suppose that these accounts exist and are funded accordingly:
-	A, B, C := keypair.MustRandom(), keypair.MustRandom(), keypair.MustRandom()
-	sponsoredAccount := B.Address()
+	// Both S1 and S2 will be sponsors for A at various points in time.
+	S1, A, S2 := keypair.MustRandom(), keypair.MustRandom(), keypair.MustRandom()
+	sponsoredAccount := A.Address()
 
+	for _, pair := range []*keypair.Full{S1, A, S2} {
+		resp, err := http.Get("https://friendbot.stellar.org/?addr=" + pair.Address())
+		if err != nil {
+			panic(err)
+		}
+		resp.Body.Close()
+		fmt.Println("Funded", pair.Address())
+	}
+
+	//
 	// NOTE: Error checks are omitted for brevity; always check return values!
+	//
 
 	// Load the corresponding account for both A and C.
+	s1Account, err := client.AccountDetail(sdk.AccountRequest{AccountID: S1.Address()})
 	aAccount, err := client.AccountDetail(sdk.AccountRequest{AccountID: A.Address()})
-	cAccount, err := client.AccountDetail(sdk.AccountRequest{AccountID: B.Address()})
+	s2Account, err := client.AccountDetail(sdk.AccountRequest{AccountID: S2.Address()})
 
-	// We presuppose that Account B has previously been sponsored for some
-	// operation by Account A (here, we refer to a `ManageData` operation).
-
-	//
-	// 1. Transfer sponsorship of B from A to C.
-	//
-
-	transferOps := []txnbuild.Operation{
-		&txnbuild.BeginSponsoringFutureReserves{
-			SourceAccount: &cAccount,
-			SponsoredID:   sponsoredAccount,
-		},
-		&txnbuild.RevokeSponsorship{
-			SponsorshipType: txnbuild.RevokeSponsorshipTypeData,
-			Account:         &sponsoredAccount,
-		},
-		&txnbuild.RevokeSponsorship{
-			SourceAccount:   &aAccount,
-			SponsorshipType: txnbuild.RevokeSponsorshipTypeAccount,
-			Account:         &sponsoredAccount,
-		},
-		&txnbuild.EndSponsoringFutureReserves{},
+	// Arbitrary assets to sponsor trustlines for. Let's assume they make sense.
+	assets := []txnbuild.CreditAsset{
+		txnbuild.CreditAsset{Code: "ABCD", Issuer: S1.Address()},
+		txnbuild.CreditAsset{Code: "EFGH", Issuer: S1.Address()},
+		txnbuild.CreditAsset{Code: "IJKL", Issuer: S2.Address()},
 	}
-
-	// Build, sign, and submit the transaction
-	tx, err := txnbuild.NewTransaction(
-		txnbuild.TransactionParams{
-			SourceAccount:        &cAccount,
-			IncrementSequenceNum: true,
-			BaseFee:              txnbuild.MinBaseFee,
-			// As always, use a real timeout in production!
-			Timebounds: txnbuild.NewInfiniteTimeout(),
-			Operations: transferOps,
-		},
-	)
-
-	// Notice that *both* A and C have to approve the sponsorship transfer.
-	tx, err = tx.Sign(network.TestNetworkPassphrase, A)
-	tx, err = tx.Sign(network.TestNetworkPassphrase, C)
-	client.SubmitTransaction(tx)
-
-	//
-	// 2. Revoke sponsorship of B entirely.
-	//
-	revokeOp := txnbuild.RevokeSponsorship{
-		SponsorshipType: txnbuild.RevokeSponsorshipTypeData,
-		Account:         &sponsoredAccount,
-	}
-
-	// Build, sign, and submit the transaction
-	tx, err = txnbuild.NewTransaction(
-		txnbuild.TransactionParams{
-			SourceAccount:        &cAccount,
-			IncrementSequenceNum: true,
-			BaseFee:              txnbuild.MinBaseFee,
-			Timebounds:           txnbuild.NewInfiniteTimeout(),
-			Operations:           []txnbuild.Operation{&revokeOp},
-		},
-	)
-
-	// Notice that *both* A and C have to approve the sponsorship transfer.
-	tx, err = tx.Sign(network.TestNetworkPassphrase, C)
-	client.SubmitTransaction(tx)
 }
 ```
 
 </CodeExample>
 
+### Sponsoring a Trustline
+Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations and that all relevant accounts need to sign the transaction.
+
+
+<CodeExample>
+
+```go
+	//
+	// 1. S1 will sponsor a trustline for Account A.
+	//
+	sponsorTrustline := []txnbuild.Operation{
+		&txnbuild.BeginSponsoringFutureReserves{
+			SourceAccount: &s1Account,
+			SponsoredID:   sponsoredAccount,
+		},
+		&txnbuild.ChangeTrust{
+			SourceAccount: &aAccount,
+			Line:          &assets[0],
+			Limit:         txnbuild.MaxTrustlineLimit,
+		},
+		&txnbuild.EndSponsoringFutureReserves{
+			SourceAccount: &aAccount,
+		},
+	}
+
+	// Note that while A can submit this transaction, both sign it.
+	SignAndSend(client, &aAccount, []*keypair.Full{S1, A}, sponsorTrustline...)
+	fmt.Println("Sponsored a trustline of", A.Address())
+
+	//
+	// 2. Both S1 and S2 sponsor trustlines for Account A for different assets.
+	//
+	sponsorTrustline = []txnbuild.Operation{
+		&txnbuild.BeginSponsoringFutureReserves{
+			SourceAccount: &s1Account,
+			SponsoredID:   sponsoredAccount,
+		},
+		&txnbuild.ChangeTrust{
+			SourceAccount: &aAccount,
+			Line:          &assets[1],
+			Limit:         txnbuild.MaxTrustlineLimit,
+		},
+		&txnbuild.EndSponsoringFutureReserves{},
+
+		&txnbuild.BeginSponsoringFutureReserves{
+			SourceAccount: &s2Account,
+			SponsoredID:   sponsoredAccount,
+		},
+		&txnbuild.ChangeTrust{
+			SourceAccount: &aAccount,
+			Line:          &assets[2],
+			Limit:         txnbuild.MaxTrustlineLimit,
+		},
+		&txnbuild.EndSponsoringFutureReserves{},
+	}
+
+	// Note that all 3 accounts must approve/sign this transaction.
+	SignAndSend(client, &aAccount, []*keypair.Full{S1, S2, A}, sponsorTrustline...)
+	fmt.Println("Sponsored two trustlines of", A.Address())
+```
+
+</CodeExample>
+
+### Transferring Sponsorship
+Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserves for the trustline to Sponsor 2. This is accomplished by sandwiching the transfer between the `BEGIN/END_SPONSORING_FUTURE_RESERVES` operations. Both of the participants must sign the transaction, though either can submit it.
+
+<CodeExample>
+
+```go
+	//
+	// 3. Transfer sponsorship of B's second trustline from S1 to S2.
+	//
+	transferOps := []txnbuild.Operation{
+		&txnbuild.BeginSponsoringFutureReserves{
+			SourceAccount: &s2Account,
+			SponsoredID:   S1.Address(),
+		},
+		&txnbuild.RevokeSponsorship{
+			SourceAccount:   &s1Account,
+			SponsorshipType: txnbuild.RevokeSponsorshipTypeTrustLine,
+			Account:         &sponsoredAccount,
+			TrustLine: &txnbuild.TrustLineID{
+				Account: sponsoredAccount,
+				Asset:   assets[1],
+			},
+		},
+		&txnbuild.EndSponsoringFutureReserves{},
+	}
+
+	// Notice that while either sponsor *sends* the transaction, both sponsors
+	// must *approve* the transfer.
+	SignAndSend(client, &s1Account, []*keypair.Full{S1, S2}, transferOps...)
+	fmt.Println("Transferred sponsorship for", A.Address())
+}
+```
+
+At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as `ABCD`), while Signer 2 is sponsoring the other two assets.
+
+### Sponsorship Revocation
+Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2 removes themselves from all responsibility over the two asset trustlines. Notice that Account A is not involved at all, since revocation should be performable purely at the sponsor's discretion.
+
+<CodeExample>
+
+```go
+	//
+	// 4. S2 revokes sponsorship of B's trustlines entirely.
+	//
+	revokeOps := []txnbuild.Operation{
+		&txnbuild.RevokeSponsorship{
+			SponsorshipType: txnbuild.RevokeSponsorshipTypeTrustLine,
+			Account:         &sponsoredAccount,
+			TrustLine: &txnbuild.TrustLineID{
+				Account: sponsoredAccount,
+				Asset:   assets[1],
+			},
+		},
+		&txnbuild.RevokeSponsorship{
+			SponsorshipType: txnbuild.RevokeSponsorshipTypeTrustLine,
+			Account:         &sponsoredAccount,
+			TrustLine: &txnbuild.TrustLineID{
+				Account: sponsoredAccount,
+				Asset:   assets[2],
+			},
+		},
+	}
+
+	SignAndSend(client, &s2Account, []*keypair.Full{S2}, revokeOps...)
+	fmt.Println("Revoked sponsorship for", A.Address())
+```
+
 
 ### Other Examples
+If you'd like other examples, or want to view a more-generic pseudocode breakdown of these sponsorship scenarios, you can refer to [CAP-0033](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship).
 
-https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-sponsoring-account-creation
 
-https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-two-trust-lines-with-different-sponsors
+### Footnote
+An implementation of `SignAndSend` might look something like this:
+
+<CodeExample>
+
+```go
+// Builds a transaction containing `operations...`, signed (by `signers`), and
+// submitted using the given `client` on behalf of `account`.
+func SignAndSend(
+	client *sdk.Client,
+	account txnbuild.Account,
+	signers []*keypair.Full,
+	operations ...txnbuild.Operation,
+) protocol.Transaction {
+	tx, err := txnbuild.NewTransaction(
+		txnbuild.TransactionParams{
+			SourceAccount:        account,
+			Operations:           operations,
+			BaseFee:              txnbuild.MinBaseFee,
+			Timebounds:           txnbuild.NewInfiniteTimeout(),
+			IncrementSequenceNum: true,
+		},
+	)
+
+	for _, signer := range signers {
+		tx, err = tx.Sign(network.TestNetworkPassphrase, signer)
+	}
+
+	txResp, err := client.SubmitTransaction(tx)
+	if err != nil {
+		if prob := sdk.GetError(err); prob != nil {
+			fmt.Printf("  problem: %s\n", prob.Problem.Detail)
+			fmt.Printf("  extras: %s\n", prob.Problem.Extras["result_codes"])
+		}
+		panic(err)
+	}
+
+	return txResp
+}
+```
+
+</CodeExample>
