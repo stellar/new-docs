@@ -36,7 +36,7 @@ export const makeLinkedHeader = (
   WrappedComponent.propTypes = {
     id: PropTypes.string,
     children: PropTypes.node.isRequired,
-    className: PropTypes.any,
+    className: PropTypes.string,
   };
   return WrappedComponent;
 };
