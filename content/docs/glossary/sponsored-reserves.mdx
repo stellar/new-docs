@@ -63,7 +63,7 @@ Each example builds on itself, referencing variables from previous snippets. We'
  - Transfer sponsorship responsibility from one account to another.
  - Revoke sponsorship by an account entirely.
 
-(For brevity, we'll assume the existence of a `SignAndSend(account, []signers, operations...)` method exists which will create a transaction containing `operations...` and sign it with each of the `signers`.)
+(For brevity, we'll assume the existence of a `SignAndSend(...)` method (defined [below](#footnote)) which will creates and submits a transaction with the proper parameters and error-checking.
 
 ### Preamble
 We'll start by including the boilerplate of account and asset creation.
@@ -120,9 +120,9 @@ func main() {
 
 </CodeExample>
 
+
 ### Sponsoring a Trustline
 Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations and that all relevant accounts need to sign the transaction.
-
 
 <CodeExample>
 
@@ -183,6 +183,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 
 </CodeExample>
 
+
 ### Transferring Sponsorship
 Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserves for the trustline to Sponsor 2. This is accomplished by sandwiching the transfer between the `BEGIN/END_SPONSORING_FUTURE_RESERVES` operations. Both of the participants must sign the transaction, though either can submit it.
 
@@ -213,7 +214,6 @@ Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserve
 	// must *approve* the transfer.
 	SignAndSend(client, &s1Account, []*keypair.Full{S1, S2}, transferOps...)
 	fmt.Println("Transferred sponsorship for", A.Address())
-}
 ```
 
 </CodeExample>
@@ -222,7 +222,6 @@ At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as
 
 ### Sponsorship Revocation
 Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2 removes themselves from all responsibility over the two asset trustlines. Notice that Account A is not involved at all, since revocation should be performable purely at the sponsor's discretion.
-
 
 <CodeExample>
 
@@ -256,9 +255,8 @@ Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2
 </CodeExample>
 
 
-
 ### Other Examples
-If you'd like other examples, or want to view a more-generic pseudocode breakdown of these sponsorship scenarios, you can refer to [CAP-0033](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship).
+If you'd like other examples, or want to view a more-generic pseudocode breakdown of these sponsorship scenarios, you can refer to [CAP-0033](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship) directly.
 
 
 ### Footnote
