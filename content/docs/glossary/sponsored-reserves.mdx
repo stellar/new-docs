@@ -216,10 +216,13 @@ Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserve
 }
 ```
 
+</CodeExample>
+
 At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as `ABCD`), while Signer 2 is sponsoring the other two assets.
 
 ### Sponsorship Revocation
 Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2 removes themselves from all responsibility over the two asset trustlines. Notice that Account A is not involved at all, since revocation should be performable purely at the sponsor's discretion.
+
 
 <CodeExample>
 
@@ -249,6 +252,9 @@ Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2
 	SignAndSend(client, &s2Account, []*keypair.Full{S2}, revokeOps...)
 	fmt.Println("Revoked sponsorship for", A.Address())
 ```
+
+</CodeExample>
+
 
 
 ### Other Examples
