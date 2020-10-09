@@ -114,8 +114,11 @@ func main() {
 			Operations:           []txnbuild.Operation{&claimableBalanceEntry},
 		},
 	)
+	check(err)
 	tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
+	check(err)
 	txResp, err := client.SubmitTransaction(tx)
+	check(err)
 
 	fmt.Println("Claimable balance created!")
 }
@@ -134,14 +137,18 @@ by its Balance ID. This can be acquired in two ways:
 // Suppose `txResp` comes from the transaction submission above.
 var txResult xdr.TransactionResult
 err = xdr.SafeUnmarshalBase64(txResp.ResultXdr, &txResult)
-results, ok := txResult.OperationResults()
-operationResult := results[0].MustTr().CreateClaimableBalanceResult
-balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
-fmt.Println("Balance ID:", balanceId)
+check(err)
+
+if results, ok := txResult.OperationResults(); ok {
+	operationResult := results[0].MustTr().CreateClaimableBalanceResult
+	balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
+	fmt.Println("Balance ID:", balanceId)
+}
 
 // Alternatively, Account B would do something like:
 balances, err := client.ClaimableBalances(sdk.ClaimableBalanceRequest{Claimant: B})
-balanceId = balances.Embedded.Records[0].BalanceID
+check(err)
+balanceId := balances.Embedded.Records[0].BalanceID
 
 // Now Account B can actually claim the balance, provided too much time hasn't elapsed!
 claimBalance := txnbuild.ClaimClaimableBalance{BalanceID: balanceId}
@@ -154,8 +161,11 @@ tx, err = txnbuild.NewTransaction(
 		Operations:           []txnbuild.Operation{&claimBalance},
 	},
 )
+check(err)
 tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
-client.SubmitTransaction(tx)
+check(err)
+err = client.SubmitTransaction(tx)
+check(err)
 ```
 
 </CodeExample>
