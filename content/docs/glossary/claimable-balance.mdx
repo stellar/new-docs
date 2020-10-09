@@ -76,8 +76,6 @@ func main() {
 	A := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
 	B := "GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5"
 
-	// NOTE: Error checks are omitted for brevity; always check return values!
-
 	// Load the corresponding account for A.
 	aKeys := keypair.MustParseFull(A)
 	aAccount, err := client.AccountDetail(sdk.AccountRequest{
@@ -110,8 +108,8 @@ func main() {
 			IncrementSequenceNum: true,
 			BaseFee:              txnbuild.MinBaseFee,
 			// Use a real timeout in production!
-			Timebounds:           txnbuild.NewInfiniteTimeout(),
-			Operations:           []txnbuild.Operation{&claimableBalanceEntry},
+			Timebounds: txnbuild.NewInfiniteTimeout(),
+			Operations: []txnbuild.Operation{&claimableBalanceEntry},
 		},
 	)
 	check(err)
