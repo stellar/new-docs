@@ -73,7 +73,7 @@ Any asset code works provided it falls into one of those two buckets. That said,
 
 This is the step where the magic happens. The issuing account makes a payment to the distribution account using the newly named asset, and tokens exist where before there were none. Presto!
 
-As long as the issuing account remains unlocked, it can continue to create new tokens by making payments to the distribution account, or to any other account with the requisite trustline. If you want to change that and put a hard limit on the number of tokens an issuing account can issue, check out our instructions on [how to lock an account](./limit-asset-supply.mdx).
+As long as the issuing account remains unlocked, it can continue to create new tokens by making payments to the distribution account, or to any other account with the requisite trustline. If you want to change that and put a hard limit on the number of tokens an issuing account can issue, check out our instructions on [how to lock an account](./control-asset-access.mdx).
 
 If you’re planning to do, really, anything with your asset, your next step is to [complete a stellar.toml file](./publishing-asset-info.mdx) to provide wallets, exchanges, market listing services, and potential token holders with the information they need to understand what it represents.
 
@@ -185,50 +185,92 @@ server.submitTransaction(sendAstroDollars);
 ```
 
 ```go
-issuerSeed := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
-recipientSeed := "SDSAVCRE5JRAI7UFAVLE5IMIZRD6N6WOJUWKY4GFN34LOBEEUS4W2T2D"
+package main
 
-// Keys for accounts to issue and receive the new asset
-issuer, err := keypair.Parse(issuerSeed)
-if err != nil { log.Fatal(err) }
-recipient, err := keypair.Parse(recipientSeed)
-if err != nil { log.Fatal(err) }
-
-// Create an object to represent the new asset
-astroDollar := build.CreditAsset("AstroDollar", issuer.Address())
-
-// First, the receiving account must trust the asset
-trustTx, err := build.Transaction(
-    build.SourceAccount{recipient.Address()},
-    build.AutoSequence{SequenceProvider: horizon.DefaultTestNetClient},
-    build.TestNetwork,
-    build.Trust(astroDollar.Code, astroDollar.Issuer, build.Limit("100.25")),
+import (
+  "github.com/stellar/go/clients/horizonclient"
+  "github.com/stellar/go/keypair"
+  "github.com/stellar/go/network"
+  "github.com/stellar/go/txnbuild"
+  "log"
 )
-if err != nil { log.Fatal(err) }
-trustTxe, err := trustTx.Sign(recipientSeed)
-if err != nil { log.Fatal(err) }
-trustTxeB64, err := trustTxe.Base64()
-if err != nil { log.Fatal(err) }
-_, err = horizon.DefaultTestNetClient.SubmitTransaction(trustTxeB64)
-if err != nil { log.Fatal(err) }
 
-// Second, the issuing account actually sends a payment using the asset
-paymentTx, err := build.Transaction(
-    build.SourceAccount{issuer.Address()},
-    build.TestNetwork,
-    build.AutoSequence{SequenceProvider: horizon.DefaultTestNetClient},
-    build.Payment(
-        build.Destination{AddressOrSeed: recipient.Address()},
-        build.CreditAmount{"AstroDollar", issuer.Address(), "10"},
-    ),
-)
-if err != nil { log.Fatal(err) }
-paymentTxe, err := paymentTx.Sign(issuerSeed)
-if err != nil {	log.Fatal(err) }
-paymentTxeB64, err := paymentTxe.Base64()
-if err != nil { log.Fatal(err) }
-_, err = horizon.DefaultTestNetClient.SubmitTransaction(paymentTxeB64)
-if err != nil { log.Fatal(err) }
+func main() {
+  client := horizonclient.DefaultTestNetClient
+
+  // Remember, these are just examples, so replace them with your own seeds.
+  issuerSeed := "SDR4C2CKNCVK4DWMTNI2IXFJ6BE3A6J3WVNCGR6Q3SCMJDTSVHMJGC6U"
+  distributorSeed := "SBUW3DVYLKLY5ZUJD5PL2ZHOFWJSVWGJA47F6FLO66UUFZLUUA2JVU5U"
+
+  /*
+   * We omit error checks here for brevity, but you should always check your
+   * return values.
+   */
+
+  // Keys for accounts to issue and distribute the new asset.
+  issuer, err := keypair.ParseFull(issuerSeed)
+  distributor, err := keypair.ParseFull(distributorSeed)
+
+  request := horizonclient.AccountRequest{AccountID: issuer.Address()}
+  issuerAccount, err := client.AccountDetail(request)
+
+  request = horizonclient.AccountRequest{AccountID: distributor.Address()}
+  distributorAccount, err := client.AccountDetail(request)
+
+  // Create an object to represent the new asset
+  astroDollar := txnbuild.CreditAsset{Code: "AstroDollar", Issuer: issuer.Address()}
+
+  // First, the receiving (distribution) account must trust the asset from the
+  // issuer.
+  tx, err := txnbuild.NewTransaction(
+    txnbuild.TransactionParams{
+      SourceAccount:        &distributorAccount,
+      IncrementSequenceNum: true,
+      BaseFee:              txnbuild.MinBaseFee,
+      Timebounds:           txnbuild.NewInfiniteTimeout(),
+      Operations: []txnbuild.Operation{
+        &txnbuild.ChangeTrust{
+          Line:  astroDollar,
+          Limit: "5000",
+        },
+      },
+    },
+  )
+
+  signedTx, err := tx.Sign(network.TestNetworkPassphrase, distributor)
+  resp, err := client.SubmitTransaction(signedTx)
+  if err != nil {
+    log.Fatal(err)
+  } else {
+    log.Printf("Trust: %s\n", resp.Hash)
+  }
+
+  // Second, the issuing account actually sends a payment using the asset
+  tx, err = txnbuild.NewTransaction(
+    txnbuild.TransactionParams{
+      SourceAccount:        &issuerAccount,
+      IncrementSequenceNum: true,
+      BaseFee:              txnbuild.MinBaseFee,
+      Timebounds:           txnbuild.NewInfiniteTimeout(),
+      Operations: []txnbuild.Operation{
+        &txnbuild.Payment{
+          Destination: distributor.Address(),
+          Asset:       astroDollar,
+          Amount:      "10",
+        },
+      },
+    },
+  )
+
+  signedTx, err = tx.Sign(network.TestNetworkPassphrase, issuer)
+  resp, err = client.SubmitTransaction(signedTx)
+
+  if err != nil {
+    log.Fatal(err)
+  } else {
+    log.Printf("Pay: %s\n", resp.Hash)
+  }
+}
 ```
 
 ```python
@@ -304,3 +346,5 @@ print(f"Payment Transaction Resp:\n{payment_transaction_resp}")
 ```
 
 </CodeExample>
+
+Naturally, the balances for the distributor's account will now hold both XLM and our new Astrodollars.
