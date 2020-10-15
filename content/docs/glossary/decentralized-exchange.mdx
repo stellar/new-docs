@@ -3,41 +3,42 @@ title: Decentralized Exchange
 order:
 ---
 
-In addition to supporting the issuing and movement of [assets](./assets.mdx), the Stellar network also acts as a decentralized **distributed exchange** that allows you to trade and asset on the network. The Stellar ledger stores both balances held by user accounts and offers that user accounts make to buy or sell assets.
+In addition to supporting the issuing and movement of [assets](./assets.mdx), the Stellar network also acts as a decentralized **distributed exchange** that allows you to trade and convert assets on the network. The Stellar ledger stores both balances held by user accounts and orders that user accounts make to buy or sell assets.
 
-## Offers
+## Orders
 
-An account can make offers to buy or sell assets using the [Manage Buy Offer](../start/list-of-operations.mdx#manage-buy-offer) or [Manage Sell Offer](../start/list-of-operations.mdx#manage-sell-offer) operation. In order to make an offer, the account must hold the asset it wants to sell. The account must also trust the issuer of the asset it's trying to buy.
+An account can create orders to buy or sell assets using the [Manage Buy Offer](../start/list-of-operations.mdx#manage-buy-offer) or [Manage Sell Offer](../start/list-of-operations.mdx#manage-sell-offer) operation. In order to initiate an order, the account must hold the asset it wants to use to buy (exchange for) the desired asset to be purchased. The account must also trust the issuer of the asset it's trying to buy.
 
-Offers in Stellar behave like limit orders in traditional markets. When an account makes an offer, the offer is checked against the existing orderbook for that asset pair. If the offer crosses an existing offer, it is filled at the price of the existing offer. If the offer doesn't cross an existing offer, the offer is saved in the orderbook until it is either taken by another offer, taken by a path payment, or canceled by the account that created the offer.
+Orders in Stellar behave like limit orders in traditional markets. When an account initiates an order, it is checked against the existing orderbook for that asset pair. If the submitted order is a marketable order (for a marketable buy limit order, the limit price is at or above the ask price; for a marketable sell limit order, the limit price is at or below the bid price), it is filled at the existing order price for the available quantity at that price. If the order is not marketable (i.e. does not cross an existing order), the order is saved on the orderbook until it is either consumed by another order, consumed by a path payment, or canceled by the account that created the order.
 
-Each offer contributes selling liabilities for the selling asset and buying liabilities for the buying asset, which are aggregated in the account (for lumens) or trustline (for other assets) owned by the account creating the offer. Any operation that would cause an account to be unable to satisfy its liabilities — such as sending away too much balance, will fail — This guarantees that any offer in the orderbook can be executed entirely.
+Each order constitutes a selling obligation for the selling asset and buying obligation for the buying asset. These obligations are aggregated in the account (for lumens) or trustline (for other assets) owned by the account creating the order. Any operation that would cause an account to be unable to satisfy its obligations — such as sending away too much balance, will fail — This guarantees that any order in the orderbook can be executed entirely.
 
-For offers placed at the same price, the older offer is filled before the newer one.
+Orders are executed on a price-time priority, meaning orders will be executed based first on price; for orders placed at the same price, the order that was entered earlier is given priority and is executed before the newer one.
 
 ### Price
 
-Each offer in Stellar has an associated price, which is represented as a ratio of the two assets in the offer. This is to ensure there is no loss of precision when representing the price of the offer (as opposed to storing the fraction as a floating-point number).
+Each order in Stellar is quoted with an associated price, and is represented as a ratio of the two assets in the order, one being the "quote asset" and the other being the "base asset". This is to ensure there is no loss of precision when representing the price of the order (as opposed to storing the fraction as a floating-point number).
 
-Prices are specified as a `{numerator, denominator}` pair, with both components of the fraction represented as 32 bit signed integers. When expressing a price of "Asset A in terms of Asset B", the amount of B is always the numerator, and A is always the denominator.
+Prices are specified as a `{numerator, denominator}` pair with both components of the fraction represented as 32 bit signed integers. The numerator is considered the base asset, and the denominator is considered the quote asset. When expressing a price of "Asset A in terms of Asset B", the amount of B is denominator (and therefore the quote asset), and A is the numerator (and therefore the base asset). As a good rule of thumb, it's generally correct to be thinking about the base asset that is being bought/sold (in terms of the quote asset).
+(see comments below)
 
-When creating a "buy"/"bid" offer in Stellar via the [Manage Buy Offer](../start/list-of-operations.mdx#manage-buy-offer) operation, the price is specified as 1 unit of what you're _buying_ in terms of what you're _selling_. For example, if you're _buying_ 20 USD in exchange for 100 XLM, you would specify the price as `{100, 20}`, which would be the equivalent of 1 USD @ 5 XLM.
+When creating a "buy"/"bid" order in Stellar via the [Manage Buy Offer](../start/list-of-operations.mdx#manage-buy-offer) operation, the price is specified as 1 unit of the base currency (the asset being bought), in terms of the quote asset (the asset that is being sold). For example, if you're _buying_ 100 XLM in exchange for 20 USD, you would specify the price as `{20, 100}`, which would be the equivalent of 5 XLM for 1 USD (or $.20 per XLM).
 
-When creating a "sell"/"offer"/"ask" offer in Stellar via the [Manage Sell Offer](../start/list-of-operations.mdx#manage-sell-offer) operation, the price is specified as 1 unit of what you're _selling_ in terms of what you're _buying_. For example, if you're _selling_ 10 USD in exchange for 100 XLM, you would specify the price as `{100, 10}`, which would be the equivalent of 1 USD @ 10 XLM (_nice profit_).
+When creating a "sell"/"offer"/"ask" order in Stellar via the [Manage Sell Offer](../start/list-of-operations.mdx#manage-sell-offer) operation, the price is specified as 1 unit of base currency (the asset being sold), in terms of the quote asset (the asset that is being bought). For example, if you're _selling_ 100 XLM in exchange for 40 USD, you would specify the price as `{40, 100}`, which would be the equivalent of 2.5 XLM for 1 USD (or $.40 per XLM) (_nice profit_).
 
 #### Fees
 
-It's important to note that the price you set is unrelated to the fee you pay for submitting the offer as a part of a transaction. Fees are always paid in the native currency of the network (lumens), and are related to the transaction that you submit to the network (which contains your offer operation) as opposed to your offer itself.
+It's important to note that the price you set is unrelated to the fee you pay for submitting the order as a part of a transaction. Fees are always paid in the native currency of the network (lumens), and are related to the transaction that you submit to the network (which contains your order operation) as opposed to your order itself.
 
 For more information, take a look at [our guide on fees in Stellar](./fees.mdx).
 
-## Passive Offers
+## Passive Order
 
-**Passive offers** allow markets to have zero spread. If you want to offer USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive offers so the two offers don't fill each other.
+**Passive orders** allow markets to have zero spread. If you want to exchange USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive orders so the two orders don't fill each other. (will this actually be a zero spread? it should still be a tick wide right? or would it be a "locked market", where the bid and the ask is at the same price?)
 
-A passive offer is an offer that does not take a counteroffer of equal price. It will only fill if the prices are not equal. For example, if the best offer to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer _does not_ take that existing offer. If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC.
+A passive order is an order that does not execute against a marketable counter order with the same price. It will only fill if the prices are not equal. For example, if the best order to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer _does not_ take that existing offer. If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC. (i have some questions here...why does it not execute at a locked market (i.e. equal price) but at a crossed market it will execute?
 
-An account can place a passive sell offer via the [Create Passive Sell Offer](../start/list-of-operations.mdx#create-passive-sell-offer) operation.
+An account can place a passive sell order via the [Create Passive Sell Offer](../start/list-of-operations.mdx#create-passive-sell-offer) operation.
 
 ## Orderbook
 
@@ -63,15 +64,15 @@ Looking at the diagram, there are a few orientation things to notice and think a
 
 Some assets will have a very thin or nonexistent orderbook between them. That's fine: as discussed in greater detail below, paths of orders can facilitate exchange between two thinly traded assets.
 
-## Cross-asset payments
+## Cross-asset payments 
 
-Suppose you are holding sheep and want to buy something from a store that only accepts wheat. You can create a payment in Stellar that will automatically convert your sheep into wheat. It goes through the sheep/wheat orderbook and converts your sheep at the best available rate.
+Suppose you are holding sheep and want to buy something from a store that only accepts wheat. You can create a payment in Stellar that will automatically convert your sheep into wheat. It goes through the sheep/wheat orderbook and converts your sheep at the best available rate. 
 
 You can also make more complicated paths of asset conversion. Imagine that the sheep/wheat orderbook has a very large spread or is nonexistent. In this case, you might get a better rate if you first trade your sheep for brick and then sell that brick for wheat. So a potential path would be 2 hops: sheep->brick->wheat. This path would take you through the sheep/brick orderbook and then the brick/wheat orderbook.
 
 These paths of asset conversion can contain up to 6 hops, but the whole payment is atomic--it will either succeed or fail. The payment sender will never be left holding an unwanted asset.
 
-This process of finding the best path of a payment is called **pathfinding**. Pathfinding involves looking at the current orderbooks and finding which series of conversions gives you the best rate. It is handled outside of Stellar Core by something like Horizon.
+This process of finding the best path of a payment is called **pathfinding**. Pathfinding involves looking at the current orderbooks and finding which series of conversions gives you the best rate. It is handled outside of Stellar Core by something like Horizon. In foreign exchange this is often referred to as multi-leg and cross-currency transactions.
 
 ## Preferred currency
 
