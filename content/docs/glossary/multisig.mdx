@@ -143,4 +143,31 @@ Expense account setup:
 
 </CodeExample>
 
+<Alert>
 
+The next example involve setting the master key weight of an account to 0. Be very, very careful if you decide to do that: that key will no longer be able to sign any kind of transaction, so you are in danger of _permanently_ locking yourself out of your account. Make sure you've thought carefully about what you're doing, that you understand the implications, and that you change weights in the correct order.
+
+</Alert>
+
+### Example 4: Company Accounts
+
+> Your company wants to set up an account that requires 3 of 6 employees to agree to _any_ transaction from that account.
+
+Company account setup:
+
+<CodeExample>
+
+```
+  Master Key Weight: 0 (Turned off so this account can't do anything without an employee.  Make sure to set this weight *last* so you don't lock the account before setting up the other signers.)
+  Low Threshold: 3
+  Medium Threshold: 3
+  High Threshold: 3
+  Employee 1 Key Weight: 1
+  Employee 2 Key Weight: 1
+  Employee 3 Key Weight: 1
+  Employee 4 Key Weight: 1
+  Employee 5 Key Weight: 1
+  Employee 6 Key Weight: 1
+```
+
+</CodeExample>
