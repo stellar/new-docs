@@ -37,11 +37,11 @@ To enable ingestion, you must either pass `--ingest=true` on the command line or
 
 ### Ingesting Historical Data
 
-To enable ingestion of historical data from Stellar Core, you need to run `horizon db backfill NUM_LEDGERS`. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive, for example, you might want to ingest all of the network's history. In this case your `NUM_LEDGERS` should be slightly higher than the current ledger id on the network. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your /metrics endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
+To enable ingestion of historical data from Stellar Core, you need to run `horizon db reingest range start end`. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive, for example, you might want to ingest all of the network's history. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your /metrics endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
 
 ### Ingesting Historical Data and Reingesting Ledgers
 
-To reingest older ledgers — which you may need to do after a version upgrade — or to ingest ledgers closed by the network before you started Horizon use the `horizon db range [START_LEDGER] [END_LEDGER]` command:
+To reingest older ledgers — which you may need to do after a version upgrade — or to ingest ledgers closed by the network before you started Horizon use the `horizon db reingest range [START_LEDGER] [END_LEDGER]` command:
 
 <CodeExample>
 
