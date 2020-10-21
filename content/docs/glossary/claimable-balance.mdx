@@ -124,13 +124,14 @@ func main() {
 
 </CodeExample>
 
-At this point, the claimable balance exists in the ledger. We can now claim it
-by its Balance ID. This can be acquired in a number of ways:
- 1. the submitter of the entry (Account A in this case) can retrieve the balance ID **prior** to submitting the transaction; 
- 2. the submitter parses the XDR of the transaction result's operations; **or**
- 3. someone queries the list of claimable balances (filtering accordingly, if necessary).
+At this point, the claimable balance exists in the ledger, but we'll need its Balance ID to claim it. This can be acquired in a number of ways:
 
-Either party could also check the `/effects` of the transaction, filter `/claimable_balances` on different fields, etc.
+ 1. the submitter of the entry (Account A in this case) can retrieve the balance ID *prior* to submitting the transaction; 
+ 2. the submitter parses the XDR of the transaction result's operations; **or**
+ 3. someone queries the list of claimable balances (filtered accordingly, if necessary).
+
+Either party could also check the `/effects` of the transaction, query `/claimable_balances` with different filters, etc. Note that while (1) may be unavailable in some SDKs as its just a helper, the other methods are universal.
+
 
 <CodeExample>
 
@@ -146,6 +147,8 @@ err = xdr.SafeUnmarshalBase64(txResp.ResultXdr, &txResult)
 check(err)
 
 if results, ok := txResult.OperationResults(); ok {
+	// We look at the first result since our first (and only) operation in the
+	// transaction was the CreateClaimableBalanceOp.
 	operationResult := results[0].MustTr().CreateClaimableBalanceResult
 	balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
 	check(err)
