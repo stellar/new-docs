@@ -136,6 +136,7 @@ Either party could also check the `/effects` of the transaction, filter `/claima
 
 ```go
 // Method 1: Suppose `tx` comes from the transaction built above.
+//           Notice that this can be done *before* submission.
 balanceId, err := tx.ClaimableBalanceID(0)
 check(err)
 
@@ -147,6 +148,7 @@ check(err)
 if results, ok := txResult.OperationResults(); ok {
 	operationResult := results[0].MustTr().CreateClaimableBalanceResult
 	balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
+	check(err)
 	fmt.Println("Balance ID:", balanceId)
 }
 
@@ -169,7 +171,7 @@ tx, err = txnbuild.NewTransaction(
 check(err)
 tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
 check(err)
-err = client.SubmitTransaction(tx)
+txResp, err = client.SubmitTransaction(tx)
 check(err)
 ```
 
