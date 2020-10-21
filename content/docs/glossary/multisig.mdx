@@ -145,7 +145,7 @@ Expense account setup:
 
 <Alert>
 
-The next two examples involve setting the master key weight of an account to 0. Be very, very careful if you decide to do that: that key will no longer be able to sign any kind of transaction, so you are in danger of _permanently_ locking yourself out of your account. Make sure you've thought carefully about what you're doing, and that you understand the implications.
+The next example involves setting the master key weight of an account to 0. Be very, very careful if you decide to do that: that key will no longer be able to sign any kind of transaction, so you are in danger of _permanently_ locking yourself out of your account. Make sure you've thought carefully about what you're doing, that you understand the implications, and that you change weights in the correct order.
 
 </Alert>
 
@@ -158,7 +158,7 @@ Company account setup:
 <CodeExample>
 
 ```
-  Master Key Weight: 0 (Turned off so this account can't do anything without an employee)
+  Master Key Weight: 0 (Turned off so this account can't do anything without an employee.)
   Low Threshold: 3
   Medium Threshold: 3
   High Threshold: 3
@@ -171,22 +171,3 @@ Company account setup:
 ```
 
 </CodeExample>
-
-### Example 5: Custom Currencies
-
-> You want to issue a custom currency and ensure that no more will ever be created. You make a source account and issue the maximum amount of currency to a holding account. Then you set the master weight of the source account to below the medium threshold--the source account can no longer issue currency.
-
-Source account setup:
-
-<CodeExample>
-
-```
-  Master Key Weight: 0
-  Low Threshold: 0
-  Medium Threshold: 0
-  High Threshold: 0
-```
-
-</CodeExample>
-
-Note that even though the thresholds are 0 here, the master key cannot successfully sign a transaction because its own weight is 0.
