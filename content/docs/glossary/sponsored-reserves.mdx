@@ -58,6 +58,8 @@ See [Revoke Sponsorship](../start/list-of-operations.mdx#revoke-sponsorship) for
 
 The logic above does not detail any of the error cases, which are specified [here](../start/list-of-operations.mdx#revoke-sponsorship).
 
+
+
 ## Examples
 Each example builds on itself, referencing variables from previous snippets. We'll demonstrate a few different things you can do with sponsoring:
  - Sponsor creation of a trustline for another account.
@@ -66,6 +68,7 @@ Each example builds on itself, referencing variables from previous snippets. We'
  - Revoke sponsorship by an account entirely.
 
 (For brevity, we'll assume the existence of a `SignAndSend(...)` method (defined [below](#footnote)) which will creates and submits a transaction with the proper parameters and error-checking.
+
 
 ### Preamble
 We'll start by including the boilerplate of account and asset creation.
@@ -121,7 +124,7 @@ func main() {
 </CodeExample>
 
 
-### Sponsoring a Trustline
+### Sponsoring Trustlines
 Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations and that all relevant accounts need to sign the transaction.
 
 <CodeExample>
@@ -136,9 +139,8 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 			SponsoredID:   addressA,
 		},
 		&txnbuild.ChangeTrust{
-			SourceAccount: &aAccount,
-			Line:          &assets[0],
-			Limit:         txnbuild.MaxTrustlineLimit,
+			Line:  &assets[0],
+			Limit: txnbuild.MaxTrustlineLimit,
 		},
 		&txnbuild.EndSponsoringFutureReserves{},
 	}
@@ -181,7 +183,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 
 
 ### Transferring Sponsorship
-Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserves for the trustline to Sponsor 2. This is accomplished by sandwiching the transfer between the `BEGIN/END_SPONSORING_FUTURE_RESERVES` operations. Both of the participants must sign the transaction, though either can submit it.
+Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserves for the trustline to Sponsor 2. This is accomplished by sandwiching the transfer between the `BEGIN`/`END_SPONSORING_FUTURE_RESERVES` operations. Both of the participants must sign the transaction, though either can submit it.
 
 <CodeExample>
 
@@ -195,7 +197,6 @@ Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserve
 			SponsoredID:   S1.Address(),
 		},
 		&txnbuild.RevokeSponsorship{
-			SourceAccount:   &s1Account,
 			SponsorshipType: txnbuild.RevokeSponsorshipTypeTrustLine,
 			Account:         &addressA,
 			TrustLine: &txnbuild.TrustLineID{
@@ -206,15 +207,18 @@ Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserve
 		&txnbuild.EndSponsoringFutureReserves{},
 	}
 
-	// Notice that while the old sponsor *sends* the transaction, both sponsors
-	// must *approve* the transfer.
+	// Notice that while the old sponsor *sends* the transaction (in this case),
+	// both sponsors must *approve* the transfer.
 	SignAndSend(client, &s1Account, []*keypair.Full{S1, S2}, transferOps...)
 	fmt.Println("Transferred sponsorship for", A.Address())
 ```
 
 </CodeExample>
 
+You can think of a sponsorship transfer as the new sponsor sponsoring sponsorship for the old sponsor[.](https://en.wikipedia.org/wiki/Semantic_satiation).
+
 At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as `ABCD`), while Signer 2 is sponsoring the other two assets.
+
 
 ### Sponsorship Revocation
 Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2 removes themselves from all responsibility over the two asset trustlines. Notice that Account A is not involved at all, since revocation should be performable purely at the sponsor's discretion.
@@ -247,6 +251,40 @@ Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2
 	SignAndSend(client, &s2Account, []*keypair.Full{S2}, revokeOps...)
 	fmt.Println("Revoked sponsorship for", A.Address())
 } // ends main()
+```
+
+</CodeExample>
+
+
+### Sponsorship Source Accounts
+When it comes to the `SourceAccount` fields of the sponsorship sandwich, it's important to refer to the wisdom of [CAP-33](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#abstract):
+
+> This relation is initiated by `BeginSponsoringFutureReservesOp`, where the **sponsoring** account is the source account, and is terminated by `EndSponsoringFutureReserveOp`, where the **sponsored** account is the source account.
+
+Since the source account defaults to the transaction submitter when omitted, this field needs always needs to be set for either the `Begin` or the `End`.
+
+For example, the following is an identical expression of the [earlier example](#sponsoring-trustlines) on sponsoring a trustline, just submitted by the **sponsor** (Sponsor 1) rather than the **sponsored** account (Account A). Notice the differences in where `SourceAccount` is set:
+
+<CodeExample>
+
+```go
+	sponsorTrustline := []txnbuild.Operation{
+		&txnbuild.BeginSponsoringFutureReserves{
+			SponsoredID: addressA,
+		},
+		&txnbuild.ChangeTrust{
+			SourceAccount: &aAccount,
+			Line:          &assets[0],
+			Limit:         txnbuild.MaxTrustlineLimit,
+		},
+		&txnbuild.EndSponsoringFutureReserves{
+			SourceAccount: &aAccount,
+		},
+	}
+
+	// Again, both participants must still sign the transaction: the sponsored
+	// account must consent to the sponsorship.
+	SignAndSend(client, &s1Account, []*keypair.Full{S1, A}, sponsorTrustline...)
 ```
 
 </CodeExample>
