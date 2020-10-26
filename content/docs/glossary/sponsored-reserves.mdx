@@ -185,6 +185,8 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 ### Transferring Sponsorship
 Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserves for the trustline to Sponsor 2. This is accomplished by sandwiching the transfer between the `BEGIN`/`END_SPONSORING_FUTURE_RESERVES` operations. Both of the participants must sign the transaction, though either can submit it.
 
+An intuitive way to think of a sponsorship transfer is that the very act of sponsorship is being sponsored by a new account. That is, the new sponsor takes over the responsibilities of the old sponsor by sponsoring a revocation.
+
 <CodeExample>
 
 ```go
@@ -214,8 +216,6 @@ Suppose that now Signer 1 wants to transfer responsibility of sponsoring reserve
 ```
 
 </CodeExample>
-
-You can think of a sponsorship transfer as the new sponsor sponsoring sponsorship for the old sponsor[.](https://en.wikipedia.org/wiki/Semantic_satiation).
 
 At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as `ABCD`), while Signer 2 is sponsoring the other two assets.
 
