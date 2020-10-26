@@ -124,31 +124,43 @@ func main() {
 
 </CodeExample>
 
-At this point, the claimable balance exists in the ledger. We can now claim it
-by its Balance ID. This can be acquired in two ways:
- 1. the submitter of the entry (Account A in this case) parses the XDR of the transaction result's operations, **or**
- 2. someone queries the list of claimable balances (filtering accordingly, if necessary)
+At this point, the `ClaimableBalanceEntry` exists in the ledger, but we'll need its Balance ID to claim it. This can be acquired in a number of ways:
+
+ 1. the submitter of the entry (Account A in this case) can retrieve the balance ID *prior* to submitting the transaction; 
+ 2. the submitter parses the XDR of the transaction result's operations; **or**
+ 3. someone queries the list of claimable balances (filtered accordingly, if necessary).
+
+Either party could also check the `/effects` of the transaction, query `/claimable_balances` with different filters, etc. Note that while (1) may be unavailable in some SDKs as its just a helper, the other methods are universal.
 
 <CodeExample>
 
 ```go
-// Suppose `txResp` comes from the transaction submission above.
+// Method 1: Suppose `tx` comes from the transaction built above.
+//           Notice that this can be done *before* submission.
+balanceId, err := tx.ClaimableBalanceID(0)
+check(err)
+
+// Method 2: Suppose `txResp` comes from the transaction submission above.
 var txResult xdr.TransactionResult
 err = xdr.SafeUnmarshalBase64(txResp.ResultXdr, &txResult)
 check(err)
 
 if results, ok := txResult.OperationResults(); ok {
+	// We look at the first result since our first (and only) operation in the
+	// transaction was the CreateClaimableBalanceOp.
 	operationResult := results[0].MustTr().CreateClaimableBalanceResult
 	balanceId, err := xdr.MarshalHex(operationResult.BalanceId)
+	check(err)
 	fmt.Println("Balance ID:", balanceId)
 }
 
-// Alternatively, Account B would do something like:
+// Method 3: Account B could alternatively do something like:
 balances, err := client.ClaimableBalances(sdk.ClaimableBalanceRequest{Claimant: B})
 check(err)
 balanceId := balances.Embedded.Records[0].BalanceID
 
-// Now Account B can actually claim the balance, provided too much time hasn't elapsed!
+// Now Account B can actually claim the balance, provided too much time
+// hasn't elapsed, or Account A can "reclaim" it otherwise.
 claimBalance := txnbuild.ClaimClaimableBalance{BalanceID: balanceId}
 tx, err = txnbuild.NewTransaction(
 	txnbuild.TransactionParams{
@@ -162,7 +174,7 @@ tx, err = txnbuild.NewTransaction(
 check(err)
 tx, err = tx.Sign(network.TestNetworkPassphrase, aKeys)
 check(err)
-err = client.SubmitTransaction(tx)
+txResp, err = client.SubmitTransaction(tx)
 check(err)
 ```
 
