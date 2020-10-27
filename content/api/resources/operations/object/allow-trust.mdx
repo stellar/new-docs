@@ -25,8 +25,8 @@ See the [`Allow Trust` errors](../../../errors/result-codes/operation-specific/a
   - string
   - The code for the asset.
 - authorize
-  - boolean
-  - Allows or disallows trust.
+  - int
+  - Flag indicating whether the trustline is authorized.  0 if the account is not authorized to transact with the asset in any way. 1 if the account is authorized to transact with the asset. 2 if the account is authorized to maintain orders, but not to perform other transactions. 
 - trustee
   - string
   - The issuing account, or source account in this instance.
