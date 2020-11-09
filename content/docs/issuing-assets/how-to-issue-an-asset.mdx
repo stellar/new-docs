@@ -6,7 +6,7 @@ order: 20
 import { CodeExample } from "components/CodeExample";
 import { Alert } from "components/Alert";
 
-There is no dedicated operation to create an asset on Stellar. Instead, assets are created with a [payment operation](../start/index.mdx/list-of-operations.mdx#payment): an issuing account makes a payment using the asset it’s issuing, and that payment actually creates the asset on the network.
+There is no dedicated operation to create an asset on Stellar. Instead, assets are created with a [payment operation](../start/list-of-operations.mdx#payment): an issuing account makes a payment using the asset it’s issuing, and that payment actually creates the asset on the network.
 
 It’s a pretty simple process that requires four operations: one to create an issuing account, one to create a distribution account, one to establish a trustline, and one to make a payment.
 
@@ -73,7 +73,7 @@ Any asset code works provided it falls into one of those two buckets. That said,
 
 This is the step where the magic happens. The issuing account makes a payment to the distribution account using the newly named asset, and tokens exist where before there were none. Presto!
 
-As long as the issuing account remains unlocked, it can continue to create new tokens by making payments to the distribution account, or to any other account with the requisite trustline. 
+As long as the issuing account remains unlocked, it can continue to create new tokens by making payments to the distribution account, or to any other account with the requisite trustline.
 
 If you’re planning to do, really, anything with your asset, your next step is to [complete a stellar.toml file](./publishing-asset-info.mdx) to provide wallets, exchanges, market listing services, and potential token holders with the information they need to understand what it represents.
 
@@ -346,5 +346,6 @@ print(f"Payment Transaction Resp:\n{payment_transaction_resp}")
 ```
 
 </CodeExample>
+
 
 Naturally, the balances for the distributor's account will now hold both XLM and our new Astrodollars.

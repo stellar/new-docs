@@ -23,11 +23,12 @@ The two main integration points to Stellar for an exchange are:<br/>
 ### Operational
 
 - _(optional)_ Set up [Stellar Core](../run-core-node/index.mdx)
-- _(optional)_ Set up [Horizon](../run-api-server/index.mdxl)
+- _(optional)_ Set up [Horizon](../run-api-server/index.mdx)
 
 It's recommended, though not strictly necessary, to run your own instances of Stellar Core and Horizon - [this doc](../run-core-node/index.mdx#types-of-nodes) explains the types of node you can run, and the advantages to running each. If you choose not to, it's possible to use the Stellar.org public-facing Horizon servers. Our test and live networks are listed below:
 
 <CodeExample>
+
 
 ```
 test net: {hostname:'horizon-testnet.stellar.org', secure:true, port:443};
@@ -35,6 +36,7 @@ live: {hostname:'horizon.stellar.org', secure:true, port:443};
 ```
 
 </CodeExample>
+
 
 ### Issuing account
 
@@ -53,12 +55,14 @@ A base account contains a more limited amount of funds than an issuing account. 
 
 <CodeExample>
 
+
 ```
 CREATE TABLE StellarTransactions (UserID INT, Destination varchar(56), XLMAmount INT, state varchar(8));
 CREATE TABLE StellarCursor (id INT, cursor varchar(50)); // id - AUTO_INCREMENT field
 ```
 
 </CodeExample>
+
 
 Possible values for `StellarTransactions.state` are "pending", "done", "error".
 
@@ -67,6 +71,7 @@ Possible values for `StellarTransactions.state` are "pending", "done", "error".
 Use this code framework to integrate Stellar into your exchange. For this guide, we use placeholder functions for reading/writing to the exchange database. Each database library connects differently, so we abstract away those details. The following sections describe each step:
 
 <CodeExample>
+
 
 ```js
 // Config your server
@@ -110,6 +115,7 @@ server.loadAccount(config.baseAccount).then(function (account) {
 
 </CodeExample>
 
+
 ## Listening for deposits
 
 When a user wants to deposit lumens in your exchange, instruct them to send XLM to your base account address with the customerID in the memo field of the transaction.
@@ -117,6 +123,7 @@ When a user wants to deposit lumens in your exchange, instruct them to send XLM 
 You must listen for payments to the base account and credit any user that sends XLM there. Here's code that listens for these payments:
 
 <CodeExample>
+
 
 ```js
 // Start listening for payments from where you last stopped
@@ -135,6 +142,7 @@ callBuilder.stream({ onmessage: handlePaymentResponse });
 
 </CodeExample>
 
+
 For every payment received by the base account, you must:<br/>
 
 - check the memo field to determine which user sent the deposit.<br/>
@@ -144,6 +152,7 @@ For every payment received by the base account, you must:<br/>
 So, you pass this function as the `onmessage` option when you stream payments:
 
 <CodeExample>
+
 
 ```js
 function handlePaymentResponse(record) {
@@ -188,6 +197,7 @@ function handlePaymentResponse(record) {
 
 </CodeExample>
 
+
 ## Submitting withdrawals
 
 When a user requests a lumen withdrawal from your exchange, you must generate a Stellar transaction to send them XLM. See [building transactions](https://github.com/stellar/js-stellar-base/blob/master/docs/reference/building-transactions.md) for more information.
@@ -195,6 +205,7 @@ When a user requests a lumen withdrawal from your exchange, you must generate a 
 The function `handleRequestWithdrawal` will queue up a transaction in the exchange's `StellarTransactions` table whenever a withdrawal is requested.
 
 <CodeExample>
+
 
 ```js
 function handleRequestWithdrawal(userID, amountLumens, destinationAddress) {
@@ -221,9 +232,11 @@ function handleRequestWithdrawal(userID, amountLumens, destinationAddress) {
 
 </CodeExample>
 
+
 Then, you should run `submitPendingTransactions`, which will check `StellarTransactions` for pending transactions and submit them.
 
 <CodeExample>
+
 
 ```js
 StellarSdk.Network.useTestNetwork();
@@ -312,6 +325,7 @@ function submitPendingTransactions(exchangeAccount) {
 
 </CodeExample>
 
+
 ## Going further...
 
 ### Federation
@@ -334,6 +348,7 @@ First, open a [trustline](../issuing-assets/anatomy-of-an-asset.mdx#trustlines) 
 
 <CodeExample>
 
+
 ```js
 var someAsset = new StellarSdk.Asset("ASSET_CODE", issuingKeys.publicKey());
 
@@ -346,6 +361,7 @@ transaction.addOperation(
 
 </CodeExample>
 
+
 If the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](../issuing-assets/control-asset-access.mdx).
 
 Then, make a few changes to the example code above:
@@ -357,6 +373,7 @@ _Note_: the user cannot send us tokens whose issuing account we have not explici
 - In the `withdraw` function, when we add an operation to the transaction, we must specify the details of the token we are sending. For example:
 
 <CodeExample>
+
 
 ```js
 var someAsset = new StellarSdk.Asset("ASSET_CODE", issuingKeys.publicKey());
@@ -371,6 +388,7 @@ transaction.addOperation(
 ```
 
 </CodeExample>
+
 
 - In the `withdraw` function your customer must have opened a trustline with the issuing account of the token they are withdrawing. So you must take the following into consideration: _ Confirm the user receiving the token has a trustline _ Parse the [Horizon error](../start/list-of-operations.mdx#payment) that will occur after sending a token to an account without a trustline
 
