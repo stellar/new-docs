@@ -11,7 +11,7 @@ The most important question: who will “own” the account? There are three pos
 2. They, the user, will store their own account credentials and permission your app to send requests or delegate transaction signing. This is a “non-custodial” service.
 3. A mixture of the two via multisig. This is especially useful for maintaining non-custodial status while still allowing for account recovery.
 
-Be very careful taking a custodial approach or using any mixture where you are storing user secrets. It’s easy to get wrong, and the consequences can be devastating. For our purposes, we will assume choice #2. This tutorial will show you hold to build a non-custodial service.
+Be very careful taking a custodial approach or using any mixture where you are storing user secrets. It’s easy to get wrong, and the consequences can be devastating. For our purposes, we will assume choice #2. This tutorial will show you how to build a non-custodial service.
 
 The non-custodial option poses some very real usability issues: your user has to securely store their own account credentials and safely navigate transaction signing on their end. There are ways to make that process more user-friendly, one of which is to create a keystore file guarded by a passphrase, and that's the approach we'll take in this tutorial.
 
