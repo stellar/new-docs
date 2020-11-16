@@ -35,8 +35,7 @@ module.exports = {
             resolve: "gatsby-remark-mermaid",
             options: {
               theme: "neutral",
-              fontFamily:
-                '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+              fontFamily: '"IBM Plex Sans", Arial, sans-serif',
             },
           },
           {
