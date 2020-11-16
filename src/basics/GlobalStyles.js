@@ -2,7 +2,6 @@ import React from "react";
 import { createGlobalStyle, css } from "styled-components";
 import styledNormalize from "styled-normalize";
 
-import { FONTS } from "constants/fonts";
 import { FONT_FAMILY, MEDIA_QUERIES } from "constants/styles";
 import { expansionStyles } from "components/Expansion";
 
@@ -72,24 +71,4 @@ const Styles = createGlobalStyle`
   }
 `;
 
-const fontStyles = FONTS.map(
-  (font) => `
-    @font-face {
-      font-display: ${font.fontDisplay || "swap"};
-      font-family: "${font.fontFamily}";
-      ${font.fontStyle && `font-style: ${font.fontStyle};`}
-      src: ${font.src
-        .map((src) => `url("${src.url}") format("${src.format}")`)
-        .join(", ")};
-      ${font.fontWeight && `font-weight: ${font.fontWeight};`}
-      ${font.unicodeRange && `unicode-range: ${font.unicodeRange};`}
-    }
-  `,
-).join("");
-
-export const GlobalStyles = () => (
-  <>
-    <style dangerouslySetInnerHTML={{ __html: fontStyles }} />
-    <Styles />
-  </>
-);
+export const GlobalStyles = () => <Styles />;

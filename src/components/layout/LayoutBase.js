@@ -34,6 +34,21 @@ const SkipToContentEl = styled(BasicLink).attrs({
   }
 `;
 
+const fontStyles = FONTS.map(
+  (font) => `
+    @font-face {
+      font-display: ${font.fontDisplay || "swap"};
+      font-family: "${font.fontFamily}";
+      ${font.fontStyle && `font-style: ${font.fontStyle};`}
+      src: ${font.src
+        .map((src) => `url("${src.url}") format("${src.format}")`)
+        .join(", ")};
+      ${font.fontWeight && `font-weight: ${font.fontWeight};`}
+      ${font.unicodeRange && `unicode-range: ${font.unicodeRange};`}
+    }
+  `,
+).join("");
+
 export const LayoutBase = ({
   path,
   title,
@@ -66,7 +81,9 @@ export const LayoutBase = ({
             content: viewport,
           },
         ]}
-      />
+      >
+        <style type="text/css">{fontStyles}</style>
+      </Helmet>
       <Seo
         title={title}
         description={description}
