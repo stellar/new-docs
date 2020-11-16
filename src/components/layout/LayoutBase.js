@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import Helmet from "react-helmet";
 
-import { FONTS } from "constants/fonts";
 import { PERFORMANCE_MARKS } from "constants/performanceMarks";
 
 import { emitMetric } from "helpers/metrics";
@@ -55,20 +54,14 @@ export const LayoutBase = ({
   return (
     <>
       <Helmet
-        link={FONTS.filter((font) => font.preload).flatMap((font) => ({
-          rel: "preload",
-          href: font.src[0].url,
-          as: "font",
-        }))}
+        link={[{ rel: "stylesheet", type: "text/css", href: "/fonts.css" }]}
         meta={[
           {
             name: "viewport",
             content: viewport,
           },
         ]}
-      >
-        <link rel="stylesheet" type="text/css" href="/fonts.css" />
-      </Helmet>
+      />
       <Seo
         title={title}
         description={description}
