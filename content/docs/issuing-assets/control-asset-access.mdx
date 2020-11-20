@@ -17,7 +17,7 @@ When `AUTHORIZATION REQUIRED` is enabled, an issuer must approve an account befo
 
 To allow access, the user creates a trustline, and the issuer approves it by changing the `AUTHORIZE` flag with the [`allow_trust`](../start/list-of-operations.mdx#allow-trust) operation.
 
-There are two levels of authorization an asset holder can grant using the `allow_trust` operation:
+There are two levels of authorization an asset issuer can grant using the `allow_trust` operation:
 
 * `AUTHORIZED`: This flag signifies complete authorization allowing an account to transact freely with the asset to make and receive payments and place orders.
 * `AUTHORIZED_TO_MAINTAIN_LIABILITIES`: This flag denotes limited authorization that allows an account to maintain current orders, but not to otherwise transact with the asset.   
