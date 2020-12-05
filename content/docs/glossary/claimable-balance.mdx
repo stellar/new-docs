@@ -56,7 +56,7 @@ Each of these accounts can only claim the balance under certain, individual cond
 <CodeExample>
 
 ```js
-const sdk = require("stellar-sdk");
+const sdk = require("stellar-sdk")
 
 var server = new sdk.Server("https://horizon-testnet.stellar.org")
 
@@ -96,69 +96,6 @@ server
     tx.sign(A)
     return [tx, server.submitTransaction(tx)]
   })
-  // Method 1: Suppose `tx` comes from the transaction built above.
-  //           Notice that this can be done *before* submission.
-  // 
-  // TODO: Before this can be merged, the tx.claimableBalanceId(int) helper
-  //       actually needs to be implemented lol
-  .then(function(pair) {
-    // why do people put up with a language that doesn't have multiple
-    // return values in 2020 lmao
-    let tx = pair[0], txResponse = pair[1]
-    console.log("Claimable balance created!")
-
-    // let balanceId = tx.ClaimableBalanceID(0)
-    // console.log("Balance ID (1):", balanceId)
-    return txResponse
-  })
-  // Method 2: Suppose `txResponse` comes from the transaction submission
-  // above.
-  .then(function(txResponse) {
-    let txResult = sdk.xdr.TransactionResult.fromXDR(txResponse.result_xdr, "base64")
-    let results = txResult.result().results()
-
-    // We look at the first result since our first (and only) operation
-    // in the transaction was the CreateClaimableBalanceOp.
-    let operationResult = results[0].value().createClaimableBalanceResult()
-    let balanceId = operationResult.balanceId().toXDR("hex")
-
-    console.log("Balance ID (2):", balanceId)
-  })
-  // Method 3: Account B could alternatively do something like:
-  .then(async function() {
-    return await server
-      .claimableBalances()
-      .claimant(B.publicKey())
-      .call()
-      .then(function(balances) {
-        console.log(balances)
-        let balanceId = balances.records[0].id
-        console.log("Balance ID (3):", balanceId)
-        return balanceId
-      })
-      .catch(showAndThrow)
-  })
-  // Now Account B can actually claim the balance, provided too much time
-  // hasn't elapsed, or Account A can "reclaim" it otherwise.
-  .then(function(balanceId) {
-    console.log("Claiming", balanceId, "as", A.publicKey())
-    let claimBalance = sdk.Operation.claimClaimableBalance({
-      balanceId: balanceId
-    })
-
-    let tx = new sdk.TransactionBuilder(aAccount, // or Account B!
-      {
-        networkPassphrase: sdk.Networks.TESTNET,
-        fee: sdk.BASE_FEE,
-      })
-      .addOperation(claimBalance)
-      .setTimeout(180)
-      .build()
-
-    tx.sign(A)
-    return server.submitTransaction(tx)
-  })
-  .catch(check)
 ```
 
 ```go
@@ -239,6 +176,72 @@ At this point, the `ClaimableBalanceEntry` exists in the ledger, but we'll need 
 Either party could also check the `/effects` of the transaction, query `/claimable_balances` with different filters, etc. Note that while (1) may be unavailable in some SDKs as its just a helper, the other methods are universal.
 
 <CodeExample>
+
+```js
+  // Method 1: Suppose `tx` comes from the transaction built above.
+  //           Notice that this can be done *before* submission.
+  // 
+  // TODO: Before this can be merged, the tx.claimableBalanceId(int) helper
+  //       actually needs to be implemented lol
+  .then(function(pair) {
+    // why do people put up with a language that doesn't have multiple
+    // return values in 2020 lmao
+    let tx = pair[0], txResponse = pair[1]
+    console.log("Claimable balance created!")
+
+    // let balanceId = tx.ClaimableBalanceID(0)
+    // console.log("Balance ID (1):", balanceId)
+    return txResponse
+  })
+  // Method 2: Suppose `txResponse` comes from the transaction submission
+  // above.
+  .then(function(txResponse) {
+    let txResult = sdk.xdr.TransactionResult.fromXDR(txResponse.result_xdr, "base64")
+    let results = txResult.result().results()
+
+    // We look at the first result since our first (and only) operation
+    // in the transaction was the CreateClaimableBalanceOp.
+    let operationResult = results[0].value().createClaimableBalanceResult()
+    let balanceId = operationResult.balanceId().toXDR("hex")
+
+    console.log("Balance ID (2):", balanceId)
+  })
+  // Method 3: Account B could alternatively do something like:
+  .then(async function() {
+    return await server
+      .claimableBalances()
+      .claimant(B.publicKey())
+      .call()
+      .then(function(balances) {
+        console.log(balances)
+        let balanceId = balances.records[0].id
+        console.log("Balance ID (3):", balanceId)
+        return balanceId
+      })
+      .catch(showAndThrow)
+  })
+  // Now Account B can actually claim the balance, provided too much time
+  // hasn't elapsed, or Account A can "reclaim" it otherwise.
+  .then(function(balanceId) {
+    console.log("Claiming", balanceId, "as", A.publicKey())
+    let claimBalance = sdk.Operation.claimClaimableBalance({
+      balanceId: balanceId
+    })
+
+    let tx = new sdk.TransactionBuilder(aAccount, // or Account B!
+      {
+        networkPassphrase: sdk.Networks.TESTNET,
+        fee: sdk.BASE_FEE,
+      })
+      .addOperation(claimBalance)
+      .setTimeout(180)
+      .build()
+
+    tx.sign(A)
+    return server.submitTransaction(tx)
+  })
+  .catch(check)
+```
 
 ```go
 // Method 1: Suppose `tx` comes from the transaction built above.
