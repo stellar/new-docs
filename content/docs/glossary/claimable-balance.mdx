@@ -49,27 +49,29 @@ This operation will load the ClaimableBalanceEntry that corresponds to the Balan
 Once a ClaimableBalanceEntry has been claimed, it will be deleted.
 
 ## Example
-The below code uses the [Go SDK](../software-and-sdks/index.mdx) to demonstrate how an account ("Account A") can create a `ClaimableBalanceEntry` with two Claimants, Account A (itself) and "Account B", another recipient.
+The below code demonstrates via both the JavaScript and Go [SDKs](../software-and-sdks/index.mdx) how an account ("Account A") can create a `ClaimableBalanceEntry` with two Claimants: Account A (itself) and "Account B" (another recipient).
 
 Each of these accounts can only claim the balance under certain, individual conditions. Namely, Account B has a full minute to claim the balance, after which Account A can "reclaim" the balance back for itself.
+
+It's worth emphasizing that there is no "recovery" mechanism for a claimable balance in general: if none of the predicates can be fulfilled, the balance **cannot be recovered**. The "reclaim" paradigm below acts as a safety net for this situation.
 
 <CodeExample>
 
 ```js
-const sdk = require("stellar-sdk")
+const sdk = require('stellar-sdk');
 
 var server = new sdk.Server("https://horizon-testnet.stellar.org")
 
-var A = sdk.Keypair.fromSecret("SBPQUZ6G4FZNWFHKUWC5BEYWF6R52E3SEP7R3GWYSM2XTKGF5LNTWW4R")
+var A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ")
 var B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP")
 
 // NOTE: Error checks are omitted for brevity; always validate things!
 
 server
   .loadAccount(A.publicKey())
-  .then(function(aAccount) {
+  .then(async function(aAccount) {
     // Create a claimable balance with our two above-described conditions.
-    let soon = Date.now() + 60
+    let soon = Math.ceil((Date.now() / 1000) + 60) // .now() is in ms
     let bCanClaim = sdk.Claimant.predicateBeforeRelativeTime("60")
     let aCanReclaim = sdk.Claimant.predicateNot(
       sdk.Claimant.predicateBeforeAbsoluteTime(soon.toString())
@@ -85,16 +87,16 @@ server
       amount: "420",
     })
 
-    let tx = new sdk.TransactionBuilder(aAccount, {
-      networkPassphrase: sdk.Networks.TESTNET,
-      fee: sdk.BASE_FEE,
-    })
+    let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
       .addOperation(claimableBalanceEntry)
+      .setNetworkPassphrase(sdk.Networks.TESTNET)
       .setTimeout(180)
       .build()
 
     tx.sign(A)
-    return [tx, server.submitTransaction(tx)]
+    let txResponse = await server.submitTransaction(tx)
+    console.log("Claimable balance created!")
+    return txResponse
   })
 ```
 
@@ -178,23 +180,10 @@ Either party could also check the `/effects` of the transaction, query `/claimab
 <CodeExample>
 
 ```js
-  // Method 1: Suppose `tx` comes from the transaction built above.
-  //           Notice that this can be done *before* submission.
-  // 
-  // TODO: Before this can be merged, the tx.claimableBalanceId(int) helper
-  //       actually needs to be implemented lol
-  .then(function(pair) {
-    // why do people put up with a language that doesn't have multiple
-    // return values in 2020 lmao
-    let tx = pair[0], txResponse = pair[1]
-    console.log("Claimable balance created!")
-
-    // let balanceId = tx.ClaimableBalanceID(0)
-    // console.log("Balance ID (1):", balanceId)
-    return txResponse
-  })
-  // Method 2: Suppose `txResponse` comes from the transaction submission
-  // above.
+  // Method 1: Not available in the JavaScript SDK yet.
+  //
+  // Method 2: Suppose `txResponse` comes from a continuation of the
+  // transaction submission Promise chain above.
   .then(function(txResponse) {
     let txResult = sdk.xdr.TransactionResult.fromXDR(txResponse.result_xdr, "base64")
     let results = txResult.result().results()
@@ -211,6 +200,8 @@ Either party could also check the `/effects` of the transaction, query `/claimab
     return await server
       .claimableBalances()
       .claimant(B.publicKey())
+      .limit(1)       // there may be many in general
+      .order("desc")  // so always get the latest one
       .call()
       .then(function(balances) {
         console.log(balances)
@@ -222,23 +213,20 @@ Either party could also check the `/effects` of the transaction, query `/claimab
   })
   // Now Account B can actually claim the balance, provided too much time
   // hasn't elapsed, or Account A can "reclaim" it otherwise.
-  .then(function(balanceId) {
-    console.log("Claiming", balanceId, "as", A.publicKey())
-    let claimBalance = sdk.Operation.claimClaimableBalance({
-      balanceId: balanceId
-    })
+  .then(async function(balanceId) {
+    let claimBalance = sdk.Operation.claimClaimableBalance({ balanceId: balanceId })
 
-    let tx = new sdk.TransactionBuilder(aAccount, // or Account B!
-      {
-        networkPassphrase: sdk.Networks.TESTNET,
-        fee: sdk.BASE_FEE,
-      })
+    let aAccount = server.loadAccount(A.publicKey())
+    let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
       .addOperation(claimBalance)
+      .setNetworkPassphrase(sdk.Networks.TESTNET)
       .setTimeout(180)
       .build()
 
     tx.sign(A)
-    return server.submitTransaction(tx)
+
+    // Note that this will fail until a minute elapses:
+    await server.submitTransaction(tx)
   })
   .catch(check)
 ```
