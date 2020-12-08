@@ -67,41 +67,42 @@ async function main() {
   var B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP");
 
   // NOTE: Error checks are omitted for brevity; always validate things!
+  try {
+    let aAccount = await server.loadAccount(A.publicKey());
 
-  let aAccount = await server.loadAccount(A.publicKey());
+    // Ideally, we should also ensure the destination account(s) exist so any
+    // claimable funds don't get lost to oblivion, but since we're including a
+    // "owner can reclaim" predicate (see below), we don't necessarily need
+    // this sanity check.
+    // let bAccount = await server.loadAccount(B.publicKey())
 
-  // Ideally, we should also ensure the destination account(s) exist so any
-  // claimable funds don't get lost to oblivion, but since we're including a
-  // "owner can reclaim" predicate (see below), we don't necessarily need this
-  // sanity check.
-  // let bAccount = await server.loadAccount(B.publicKey())
+    // Create a claimable balance with our two above-described conditions.
+    let soon = Math.ceil((Date.now() / 1000) + 60); // .now() is in ms
+    let bCanClaim = sdk.Claimant.predicateBeforeRelativeTime("60");
+    let aCanReclaim = sdk.Claimant.predicateNot(
+      sdk.Claimant.predicateBeforeAbsoluteTime(soon.toString())
+    );
 
-  // Create a claimable balance with our two above-described conditions.
-  let soon = Math.ceil((Date.now() / 1000) + 60); // .now() is in ms
-  let bCanClaim = sdk.Claimant.predicateBeforeRelativeTime("60");
-  let aCanReclaim = sdk.Claimant.predicateNot(
-    sdk.Claimant.predicateBeforeAbsoluteTime(soon.toString())
-  );
+    // Create the operation and submit it in a transaction.
+    let claimableBalanceEntry = sdk.Operation.createClaimableBalance({
+      claimants: [
+        new sdk.Claimant(B.publicKey(), bCanClaim),
+        new sdk.Claimant(A.publicKey(), aCanReclaim)
+      ],
+      asset: sdk.Asset.native(),
+      amount: "420",
+    });
 
-  // Create the operation and submit it in a transaction.
-  let claimableBalanceEntry = sdk.Operation.createClaimableBalance({
-    claimants: [
-      new sdk.Claimant(B.publicKey(), bCanClaim),
-      new sdk.Claimant(A.publicKey(), aCanReclaim)
-    ],
-    asset: sdk.Asset.native(),
-    amount: "420",
-  });
+    let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
+      .addOperation(claimableBalanceEntry)
+      .setNetworkPassphrase(sdk.Networks.TESTNET)
+      .setTimeout(180)
+      .build();
 
-  let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
-    .addOperation(claimableBalanceEntry)
-    .setNetworkPassphrase(sdk.Networks.TESTNET)
-    .setTimeout(180)
-    .build();
-
-  tx.sign(A);
-  let txResponse = await server.submitTransaction(tx);
-  console.log("Claimable balance created!");
+    tx.sign(A);
+    let txResponse = await server.submitTransaction(tx);
+    console.log("Claimable balance created!");
+  }
 }
 ```
 
@@ -186,45 +187,50 @@ Either party could also check the `/effects` of the transaction, query `/claimab
 
 ```js
 async function main(txResponse) {
-  // Method 1: Not available in the JavaScript SDK yet.
+  try {
+    // Method 1: Not available in the JavaScript SDK yet.
 
 
-  // Method 2: Suppose `txResponse` comes from the `submitTransaction()` above.
-  let txResult = sdk.xdr.TransactionResult.fromXDR(
-    txResponse.result_xdr, "base64");
-  let results = txResult.result().results();
+    // Method 2: Suppose `txResponse` comes from the `submitTransaction()` above.
+    let txResult = sdk.xdr.TransactionResult.fromXDR(
+      txResponse.result_xdr, "base64");
+    let results = txResult.result().results();
 
-  // We look at the first result since our first (and only) operation in the 
-  // transaction was the CreateClaimableBalanceOp.
-  let operationResult = results[0].value().createClaimableBalanceResult();
-  let balanceId = operationResult.balanceId().toXDR("hex");
-  console.log("Balance ID (2):", balanceId);
+    // We look at the first result since our first (and only) operation in the 
+    // transaction was the CreateClaimableBalanceOp.
+    let operationResult = results[0].value().createClaimableBalanceResult();
+    let balanceId = operationResult.balanceId().toXDR("hex");
+    console.log("Balance ID (2):", balanceId);
 
 
-  // Method 3: Account B could alternatively do something like:
-  let balances = await server
-    .claimableBalances()
-    .claimant(B.publicKey())
-    .limit(1)       // there may be many in general
-    .order("desc")  // so always get the latest one
-    .call();
+    // Method 3: Account B could alternatively do something like:
+    let balances = await server
+      .claimableBalances()
+      .claimant(B.publicKey())
+      .limit(1)       // there may be many in general
+      .order("desc")  // so always get the latest one
+      .call();
 
-  balanceId = balances.records[0].id;
-  console.log("Balance ID (3):", balanceId);
+    balanceId = balances.records[0].id;
+    console.log("Balance ID (3):", balanceId);
 
-  // Now Account B can actually *claim* the balance, provided too much time
-  // hasn't elapsed, or Account A can "reclaim" it otherwise.
-  let claimBalance = sdk.Operation.claimClaimableBalance({ balanceId: balanceId });
-  console.log(A.publicKey(), "claiming", balanceId);
+    // Now Account B can actually *claim* the balance, provided too much time
+    // hasn't elapsed, or Account A can "reclaim" it otherwise.
+    let claimBalance = sdk.Operation.claimClaimableBalance({ 
+      balanceId: balanceId 
+    });
 
-  let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
-    .addOperation(claimBalance)
-    .setNetworkPassphrase(sdk.Networks.TESTNET)
-    .setTimeout(180)
-    .build();
+    let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
+      .addOperation(claimBalance)
+      .setNetworkPassphrase(sdk.Networks.TESTNET)
+      .setTimeout(180)
+      .build();
 
-  tx.sign(A);
-  return await server.submitTransaction(tx);
+    tx.sign(A);
+    return await server.submitTransaction(tx);
+  } catch (err) {
+    console.error(err)
+  }
 }
 ```
 
@@ -233,6 +239,7 @@ async function main(txResponse) {
 //           Notice that this can be done *before* submission.
 balanceId, err := tx.ClaimableBalanceID(0)
 check(err)
+
 
 // Method 2: Suppose `txResp` comes from the transaction submission above.
 var txResult xdr.TransactionResult
@@ -247,6 +254,7 @@ if results, ok := txResult.OperationResults(); ok {
 	check(err)
 	fmt.Println("Balance ID:", balanceId)
 }
+
 
 // Method 3: Account B could alternatively do something like:
 balances, err := client.ClaimableBalances(sdk.ClaimableBalanceRequest{Claimant: B})
