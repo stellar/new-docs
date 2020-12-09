@@ -61,10 +61,10 @@ It's worth emphasizing that there is no "recovery" mechanism for a claimable bal
 const sdk = require("stellar-sdk");
 
 async function main() {
-  var server = new sdk.Server("https://horizon-testnet.stellar.org");
+  let server = new sdk.Server("https://horizon-testnet.stellar.org");
 
-  var A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
-  var B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP");
+  let A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
+  let B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP");
 
   // NOTE: Proper error checks are omitted for brevity; always validate things!
 
