@@ -97,7 +97,7 @@ async function main() {
     .build();
 
   tx.sign(A);
-  return await server.submitTransaction(tx).then(function() {
+  await server.submitTransaction(tx).then(function() {
     console.log("Claimable balance created!");
   }).catch(function (err) {
     console.error(`Tx submission failed: ${err}`)
@@ -258,7 +258,7 @@ tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
   .build();
 
 tx.sign(A);
-return await server.submitTransaction(tx).catch(function (err) {
+await server.submitTransaction(tx).catch(function (err) {
   console.error(`Tx submission failed: ${err}`)
 });
 ```
