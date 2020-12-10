@@ -97,7 +97,7 @@ async function main() {
     .build();
 
   tx.sign(A);
-  await server.submitTransaction(tx).then(function() {
+  let txResponse = await server.submitTransaction(tx).then(function() {
     console.log("Claimable balance created!");
   }).catch(function (err) {
     console.error(`Tx submission failed: ${err}`)
@@ -209,7 +209,7 @@ let balances = await server
     .catch(function(err) {
       console.error(`Claimable balance retrieval failed: ${err}`)
     });
-if (!balances) { return }
+if (!balances) { return; }
 
 balanceId = balances.records[0].id;
 console.log("Balance ID (3):", balanceId);
@@ -251,7 +251,7 @@ With the claimable balance ID acquired, either Account B or A can actually submi
 let claimBalance = sdk.Operation.claimClaimableBalance({ balanceId: balanceId });
 console.log(A.publicKey(), "claiming", balanceId);
 
-tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
+let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
   .addOperation(claimBalance)
   .setNetworkPassphrase(sdk.Networks.TESTNET)
   .setTimeout(180)
