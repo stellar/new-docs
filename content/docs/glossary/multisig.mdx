@@ -63,7 +63,7 @@ To enable some advanced smart contract features there are a couple of additional
 
 It is possible for an account to pre-authorize a particular transaction by adding the hash of the future transaction as a "signer" on the account. To do that you need to prepare the transaction beforehand with proper sequence number. Then you can obtain the hash of this transaction and add it as signer to account.
 
-Signers of this type are automatically removed from the account when a matching transaction is properly applied. In case of error, or when matching transaction is never submitted, the signer remains and must be manually removed using the [Set Options](../start/list-of-operations.mdx#set-options) operation.
+Signers of this type are automatically removed from the account when a matching transaction is applied, regardless of whether the transaction succeeds or fails. In case a matching transaction is never submitted, the signer remains and must be manually removed using the [Set Options](../start/list-of-operations.mdx#set-options) operation.
 
 This type of signer is especially useful in escrow accounts. You can pre-authorize two different transactions. Both could have the same sequence number but different destinations. This means that only one of them can be executed.
 
