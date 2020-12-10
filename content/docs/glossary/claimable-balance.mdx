@@ -49,11 +49,61 @@ This operation will load the ClaimableBalanceEntry that corresponds to the Balan
 Once a ClaimableBalanceEntry has been claimed, it will be deleted.
 
 ## Example
-The below code uses the [Go SDK](../software-and-sdks/index.mdx) to demonstrate how an account ("Account A") can create a `ClaimableBalanceEntry` with two Claimants, Account A (itself) and "Account B", another recipient.
+The below code demonstrates via both the JavaScript and Go [SDKs](../software-and-sdks/index.mdx) how an account ("Account A") can create a `ClaimableBalanceEntry` with two Claimants: Account A (itself) and "Account B" (another recipient).
 
 Each of these accounts can only claim the balance under certain, individual conditions. Namely, Account B has a full minute to claim the balance, after which Account A can "reclaim" the balance back for itself.
 
+It's worth emphasizing that there is no "recovery" mechanism for a claimable balance in general: if none of the predicates can be fulfilled, the balance **cannot be recovered**. The "reclaim" paradigm below acts as a safety net for this situation.
+
 <CodeExample>
+
+```js
+const sdk = require("stellar-sdk");
+
+async function main() {
+  let server = new sdk.Server("https://horizon-testnet.stellar.org");
+
+  let A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
+  let B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP");
+
+  // NOTE: Proper error checks are omitted for brevity; always validate things!
+
+  let aAccount = await server.loadAccount(A.publicKey()).catch(function (err) {
+    console.error(`Failed to load ${A.publicKey()}: ${err}`)
+  })
+  if (!aAccount) { return }
+
+  // Create a claimable balance with our two above-described conditions.
+  let soon = Math.ceil((Date.now() / 1000) + 60); // .now() is in ms
+  let bCanClaim = sdk.Claimant.predicateBeforeRelativeTime("60");
+  let aCanReclaim = sdk.Claimant.predicateNot(
+    sdk.Claimant.predicateBeforeAbsoluteTime(soon.toString())
+  );
+
+  // Create the operation and submit it in a transaction.
+  let claimableBalanceEntry = sdk.Operation.createClaimableBalance({
+    claimants: [
+      new sdk.Claimant(B.publicKey(), bCanClaim),
+      new sdk.Claimant(A.publicKey(), aCanReclaim)
+    ],
+    asset: sdk.Asset.native(),
+    amount: "420",
+  });
+
+  let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
+    .addOperation(claimableBalanceEntry)
+    .setNetworkPassphrase(sdk.Networks.TESTNET)
+    .setTimeout(180)
+    .build();
+
+  tx.sign(A);
+  let txResponse = await server.submitTransaction(tx).then(function() {
+    console.log("Claimable balance created!");
+  }).catch(function (err) {
+    console.error(`Tx submission failed: ${err}`)
+  });
+}
+```
 
 ```go
 package main
@@ -134,6 +184,37 @@ Either party could also check the `/effects` of the transaction, query `/claimab
 
 <CodeExample>
 
+```js
+// Method 1: Not available in the JavaScript SDK yet.
+
+// Method 2: Suppose `txResponse` comes from the transaction submission
+// above.
+let txResult = sdk.xdr.TransactionResult.fromXDR(
+  txResponse.result_xdr, "base64");
+let results = txResult.result().results();
+
+// We look at the first result since our first (and only) operation
+// in the transaction was the CreateClaimableBalanceOp.
+let operationResult = results[0].value().createClaimableBalanceResult();
+let balanceId = operationResult.balanceId().toXDR("hex");
+console.log("Balance ID (2):", balanceId);
+
+// Method 3: Account B could alternatively do something like:
+let balances = await server
+    .claimableBalances()
+    .claimant(B.publicKey())
+    .limit(1)       // there may be many in general
+    .order("desc")  // so always get the latest one
+    .call()
+    .catch(function(err) {
+      console.error(`Claimable balance retrieval failed: ${err}`)
+    });
+if (!balances) { return; }
+
+balanceId = balances.records[0].id;
+console.log("Balance ID (3):", balanceId);
+```
+
 ```go
 // Method 1: Suppose `tx` comes from the transaction built above.
 //           Notice that this can be done *before* submission.
@@ -158,9 +239,31 @@ if results, ok := txResult.OperationResults(); ok {
 balances, err := client.ClaimableBalances(sdk.ClaimableBalanceRequest{Claimant: B})
 check(err)
 balanceId := balances.Embedded.Records[0].BalanceID
+```
 
-// Now Account B can actually claim the balance, provided too much time
-// hasn't elapsed, or Account A can "reclaim" it otherwise.
+</CodeExample>
+
+With the claimable balance ID acquired, either Account B or A can actually submit a claim, depending on which predicate is fulfilled. We'll assume here that a minute has passed, so Account A just reclaims the balance entry.
+
+<CodeExample>
+
+```js
+let claimBalance = sdk.Operation.claimClaimableBalance({ balanceId: balanceId });
+console.log(A.publicKey(), "claiming", balanceId);
+
+let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
+  .addOperation(claimBalance)
+  .setNetworkPassphrase(sdk.Networks.TESTNET)
+  .setTimeout(180)
+  .build();
+
+tx.sign(A);
+await server.submitTransaction(tx).catch(function (err) {
+  console.error(`Tx submission failed: ${err}`)
+});
+```
+
+```go
 claimBalance := txnbuild.ClaimClaimableBalance{BalanceID: balanceId}
 tx, err = txnbuild.NewTransaction(
 	txnbuild.TransactionParams{
@@ -179,3 +282,5 @@ check(err)
 ```
 
 </CodeExample>
+
+And that's it! At this point, since we opted for the "reclaim" path, Account A should have the same balance as what it started with (sans fees), and Account B should be unchanged.
