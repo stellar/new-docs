@@ -158,7 +158,7 @@ func main () {
       txnbuild.TransactionParams{
         SourceAccount:        &sourceAccount,
         IncrementSequenceNum: true,
-        BaseFee:              MinBaseFee,
+        BaseFee:              txnbuild.MinBaseFee,
         Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
         Operations: []txnbuild.Operation{
           &txnbuild.Payment{
