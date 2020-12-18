@@ -75,6 +75,42 @@ We'll start by including the boilerplate of account and asset creation.
 
 <CodeExample>
 
+```js
+const sdk = require("stellar-sdk");
+const http = require("got");
+
+let server = new sdk.Server("https://horizon-testnet.stellar.org");
+
+async function main() {
+  // Create & fund the new accounts.
+  let keypairs = [
+    sdk.Keypair.random(),
+    sdk.Keypair.random(),
+    sdk.Keypair.random(),
+  ];
+
+  for (const keypair of keypairs) {
+    const base = "https://friendbot.stellar.org/?"
+    const path = base + "addr=" + encodeURIComponent(keypair.publicKey())
+
+    console.log("Funding account:\n", keypair.secret(), "\n", keypair.publicKey())
+    const response = await http(path).catch(function (error) {
+      console.error("  failed:", error.response.body);
+    })
+  }
+
+  // Arbitrary assets to sponsor trustlines for. Let's assume they make sense.
+  let S1 = keypairs[0], A = keypairs[1], S2 = keypairs[2];
+  let assets = [
+    new sdk.Asset("ABCD", S1.publicKey()),
+    new sdk.Asset("EFGH", S1.publicKey()),
+    new sdk.Asset("IJKL", S2.publicKey()),
+  ];
+
+  // ...
+}
+```
+
 ```go
 package main
 
@@ -128,6 +164,70 @@ func main() {
 Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` operation is sandwiched between the begin and end sponsoring operations and that all relevant accounts need to sign the transaction.
 
 <CodeExample>
+
+```js
+  //
+  // 1. S1 will sponsor a trustline for Account A.
+  //
+  let s1Account = await server.loadAccount(S1.publicKey())
+  let tx = new sdk.TransactionBuilder(s1Account, {fee: sdk.BASE_FEE})
+    .addOperation(sdk.Operation.beginSponsoringFutureReserves({
+      sponsoredId: A.publicKey(),
+    }))
+    .addOperation(sdk.Operation.changeTrust({
+      source: A.publicKey(),
+      asset: assets[0],
+      limit: "1000",
+    }))
+    .addOperation(sdk.Operation.endSponsoringFutureReserves({
+      source: A.publicKey(),
+    }))
+    .setNetworkPassphrase(sdk.Networks.TESTNET)
+    .setTimeout(180)
+    .build();
+
+  // Note that while either can submit this transaction, both must sign it.
+  tx.sign(S1, A);
+  let txResponse = await server.submitTransaction(tx).catch(txCheck);
+  if (!txResponse) { return; }
+
+  console.log("Sponsored a trustline of", A.publicKey());
+
+  //
+  // 2. Both S1 and S2 sponsor trustlines for Account A for different assets.
+  //
+  let aAccount = await server.loadAccount(A.publicKey());
+  let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
+    .addOperation(sdk.Operation.beginSponsoringFutureReserves({
+      source: S1.publicKey(),
+      sponsoredId: A.publicKey()
+    }))
+    .addOperation(sdk.Operation.changeTrust({
+      asset: assets[1],
+      limit: "5000"
+    }))
+    .addOperation(sdk.Operation.endSponsoringFutureReserves())
+
+    .addOperation(sdk.Operation.beginSponsoringFutureReserves({
+      source: S2.publicKey(),
+      sponsoredId: A.publicKey()
+    }))
+    .addOperation(sdk.Operation.changeTrust({
+      asset: assets[2],
+      limit: "2500"
+    }))
+    .addOperation(sdk.Operation.endSponsoringFutureReserves())
+    .setNetworkPassphrase(sdk.Networks.TESTNET)
+    .setTimeout(180)
+    .build();
+
+  // Note that all 3 accounts must approve/sign this transaction.
+  tx.sign(S1, S2, A);
+  let txResponse = await server.submitTransaction(tx).catch(txCheck);
+  if (!txResponse) { return; }
+
+  console.log("Sponsored two trustlines of", A.publicKey());
+```
 
 ```go
 	//
@@ -189,6 +289,33 @@ An intuitive way to think of a sponsorship transfer is that the very act of spon
 
 <CodeExample>
 
+```js 
+  //
+  // 3. Transfer sponsorship of B's second trustline from S1 to S2.
+  //
+  let tx = new sdk.TransactionBuilder(s1Account, {fee: sdk.BASE_FEE})
+    .addOperation(sdk.Operation.beginSponsoringFutureReserves({
+      source: S2.publicKey(),
+      sponsoredId: S1.publicKey()
+    }))
+    .addOperation(sdk.Operation.revokeTrustlineSponsorship({
+      account: A.publicKey(),
+      asset: assets[1],
+    }))
+    .addOperation(sdk.Operation.endSponsoringFutureReserves())
+    .setNetworkPassphrase(sdk.Networks.TESTNET)
+    .setTimeout(180)
+    .build();
+
+  // Notice that while the old sponsor *sends* the transaction, both sponsors
+  // must *approve* the transfer.
+  tx.sign(S1, S2);
+  let txResponse = await server.submitTransaction(tx).catch(txCheck);
+  if (!txResponse) { return; }
+
+  console.log("Transferred sponsorship for", A.publicKey());
+```
+
 ```go
 	//
 	// 3. Transfer sponsorship of B's second trustline from S1 to S2.
@@ -224,6 +351,32 @@ At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as
 Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2 removes themselves from all responsibility over the two asset trustlines. Notice that Account A is not involved at all, since revocation should be performable purely at the sponsor's discretion.
 
 <CodeExample>
+
+```js
+  //
+  // 4. S2 revokes sponsorship of B's trustlines entirely.
+  //
+  let s2Account = await server.loadAccount(S2.publicKey());
+  let tx = new sdk.TransactionBuilder(s2Account, {fee: sdk.BASE_FEE})
+    .addOperation(sdk.Operation.revokeTrustlineSponsorship({
+      account: A.publicKey(),
+      asset: assets[1],
+    }))
+    .addOperation(sdk.Operation.revokeTrustlineSponsorship({
+      account: A.publicKey(),
+      asset: assets[2],
+    }))
+    .setNetworkPassphrase(sdk.Networks.TESTNET)
+    .setTimeout(180)
+    .build();
+
+  tx.sign(S2);
+  let txResponse = await server.submitTransaction(tx).catch(txCheck);
+  if (!txResponse) { return; }
+
+  console.log("Revoked sponsorship for", A.publicKey());
+} // ends main()
+```
 
 ```go
 	//
@@ -266,7 +419,7 @@ Since the source account defaults to the transaction submitter when omitted, thi
 For example, the following is an identical expression of the [earlier example](#sponsoring-trustlines) on sponsoring a trustline, just submitted by the **sponsor** (Sponsor 1) rather than the **sponsored** account (Account A). Notice the differences in where `SourceAccount` is set:
 
 <CodeExample>
-
+  
 ```go
 	sponsorTrustline := []txnbuild.Operation{
 		&txnbuild.BeginSponsoringFutureReserves{
@@ -295,7 +448,7 @@ If you'd like other examples, or want to view a more-generic pseudocode breakdow
 
 
 ### Footnote
-An implementation of `SignAndSend` might look something like this:
+For the Golang examples, an implementation of `SignAndSend` might look something like this:
 
 <CodeExample>
 
