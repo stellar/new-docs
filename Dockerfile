@@ -22,7 +22,7 @@ WORKDIR /app/src
 
 ADD package.json yarn.lock /app/src/
 
-RUN yarn
+RUN yarn --frozen-lockfile
 
 # Enumerate specific files for better docker build caching
 COPY .eslintrc.js .babelrc gatsby-browser.js gatsby-config.js gatsby-node.js gatsby-ssr.js jsconfig.json /app/src/
