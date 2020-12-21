@@ -62,12 +62,12 @@ The logic above does not detail any of the error cases, which are specified [her
 
 ## Examples
 Each example builds on itself, referencing variables from previous snippets. We'll demonstrate a few different things you can do with sponsoring:
- - Sponsor creation of a trustline for another account.
- - Sponsor **two** trustlines for an account via two *different* sponsors.
- - Transfer sponsorship responsibility from one account to another.
- - Revoke sponsorship by an account entirely.
+ - [Sponsor creation](#sponsoring-trustlines) of a trustline for another account.
+ - [Sponsor **two** trustlines](#sponsoring-trustlines) for an account via two *different* sponsors.
+ - [Transfer sponsorship](#transferring-sponsorship) responsibility from one account to another.
+ - [Revoke sponsorship](#sponsorship-revocation) by an account entirely.
 
-(For brevity, we'll assume the existence of a `SignAndSend(...)` method (defined [below](#footnote)) which will creates and submits a transaction with the proper parameters and error-checking.
+(For brevity in the Golang examples, we'll assume the existence of a `SignAndSend(...)` method (defined [below](#footnote)) which creates and submits a transaction with the proper parameters and error-checking.
 
 
 ### Preamble
