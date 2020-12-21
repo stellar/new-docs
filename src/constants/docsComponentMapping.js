@@ -8,7 +8,7 @@ import { makeLinkedHeader } from "helpers/makeLinkedHeader";
 
 import { CheckmarkIcon } from "basics/Icons";
 import { BasicImage } from "basics/Images";
-import { Link, BasicLink } from "basics/Links";
+import { Link } from "basics/Links";
 import { Mermaid } from "basics/Mermaid";
 import * as TextComponents from "basics/Text";
 
@@ -158,7 +158,7 @@ export const documentationComponents = {
 
 const headerOptions = {
   treatIdAsHref: true,
-  LinkComponent: BasicLink,
+  LinkComponent: Link,
 };
 
 const ApiRefH1 = styled(TextComponents.H1)`
