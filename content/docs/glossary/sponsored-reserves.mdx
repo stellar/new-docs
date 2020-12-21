@@ -171,7 +171,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
   //
   // 1. S1 will sponsor a trustline for Account A.
   //
-  let s1Account = await server.loadAccount(S1.publicKey())
+  let s1Account = await server.loadAccount(S1.publicKey()).catch(accountFail)
   let tx = new sdk.TransactionBuilder(s1Account, {fee: sdk.BASE_FEE})
     .addOperation(sdk.Operation.beginSponsoringFutureReserves({
       sponsoredId: A.publicKey(),
@@ -179,7 +179,8 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
     .addOperation(sdk.Operation.changeTrust({
       source: A.publicKey(),
       asset: assets[0],
-      limit: "1000",
+      limit: "1000", // This limit can vary according with your application;
+                     // if left empty, it defaults to the max limit.
     }))
     .addOperation(sdk.Operation.endSponsoringFutureReserves({
       source: A.publicKey(),
@@ -450,9 +451,24 @@ If you'd like other examples, or want to view a more-generic pseudocode breakdow
 
 
 ### Footnote
-For the Golang examples, an implementation of `SignAndSend` might look something like this:
+For the above examples, an implementation of `SignAndSend` (Golang) and error checking (all languages) might look something like this:
 
 <CodeExample>
+
+```js 
+function accountFail(err) {
+  console.error(" Failed to load account:", err.response.body);
+}
+
+function txCheck(err) {
+  console.error("Transaction submission failed:", err);
+  if (err.response != null && err.response.data != null) {
+    console.error("More details:", err.response.data.extras);
+  } else {
+    console.error("Unknown reason:", err);
+  }
+}
+```
 
 ```go
 // Builds a transaction containing `operations...`, signed (by `signers`), and
