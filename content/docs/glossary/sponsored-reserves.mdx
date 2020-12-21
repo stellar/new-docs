@@ -347,7 +347,7 @@ An intuitive way to think of a sponsorship transfer is that the very act of spon
 
 </CodeExample>
 
-At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as `ABCD`), while Signer 2 is sponsoring the other two assets.
+At this point, Signer 1 is only sponsoring the first asset (arbitrarily coded as `ABCD`), while Signer 2 is sponsoring the other two assets. (Recall that [initially](#sponsoring-trustlines) Signer 1 was also sponsoring `EFGH`.)
 
 
 ### Sponsorship Revocation
@@ -417,9 +417,9 @@ When it comes to the `SourceAccount` fields of the sponsorship sandwich, it's im
 
 > This relation is initiated by `BeginSponsoringFutureReservesOp`, where the **sponsoring** account is the source account, and is terminated by `EndSponsoringFutureReserveOp`, where the **sponsored** account is the source account.
 
-Since the source account defaults to the transaction submitter when omitted, this field needs always needs to be set for either the `Begin` or the `End`.
+Since the source account defaults to the transaction submitter when omitted, this field needs *always* needs to be set for either the `Begin` or the `End`.
 
-For example, the following is an identical expression of the [earlier example](#sponsoring-trustlines) on sponsoring a trustline, just submitted by the **sponsor** (Sponsor 1) rather than the **sponsored** account (Account A). Notice the differences in where `SourceAccount` is set:
+For example, the following is an identical expression of the [earlier Golang example](#sponsoring-trustlines) of sponsoring a trustline, just submitted by the **sponsor** (Sponsor 1) rather than the **sponsored** account (Account A). Notice the differences in where `SourceAccount` is set:
 
 <CodeExample>
 
@@ -447,19 +447,15 @@ For example, the following is an identical expression of the [earlier example](#
 
 
 ### Other Examples
-If you'd like other examples, or want to view a more-generic pseudocode breakdown of these sponsorship scenarios, you can refer to [CAP-0033](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship) directly.
+If you'd like other examples, or want to view a more-generic pseudocode breakdown of these sponsorship scenarios, you can refer to [CAP-33](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md#example-revoke-sponsorship) directly.
 
 
 ### Footnote
-For the above examples, an implementation of `SignAndSend` (Golang) and error checking (all languages) might look something like this:
+For the above examples, an implementation of `SignAndSend` (Golang) and some (very) rudimentary error checking code (all languages) might look something like this:
 
 <CodeExample>
 
 ```js 
-function accountFail(err) {
-  console.error(" Failed to load account:", err.response.body);
-}
-
 function txCheck(err) {
   console.error("Transaction submission failed:", err);
   if (err.response != null && err.response.data != null) {
@@ -467,6 +463,10 @@ function txCheck(err) {
   } else {
     console.error("Unknown reason:", err);
   }
+}
+
+function accountFail(err) {
+  console.error(" Failed to load account:", err.response.body);
 }
 ```
 
