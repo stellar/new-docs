@@ -171,7 +171,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
   //
   // 1. S1 will sponsor a trustline for Account A.
   //
-  let s1Account = await server.loadAccount(S1.publicKey()).catch(accountFail)
+  let s1Account = await server.loadAccount(S1.publicKey()).catch(accountFail);
   let tx = new sdk.TransactionBuilder(s1Account, {fee: sdk.BASE_FEE})
     .addOperation(sdk.Operation.beginSponsoringFutureReserves({
       sponsoredId: A.publicKey(),
@@ -199,7 +199,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
   //
   // 2. Both S1 and S2 sponsor trustlines for Account A for different assets.
   //
-  let aAccount = await server.loadAccount(A.publicKey());
+  let aAccount = await server.loadAccount(A.publicKey()).catch(accountFail);
   let tx = new sdk.TransactionBuilder(aAccount, {fee: sdk.BASE_FEE})
     .addOperation(sdk.Operation.beginSponsoringFutureReserves({
       source: S1.publicKey(),
@@ -359,7 +359,7 @@ Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2
   //
   // 4. S2 revokes sponsorship of B's trustlines entirely.
   //
-  let s2Account = await server.loadAccount(S2.publicKey());
+  let s2Account = await server.loadAccount(S2.publicKey()).catch(accountFail);
   let tx = new sdk.TransactionBuilder(s2Account, {fee: sdk.BASE_FEE})
     .addOperation(sdk.Operation.revokeTrustlineSponsorship({
       account: A.publicKey(),
