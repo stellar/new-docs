@@ -17,7 +17,7 @@ export const TrackedContent = ({ children, identifier }) => {
     return () => {
       stopTrackingElement(toTrack);
     };
-  }, [children, identifier, trackElement, stopTrackingElement]);
+  }, [identifier, trackElement, stopTrackingElement]);
 
   return <El ref={ref}>{children}</El>;
 };
