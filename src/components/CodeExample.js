@@ -18,6 +18,8 @@ import { Select } from "basics/Inputs";
 
 import { Tooltip } from "components/Tooltip";
 
+const CODE_LANG_CHANGE_EVENT = "codeLangChange";
+
 const CODE_LANGS = {
   bash: "bash",
   cpp: "C++",
@@ -176,7 +178,28 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
   const onChange = React.useCallback((e) => {
     const { value } = e.target;
     document.cookie = `lang=${value}`;
-    setActiveLang(value);
+
+    document.dispatchEvent(
+      new CustomEvent(CODE_LANG_CHANGE_EVENT, {
+        detail: {
+          lang: value,
+        },
+      }),
+    );
+  }, []);
+
+  const onLangChangeEvent = (e) => {
+    setActiveLang(e.detail.lang);
+  };
+
+  React.useEffect(() => {
+    document.addEventListener(CODE_LANG_CHANGE_EVENT, onLangChangeEvent);
+
+    return document.removeEventListener(
+      CODE_LANG_CHANGE_EVENT,
+      onLangChangeEvent,
+      true,
+    );
   }, []);
 
   React.useEffect(() => {
