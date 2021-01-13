@@ -188,11 +188,11 @@ const CodeSnippet = ({ codeSnippets, title, href }) => {
     );
   }, []);
 
-  const onLangChangeEvent = (e) => {
-    setActiveLang(e.detail.lang);
-  };
-
   React.useEffect(() => {
+    const onLangChangeEvent = (e) => {
+      setActiveLang(e.detail.lang);
+    };
+
     document.addEventListener(CODE_LANG_CHANGE_EVENT, onLangChangeEvent);
 
     return document.removeEventListener(
