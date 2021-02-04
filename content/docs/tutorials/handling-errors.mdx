@@ -3,6 +3,8 @@ title: Handling Errors Gracefully
 order: 100
 ---
 
+import { CodeExample } from "components/CodeExample";
+
 When working with a payment network like Stellar, expecting the unexpected is critical in ensuring a good user experience: one in which money doesn't get lost, actions happen when they're supposed to (or as early as they can), and everyone's view of the network is as accurate as possible.
 
 In many of the tutorials and code samples throughout this documentation, we've minimized the error handling code to reduce verbosity and focus on the essence of the examples. Here, we'll do the exact opposite, because error handling *is* the essence: by the end, you should be able to categorize errors and understand the best, most-idiomatic way to handle them in your application.
@@ -40,9 +42,15 @@ The most surefire way to recover from a random outage is to simple: *keep trying
 # Query Errors
 There are many, *many* possible mistakes you can make while querying the Horizon API. Naturally, using an SDK will alleviate the silliest ones, but there are still plenty of ways to go wrong. To keep the example simple here, we'll just query for details about a transaction that doesn't exist (the hash is one for an impossible null transaction):
 
+<CodeExample>
+
 ```bash
 curl -s --get https://horizon.stellar.org/transaction/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | jq
 ```
+
+</CodeExample>
+
+<CodeExample>
 
 ```json
 {
@@ -53,10 +61,14 @@ curl -s --get https://horizon.stellar.org/transaction/e3b0c44298fc1c149afbf4c899
 }
 ```
 
+</CodeExample>
+
 It's worth noting that SDKs commonly classify 404s uniquely relative to other error codes (e.g. `NotFoundError` vs the generic `NetworkError` in the JavaScript SDK).
 
 ## Resolutions
+TODO: Either fix the parameters (in case of user error, insert link to API reference) or try again (in case of transient error). 
 
+Are there other cases?
 
 
 
@@ -65,9 +77,15 @@ Just like with query errors, there are dozens of possible causes of a transactio
 
 Here's a common failure: using the wrong sequence number for an account. The following transaction envelope (examine it in the [Laboratory](https://laboratory.stellar.org/#xdr-viewer?input=AAAAAgAAAABjsEXePrFn%2BdH3tNaTkGo3kojf2iecJqU3g84%2F95XLqgAAAGQAAAAAbG1hbwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA50aGlzIGlzIGEgdGVzdAAAAAAAAQAAAAEAAAAAY7BF3j6xZ%2FnR97TWk5BqN5KI39onnCalN4POP%2FeVy6oAAAAKAAAAB21lc3NhZ2UAAAAAAQAAAA1IZWxsbywgd29ybGQhAAAAAAAAAAAAAAH3lcuqAAAAQNZ%2F9lkhKMw0Rbiwmw%2BdF3X1DldjT0qPdiCuEPpf5rErYDoXBkr0HlQdAfK1ptfLwK7kMELQfXCfPUEYVuJd4gQ%3D&type=TransactionEnvelope&network=test)) is a simple transaction to add some [managed data](../start/list-of-operations#manage-data) to the account:
 
+<CodeExample>
+
 ```bash
 curl -s --data "tx=AAAAAgAAAABjsEXePrFn+dH3tNaTkGo3kojf2iecJqU3g84/95XLqgAAAGQAAAAAbG1hbwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA50aGlzIGlzIGEgdGVzdAAAAAAAAQAAAAEAAAAAY7BF3j6xZ/nR97TWk5BqN5KI39onnCalN4POP/eVy6oAAAAKAAAAB21lc3NhZ2UAAAAAAQAAAA1IZWxsbywgd29ybGQhAAAAAAAAAAAAAAH3lcuqAAAAQNZ/9lkhKMw0Rbiwmw+dF3X1DldjT0qPdiCuEPpf5rErYDoXBkr0HlQdAfK1ptfLwK7kMELQfXCfPUEYVuJd4gQ=" https://horizon-testnet.stellar.org | jq
 ```
+
+</CodeExample>
+
+<CodeExample>
 
 ```json
 {
@@ -84,6 +102,8 @@ curl -s --data "tx=AAAAAgAAAABjsEXePrFn+dH3tNaTkGo3kojf2iecJqU3g84/95XLqgAAAGQAA
   }
 }
 ```
+
+</CodeExample>
 
 
 ## Invalid Sequences
