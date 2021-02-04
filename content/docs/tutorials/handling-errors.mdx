@@ -5,7 +5,7 @@ order: 100
 
 import { CodeExample } from "components/CodeExample";
 
-When working with a payment network like Stellar, expecting the unexpected is critical in ensuring a good user experience: one in which money doesn't get lost, actions happen when they're supposed to (or as early as they can), and everyone's view of the network is as accurate as possible.
+When working with a payment network like Stellar[,](https://www.youtube.com/watch/TLXo9IFVboY) expecting the unexpected is critical in ensuring a good user experience: one in which money doesn't get lost, actions happen when they're supposed to (or as early as they can), and everyone's view of the network is as accurate as possible.
 
 In many of the tutorials and code samples throughout this documentation, we've minimized the error handling code to reduce verbosity and focus on the essence of the examples. Here, we'll do the exact opposite, because error handling *is* the essence: by the end, you should be able to categorize errors and understand the best, most-idiomatic way to handle them in your application.
 
@@ -13,7 +13,7 @@ Since [the SDKs](../software-and-sdks/) are the main way people interact with th
 
 # Contents
 
-  - TODO.
+  - TODO once reviewed.
 
 
 # Types of Errors
@@ -30,6 +30,7 @@ There isn't a universal way to handle HTTP errors: some are the result of user e
 Let's dive into each of these separately: we'll go over examples, some common causes, and recommended resolution strategies. Note that different errors are manifested differently by each SDK, so we'll just use `curl` in examples to maintain uniformity.
 
 
+
 # Transient Errors
 The simplest transient "outage" scenario would be your machine disconnecting from the Internet:
 
@@ -38,6 +39,8 @@ The simplest transient "outage" scenario would be your machine disconnecting fro
 but there are innumerable other scenarios (DNS down, firewall misconfigured, AWS outage, etc. just to name a few) that can cause them.
 
 The most surefire way to recover from a random outage is to simple: *keep trying*. Regardless of which part of the pipeline goes down, properly retrying guarantees *eventual* success (just be sure to implement back-off). This will work for most query failures, but handling an outage that occurred during a transaction submission requires a little more finesse: there's uncertainty about whether or not the transaction actually made it into a ledger. Since this situation is a little more precarious, we discuss this in more detail in a [later section](#outages).
+
+
 
 # Query Errors
 There are many, *many* possible mistakes you can make while querying the Horizon API. Naturally, using an SDK will alleviate the silliest ones, but there are still plenty of ways to go wrong. To keep the example simple here, we'll just query for details about a transaction that doesn't exist (the hash is one for an impossible null transaction):
@@ -211,6 +214,7 @@ Note an [important stipulation](https://developers.stellar.org/docs/glossary/fee
 
 
 ## Timeouts & Outages
+While these two error types occur for different reasons, they can be handled in very similar ways. 
 
 ### Timeouts
 If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. A timeout indicates something a little nebulous and non-traditional in the Stellar universe: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time **yet** more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar-Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing)---on the order of 5-10 minutes in the worst cases, while Horizon needs to provide developers with a response within 30 seconds or so.
@@ -225,14 +229,12 @@ With this trick in our back pocket, resolving 504s is straightforward: until the
 
 In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't, you've essentially started from scratch again: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
 
-
-## Outages
+### Outages
 Receiving no response from Horizon after a submission is very similar to receiving a 504: you're uncertain about the outcome of the transaction submission.
 
 It's obviously crucial to determine whether or not it went through or not, but you can likewise just keep trying submission until the timebounds expire. Once they have, though, if the transient error hasn't resolved itself, you should just stop and wait; submitting a new transaction might result in a undesirable duplicate action. 
 
-
-## Implementations
+### Implementations
 Be sure to integrate backoff into your retry mechanism. There are plenty of recommendations [out there](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) for various backoff strategies you can employ. In our example below, we'll implement a simple linear backoff:
 
 <CodeExample>
@@ -269,4 +271,4 @@ You may have noticed that the possible error conditions for a given action can s
 
 How can we manage this in a sane way?
 
-TODO: Answer this :sweat_smile:
+TODO: Actually answer this lol
