@@ -210,25 +210,29 @@ Note an [important stipulation](https://developers.stellar.org/docs/glossary/fee
 > If you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if **the fee bid of the second transaction is at least 10x the fee bid of the first transaction**.
 
 
-## Timeouts
-If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. A timeout indicates something a little nebulous and non-traditional in the Stellar universe: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time **yet** more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar-Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing)---on the order of 5-10 minutes in the worst cases, while Horizon needs to provide developers with a response within 30 seconds or so. 
+## Timeouts & Outages
+
+### Timeouts
+If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. A timeout indicates something a little nebulous and non-traditional in the Stellar universe: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time **yet** more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar-Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing)---on the order of 5-10 minutes in the worst cases, while Horizon needs to provide developers with a response within 30 seconds or so.
 
 This leads to a very important point: receiving a 504 for your transaction submission **does not mean** the transaction did not make it to the network.
 
 There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding the timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
 
-With this trick in our back pocket, resolving 504s is straightforward: after the timebound has expired, try submitting the (*exact same*, incl. the sequence number and signing orders) transaction again with a new timebound. If your transaction made it through and into a ledger at some point after the 504 and before the timebound expired, you'll get your previously-submitted transaction back. If it didn't, you've essentially started from scratch again: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
-
-
-
-## Outages
-In the case of transaction submission, it's obviously crucial to determine whether or not a transaction went through to the network or not. The best way to do that is simply to retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)):
+With this trick in our back pocket, resolving 504s is straightforward: until the timebound has expired, you can safely retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)) for this scenario:
 
 > If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
 
-<!-- through querying the `/transactions` endpoint on Horizon. Since the transaction hash is determined *before* it enters the ledger, just checking the path for a 404 after the timebounds tells you that the transaction won't make it into the networks.
- -->
+In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't, you've essentially started from scratch again: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
 
+
+## Outages
+Receiving no response from Horizon after a submission is very similar to receiving a 504: you're uncertain about the outcome of the transaction submission.
+
+It's obviously crucial to determine whether or not it went through or not, but you can likewise just keep trying submission until the timebounds expire. Once they have, though, if the transient error hasn't resolved itself, you should just stop and wait; submitting a new transaction might result in a undesirable duplicate action. 
+
+
+## Implementations
 Be sure to integrate backoff into your retry mechanism. There are plenty of recommendations [out there](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) for various backoff strategies you can employ. In our example below, we'll implement a simple linear backoff:
 
 <CodeExample>
@@ -239,14 +243,18 @@ return txSubWithBackoff(tx, 1);
 
 function txSubWithBackoff(tx, timeout) {
   return server.submitTransaction(tx).catch(function (error) {
-    // transient error? back-off then try again
-    if (!error.response) {
+    // transient error or timeout? back-off then try again
+    if (isTimeoutOrOutage(error)) {
       return sleep(timeout).then(function () {
         return txSubWithBackoff(tx, timeout + 5)
       });
     }
     // ...other error handling...
   }
+}
+
+function isTimeoutOrOutage(error) {
+  return !error.response || error.status == 504;
 }
 ```
 
