@@ -86,7 +86,6 @@ Possible errors:
 | PAYMENT_NO_TRUST | -6 | The receiver does not trust the issuer of the asset being sent. For more information, see the [assets doc](../glossary/assets.mdx). |
 | PAYMENT_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PAYMENT_LINE_FULL | -8 | The destination account (receiver) does not have sufficient limits to receive `amount` and still satisfy its buying liabilities. |
-| PAYMENT_NO_ISSUER | -9 | The issuer of the asset does not exist. |
 
 ## Path Payment Strict Send
 
@@ -130,7 +129,6 @@ Possible errors:
 | PATH_PAYMENT_STRICT_SEND_NO_TRUST | -6 | The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](../glossary/assets.mdx). |
 | PATH_PAYMENT_STRICT_SEND_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PATH_PAYMENT_STRICT_SEND_LINE_FULL | -8 | The destination account does not have sufficient limits to receive `destination amount` and still satisfy its buying liabilities. |
-| PATH_PAYMENT_STRICT_SEND_NO_ISSUER | -9 | The issuer of one of the assets is missing. |
 | PATH_PAYMENT_STRICT_SEND_TOO_FEW_OFFERS | -10 | There is no path of offers connecting the `send asset` and `destination asset`. Stellar only considers paths of length 5 or shorter. |
 | PATH_PAYMENT_STRICT_SEND_OFFER_CROSS_SELF | -11 | The payment would cross one of its own offers. |
 | PATH_PAYMENT_STRICT_SEND_UNDER_DESTMIN | -12 | The paths that could send `destination amount` of `destination asset` would fall short of `destination min`. |
@@ -177,7 +175,6 @@ Possible errors:
 | PATH_PAYMENT_STRICT_RECEIVE_NO_TRUST | -6 | The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](../glossary/assets.mdx). |
 | PATH_PAYMENT_STRICT_RECEIVE_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PATH_PAYMENT_STRICT_RECEIVE_LINE_FULL | -8 | The destination account does not have sufficient limits to receive `destination amount` and still satisfy its buying liabilities. |
-| PATH_PAYMENT_STRICT_RECEIVE_NO_ISSUER | -9 | The issuer of one the of assets is missing. |
 | PATH_PAYMENT_STRICT_RECEIVE_TOO_FEW_OFFERS | -10 | There is no path of offers connecting the `send asset` and `destination asset`. Stellar only considers paths of length 5 or shorter. |
 | PATH_PAYMENT_STRICT_RECEIVE_OFFER_CROSS_SELF | -11 | The payment would cross one of its own offers. |
 | PATH_PAYMENT_STRICT_RECEIVE_OVER_SENDMAX | -12 | The paths that could send `destination amount` of `destination asset` would exceed `send max`. |
@@ -218,8 +215,6 @@ Possible errors:
 | MANAGE_BUY_OFFER_LINE_FULL | -6 | The account creating the offer does not have sufficient limits to receive `buying` and still satisfy its buying liabilities. |
 | MANAGE_BUY_OFFER_UNDERFUNDED | -7 | The account creating the offer does not have sufficient limits to send `selling` and still satisfy its selling liabilities. Note that if selling XLM then the account must additionally maintain its minimum XLM reserve, which is calculated assuming this offer will not completely execute immediately. |
 | MANAGE_BUY_OFFER_CROSS_SELF | -8 | The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself. |
-| MANAGE_BUY_OFFER_SELL_NO_ISSUER | -9 | The issuer of selling asset does not exist. |
-| MANAGE_BUY_OFFER_BUY_NO_ISSUER | -10 | The issuer of buying asset does not exist. |
 | MANAGE_BUY_OFFER_NOT_FOUND | -11 | An offer with that `offerID` cannot be found. |
 | MANAGE_BUY_OFFER_LOW_RESERVE | -12 | The account creating this offer does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every offer an account creates, the minimum amount of XLM that account must hold will increase. |
 
@@ -259,8 +254,6 @@ Possible errors:
 | MANAGE_SELL_OFFER_LINE_FULL | -6 | The account creating the offer does not have sufficient limits to receive `buying` and still satisfy its buying liabilities. |
 | MANAGE_SELL_OFFER_UNDERFUNDED | -7 | The account creating the offer does not have sufficient limits to send `selling` and still satisfy its selling liabilities. Note that if selling XLM then the account must additionally maintain its minimum XLM reserve, which is calculated assuming this offer will not completely execute immediately. |
 | MANAGE_SELL_OFFER_CROSS_SELF | -8 | The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself. |
-| MANAGE_SELL_OFFER_SELL_NO_ISSUER | -9 | The issuer of selling asset does not exist. |
-| MANAGE_SELL_OFFER_BUY_NO_ISSUER | -10 | The issuer of buying asset does not exist. |
 | MANAGE_SELL_OFFER_NOT_FOUND | -11 | An offer with that `offerID` cannot be found. |
 | MANAGE_SELL_OFFER_LOW_RESERVE | -12 | The account creating this offer does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every offer an account creates, the minimum amount of XLM that account must hold will increase. |
 
@@ -301,8 +294,6 @@ Possible errors:
 | MANAGE_SELL_OFFER_LINE_FULL | -6 | The account creating the offer does not have sufficient limits to receive `buying` and still satisfy its buying liabilities. |
 | MANAGE_SELL_OFFER_UNDERFUNDED | -7 | The account creating the offer does not have sufficient limits to send `selling` and still satisfy its selling liabilities. Note that if selling XLM then the account must additionally maintain its minimum XLM reserve, which is calculated assuming this offer will not completely execute immediately. |
 | MANAGE_SELL_OFFER_CROSS_SELF | -8 | The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself. |
-| MANAGE_SELL_OFFER_SELL_NO_ISSUER | -9 | The issuer of selling asset does not exist. |
-| MANAGE_SELL_OFFER_BUY_NO_ISSUER | -10 | The issuer of buying asset does not exist. |
 | MANAGE_SELL_OFFER_NOT_FOUND | -11 | An offer with that `offerID` cannot be found. |
 | MANAGE_SELL_OFFER_LOW_RESERVE | -12 | The account creating this offer does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every offer an account creates, the minimum amount of XLM that account must hold will increase. |
 
