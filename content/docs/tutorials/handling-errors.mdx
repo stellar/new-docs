@@ -21,17 +21,28 @@ To start, let's categorize the possible error scenarios. There are three main cl
 
   - **transient failures** such as the Horizon instance you're relying on going down, your router resetting, AWS hiccupping, etc. which may occur rarely but are nonetheless crucial to handle.
 
-There isn't a universal way to handle HTTP errors: some are the result of user error, some are dynamically recoverable, and some are unavoidable altogether. Transient errors are even trickier to handle due to their rarity and uncertainty, but can be made easier under the assumption that the failing backends will be up to speed again soon.
+There isn't a universal way to handle HTTP errors: some are the result of user error, some are dynamically recoverable, and some are unavoidable altogether. Transient errors are even trickier to handle due to their rarity and uncertainty, but can be made easier under the assumption that the failing backends will be up to speed again soon. 
 
-Let's dive into each of these separately: we'll go over examples, some common causes, and recommended resolution strategies. Note that different errors are manifested differently by each SDK, so we'll just use `curl` in examples to maintain uniformity.
+Let's dive into each of these separately: we'll go over examples, some common causes, and recommended resolution strategies.
 
 
 ## Transaction Submission Errors
-Just like with query errors, there are dozens of possible causes of a transaction submission failure and they all return their own internal result codes. Horizon attempts to wrangle the asynchronous nature of the beast that is Stellar-Core into a synchronous flow more familiar to application developers. This requires making assumptions and imposing restrictions, and though it's a simpler model there are still caveats to be aware of.
+Just like with query errors, there are dozens of possible causes of a transaction submission failure and they all return their own internal result codes. Horizon attempts to wrangle the asynchronous nature of the beast that is Stellar Core into a synchronous flow more familiar to application developers. This requires making assumptions and imposing restrictions, and though it's a simpler model there are still caveats to be aware of. 
+
+Here are some of the common errors encountered when performing a `POST /transactions`:
 
   - [400 error, `tx_bad_seq`](#invalid-sequences)
   - [504 error, timeout](#timeouts)
+  - [Surge pricing, `tx_insufficient_fee`](#surge-pricing)
   - [No HTTP response](#outages)
+
+Keep in mind this general rule of thumb: **any response other than `200 OK` or `400 Bad Request` means that the final status of the transaction is unknown.**
+
+### 400 Errors
+Generally-speaking, if you get a 400 error during transaction submission, there are two main causes: either your transaction is in an unacceptable format or Stellar Core rejected your transaction. The former case is described by the [`transaction_malformed`](https://developers.stellar.org/api/errors/http-status-codes/horizon-specific/transaction-malformed/) error code and the latter by the [`transaction_failed`](https://developers.stellar.org/api/errors/http-status-codes/horizon-specific/transaction-failed/) code.
+
+Some transaction failures are recoverable; you should look at the `extras.result_code` field in the response message to determine the [root cause](https://developers.stellar.org/api/errors/result-codes/transactions/). One of these recoverable errors is `tx_bad_seq`, where the sequence number on the transaction doesn't match what's expected for the account.
+
 
 ### Invalid Sequences
 These errors typically occur when you have an outdated view of an account due to other transactions happening outside of your worldview. This could be because the account is used on multiple devices, you have concurrent submissions happening, or a number of other reasons.
@@ -59,24 +70,33 @@ server.submitTransaction(tx).catch(function (error)) {
 
 </CodeExample>
 
-Something to be extremely careful about is **duplicate submissions**.
+Despite the simple solution, something to be extremely careful about is **duplicate submissions**. Suppose you submitting transactions from multiple places in your application concurrently, and your user spammed the "Send Payment" button a few times in impatience. If you try to send the *exact same* payment transaction for each tap, naturally only one of them will succeed. However, since the others fail with `tx_bad_seq`, the above code will blindly resubmit them with an updated sequence number and **also succeed**, ultimately resulting in more than one payment being made when only one was intended. In summary, be careful with resubmissions and recoverable transaction errors.
+
+
 
 
 ### Timeouts
-If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. A timeout indicates something a little nebulous and non-traditional in the Stellar universe: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time **yet** more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar-Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing)---on the order of 5-10 minutes in the worst cases, while Horizon needs to provide developers with a response within 30 seconds or so.
+If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. In the Stellar universe, a timeout indicates something a little nebulous and non-traditional: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing) later---on the order of 5-10 minutes in the worst cases, whereas Horizon needs to provide developers with a response within 30 seconds or so.
 
-This leads to a very important point: receiving a 504 for your transaction submission **does not mean** the transaction did not make it to the network.
+This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**.
 
-There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding the timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
+There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding its timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
 
 With this trick in our back pocket, resolving 504s is straightforward: until the timebound has expired, you can safely retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)) for this scenario:
 
 > If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
 
-In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't, you've essentially started from scratch again: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
+In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't (e.g. a `tx_too_late` result code), you're essentially back to square one: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
+
+#### Transaction Bans
+Note the following caveat of the [transaction lifecycle](https://developers.stellar.org/docs/glossary/transactions/#transaction-lifecycle): 
+
+> If a transaction is kept in memory after a certain number of ledger closes, **it will be banned for several additional ledgers.** This means no attempt will be made to include it in a candidate transaction set additional ledgers during this time.
+
+If you trigger a ban scenario while your timebound is still in the future, you may have no choice but to use a [fee-bump transaction](#bumping-fees-on-past-transactions) to get into the ledger.
 
 #### Surge Pricing
-When the Stellar network undergoes bursts of activity, [surge pricing](https://developers.stellar.org/docs/glossary/fees/#surge-pricing) might kick in. This and other fee fluctuations can cause unnecessary errors during transaction submission in applications that don't plan ahead for its dynamic nature.
+When the Stellar network undergoes bursts of activity, [surge pricing](https://developers.stellar.org/docs/glossary/fees/#surge-pricing) might kick in. This and other fee fluctuations can cause unexpected errors during transaction submission in applications that don't plan ahead for its dynamic nature.
 
 There are two main approaches for dealing with this variance:
 
@@ -112,9 +132,10 @@ Suppose we want a fairly conservative fee-paying strategy: we're only willing to
 ```js
 // when submitting any transaction, first query fee stats
 server.feeStats().then(function (response) {
+  let avgFee = parseFloat(response.fee_charged.p50);
   let tx = base.TransactionBuilder(someAccount, {
-    fee: parseFloat(response.fee_charged.p50) * 1.10).toFixed(2),
-    // ...
+    fee: (avgFee * 1.10).toFixed(0),  // bump & convert to int
+    networkPassphrase: // ...
   });
   // ...build the rest of the tx... 
   tx.sign(someAccount);
@@ -131,13 +152,13 @@ It's possible that even with the liberal fee-paying policy, your transaction fai
 
 ```js
 // Let `lastTx` be some transaction that fails submission due to high fees, and
-// `lastFee` be the maximum fee (expressed as a float) willing to be paid by 
+// `lastFee` be the maximum fee (expressed as an int) willing to be paid by 
 // `account` for `lastTx`.
 server.submitTransaction(lastTx).catch(function (error) {
   if (isFeeError(error)) {
     let bump = sdk.TransactionBuilder.buildFeeBumpTransaction(
-      account, // account that will PAY the new fee
-      (lastFee * 10).toFixed(0), // new fee
+      account,      // account that will PAY the new fee
+      lastFee * 10, // new fee
       lastTx,
       server.networkPassphrase
     );
@@ -170,7 +191,11 @@ It's obviously crucial to determine whether or not it went through or not, but y
 
 ```js
 let server = sdk.Server("horizon.stellar.org");
-return txSubWithBackoff(tx, 1);
+
+function submitTransaction(tx) {
+    // ... 
+    return txSubWithBackoff(tx, 1);
+}
 
 function txSubWithBackoff(tx, timeout) {
   return server.submitTransaction(tx).catch(function (error) {
@@ -195,17 +220,32 @@ Obviously, if the Horizon instance you're relying on itself is down, this only b
 
 
 ## Query Errors
-There are many, *many* possible mistakes you can make while querying the Horizon API. Naturally, using an SDK will alleviate the silliest ones, but there are still plenty of ways to go wrong. To keep the example simple here, we'll just query for details about a transaction that doesn't exist (the hash is one for an impossible null transaction):
+There are many, *many* possible mistakes you can make while querying the Horizon API. Naturally, using an SDK will alleviate the silliest ones, but there are still plenty of ways to go wrong. There are two main error types encountered during a `GET` request: submit an **invalid query** (400 error) or request a **missing resource** (404 error). Both can be achieved on the same endpoint. The SDKs make a point to distinguish these errors (e.g. `NotFoundError` vs the generic `NetworkError` in the JavaScript SDK).
 
-<CodeExample>
+As an example, consider the [`/claimable_balances` endpoint](https://developers.stellar.org/api/resources/claimablebalances/). You'd get a 400 error when looking up a balance by an invalid ID:
 
 ```bash
-curl -s --get https://horizon.stellar.org/transaction/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | jq
+curl https://horizon-testnet.stellar.org/claimable_balances/0000
 ```
 
-</CodeExample>
+```json
+{
+  "type": "https://stellar.org/horizon-errors/bad_request",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "The request you sent was invalid in some way.",
+  "extras": {
+    "invalid_field": "id",
+    "reason": "Invalid claimable balance ID"
+  }
+}
+```
 
-<CodeExample>
+On the other hand, you'd get a 404 with a valid ID if it doesn't resolve to an actual claimable balance:
+
+```bash
+curl https://horizon-testnet.stellar.org/claimable_balances/000000000000000000000000000000000000000000000000000000000000000000000000
+```
 
 ```json
 {
@@ -216,22 +256,11 @@ curl -s --get https://horizon.stellar.org/transaction/e3b0c44298fc1c149afbf4c899
 }
 ```
 
-</CodeExample>
 
-It's worth noting that SDKs commonly classify 404s uniquely relative to other error codes (e.g. `NotFoundError` vs the generic `NetworkError` in the JavaScript SDK).
-
-<!--
-## Architecting Error Handling
-You may have noticed that the possible error conditions for a given action can sometimes be varied, divergent, and even recursive. Handling errors in a single action may require handling other errors within said handler, and so on. For example, you might encounter a transient error while retrieving the account information after a bad sequence number.
-
-How can we manage this in a sane way?
-
-This can be answered post-release.
--->
-
+### Rate Limiting
+If you're using the SDF's public Horizon instance, you may get a `429` error when exceeding the [rate limits](https://developers.stellar.org/api/introduction/rate-limiting/). If you're encountering this frequently, it may be time to [deploy your own](https://developers.stellar.org/docs/run-api-server/) Horizon instance!
 
 
 ## Footnotes
 
-1. Be sure to integrate backoff into your retry mechanism for handling outages and timeouts. There are plenty of recommendations [out there](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) for various backoff strategies you can employ. In our examples above, we'll implement a simple linear backoff.
-
+  1. Be sure to integrate backoff into your retry mechanism for handling [outages](#outages) and [timeouts](#timeouts). There are plenty of recommendations [out there](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) for various backoff strategies you can employ. In our examples above, we'll implement a simple linear backoff.
