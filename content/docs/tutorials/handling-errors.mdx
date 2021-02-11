@@ -224,9 +224,15 @@ There are many, *many* possible mistakes you can make while querying the Horizon
 
 As an example, consider the [`/claimable_balances` endpoint](https://developers.stellar.org/api/resources/claimablebalances/). You'd get a 400 error when looking up a balance by an invalid ID:
 
+<CodeExample>
+
 ```bash
 curl https://horizon-testnet.stellar.org/claimable_balances/0000
 ```
+
+</CodeExample>
+
+<CodeExample>
 
 ```json
 {
@@ -241,11 +247,19 @@ curl https://horizon-testnet.stellar.org/claimable_balances/0000
 }
 ```
 
+</CodeExample>
+
 On the other hand, you'd get a 404 with a valid ID if it doesn't resolve to an actual claimable balance:
+
+<CodeExample>
 
 ```bash
 curl https://horizon-testnet.stellar.org/claimable_balances/000000000000000000000000000000000000000000000000000000000000000000000000
 ```
+
+</CodeExample>
+
+<CodeExample>
 
 ```json
 {
@@ -256,6 +270,7 @@ curl https://horizon-testnet.stellar.org/claimable_balances/00000000000000000000
 }
 ```
 
+</CodeExample>
 
 ### Rate Limiting
 If you're using the SDF's public Horizon instance, you may get a `429` error when exceeding the [rate limits](https://developers.stellar.org/api/introduction/rate-limiting/). If you're encountering this frequently, it may be time to [deploy your own](https://developers.stellar.org/docs/run-api-server/) Horizon instance!
