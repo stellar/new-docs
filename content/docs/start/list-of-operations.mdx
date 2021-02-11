@@ -82,7 +82,7 @@ Possible errors:
 | PAYMENT_UNDERFUNDED | -2 | The source account (sender) does not have enough funds to send `amount` and still satisfy its selling liabilities. Note that if sending XLM then the sender must additionally maintain its minimum XLM reserve. |
 | PAYMENT_SRC_NO_TRUST | -3 | The source account does not trust the issuer of the asset it is trying to send. |
 | PAYMENT_SRC_NOT_AUTHORIZED | -4 | The source account is not authorized to send this payment. |
-| PAYMENT_NO_DESTINATION | -5 | The receiving account does not exist. |
+| PAYMENT_NO_DESTINATION | -5 | The receiving account does not exist. Note that this error will **not** be returned if the receiving account is the issuer of `asset`. |
 | PAYMENT_NO_TRUST | -6 | The receiver does not trust the issuer of the asset being sent. For more information, see the [assets doc](../glossary/assets.mdx). |
 | PAYMENT_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PAYMENT_LINE_FULL | -8 | The destination account (receiver) does not have sufficient limits to receive `amount` and still satisfy its buying liabilities. |
