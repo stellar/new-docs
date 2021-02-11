@@ -31,20 +31,21 @@ Just like with query errors, there are dozens of possible causes of a transactio
 
 Here are some of the common errors encountered when performing a `POST /transactions`:
 
-  - [400 error, `tx_bad_seq`](#invalid-sequences)
+  - [400 errors, e.g. `tx_bad_seq`](#invalid-sequences)
+  - [Fee / surge pricing errors, e.g. `tx_insufficient_fee`](#surge-pricing)
   - [504 error, timeout](#timeouts)
-  - [Surge pricing, `tx_insufficient_fee`](#surge-pricing)
   - [No HTTP response](#outages)
 
 Keep in mind this general rule of thumb: **any response other than `200 OK` or `400 Bad Request` means that the final status of the transaction is unknown.**
 
+
 ### 400 Errors
 Generally-speaking, if you get a 400 error during transaction submission, there are two main causes: either your transaction is in an unacceptable format or Stellar Core rejected your transaction. The former case is described by the [`transaction_malformed`](https://developers.stellar.org/api/errors/http-status-codes/horizon-specific/transaction-malformed/) error code and the latter by the [`transaction_failed`](https://developers.stellar.org/api/errors/http-status-codes/horizon-specific/transaction-failed/) code.
 
-Some transaction failures are recoverable; you should look at the `extras.result_code` field in the response message to determine the [root cause](https://developers.stellar.org/api/errors/result-codes/transactions/). One of these recoverable errors is `tx_bad_seq`, where the sequence number on the transaction doesn't match what's expected for the account.
+Some transaction failures are recoverable; you should look at the `extras.result_code` field in the response message to determine the [root cause](https://developers.stellar.org/api/errors/result-codes/transactions/). One of these recoverable errors is `tx_bad_seq`, where the sequence number on the transaction doesn't match what's expected for the account; another is `tx_insufficient_fee` which is covered [later](#surge-pricing).
 
 
-### Invalid Sequences
+#### Invalid Sequences
 These errors typically occur when you have an outdated view of an account due to other transactions happening outside of your worldview. This could be because the account is used on multiple devices, you have concurrent submissions happening, or a number of other reasons.
 
 Thankfully, the solution is relatively simple: retrieve the account details and try again with an updated sequence number.
@@ -72,28 +73,6 @@ server.submitTransaction(tx).catch(function (error)) {
 
 Despite the simple solution, something to be extremely careful about is **duplicate submissions**. Suppose you submitting transactions from multiple places in your application concurrently, and your user spammed the "Send Payment" button a few times in impatience. If you try to send the *exact same* payment transaction for each tap, naturally only one of them will succeed. However, since the others fail with `tx_bad_seq`, the above code will blindly resubmit them with an updated sequence number and **also succeed**, ultimately resulting in more than one payment being made when only one was intended. In summary, be careful with resubmissions and recoverable transaction errors.
 
-
-
-
-### Timeouts
-If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. In the Stellar universe, a timeout indicates something a little nebulous and non-traditional: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing) later---on the order of 5-10 minutes in the worst cases, whereas Horizon needs to provide developers with a response within 30 seconds or so.
-
-This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**.
-
-There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding its timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
-
-With this trick in our back pocket, resolving 504s is straightforward: until the timebound has expired, you can safely retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)) for this scenario:
-
-> If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
-
-In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't (e.g. a `tx_too_late` result code), you're essentially back to square one: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
-
-#### Transaction Bans
-Note the following caveat of the [transaction lifecycle](https://developers.stellar.org/docs/glossary/transactions/#transaction-lifecycle): 
-
-> If a transaction is kept in memory after a certain number of ledger closes, **it will be banned for several additional ledgers.** This means no attempt will be made to include it in a candidate transaction set additional ledgers during this time.
-
-If you trigger a ban scenario while your timebound is still in the future, you may have no choice but to use a [fee-bump transaction](#bumping-fees-on-past-transactions) to get into the ledger.
 
 #### Surge Pricing
 When the Stellar network undergoes bursts of activity, [surge pricing](https://developers.stellar.org/docs/glossary/fees/#surge-pricing) might kick in. This and other fee fluctuations can cause unexpected errors during transaction submission in applications that don't plan ahead for its dynamic nature.
@@ -174,6 +153,27 @@ server.submitTransaction(lastTx).catch(function (error) {
 Note an [important stipulation](https://developers.stellar.org/docs/glossary/fee-bumps/#replace-by-fee) of fee bumping that's fulfilled above:
 
 > If you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if **the fee bid of the second transaction is at least 10x the fee bid of the first transaction**.
+
+
+### Timeouts
+If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. In the Stellar universe, a timeout indicates something a little nebulous and non-traditional: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing) later---on the order of 5-10 minutes in the worst cases, whereas Horizon needs to provide developers with a response within 30 seconds or so.
+
+This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**.
+
+There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding its timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
+
+With this trick in our back pocket, resolving 504s is straightforward: until the timebound has expired, you can safely retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)) for this scenario:
+
+> If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
+
+In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't (e.g. a `tx_too_late` result code), you're essentially back to square one: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
+
+#### Transaction Bans
+Note the following caveat of the [transaction lifecycle](https://developers.stellar.org/docs/glossary/transactions/#transaction-lifecycle): 
+
+> If a transaction is kept in memory after a certain number of ledger closes, **it will be banned for several additional ledgers.** This means no attempt will be made to include it in a candidate transaction set additional ledgers during this time.
+
+If you trigger a ban scenario while your timebound is still in the future, you may have no choice but to use a [fee-bump transaction](#bumping-fees-on-past-transactions) to get into the ledger.
 
 
 ### Outages
