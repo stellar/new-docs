@@ -26,85 +26,12 @@ There isn't a universal way to handle HTTP errors: some are the result of user e
 Let's dive into each of these separately: we'll go over examples, some common causes, and recommended resolution strategies. Note that different errors are manifested differently by each SDK, so we'll just use `curl` in examples to maintain uniformity.
 
 
-
-## Transient Errors
-The simplest transient "outage" scenario would be your machine disconnecting from the Internet:
-
-    curl: (6) Could not resolve host: horizon.stellar.org
-
-but there are innumerable other scenarios (DNS down, firewall misconfigured, AWS outage, etc. just to name a few) that can cause them.
-
-The most surefire way to recover from a random outage is to simple: *keep trying*. Regardless of which part of the pipeline goes down, properly retrying guarantees *eventual* success (just be sure to implement back-off). This will work for most query failures, but handling an outage that occurred during a transaction submission requires a little more finesse: there's uncertainty about whether or not the transaction actually made it into a ledger. Since this situation is a little more precarious, we discuss this in more detail in a [later section](#outages).
-
-
-
-## Query Errors
-There are many, *many* possible mistakes you can make while querying the Horizon API. Naturally, using an SDK will alleviate the silliest ones, but there are still plenty of ways to go wrong. To keep the example simple here, we'll just query for details about a transaction that doesn't exist (the hash is one for an impossible null transaction):
-
-<CodeExample>
-
-```bash
-curl -s --get https://horizon.stellar.org/transaction/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | jq
-```
-
-</CodeExample>
-
-<CodeExample>
-
-```json
-{
-  "type": "https://stellar.org/horizon-errors/not_found",
-  "title": "Resource Missing",
-  "status": 404,
-  "detail": "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided."
-}
-```
-
-</CodeExample>
-
-It's worth noting that SDKs commonly classify 404s uniquely relative to other error codes (e.g. `NotFoundError` vs the generic `NetworkError` in the JavaScript SDK).
-
-
-### Resolutions
-TODO: Either fix the parameters (in case of user error, insert link to API reference) or try again (in case of transient error). 
-
-Are there other cases?
-
-
-
 ## Transaction Submission Errors
-Just like with query errors, there are dozens of possible causes of a transaction submission failure and they all return their own internal result codes. Horizon attempts to wrangle the asynchronous nature of the beast that is Stellar-Core into a synchronous flow more familiar to application developers. This requires making assumptions and imposing restrictions,  and though it's a simpler model there are still caveats to be aware of.
+Just like with query errors, there are dozens of possible causes of a transaction submission failure and they all return their own internal result codes. Horizon attempts to wrangle the asynchronous nature of the beast that is Stellar-Core into a synchronous flow more familiar to application developers. This requires making assumptions and imposing restrictions, and though it's a simpler model there are still caveats to be aware of.
 
-Here's a common failure: using the wrong sequence number for an account. The following transaction envelope (examine it in the [Laboratory](https://laboratory.stellar.org/#xdr-viewer?input=AAAAAgAAAABjsEXePrFn%2BdH3tNaTkGo3kojf2iecJqU3g84%2F95XLqgAAAGQAAAAAbG1hbwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA50aGlzIGlzIGEgdGVzdAAAAAAAAQAAAAEAAAAAY7BF3j6xZ%2FnR97TWk5BqN5KI39onnCalN4POP%2FeVy6oAAAAKAAAAB21lc3NhZ2UAAAAAAQAAAA1IZWxsbywgd29ybGQhAAAAAAAAAAAAAAH3lcuqAAAAQNZ%2F9lkhKMw0Rbiwmw%2BdF3X1DldjT0qPdiCuEPpf5rErYDoXBkr0HlQdAfK1ptfLwK7kMELQfXCfPUEYVuJd4gQ%3D&type=TransactionEnvelope&network=test)) is a simple transaction to add some [managed data](../start/list-of-operations#manage-data) to the account:
-
-<CodeExample>
-
-```bash
-curl -s --data "tx=AAAAAgAAAABjsEXePrFn+dH3tNaTkGo3kojf2iecJqU3g84/95XLqgAAAGQAAAAAbG1hbwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA50aGlzIGlzIGEgdGVzdAAAAAAAAQAAAAEAAAAAY7BF3j6xZ/nR97TWk5BqN5KI39onnCalN4POP/eVy6oAAAAKAAAAB21lc3NhZ2UAAAAAAQAAAA1IZWxsbywgd29ybGQhAAAAAAAAAAAAAAH3lcuqAAAAQNZ/9lkhKMw0Rbiwmw+dF3X1DldjT0qPdiCuEPpf5rErYDoXBkr0HlQdAfK1ptfLwK7kMELQfXCfPUEYVuJd4gQ=" https://horizon-testnet.stellar.org | jq
-```
-
-</CodeExample>
-
-<CodeExample>
-
-```json
-{
-  "type": "https://stellar.org/horizon-errors/transaction_failed",
-  "title": "Transaction Failed",
-  "status": 400,
-  "detail": "The transaction failed when submitted to the stellar network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://www.stellar.org/developers/guides/concepts/list-of-operations.html",
-  "extras": {
-    "envelope_xdr": "AAAAAgAAAABjsEXePrFn+dH3tNaTkGo3kojf2iecJqU3g84/95XLqgAAAGQAAAAAbG1hbwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA50aGlzIGlzIGEgdGVzdAAAAAAAAQAAAAEAAAAAY7BF3j6xZ/nR97TWk5BqN5KI39onnCalN4POP/eVy6oAAAAKAAAAB21lc3NhZ2UAAAAAAQAAAA1IZWxsbywgd29ybGQhAAAAAAAAAAAAAAH3lcuqAAAAQNZ/9lkhKMw0Rbiwmw+dF3X1DldjT0qPdiCuEPpf5rErYDoXBkr0HlQdAfK1ptfLwK7kMELQfXCfPUEYVuJd4gQ=",
-    "result_codes": {
-      "transaction": "tx_bad_seq"
-    },
-    "result_xdr": "AAAAAAAAAAD////7AAAAAA=="
-  }
-}
-```
-
-</CodeExample>
-
+  - [400 error, `tx_bad_seq`](#invalid-sequences)
+  - [504 error, timeout](#timeouts)
+  - [No HTTP response](#outages)
 
 ### Invalid Sequences
 These errors typically occur when you have an outdated view of an account due to other transactions happening outside of your worldview. This could be because the account is used on multiple devices, you have concurrent submissions happening, or a number of other reasons.
@@ -132,8 +59,23 @@ server.submitTransaction(tx).catch(function (error)) {
 
 </CodeExample>
 
+Something to be extremely careful about is **duplicate submissions**.
 
-### Surge Pricing
+
+### Timeouts
+If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. A timeout indicates something a little nebulous and non-traditional in the Stellar universe: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time **yet** more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar-Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing)---on the order of 5-10 minutes in the worst cases, while Horizon needs to provide developers with a response within 30 seconds or so.
+
+This leads to a very important point: receiving a 504 for your transaction submission **does not mean** the transaction did not make it to the network.
+
+There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding the timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
+
+With this trick in our back pocket, resolving 504s is straightforward: until the timebound has expired, you can safely retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)) for this scenario:
+
+> If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
+
+In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't, you've essentially started from scratch again: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
+
+#### Surge Pricing
 When the Stellar network undergoes bursts of activity, [surge pricing](https://developers.stellar.org/docs/glossary/fees/#surge-pricing) might kick in. This and other fee fluctuations can cause unnecessary errors during transaction submission in applications that don't plan ahead for its dynamic nature.
 
 There are two main approaches for dealing with this variance:
@@ -162,7 +104,7 @@ function isFeeError(error) {
 
 Of course, there are much more streamlined ways to *combine* errors together, but this will be used below to demonstrate the (very) specific check.
 
-#### Example: Paying 10% above average
+##### Example: Paying 10% above average
 Suppose we want a fairly conservative fee-paying strategy: we're only willing to pay a 10% higher fee than the average transaction paid.
 
 <CodeExample>
@@ -182,7 +124,7 @@ server.feeStats().then(function (response) {
 
 </CodeExample>
 
-#### Bumping fees on past transactions
+##### Bumping fees on past transactions
 It's possible that even with the liberal fee-paying policy, your transaction fails to make it into the ledger due to insufficient funds or untimely surges. Resolving this problem is exactly the goal of a [fee-bump transaction](https://developers.stellar.org/docs/glossary/fee-bumps/); the following snippet shows how you can resubmit a transaction with a higher fee given that you have the original [transaction envelope](https://developers.stellar.org/docs/glossary/transactions/#transaction-envelopes):
 
 <CodeExample>
@@ -213,29 +155,16 @@ Note an [important stipulation](https://developers.stellar.org/docs/glossary/fee
 > If you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if **the fee bid of the second transaction is at least 10x the fee bid of the first transaction**.
 
 
-### Timeouts & Outages
-While these two error types occur for different reasons, they can be handled in very similar ways. 
+### Outages
+The simplest transient "outage" scenario could be a machine disconnecting from the Internet:
 
-#### Timeouts
-If you receive a 504 error from Horizon after a transaction submission, you've encountered a timeout. A timeout indicates something a little nebulous and non-traditional in the Stellar universe: it's more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time **yet** more than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar-Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#surge-pricing)---on the order of 5-10 minutes in the worst cases, while Horizon needs to provide developers with a response within 30 seconds or so.
+    curl: (6) Could not resolve host: horizon.stellar.org
 
-This leads to a very important point: receiving a 504 for your transaction submission **does not mean** the transaction did not make it to the network.
+but there are innumerable other scenarios (DNS down, firewall misconfigured, AWS outage, etc. just to name a few) that can cause them.
 
-There's no mechanism to "cancel" a transaction after it has been submitted aside from by exceeding the timebounds. In fact, one of the best tools available for managing transaction failures is through [timebounds](https://developers.stellar.org/docs/glossary/transactions/#time-bounds). While optional, they're *crucial* in simplifying error handling: it's much easier to know when to check a transaction's status when you know the maximum amount of time it can be stuck.
+Receiving no response from Horizon after a submission is very similar to receiving a [504 timeout](#timeouts): you're uncertain about the outcome of the transaction submission.
 
-With this trick in our back pocket, resolving 504s is straightforward: until the timebound has expired, you can safely retry submission *without modifying the transaction*. Horizon makes an important guarantee (excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment)) for this scenario:
-
-> If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
-
-In other words, if your transaction made it through after the 504, you'll get your previously-submitted transaction back. If it didn't, you've essentially started from scratch again: you might 504 again, fail for another reason (e.g. `tx_bad_seq`), or succeed.
-
-#### Outages
-Receiving no response from Horizon after a submission is very similar to receiving a 504: you're uncertain about the outcome of the transaction submission.
-
-It's obviously crucial to determine whether or not it went through or not, but you can likewise just keep trying submission until the timebounds expire. Once they have, though, if the transient error hasn't resolved itself, you should just stop and wait; submitting a new transaction might result in a undesirable duplicate action. 
-
-#### Implementations
-Be sure to integrate backoff into your retry mechanism. There are plenty of recommendations [out there](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) for various backoff strategies you can employ. In our example below, we'll implement a simple linear backoff:
+It's obviously crucial to determine whether or not it went through or not, but you can likewise *just keep trying* submission until the timebounds expire. Once they have, though, if the transient error hasn't resolved itself, you should just stop and wait; submitting a new transaction might result in a undesirable duplicate action. 
 
 <CodeExample>
 
@@ -265,10 +194,44 @@ function isTimeoutOrOutage(error) {
 Obviously, if the Horizon instance you're relying on itself is down, this only becomes viable when you eventually get results.
 
 
+## Query Errors
+There are many, *many* possible mistakes you can make while querying the Horizon API. Naturally, using an SDK will alleviate the silliest ones, but there are still plenty of ways to go wrong. To keep the example simple here, we'll just query for details about a transaction that doesn't exist (the hash is one for an impossible null transaction):
 
+<CodeExample>
+
+```bash
+curl -s --get https://horizon.stellar.org/transaction/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | jq
+```
+
+</CodeExample>
+
+<CodeExample>
+
+```json
+{
+  "type": "https://stellar.org/horizon-errors/not_found",
+  "title": "Resource Missing",
+  "status": 404,
+  "detail": "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided."
+}
+```
+
+</CodeExample>
+
+It's worth noting that SDKs commonly classify 404s uniquely relative to other error codes (e.g. `NotFoundError` vs the generic `NetworkError` in the JavaScript SDK).
+
+<!--
 ## Architecting Error Handling
 You may have noticed that the possible error conditions for a given action can sometimes be varied, divergent, and even recursive. Handling errors in a single action may require handling other errors within said handler, and so on. For example, you might encounter a transient error while retrieving the account information after a bad sequence number.
 
 How can we manage this in a sane way?
 
-TODO: Actually answer this lol
+This can be answered post-release.
+-->
+
+
+
+## Footnotes
+
+1. Be sure to integrate backoff into your retry mechanism for handling outages and timeouts. There are plenty of recommendations [out there](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) for various backoff strategies you can employ. In our examples above, we'll implement a simple linear backoff.
+
