@@ -14,7 +14,7 @@ This document is broken down into two main sections. In the [first section](#res
 
 
 ## Resolution Strategies
-Despite the fact that there are many ways to interact with the Stellar network through the Horizon API, the possible actions fall into two main categories: **queries** (any `GET` request, like to `/accounts`) and **transaction submissions** (a `POST /transactions`). There are a myriad of possible errors codes (again, [Section 2](#managing-specific-errors) breaks some down) when executing these actions, but they can be handled through a few primary strategies:
+Despite the fact that there are many ways to interact with the Stellar network through the Horizon API, the possible actions fall into two main categories: **queries** (any `GET` request, like to `/accounts`) and **transaction submissions** (a `POST /transactions`). There are a myriad of possible errors codes (again, we break some down [later](#managing-specific-errors)) when executing these actions, but they can be handled through a few primary strategies:
 
   - **Retrying until success** is the recommended way to work around latency or congestion issues encountered anywhere along the pipeline between your machine and the Stellar network. This ephemeral scenario is [unavoidable](https://en.wikipedia.org/wiki/High_availability#%22Nines%22) due to the very nature of a distributed system.
   - **Adjusting the request** to resolve structural errors with queries or transaction submissions is the first line of defense: if you've included a bad parameter, malformed your XDR, or otherwise didn't follow the endpoint's specification, the error can be resolved by referencing the details or result codes of the error response.
@@ -149,13 +149,13 @@ This section covers a smattering of specific error cases commonly encountered du
 
 
 ### Timeouts
-If you receive a `504 Timeout` from Horizon after a transaction submission, you've encountered something a little nebulous and non-traditional in the Stellar universe: timeouts are more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* rather than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#insufficient-fees-and-surge-pricing) later---on the order of 5-10 minutes in bad cases, whereas Horizon needs to provide developers with a response within a reasonable 30 seconds or so.
+If you receive a `504 Timeout` from Horizon after a transaction submission, you've encountered something a little nebulous and non-traditional in the Stellar universe: timeouts are more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* rather than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#insufficient-fees-and-surge-pricing) later---on the order of 5-10 minutes during congestion, whereas Horizon needs to provide developers with a response within a reasonable 30 seconds or so.
 
-This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**.
+This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**. You should continue with [retries](#retrying-until-success) until getting a more definitive response.
 
 
 ### Insufficient Fees and Surge Pricing
-When the Stellar network undergoes bursts of activity, [surge pricing](https://developers.stellar.org/docs/glossary/fees/#surge-pricing) might kick in. This and other fee fluctuations can cause unexpected errors during transaction submission in applications that don't plan ahead for its dynamic nature.
+When the Stellar network undergoes bursts of activity, [surge pricing](https://developers.stellar.org/docs/glossary/fees/#surge-pricing) might kick in. This and other fee fluctuations can cause unexpected errors during transaction submission in applications that don't plan ahead for its dynamic nature. A recent [blog post](https://www.stellar.org/developers-blog/transaction-submission-timeouts-and-dynamic-fees-faq) by the SDF discusses fee surges and other frequently asked questions in much greater detail. 
 
 There are two main approaches for dealing with this variance:
 
@@ -205,7 +205,7 @@ server.feeStats().then(function (response) {
 </CodeExample>
 
 #### Bumping fees on past transactions
-It's possible that even with the liberal fee-paying policy, your transaction fails to make it into the ledger due to insufficient funds or untimely surges. Resolving this problem is exactly the goal of a [fee-bump transaction](https://developers.stellar.org/docs/glossary/fee-bumps/); the following snippet shows how you can resubmit a transaction with a higher fee given that you have the original [transaction envelope](https://developers.stellar.org/docs/glossary/transactions/#transaction-envelopes):
+It's possible that even with a liberal fee-paying policy, your transaction fails to make it into the ledger due to insufficient funds or untimely surges. Resolving this problem is exactly the goal of a [fee-bump transaction](../docs/glossary/fee-bumps/). The following snippet shows how you can resubmit a transaction with a higher fee given that you have the original [transaction envelope](../glossary/transactions/#transaction-envelopes):
 
 <CodeExample>
 
@@ -234,7 +234,7 @@ Note an [important stipulation](https://developers.stellar.org/docs/glossary/fee
 
 > If you submit two distinct transactions with the same source account and sequence number, and the second transaction is a fee-bump transaction, the second transaction will be included in the transaction queue in place of the first transaction if and only if **the fee bid of the second transaction is at least 10x the fee bid of the first transaction**.
 
-This value can typically be found in the `fee_charged` field of the [transaction response](../../api/resources/transactions/object/) under the insufficient fee error case.
+This value can typically be found in the `fee_charged` field of the [transaction response](../../api/resources/transactions/object/) under the `tx_insufficient_fee` error case.
 
 
 ### Rate Limiting
