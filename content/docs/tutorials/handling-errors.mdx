@@ -40,6 +40,7 @@ In other words, if your transaction makes it through at any point in time, you'l
 Suppose you submit a transaction and it enters the queue of the Stellar network, but Horizon crashes while giving you a response. Uncertain about the transaction status, you resubmit (with no changes!) until either (a) Horizon comes back up to give you a reply or (b) the timebounds you set get exceeded. There are only two possible results: the transaction makes it into a ledger (exactly once!) and Horizon gives you the response, or the transaction never makes it out of the queue and you receive the corresponding `tx_too_late` response.
 
 #### Example Implementation
+
 <CodeExample>
 
 ```js
