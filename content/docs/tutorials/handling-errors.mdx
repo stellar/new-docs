@@ -66,9 +66,9 @@ function submitTransaction(tx, timeout) {
 }
 ```
 
-(We assume the existence of a `sleep` implementation akin to the one [here](https://stackoverflow.com/a/39914235).)
-
 </CodeExample>
+
+(We assume the existence of a `sleep` implementation akin to the one [here](https://stackoverflow.com/a/39914235).)
 
 #### Details: Retry Backoff
 Be sure to integrate backoff into your retry mechanism. In our example error-handling code above, we implement a simple linear back-off, but there are [plenty of recommendations](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) out there for various other strategies you can employ. Back-off is important both for maintaining performance and avoiding [rate-limiting](#rate-limiting) issues.
