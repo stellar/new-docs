@@ -142,7 +142,7 @@ Despite the solution's simplicity, things can go very wrong very fast if you don
 
 Suppose you submit transactions from multiple places in your application concurrently, and your user spammed the "Send Payment" button a few times in their impatience. If you try to send the *exact same* payment transaction for each tap, naturally only one will succeed. The others will fail with an invalid sequence number (`tx_bad_seq`), and if you resubmit blindly with an updated sequence number (as we do above), these payments will **also succeed**, ultimately resulting in more than one payment being made when only one was intended.
 
-In essence, be very careful with resubmitting transactions that have been modified to work around an error.
+In essence, **be very careful with resubmitting transactions that have been modified** to work around an error.
 
 
 
@@ -151,7 +151,7 @@ This section covers a smattering of specific error cases commonly encountered du
 
 
 ### Timeouts
-If you receive a `504 Timeout` from Horizon after a transaction submission, you've encountered something a little nebulous and non-traditional in the Stellar universe: timeouts are more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* rather than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction---especially one with a low fee, see [Surge Pricing](#insufficient-fees-and-surge-pricing) later---on the order of 5-10 minutes during congestion, whereas Horizon needs to provide developers with a response within a reasonable 30 seconds or so.
+If you receive a `504 Timeout` from Horizon after a transaction submission, you've encountered something a little nebulous and non-traditional in the Stellar universe: timeouts are more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* rather than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction&mdash;especially one with a low fee, see the discussion of [Surge Pricing](#insufficient-fees-and-surge-pricing) later&mdash;on the order of 5-10 minutes during congestion, whereas Horizon needs to provide developers with a response within a reasonable 30 seconds or so.
 
 This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**. You should continue with [retries](#retrying-until-success) until getting a more definitive response.
 
