@@ -26,6 +26,8 @@ Claimable Balances can be used to "split up" a payment into two parts, which all
    - Can claim _between_ X and Y Unix timestamps (given X < Y) - `AND(NOT(BEFORE_ABSOLUTE_TIME(X)), BEFORE_ABSOLUTE_TIME(Y))`
    - Can claim _outside_ X and Y Unix timestamps (given X < Y) - `OR(BEFORE_ABSOLUTE_TIME(X), NOT(BEFORE_ABSOLUTE_TIME(Y))`
 
+Note that the SDKs expect the Unix timestamps to be expressed in **seconds**.
+
 #### Operation Information
 
 This operation will move Amount of Asset from the operation source account into a new ClaimableBalanceEntry.
