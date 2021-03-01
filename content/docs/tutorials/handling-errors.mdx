@@ -7,14 +7,14 @@ import { CodeExample } from "components/CodeExample";
 
 When working with a payment network like Stellar[,](https://www.youtube.com/watch/TLXo9IFVboY) expecting the unexpected is critical in ensuring a good user experience: one in which money doesn't get lost, actions happen when they're supposed to (or as early as they can), and everyone's view of the network is as accurate as possible.
 
-In many of the tutorials and code samples throughout this documentation, we've minimized the error handling code to reduce verbosity and focus on the essence of the examples. Here, we'll do the exact opposite, because error handling *is* the essence: by the end, you should be able to categorize errors and understand the best, most-idiomatic way to handle them in your application.
+In many of the tutorials and code samples throughout this documentation, we've minimized the error handling code to reduce verbosity and focus on the essence of the examples. Here, we'll do the exact opposite, because error handling *is* the essence: by the end, you should be able to categorize errors and understand the best, most idiomatic way to handle them in your application.
 
 This document is broken down into two main sections. In the [first section](#resolution-strategies), we cover the recommended resolution strategies that apply to most error scenarios developers may encounter. Then, in the [second section](#managing-specific-errors), we dive deeper into the errors themselves; refer to this latter section if you have encountered a specific error and want a broader understanding of its causes.
 
 
 
 ## Resolution Strategies
-Despite the fact that there are many ways to interact with the Stellar network through the Horizon API, the possible actions fall into two main categories: **queries** (any `GET` request, like to `/accounts`) and **transaction submissions** (a `POST /transactions`). Though there are a myriad of possible errors codes (again, we break some down [later](#managing-specific-errors)) when executing these actions, they can be handled through a few primary strategies:
+Despite the fact that there are many ways to interact with the Stellar network through the Horizon API, the possible actions fall into two main categories: **queries** (any `GET` request, like to `/accounts`) and **transaction submissions** (a `POST /transactions`). Though there are a myriad of possible error codes (again, we break some down [later](#managing-specific-errors)) when executing these actions, they can be handled through a few primary strategies:
 
   - **Adjusting the request** to resolve structural errors with queries or transaction submissions is the first line of defense: if you've included a bad parameter, malformed your XDR, or otherwise didn't follow the endpoint's specification, the error can be resolved by referencing the details or result codes of the error response.
   - **Retrying until success** is the recommended way to work around latency or congestion issues encountered anywhere along the pipeline between your machine and the Stellar network. This ephemeral scenario is [unavoidable](https://en.wikipedia.org/wiki/High_availability#%22Nines%22) due to the very nature of a distributed system.
@@ -47,7 +47,7 @@ curl -s https://horizon-testnet.stellar.org/claimable_balances/0000 | jq '.extra
 Note that the SDKs make it a point to distinguish an **invalid request** (as above) vs. a **missing resource** (a `404 Not Found`) (e.g. the generic `NetworkError` vs. a `NotFoundError` in the JavaScript SDK), where the latter might not be considered an error depending on your situation.
 
 #### Transaction Submissions
-Certain transaction submission failures also need adjustments to succeed. If the XDR is malformed or the transaction is somehow otherwise invalid, you'll encounter a `400 Bad Request` (for example, when excluding a source account as seen in the [API reference example](../../api/errors/response/)). Both transactions and their requisite operations can easily be malformed: ook at the `extras.result_codes` field for details and cross-reference them with the appropriate [Result Codes documentation](../../api/errors/result-codes/) to determine specifics.
+Certain transaction submission failures also need adjustments to succeed. If the XDR is malformed or the transaction is somehow otherwise invalid, you'll encounter a `400 Bad Request` (for example, when excluding a source account as seen in the [API reference example](../../api/errors/response/)). Both transactions and their requisite operations can easily be malformed: look at the `extras.result_codes` field for details and cross-reference them with the appropriate [Result Codes documentation](../../api/errors/result-codes/) to determine specifics.
 
 Another class of safe adjustments involves transaction fees: if you get a `tx_insufficient_fee` error, it's worth reading the [later section](#insufficient-fees-and-surge-pricing) to adjust your fee-paying strategy.
 
@@ -65,7 +65,7 @@ Since there's no mechanism to "cancel" a transaction after it has been submitted
 
 _(The above excerpt is from [this example](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment).)_
 
-In other words, if your transaction makes it through at any point in time, you'll get your previously-submitted transaction back for all subsequent retries.
+In other words, if your transaction makes it through at any point in time, you'll get your previously submitted transaction back for all subsequent retries.
 
 
 #### Example Scenario
@@ -108,7 +108,7 @@ function submitTransaction(tx, timeout) {
 _(We assume the existence of a `sleep` implementation akin to the one [here](https://stackoverflow.com/a/39914235).)_
 
 #### Details: Retry Backoff
-Be sure to integrate backoff into your retry mechanism. In our example error-handling code above, we implement a simple linear back-off, but there are [plenty of recommendations](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) out there for various other strategies you can employ. Back-off is important both for maintaining performance and avoiding [rate-limiting](#rate-limiting) issues.
+Be sure to integrate backoff into your retry mechanism. In our example error-handling code above, we implement a simple linear backoff, but there are [plenty of recommendations](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) out there for various other strategies you can employ. Backoff is important both for maintaining performance and avoiding [rate-limiting](#rate-limiting) issues.
 
 #### Details: Transaction Bans
 Note the following caveat of the [transaction lifecycle](https://developers.stellar.org/docs/glossary/transactions/#transaction-lifecycle):
@@ -171,7 +171,7 @@ There are two main approaches for dealing with this variance:
 
   2. **Set the highest fee** you are comfortable with. Crucially, you should remember that *this doesn't mean you'll **pay** that on every transaction*. You will only pay whatever is necessary to get you into the ledger: under normal (non-surge) circumstances, even with a higher *maximum* fee set, you will pay the *standard* fee (100 stroops as of this writing).
 
-The latter strategy balances simplicity, efficacy, and convenience, but unless you set your maximum high enough simply *never* be exceeded, can still lead to failures. The former strategy can provide more-reliable submissions by allowing tighter guarantees about whether or not a transaction will be accepted. In general, though, it's important to track fee costs: if the network saturates beyond your maximum willingness to pay, perhaps waiting for activity to die down or periodically retrying with the same fee is the best approach for your use case.
+The latter strategy balances simplicity, efficacy, and convenience, but unless you set your maximum high enough so that it's *never* exceeded, it can still lead to failures. The former strategy can provide more reliable submissions by allowing tighter guarantees about whether or not a transaction will be accepted. In general, though, it's important to track fee costs: if the network saturates beyond your maximum willingness to pay, perhaps waiting for activity to die down or periodically retrying with the same fee is the best approach for your use case.
 
 If you want to match a fee error **exactly**, you might write something like this:
 
