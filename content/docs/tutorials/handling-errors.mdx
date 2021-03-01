@@ -79,17 +79,23 @@ Suppose you submit a transaction and it enters the queue of the Stellar network,
 let server = sdk.Server("horizon.stellar.org");
 
 function submitTransaction(tx, timeout) {
-  // If a maximum timebound isn't set, we should definitely set one.
-  const maxTime = tx.maxTime || 20;
-  tx.maxTime = maxTime;
+  if (!tx.timeBounds || tx.timeBounds.maxTime === 0) {
+    throw new Error("Always set a reasonable timebound!");
+  }
+  const expiration = parseInt(tx.timeBounds.maxTime);
 
   return server.submitTransaction(tx).catch(function (error) {
     if (isNonRetryErrorCase(error)) {
       // ...do other error handling...
       return;
     }
+
+    // the tx no longer has a chance of making it into a ledger
+    if (Date.now() >= expiration) {
+      return new Error("The transaction timed out.");
+    }
     
-    timeout = timeout || 1; // start the back-off process
+    timeout = timeout || 1; // start the (linear) back-off process
     return sleep(timeout).then(function () {
       return submitTransaction(tx, timeout + 5);
     });
