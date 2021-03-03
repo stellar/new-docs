@@ -17,9 +17,9 @@ When you run the command above, you'll see that Horizon defines a large number o
 | flag | envvar | example |
 | ---- | ------ | ------- |
 | `--db-url` | `DATABASE_URL` | postgres://localhost/horizon_testnet |
-| `--captive-core-config-append-path` | `CAPTIVE_CORE_CONFIG_APPEND_PATH` | `/etc/default/stellar-captive-core-stub.toml` |
+| `--captive-core-config-append-path` | `CAPTIVE_CORE_CONFIG_APPEND_PATH` | /etc/default/stellar-captive-core-stub.toml |
 | `--stellar-core-url` | `STELLAR_CORE_URL` | http://localhost:11626 |
-| `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | `/usr/bin/stellar-core` |
+| `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
 
   - The most important parameter, `--db-url`, specifies the Horizon database, and its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.2/static/libpq-connect.html#AEN38419).
   - The second parameter, `--captive-core-config-append-path`, points to a Captive Core configuration stub. This stub file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running. 
@@ -27,9 +27,7 @@ When you run the command above, you'll see that Horizon defines a large number o
 
 Note that Horizon will perform ingestion by default as of [v2.0](https://github.com/stellar/go/releases/tag/horizon-v2.0.0); if you want to have certain nodes dedicated exclusively to fulfilling requests, you should set `--enable-captive-core-ingestion=false`.
 
-Specifying command line flags every time you invoke Horizon can be cumbersome, so we recommend using environment variables. There are many tools you can use to manage them: we recommend either [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).
-
-However, **if you installed via [the package manager](./installing.mdx#package-manager),** the provided `stellar-horizon-cmd` wrapper will actually import a configuration from `/etc/default/stellar-horizon` and set up the environment accordingly.
+Specifying command line flags every time you invoke Horizon can be cumbersome, so we recommend using environment variables. There are many tools you can use to manage them: we recommend either [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv). However, **if you installed via [the package manager](./installing.mdx#package-manager),** the provided `stellar-horizon-cmd` wrapper will actually import a configuration from `/etc/default/stellar-horizon` and set up the environment accordingly.
 
 
 ## Preparing the Database
@@ -81,6 +79,7 @@ _(For the remainder of this guide, we'll assume this stub lives at `/etc/default
 
 
 ## Remote Captive Core
+
 If you want to run a Captive Core instance independently of your Horizon instances, the architecture supports that. We provide a package that wraps a Captive Core instance in an HTTP API that Horizon can consume.
 
 ### Configuring Core
