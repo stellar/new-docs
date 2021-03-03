@@ -5,25 +5,101 @@ order: 20
 
 import { CodeExample } from "components/CodeExample";
 
-To install Horizon, you have a choice: you can download a [prebuilt release for your target architecture](https://github.com/stellar/go/releases) and operation system or you can [build Horizon yourself](#Building). When either approach is complete, you will find yourself with a directory containing a file named `horizon`. This file is a native binary.
 
-After building or unpacking Horizon, you simply need to copy the native binary into a directory that is part of your PATH. Most unix-like systems have `/usr/local/bin` in PATH by default, so unless you have a preference or know better, we recommend you copy the binary there.
+## Installation Methods
 
-To test the installation, simply run `horizon --help` from a terminal. If the help for Horizon is displayed, your installation was successful. Note: some shells, such as zsh, cache PATH lookups. You may need to clear your cache (by using `rehash` in zsh, for example) before trying to run `horizon --help`.
+To install Horizon, you have a few choices. You can...
+  - install prebuilt binaries [from our repositories](#package-manager) via your package manager if running a Debian-based system,
+  - download a [prebuilt release](https://github.com/stellar/go/releases) for your target architecture and operation system, or
+  - [build Horizon yourself](#building) from scratch. 
 
-## Building
+The first method is recommended: not only do you ensure OS compatibility and dependency management, you'll also install some convenient wrappers that make running Horizon and Stellar-Core much simpler.
 
+### Package Manager
+SDF publishes new releases to its custom Ubuntu repositories. Follow [this guide](https://github.com/stellar/packages/blob/master/docs/adding-the-sdf-stable-repository-to-your-system.md#adding-the-sdf-stable-repository-to-your-system) to add the stable SDF repository to your system. Then, 
+
+```bash
+sudo apt update && sudo apt install stellar-captive-core stellar-horizon
+```
+
+[This page](https://github.com/stellar/packages/blob/master/docs/installing-individual-packages.md#installing-individual-packages) outlines the various commands that these packages make available.
+
+### Building
 Should you decide not to use one of our prebuilt releases, you may instead build Horizon from source. To do so, you need to install some developer tools:
 
-- A unix-like operating system with the common core commands (cp, tar, mkdir, bash, etc.)
+- A Unix-like operating system with the common core commands (cp, tar, mkdir, bash, etc.)
 - A compatible distribution of Go (Go 1.13 or later)
 - [git](https://git-scm.com/)
-- [mercurial](https://www.mercurial-scm.org/)
 
-1. See the details in [README.md](https://github.com/stellar/go/blob/master/README.md#dependencies) for installing dependencies.
-2. Compile the Horizon binary: `go install github.com/stellar/go/services/horizon`. You should see the `horizon` binary in `$GOPATH/bin`.
-3. Add Go binaries to your PATH in your `bashrc` or equivalent, for easy access: `export PATH=${GOPATH//://bin:}/bin:$PATH`
+**Note**: Though Horizon should run on Windows, *building* directly on Windows is not supported.
 
-Open a new terminal. Confirm everything worked by running `horizon --help` successfully.
+First, refer to the details of [README.md](https://github.com/stellar/go/blob/master/README.md#dependencies) for installing dependencies. Then, you can build the Horizon binary pretty easily:
 
-Note: Building directly on windows is not supported.
+```bash
+git clone https://github.com/stellar/go monorepo && cd monorepo
+go install -v ./services/horizon
+sudo cp $(go env GOPATH)/bin/horizon /usr/bin/stellar-horizon
+```
+
+(You should refer to the list of [Horizon releases](https://github.com/stellar/go/releases) and `git checkout` accordingly if you're looking for a stable release rather than the bleeding edge `master` branch.)
+
+At this point, you can either add Go binaries to your PATH in your `bashrc` or equivalent:
+
+<CodeExample>
+
+```bash
+export PATH=${GOPATH//://bin:}/bin:$PATH
+```
+
+</CodeExample>
+
+or just copy the binary from the `GOPATH` to the system PATH:
+
+<CodeExample>
+
+```bash
+cp $(go env GOPATH)/bin/horizon /usr/bin/stellar-horizon
+```
+
+</CodeExample>
+
+Open a new terminal and confirm everything works by running `horizon --help` successfully.
+
+
+## Installing Remote Captive Core
+
+If you are [configuring a remote Captive Core](./configuring#remote-captive-core) instance, you'll need some additional binaries on that machine.
+
+### From Repositories
+After setting up repositories as described [above](#package-manager), you'll need to install the following packages on that machine:
+
+<CodeExample>
+
+```bash
+    apt install stellar-captive-core stellar-captive-core-api
+```
+
+</CodeExample>
+
+### From Source
+Alternatively, you can install the bleeding edge [from source](https://github.com/stellar/go/exp/services/captivecore):
+
+```bash
+git clone https://github.com/stellar/go monorepo && cd monorepo
+go install -v ./exp/services/captivecore
+sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
+```
+
+
+## Conclusion
+If you [built from source](#building) or downloaded a release from GitHub, you simply need to copy the native binary into a directory that is part of your PATH. Most Unix-like systems have `/usr/local/bin` in PATH by default, so unless you have a preference or know better, we recommend you copy the binary there:
+
+```bash
+cp horizon /usr/local/bin/stellar-horizon
+```
+
+(We've renamed it here to keep it consistent with the results of the recommended [Package Manager](#package-manager) method.)
+
+To test your installation, simply run `stellar-horizon --help` from a terminal. If the help for Horizon is displayed, your installation was successful.
+
+**Note**: Some shells (such as [zsh](https://www.zsh.org/)) cache PATH lookups. You may need to clear your cache (by using `rehash` in zsh, for example) or restart your shell before trying to run the aforementioned command.
