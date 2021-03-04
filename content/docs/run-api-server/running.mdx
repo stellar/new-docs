@@ -50,7 +50,7 @@ By default, your Horizon server is configured to listen for and ingest *live* tr
 To *disable* ingestion, you must either pass `--ingest=false` on the command line or set the `INGEST` environment variable to "false". Note that you can have multiple ingesting machines in your cluster.
 
 ### Ingesting Historical Data
-To ingest *historical* data from Stellar-Core, you need to run `horizon db reingest range <start> <end>`. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive(s), for example, you might want to ingest the network's entire history. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your `/metrics` endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
+To ingest *historical* data from Stellar Core, you need to run `horizon db reingest range <start> <end>`. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive(s), for example, you might want to ingest the network's entire history. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your `/metrics` endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
 
 ### Reingesting Ledgers
 
@@ -71,7 +71,7 @@ This allows reingestion to be split up and done in parallel by multiple Horizon 
 
 
 ### Managing Storage for Historical Data
-Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar-Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, you may execute the command `horizon db reap` to force a collection.
+Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, you may execute the command `horizon db reap` to force a collection.
 
 If you configure this value, we also recommend [configuring](./configuring.mdx#configuring-captive-core) the `CATCHUP_RECENT` value for your Captive Core instance. 
 
