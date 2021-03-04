@@ -110,12 +110,6 @@ _(We assume the existence of a `sleep` implementation akin to the one [here](htt
 #### Details: Retry Backoff
 Be sure to integrate backoff into your retry mechanism. In our example error-handling code above, we implement a simple linear backoff, but there are [plenty of recommendations](https://backoff-utils.readthedocs.io/en/latest/strategies.html#why-are-backoff-strategies-useful) out there for various other strategies you can employ. Backoff is important both for maintaining performance and avoiding [rate-limiting](#rate-limiting) issues.
 
-#### Details: Transaction Bans
-Note the following caveat of the [transaction lifecycle](https://developers.stellar.org/docs/glossary/transactions/#transaction-lifecycle):
-
-> If a transaction is kept in memory after a certain number of ledger closes, **it will be banned for several additional ledgers.** This means no attempt will be made to include it in a candidate transaction set additional ledgers during this time.
-
-This means that if you trigger a ban scenario while your timebound is still in the future, you may have no choice but to use a [fee-bump transaction](#bumping-fees-on-past-transactions) to get into the ledger. Bans occur when a transaction stays in the queue for too long, which often means other transactions are taking priority due to higher fees set.
 
 ### Unsafe Transaction Adjustments
 As outlined in the section on [retries](#retrying-until-success), resubmitting an *unchanged* (and valid) transaction (with the same operations, signatures, sequence number, etc.) is always safe to do. You should be careful when working around an error that *does* require changes to the transaction, though: it's very possible to cause **duplication transactions** which can result in all sorts of problems (double-payments, erroneous trustlines, etc.).
@@ -160,6 +154,8 @@ This section covers a smattering of specific error cases commonly encountered du
 If you receive a `504 Timeout` from Horizon after a transaction submission, you've encountered something a little nebulous and non-traditional in the Stellar universe: timeouts are more of a *warning* that your request hasn't been fulfilled within a reasonable amount of time *yet* rather than an error. This subtlety arises because of the nature of the relationship between Horizon and Stellar Core: the network might take some time to accept a transaction&mdash;especially one with a low fee, see the discussion of [Surge Pricing](#insufficient-fees-and-surge-pricing) later&mdash;on the order of 5-10 minutes during congestion, whereas Horizon needs to provide developers with a response within a reasonable 30 seconds or so.
 
 This leads to a very important point: **receiving a 504 for your transaction submission does not mean the transaction did not make it to the network**. You should continue with [retries](#retrying-until-success) until getting a more definitive response.
+
+If you *continue* to face timeouts on retries, you may want to consider using a [fee-bump transaction](#bumping-fees-on-past-transactions) to get into the ledger (after timebounds expire, of course) or increasing the maximum fee you're willing to pay. Read on about [surge pricing](#insufficient-fees-and-surge-pricing) for more details.
 
 
 ### Insufficient Fees and Surge Pricing
