@@ -82,7 +82,7 @@ The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATOR
 
 ## Remote Captive Core
 
-If you want to run a Horizon Captive Core instance separately from other Horizon instances, the architecture supports that. We provide a package that wraps a Captive Core instance in an HTTP API that Horizon can consume. This allows flexibility in your scaling and redundancy. For example, you may want to have your ingesting Horizon instances have dedicated Captive Cores, while request-serving instances all use the same Remote Captive Core. Or perhaps you want a dedicated Remote Captive Core for ingestion living on more-powerful hardware.
+As mentioned [earlier](./installing.mdx#remote-captive-core), we provide a library that wraps a Captive Core instance in an HTTP API that Horizon can consume remotely.
 
 ### Configuring Core
 We'll need to configure the Captive Core environment. The required parameters include the [above](#parameters), the [configuration stub](#configuring-captive-core), as well as a few others:

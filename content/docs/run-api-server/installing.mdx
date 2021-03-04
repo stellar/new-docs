@@ -73,8 +73,9 @@ cp $(go env GOPATH)/bin/horizon /usr/bin/stellar-horizon
 
 
 ## Installing Remote Captive Core
+If you want to run Captive Core instances separately from other Horizon instances, the architecture supports that. This allows flexibility in your scaling and redundancy. For example, you may want to have your ingesting Horizon instances have dedicated Captive Cores, while request-serving instances all use the same Remote Captive Core. Or perhaps you want a dedicated Remote Captive Core for ingestion living on more-powerful hardware.
 
-If you are [configuring a remote Captive Core](./configuring#remote-captive-core) instance, you'll need some additional binaries on that machine.
+If you are interested in this approach, you'll need some additional binaries on that machine.
 
 ### From Repositories
 After setting up repositories as described [above](#package-manager), you'll need to install the following packages on that machine:
