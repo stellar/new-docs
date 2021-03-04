@@ -77,10 +77,12 @@ HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{
 
 _(For the remainder of this guide, we'll assume this stub lives at `/etc/default/stellar-captive-core-stub.toml`.)_
 
+The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF configures on the pubnet.
+
 
 ## Remote Captive Core
 
-If you want to run a Captive Core instance independently of your Horizon instances, the architecture supports that. We provide a package that wraps a Captive Core instance in an HTTP API that Horizon can consume.
+If you want to run a Horizon Captive Core instance separately from other Horizon instances, the architecture supports that. We provide a package that wraps a Captive Core instance in an HTTP API that Horizon can consume. This allows flexibility in your scaling and redundancy. For example, you may want to have your ingesting Horizon instances have dedicated Captive Cores, while request-serving instances all use the same Remote Captive Core. Or perhaps you want a dedicated Remote Captive Core for ingestion living on more-powerful hardware.
 
 ### Configuring Core
 We'll need to configure the Captive Core environment. The required parameters include the [above](#parameters), the [configuration stub](#configuring-captive-core), as well as a few others:
