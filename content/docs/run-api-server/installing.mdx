@@ -35,7 +35,7 @@ Should you decide not to use one of our prebuilt releases, you may instead build
 - A compatible distribution of Go (Go 1.13 or later)
 - [git](https://git-scm.com/)
 
-**Note**: Though Horizon should run on Windows, *building* directly on Windows is not supported.
+**Note**: Though Horizon can run on Windows, *building* directly on Windows is not supported.
 
 First, refer to the details of [README.md](https://github.com/stellar/go/blob/master/README.md#dependencies) for installing dependencies. Then, you can build the Horizon binary pretty easily:
 
@@ -101,7 +101,7 @@ sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
 </CodeExample>
 
 
-## Conclusion
+## Completing and Testing Your Installation
 If you [built from source](#building) or downloaded a release [from GitHub](https://github.com/stellar/go/releases), you simply need to copy the native binary into a directory that is part of your PATH. Most Unix-like systems have `/usr/local/bin` in PATH by default, so unless you have a preference or know better, we recommend you copy the binary there:
 
 <CodeExample>
