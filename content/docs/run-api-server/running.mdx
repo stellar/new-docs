@@ -41,13 +41,10 @@ The log line above announces that Horizon is ready to serve client requests. Nex
 
 
 ## Ingesting Transactions
-
-Horizon provides most of its utility through ingested data.
+Horizon provides most of its utility through ingested data, and your Horizon server can be configured to listen for and ingest transaction results from the Stellar network. However, this option is disabled by default.
 
 ### Ingesting Live Data 
-By default, your Horizon server is configured to listen for and ingest *live* transaction results from its managed Captive Core instance.
-
-To *disable* ingestion, you must either pass `--ingest=false` on the command line or set the `INGEST` environment variable to "false". Note that you can have multiple ingesting machines in your cluster.
+To **enable** ingestion, you must either pass `--ingest=true` on the command line or set the `INGEST` environment variable to "true". Note that you can have multiple ingesting machines in your cluster.
 
 ### Ingesting Historical Data
 To ingest *historical* data from Stellar Core, you need to run `horizon db reingest range <start> <end>`. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive(s), for example, you might want to ingest the network's entire history. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your `/metrics` endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
