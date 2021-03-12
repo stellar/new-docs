@@ -43,6 +43,9 @@ The log line above announces that Horizon is ready to serve client requests. Nex
 ## Ingesting Transactions
 Horizon provides most of its utility through ingested data, and your Horizon server can be configured to listen for and ingest transaction results from the Stellar network. However, this option is disabled by default.
 
+**We highly recommend having more than one ingesting instance**, as this makes it easier to avoid downtime during upgrades and adds resilience to your infrastructure, ensuring you always have the latest network data.
+
+
 ### Ingesting Live Data 
 To **enable** ingestion, you must either pass `--ingest=true` on the command line or set the `INGEST` environment variable to "true". Note that you can have multiple ingesting machines in your cluster.
 
