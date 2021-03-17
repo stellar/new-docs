@@ -77,7 +77,7 @@ HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{
 
 _(For the remainder of this guide, we'll assume this stub lives at `/etc/default/stellar-captive-core-stub.toml`.)_
 
-The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF configures on the pubnet.
+You can [install](./installing.mdx#package-manager) the `stellar-captive-core` package to simplify configuration here, but the minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF configures on the pubnet.
 
 
 ## Remote Captive Core

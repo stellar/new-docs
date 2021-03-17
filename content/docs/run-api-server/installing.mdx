@@ -23,7 +23,7 @@ sudo apt update && sudo apt install stellar-core stellar-horizon
 
 </CodeExample>
 
-If you want to do [ingestion](./running.mdx#ingesting-transactions) on this machine, you should also install the `stellar-captive-core` package.  [This page](https://github.com/stellar/packages/blob/master/docs/installing-individual-packages.md#installing-individual-packages) outlines the various commands that these packages make available.
+[This page](https://github.com/stellar/packages/blob/master/docs/installing-individual-packages.md#installing-individual-packages) outlines the various commands that these packages make available.
 
 ### Building
 Should you decide not to use one of our prebuilt releases, you may instead build Horizon from source. To do so, you need to prepare a developer environment, including:
@@ -90,6 +90,7 @@ sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
 
 
 ## Completing and Testing Your Installation
+
 If you [built from source](#building) or downloaded a release [from GitHub](https://github.com/stellar/go/releases), make sure to copy the native binary into a directory that is part of your PATH. Most Unix-like systems have `/usr/local/bin` in PATH by default, so unless you have a preference or know better, we recommend you copy the binary there:
 
 <CodeExample>
