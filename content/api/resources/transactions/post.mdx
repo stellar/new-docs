@@ -8,7 +8,7 @@ import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
-This endpoint actually submits a transaction to the Stellar network. It only takes a single, required parameter (the signed transaction). Refer to the [Transactions](../docs/glossary/transactions.mdx) page for details on how to form a proper transaction.
+This endpoint actually submits a transaction to the Stellar network. It only takes a single, required parameter: the signed transaction. Refer to the [Transactions](../docs/glossary/transactions.mdx) page for details on how to craft a proper one.
 
 <Endpoint>
 
@@ -29,7 +29,7 @@ This endpoint actually submits a transaction to the Stellar network. It only tak
 
 </AttributeTable>
 
-<CodeExample title="Example Request">
+<CodeExample title="Example Submission">
 
 ```curl
 curl -X POST -F 'tx=AAAAAgAAAACQcEK2yfQA9CHrX+2UMkRIb/1wzltKqHpbdIcJbp+b/QAAAGQAAiEYAAAAAQAAAAEAAAAAAAAAAAAAAABgXP3QAAAAAQAAABBUZXN0IFRyYW5zYWN0aW9uAAAAAQAAAAAAAAABAAAAAJBwQrbJ9AD0Ietf7ZQyREhv/XDOW0qoelt0hwlun5v9AAAAAAAAAAAF9eEAAAAAAAAAAAFun5v9AAAAQKdJnG8QRiv9xGp1Oq7ACv/xR2BnNqjfUHrGNua7m4tWbrun3+GmAj6ca3xz+4ZppWRTbvTUcCxvpbHERZ85QgY=' 'https://horizon-testnet.stellar.org/transactions'
