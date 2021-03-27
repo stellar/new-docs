@@ -21,8 +21,6 @@ This doc works best in conjunction with concrete config examples, so as you read
 
 - If you want to connect to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg). It includes a properly crafted quorum set with all the current [Tier 1 validators](./tier-1-orgs.mdx), which is a good place to start for most configurations. This node is set up to both [validate](#validating) and write history to a [public archive](./publishing-history-archives.mdx), but you can disable either feature to adjust this config so it's a little lighter.
 
-- Here's a config for a [pubnet watcher](https://github.com/stellar/packages/blob/master/docs/stellar-core_pubnet_watcher.cfg). It's a little out of date — it still uses the old method for quorum set generation — but we'll fix it soon.
-
 ## Database
 
 Stellar Core stores two copies of the ledger: one in a SQL database and one in XDR files on local disk called [buckets](#buckets). The database is consulted during consensus, and modified atomically when a transaction set is applied to the ledger. It's random access, fine-grained, and fast.
@@ -70,7 +68,7 @@ If you run more than one node, set the `HOME_DOMAIN` common to those nodes using
 
 ## Choosing Your Quorum Set
 
-No matter what kind of node you run — Watcher, Basic Validator, Full Validator, or Archiver — you need to select a quorum set, which consists of validators (grouped by organization) that your node checks with to determine whether to apply a transaction set to a ledger. If you want to know more about how qorum sets work, check this article about [how Stellar approaches quorums](https://www.stellar.org/developers-blog/why-quorums-matter-and-how-stellar-approaches-them). If you want to see what a quorum set consisting of all the Tier 1 validators looks like — at tried and true setup — check out the [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg)
+No matter what kind of node you run — Basic Validator, Full Validator, or Archiver — you need to select a quorum set, which consists of validators (grouped by organization) that your node checks with to determine whether to apply a transaction set to a ledger. If you want to know more about how qorum sets work, check this article about [how Stellar approaches quorums](https://www.stellar.org/developers-blog/why-quorums-matter-and-how-stellar-approaches-them). If you want to see what a quorum set consisting of all the Tier 1 validators looks like — at tried and true setup — check out the [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg)
 
 A good quorum set:
 
