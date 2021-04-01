@@ -35,7 +35,7 @@ We'll call the component `stellar-loader`, and deselect both test files leaving 
 <CodeExample>
 
 ```tsx
-import Combinatorics from "js-combinatorics";
+import { BaseN } from "js-combinatorics";
 import { Component, h, State, Prop } from "@stencil/core";
 import { isEqual as loIsEqual, sample as loSample } from "lodash-es";
 
@@ -61,7 +61,7 @@ export class Loader {
   }
 
   generateChances(int: number) {
-    const baseN = Combinatorics.baseN([0, 1], int);
+    const baseN = new BaseN([0, 1], int);
 
     this.chances = baseN.toArray();
     this.getChance();
