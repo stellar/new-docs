@@ -3,69 +3,178 @@ title: Set Up a Custodial Account
 order: 45
 ---
 
+import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
+
 This guide describes how to add tokens from the Stellar network to your custodial service. First, we walk through adding Stellar native asset, lumens. Following that, we describe how to add other tokens. This example uses Node.js and the [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk), but it should be easy to adapt to other languages.
 
 # Account Setup
-### Pooled account 
+### Pooled account
 Most custodial services, including crypto exchanges, choose to use a single pooled Stellar account to handle transactions on behalf of their users instead of creating a new Stellar account for each customer. Generally, they keep track of their customers in an internal database and use the memo field of a Stellar transaction to map an incoming payment to the corresponding internal customer ID.
 
-The benefits of using a pooled account are low cost, no base reserves needed for each account; and low complexity, you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual balances and payments. You can no longer rely on Stellar ledger to accumulate value and manage transactions on a customer-by-customer basis.
+The benefits of using a pooled account are low cost, no base reserves needed for each account; and low complexity, you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual balances and payments. You can no longer rely on Stellar ledger to accumulate value, handle errors and atomicity, and manage transactions on a customer-by-customer basis.
 
 
 # Code Framework
-Use this code framework to integrate Stellar into your custodial service. For this guide, we use placeholder functions for reading/writing to your internal customer database. Each organization will architect their infrastructure differently, so we abstract away those details. The following sections describe each step:
-CODE
-  
-# Integration points for listing XLM
-### Setting the memo required flag on your account
+Use this code framework to integrate Stellar into your custodial service. For this guide, we use placeholder functions for reading/writing to your internal customer database. Each organization will architect their infrastructure differently, so we abstract away those details. Here are the functions we'll assume exist (along with their expected behavior):
 
-Before we get into the main integration points for adding XLM, make sure to set the memo required flag on your pooled account. This step is necessary to prevent customers from forgetting to attach the memo, which can result in additional support needed from the custodial services, and a less desirable user experience for the new customers. This [article](https://www.stellar.org/developers-blog/fixing-memo-less-payments?locale=en) explains how to set it up.
+<CodeExample>
+
+```js
+
+/**
+ * Credits a customer (`to`) with `amount` of a particular `asset`.
+ *
+ * @param  {string}   to     A string representing the customer that's part of
+ *     this pooled account. This could be a key, a database index, an object,
+ *     or some other abstraction. The main point is that this is *NOT* a
+ *     Stellar account.
+ *
+ *     This value either directly comes from or somehow resolves from the
+ *     transaction memo field on the payment.
+ *
+ * @param  {string}   from   The public key of the Stellar account that
+ *                           submitted this deposit.
+ * @param  {Asset}    asset  The asset deposited into the customer's account.
+ * @param  {string}   amount The quantity (as a string, to conform to the way
+ *     payments are submitted on the Stellar network) of `asset` being
+ *     credited.
+ **/
+function depositIntoPool(to, from, asset, amount) {}
+
+/**
+ * Withdraws an `amount` of `asset` from a customer (`from`).
+ *
+ * For simplicity, we assume that this function always works. However, you
+ * should obviously be managing balances appropriately and ensuring that
+ * a particular customer can in fact fulfill a requested withdrawal.
+ *
+ * Note that this should probably be executed *after* the requisite transaction
+ * (see `createPayment()`) succeeds to ensure accounts aren't debited
+ * unnecessarily.
+ *
+ * @param  {string} from    As in `depositIntoPool()`, this is some
+ *     representation of a customer that's part of a pooled account but not
+ *     on the Stellar network.
+ *
+ * @param  {Asset}  asset   The asset being credited from the customer.
+ * @param  {string} amount  The quantity (again as a string to conform to
+ *     `Operation.payment`) of `asset` to withdraw.
+ **/
+function withdrawFromPool(from, asset, amount) {}
+
+/**
+ * Creates a PaymentOp corresponding to a withdrawal.
+ *
+ * This is just a convenience method for submitting payments on behalf of
+ * customers in a transaction. You may want to just do one operation per
+ * transaction (for example to include the source customer's ID in the memo),
+ * or you can batch many operations together; it's up to you.
+ *
+ * @param  {string} to      The account address of the recipient ("G...")
+ * @param  {Asset}  asset   The asset to credit from the source customer
+ * @param  {string} amount  The amount of `asset` to credit
+ *
+ * @return {xdr.paymentOp}
+ */
+function createPayment(to, asset, amount) {
+  return sdk.Operation.payment({
+    source: CUSTODIAL_KEY.publicKey(),
+    destination: to,
+    asset: asset,
+    amount: amount,
+  });
+}
+```
+
+</CodeExample>
+
+
+# Integration points for listing XLM
+
+### Setting the memo required flag on your account
+Before we get into the main integration points for adding XLM, make sure to set the memo required flag on your pooled account. This step is necessary to prevent customers from forgetting to attach the memo, which can result in additional support needed from the custodial services and a less desirable user experience for the new customers. This [article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
 
 ### Listening for incoming payments from the Stellar network
-When someone wants to send lumens to one of your customers, instruct them to make an XLM payment to your pooled account address with the customer ID in the memo field of the transaction. Assuming you have set the memo required flag on your account, wallets should enforce it and prevent customers from forgetting to attach a memo to an incoming payment. However, to be on the safe side, you may want to make it incredibly clear to senders that their payment will end up in limbo if they fail to attach one. Memo field details can be found [here](https://developers.stellar.org/docs/glossary/transactions/#memo), an example of a payment with a memo field set follows:
+First, you need to listen for payments to the pooled account and credit any user that receives XLM there. For every payment received by the pooled account:
 
-CODE
+  * check the memo field to determine which user should receive the payment, and
+  * credit the user’s account with the amount of XLM they received.
 
-You then listen for payments to the pooled account and credit any user that receives XLM there. Here’s code that listens for these payments:
+This is the role of `depositIntoPool`, described above. You pass this function as the `onmessage` option when you [stream payments](https://developers.stellar.org/docs/tutorials/follow-received-payments/):
 
-CODE
+<CodeExample>
 
-For every payment received by the pooled account:
-* check the memo field to determine which user should receive the payment.
-* credit the user’s account in the DB with the number of XLM they received.
+```js
 
-So, you pass this function as the `onmessage` option when you stream payments:
+  const stream = server.payments()
+    .forAccount(custodialAcc)
+    .join("transactions")
+    .stream({
+      onmessage: (payment) => {
+        const from = payment.source_account;
+        const customerId = payment.memo;
+        const amount = payment.amount;
 
-CODE
+        let asset = sdk.Asset.native();
+        if (payment.asset_issuer) {
+          asset = new sdk.Asset(payment.asset_code, payment.asset_issuer);
+        }
+
+        depositIntoPool(from, customerId, asset, amount);
+      }
+    });
+```
+
+</CodeExample>
+
+When someone **outside** of your customer base wants to send lumens to one of your customers, instruct them to make an XLM payment to your pooled account address with the customer ID in the memo field of the transaction. Assuming you have set the memo required flag on your account (see [above](#setting-the-memo-required-flag-on-your-account)), wallets should enforce it and prevent users from forgetting to attach a memo to an incoming payment. However, to be on the safe side, you may want to make it incredibly clear to senders that their payment will end up in limbo if they fail to attach a valid one. You can learn more about the transaction memo field [here](https://developers.stellar.org/docs/glossary/transactions/#memo).
+
+When someone **inside** of your customer base wants to send lumens to *another* one of your customers, you have two choices: you can send a memo'd payment exactly as above--this lets you maintain an audit trail, ensures the balance exists in the custodial account, etc.--or you can do the exchange "off-chain", i.e. by exclusively adjusting balances within your database.
 
 ### Submitting outgoing payments to the Stellar network
-When one of your users wants to make an outgoing lumen payment, you must generate a Stellar transaction to send XLM. See [building transactions](https://www.stellar.org/developers/js-stellar-base/reference/building-transactions.html) or the [payments tutorial](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment) for more information.
+When one of your customers wants to make an outgoing lumen payment, you must generate a Stellar transaction to send XLM. See [building transactions](https://stellar.github.io/js-stellar-sdk/TransactionBuilder.html) or the [payments tutorial](https://developers.stellar.org/docs/tutorials/send-and-receive-payments/#send-a-payment) for more information.
 
-The function `handleRequestWithdrawal` will queue up a transaction in the exchange’s `StellarTransactions` table whenever a withdrawal is requested.
+The aforementioned function `withdrawFromPool` will prepare the corresponding operation whenever a withdrawal is requested. You can use these to queue up transactions (for periodic or batched submission) or submit them immediately. It's up to you how to architect this portion, we adopt the (simpler) latter approach here:
 
-CODE
+<CodeExample>
 
-Then, you should run `submitPendingTransactions`, which will check `StellarTransactions` for pending transactions and submit them.
+```js
+function onPooledPayment(customerId, dest, amount, asset) {
+  let tx = new sdk.TransactionBuilder(source, {
+    fee: 100,
+    networkPassphrase: sdk.Networks.TESTNET,
+    memo: customerId,
+  })
+    .addOperation(createPayment(dest, amount, asset))
+    .setTimeout(30)
+    .build();
 
-CODE
+  tx.sign(CUSTODIAL_KEY);
+  return server.submitTransaction(tx).catch(onError).then((resp) => {
+    return withdrawFromPool(customerId, asset, amount);
+  });
+}
+```
 
-# Listing Other Stellar Tokens
-If you’d like to accept other non-lumen tokens, follow these instructions.
+</CodeExample>
 
-First, open a [trustline](https://developers.stellar.org/docs/start/list-of-operations/#change-trust) with the issuing account of the token you’d like to list – without this, you cannot begin to accept the token.
 
-CODE
+# Listing Other Stellar Assets
+Accepting other (non-native/lumen) assets into your custodial account is not very difficult from an implementation perspective. In fact, all of the code above is asset-agnostic. There are a few prerequisities, however:
 
-If the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](https://developers.stellar.org/docs/issuing-assets/control-asset-access/).
+First, you must open a [trustline](https://developers.stellar.org/docs/start/list-of-operations/#change-trust) with the issuing account of the token you’d like to list – without this, you cannot begin to accept the token. The [Issue an Asset](https://developers.stellar.org/docs/issuing-assets/how-to-issue-an-asset/) tutorial covers the code for this one-time process.
 
-Then, make a few changes to the example code above:
+Next, if the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](https://developers.stellar.org/docs/issuing-assets/control-asset-access/).
 
-* In the `handlePaymentResponse` function, we dealt with the case of incoming non-lumen assets. Since we are now accepting other tokens, you will need to change this condition; 
+<Alert>
 
-*Note*: the user cannot send a given token to your pooled account unless your pooled account has opted in to that token by opening a trustline to its issuing account.
-* In the `withdraw` function, when we add an operation to the transaction, we must specify the details of the token we are sending. For example:
+*Note*: Users cannot send a given token to your pooled account unless it has opted into that token by opening a trustline to the token's issuing account.
 
-CODE
+</Alert>
+
+Then, you'll need to adapt your balance sheet (e.g. the internals of `depositIntoPool()` and `withdrawFromPool()`, [above](#code-framework) to track balances per-asset for each customer. Since this is backend-specific, we won't provide example code here.
+
 
 * In the `withdraw` function your customer must have an open trustline with the issuing account of the token they are withdrawing. So you must take the following into consideration:
    - Confirm the user receiving the token has a trustline
