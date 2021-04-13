@@ -9,7 +9,7 @@ import { Alert } from "components/Alert";
 This guide describes how to add tokens from the Stellar network to your custodial service. First, we walk through adding Stellar native asset, lumens. Following that, we describe how to add other tokens. This example uses Node.js and the [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk), but it should be easy to adapt to other languages.
 
 
-# Account Setup
+## Account Setup
 
 ### Pooled account
 Most custodial services, including crypto exchanges, choose to use a single pooled Stellar account to handle transactions on behalf of their users instead of creating a new Stellar account for each customer. Generally, they keep track of their customers in an internal database and use the memo field of a Stellar transaction to map an incoming payment to the corresponding internal customer ID.
@@ -17,7 +17,7 @@ Most custodial services, including crypto exchanges, choose to use a single pool
 The benefits of using a pooled account are low cost, no base reserves needed for each account; and low complexity, you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual balances and payments. You can no longer rely on Stellar ledger to accumulate value, handle errors and atomicity, and manage transactions on a customer-by-customer basis.
 
 
-# Code Framework
+## Code Framework
 Use this code framework to integrate Stellar into your custodial service. For this guide, we use placeholder functions for reading/writing to your internal customer database. Each organization will architect their infrastructure differently, so we abstract away those details. Here are the functions we'll assume exist (along with their expected behavior):
 
 <CodeExample title="API Assumptions">
@@ -95,7 +95,7 @@ function createPayment(to, asset, amount) {
 </CodeExample>
 
 
-# Integration points for listing XLM
+## Integration points for listing XLM
 
 ### Setting the memo required flag on your account
 Before we get into the main integration points for adding XLM, make sure to set the memo required flag on your pooled account. This step is necessary to prevent customers from forgetting to attach the memo, which can result in additional support needed from the custodial services and a less desirable user experience for the new customers. This [article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
@@ -167,7 +167,7 @@ function onPooledPayment(customerId, dest, amount, asset) {
 This code would be called whenever one of your customers submitted a payment through your platform.
 
 
-# Listing Other Stellar Assets
+## Listing Other Stellar Assets
 Accepting other (non-native/lumen) assets into your custodial account is not very difficult from an implementation perspective. In fact, all of the code above is asset-agnostic. There are a few prerequisities, however:
 
 First, you must open a [trustline](https://developers.stellar.org/docs/start/list-of-operations/#change-trust) with the issuing account of the token you’d like to list – without this, you cannot begin to accept the token. The [Issue an Asset](https://developers.stellar.org/docs/issuing-assets/how-to-issue-an-asset/) tutorial covers the code for this one-time process.
