@@ -175,9 +175,4 @@ Next, if the token issuer has `authorization_required` set to true, you will nee
 
 Then, you'll need to adapt your balance sheet (e.g. the internals of `depositIntoPool()` and `withdrawFromPool()`, [above](#code-framework) to track balances per-asset for each customer. Since this is backend-specific, we won't provide example code here.
 
-
-* In the `withdraw` function your customer must have an open trustline with the issuing account of the token they are withdrawing. So you must take the following into consideration:
-   - Confirm the user receiving the token has a trustline
-   - Parse the `Horizon error` you get if you try to send a token to an account that does not have a trustline.
-
-For more information about tokens check out the [general asset guide](https://www.stellar.org/developers/guides/concepts/assets.html) and the [issuing asset guide](https://developers.stellar.org/docs/issuing-assets/).
+For more information about non-native assets, check out the [general asset guide](https://www.stellar.org/developers/guides/concepts/assets.html) and the [issuing asset guide](https://developers.stellar.org/docs/issuing-assets/).
