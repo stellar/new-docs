@@ -9,15 +9,15 @@ When you issue an asset on Stellar, anyone can hold it by default. In general, t
 
 However, if you need to control access to an asset to comply with regulations (or for any other reason), you can easily do so by enabling flags on your issuing account.
 
-Flags are set and cleared at the _account level_ using a [`set_options`](../start/list-of-operations.mdx#set-options) operation. They can be set at any time in the life cycle of an asset, not just when you issue it:
+Flags are created on the _account level_ using a [`set_options`](../start/list-of-operations.mdx#set-options) operation. They can be set at any time in the life cycle of an asset, not just when you issue it:
 
 ## Authorization Required
 
 When `AUTHORIZATION REQUIRED` is enabled, an issuer must approve an account before that account can hold its asset. This setting allows issuers to vet potential token holders using whatever means they see fit, and to approve trustlines if and only if the holders pass muster. 
 
-To allow access, the user creates a trustline, and the issuer approves it by changing the `AUTHORIZE` flag with the [`set_trust_line_options`](../start/list-of-operations.mdx#set-trustline-options) operation.
+To allow access, the user creates a trustline, and the issuer approves it by changing the `AUTHORIZE` flag with the [`allow_trust`](../start/list-of-operations.mdx#allow-trust) operation.
 
-There are two levels of authorization an asset issuer can grant using the `set_trust_line_options` operation:
+There are two levels of authorization an asset issuer can grant using the `allow_trust` operation:
 
 * `AUTHORIZED`: This flag signifies complete authorization allowing an account to transact freely with the asset to make and receive payments and place orders.
 * `AUTHORIZED_TO_MAINTAIN_LIABILITIES`: This flag denotes limited authorization that allows an account to maintain current orders, but not to otherwise transact with the asset.   
@@ -29,19 +29,13 @@ When `AUTHORIZATION_REVOCABLE` is enabled, an issuer can revoke an existing trus
 
 `AUTHORIZATION_REVOCABLE` also allows an issuer to reduce authorization from complete to limited, which prevents the account from transferring or trading the asset, but does not cancel the account's open orders for the asset.  This setting is useful for issuers of regulated assets who need to authorize transactions on a case-by-case basis to ensure each conforms to certain requirements.   
 
-All changes to asset authorization are performed with the [`set_trust_line_options`](../start/list-of-operations.mdx#set-trustline-options) operation.
+All changes to asset authorization are performed with the [`allow_trust`](../start/list-of-operations.mdx#allow-trust) operation.
 
-To use this setting, `AUTHORIZATION_REQUIRED` must also be enabled.
+To use this setting, `AUTHORIZATION REQUIRED` must also be enabled.
 
 ## Authorization Immutable
 
-With this setting, neither of the other authorization flags can be set, and the issuing account can’t be merged. You set this flag to signal to potential token holders that your issuing account and its assets will persist on ledger in an open and accessible state.
-
-## Authorization Clawback Enabled
-
-When this setting is enabled alongside [Authorization Revocable](#authorization-revocable), all trustlines for any assets issued by this account will have clawbacks enabled. This allows you to burn assets that you have issued that others are holding. Note, though, that this setting will apply to *future* trustlines: you cannot retroactively enable clawback on an asset.
-
-You can refer to [Clawbacks](../glossary/clawbacks.mdx) for more on this.
+With this setting, neither of the other authorization flags can be set, and the issuing account can’t be merged. You set this flag to signal to potential token holders that your issuing account and its assets will persist on ledger in an open and accessible state. 
 
 ## Example flow
 To get a sense of how authorization flags work, let's look at how an issuer of a regulated asset might use the `AUTHORIZED_TO_MAINTAIN_LIABILITIES` flag. 
@@ -50,12 +44,12 @@ If the issuer wants to approve transactions on a case-by-base basis while allowi
 
 To intitiate a new operation, the holding account requests that the issuer approve and sign a transaction. Once the issuer inspects the operation and decides to approve it, they sandwich it between a set of operations, first granting authorization, then reducing it.  
 
-Here's a payment from A to B sandwiched between [`allow_trust`](../start/list-of-operations.mdx#set-trustline-options) operations:
+Here's a payment from A to B sandwiched between [`allow_trust`](../start/list-of-operations.mdx#allow-trust) operations:
 
-- Operation 1: Issuer uses `SetTrustLineOptions` to fully authorize account A, asset X
-- Operation 2: Issuer uses `SetTrustLineOptions` to fully authorize account B, asset X
+- Operation 1: Issuer uses `AllowTrust` to fully authorize account A, asset X
+- Operation 2: Issuer uses `AllowTrust` to fully authorize account B, asset X
 - Operation 3: Payment from A to B
-- Operation 4: Issuer uses `SetTrustLineOptions` to set account B, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
+- Operation 4: Issuer uses `AllowTrust` to set account B, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
 - Operation 5: Issuer uses `AllowTrust` to set account A, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
 
 The authorization sandwich allows the issuer to inspect the specifc payment, and to grant authorization for it and it alone.  Since operations bundled in a transaction are simultaneous, A and B are only authorized for the specific, pre-approved payment operation.  Complete authorization does not extend beyond the specific transaction.
