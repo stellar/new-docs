@@ -172,15 +172,15 @@ This code would be called whenever one of your customers submitted a payment thr
 
 
 ## Listing Other Stellar Assets
-Accepting other (non-native/lumen) assets into your custodial account is achieved similarly to how it's done for native assets. In fact, all of the code above is asset-agnostic. There are a few prerequisities, however:
+All of the code above is asset-agnostic, so accepting other (non-native/lumen) assets into your custodial account can be achieved after fulfilling a few prerequisities.
 
-First, you must open a [trustline](https://developers.stellar.org/docs/start/list-of-operations/#change-trust) with the issuing account of the token you’d like to list – without this, you cannot begin to accept the token. The [Issue an Asset](https://developers.stellar.org/docs/issuing-assets/how-to-issue-an-asset/) tutorial covers the code for this one-time process.
+First, you must [open a trustline](https://developers.stellar.org/docs/start/list-of-operations/#change-trust) with the issuing account of the token you’d like to list – without this, you cannot begin accepting the token. The [Issue an Asset](https://developers.stellar.org/docs/issuing-assets/how-to-issue-an-asset/) tutorial covers the code for this one-time process.
 
 Next, if the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](https://developers.stellar.org/docs/issuing-assets/control-asset-access/).
 
 <Alert>
 
-*Note*: Users cannot send a given token to your pooled account unless it has opted into that token by opening a trustline to the token's issuing account.
+*Note*: Users cannot send a non-native asset to your pooled account (nor receive it from your customers) unless they have opted into that asset by opening a trustline to its issuer.
 
 </Alert>
 
