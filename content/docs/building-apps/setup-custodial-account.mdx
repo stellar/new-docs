@@ -14,7 +14,7 @@ This guide describes how to add assets from the Stellar network to your custodia
 ### Pooled account
 Most custodial services, including cryptocurrency exchanges, choose to use a single pooled Stellar account to handle transactions on behalf of their users instead of creating a new Stellar account for each customer. Generally, they keep track of their customers in a separate, internal database and use the memo field of a Stellar transaction to map an incoming payment to the corresponding internal customer.
 
-The benefit of using a pooled account is *lower costs* – no base reserves needed for each account – and *lower complexity* – you only need to manage one account key. However, with a pooled account it is your responsibility to manage all individual customer balances and payments. You can no longer rely on the Stellar ledger to accumulate value, handle errors and atomicity, and manage transactions on an account-by-account basis.
+The benefit of using a pooled account are *lower costs* – no base reserves are needed for each account – and *lower complexity* – you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual customer balances and payments. You can no longer rely on the Stellar ledger to accumulate value, handle errors and atomicity, or manage transactions on an account-by-account basis.
 
 
 ## Code Framework
