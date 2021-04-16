@@ -1,0 +1,119 @@
+---
+title: Clawbacks
+order:
+---
+
+
+Protocol 17 introduces operations that allow asset issuers to maintain tighter control over how their asset is distributed to the world. Specifically, it gives them power to **burn their asset** after a [payment][ex1] or [claimable balance][ex2] to another account, effectively removing it from the recipient's balance sheet:
+
+> The amount of the asset clawed back is burned and is not sent to any other address. The issuer may reissue the asset to the same account or to another account if the intent of the clawback is to move the asset to another account.
+
+This allows for things like regulatory enforcement, safety and control over certain assets, etc. You can refer to [CAP-35](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0035.md) for more motivations or technical details behind these new features.
+
+
+## Relevant operations
+Configuring and performing a clawback involves several discrete steps:
+
+ - setting up your account to enable clawbacks (via [SetOptions](https://developers.stellar.org/docs/start/list-of-operations/#set-options)),
+ - establishing trustlines for a particular asset (via [ChangeTrust](https://developers.stellar.org/docs/start/list-of-operations/#change-trust)),
+ - making a payment with a particular asset (via [Payment](https://developers.stellar.org/docs/start/list-of-operations/#payment)), and finally
+ - clawing back some or all of the asset (via [Clawback](https://developers.stellar.org/docs/start/list-of-operations/#clawback)).
+
+### Setting Account Options
+In order to enable clawback, an account must first specify the `AUTH_CLAWBACK_ENABLED` flag on its account. This will cause *every* subsequent trustline established from this account to have its corresponding `TRUSTLINE_CLAWBACK_ENABLED_FLAG` set automatically.
+
+Note an important corequirement described in [the CAP](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0035.md#semantics):
+
+> If an issuer wishes to set `AUTH_CLAWBACK_ENABLED_FLAG`, it must also have `AUTH_REVOCABLE_FLAG` set.
+
+If you'd like to control which specific trustlines or assets have clawback enabled, you need to clear the flag on the trustline via [SetTrustLineOptions](https://developers.stellar.org/docs/start/list-of-operations/#set-trustline-options). Note that you can **only** clear the flag, not set it, in order to give asset holders perpetual confidence about the state of their holdings.
+
+### Clawback
+Once an account holds a particular asset for which clawbacks have been enabled, you can claw it back (provided you are the issuer, obviously). You need to provide the asset, a quantity, and the account from which you're clawing the asset back.
+
+### Clawback Claimable Balance
+[Claimable balances](./#claimable-balance.mdx), introduced in [Protocol 15](https://www.stellar.org/blog/protocol-14-improvements), provide another way for accounts to acquire assets. They are a special, two-part payment, and thus need to be clawed back differently. All you need to do is provide the claimable balance ID.
+
+
+## Examples
+Here we'll cover the two main approaches to clawing back an asset. Account A will issue an asset and send some to Account B, who will then make it availble to Account C. (We'll add this level of indirection to demonstrate that clawbacks don't rely on direct relationships between accounts.) Finally, A will claw back half of that. 
+
+In one scenario, Account B will pay Account C directly. In the other, Account B will give Account C the asset via a claimable balance.
+
+### Preamble: Issuing a Clawback-able Asset
+First, we'll set up an account to enable clawbacks and issue an asset accordingly. Note that *properly* issuing an asset is more involved (refer to the [tutorial](../issuing-assets/how-to-issue-an-asset.mdx) for more on that); we use a simpler method here for brevity.
+
+<CodeExample>
+
+```js
+const sdk = require("stellar-sdk");
+
+let server = new sdk.Server("https://horizon-testnet.stellar.org");
+
+const A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
+const B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP");
+const C = sdk.Keypair.fromPublicKey("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
+
+
+function preamble() {
+
+  // NOTE: Proper error checks are omitted for brevity; always validate things!
+  //
+  // Refer to https://developers.stellar.org/docs/tutorials/handling-errors/ 
+  // for error handling strategies.
+
+  return server
+    .loadAccount(A.publicKey())
+    .then(function (issuer) {
+      // 
+      // 1. Enable AuthClawbackEnabledFlag on the account.
+      // 
+      var tx = new StellarSdk.TransactionBuilder(issuer, {
+        fee: 100,
+        networkPassphrase: StellarSdk.Networks.TESTNET,
+      })
+        .addOperation(
+          sdk.Operation.setOptions({
+            setFlags: StellarSdk.AuthClawbackEnabledFlag | StellarSdk.AuthRevocableFlag,
+          }),
+        )
+        .setTimeout(130)
+        .build();
+      tx.sign(A);
+      return server.submitTransaction(tx);
+    })
+    .catch(handleTransactionError)
+    .loadAccount(B.publicKey())
+    .then(function (recipient) {
+      //
+      // 2. Establish a trustline from B to issue A's asset.
+      //
+      var tx = new StellarSdk.TransactionBuilder(recipient, {
+        fee: 100,
+        networkPassphrase: StellarSdk.Networks.TESTNET,
+      })
+        .addOperation(
+          sdk.Operation.changeTrust({
+            asset: asset,
+            limit: "10000",
+          }),
+        )
+        .setTimeout(130)
+        .build();
+
+      tx.sign(B);
+      return server.submitTransaction(tx);
+    });
+}
+```
+
+</CodeExample>
+
+
+
+### Example: Payments
+### Example: Claimable Balances
+
+
+[ex1]: #example-payments
+[ex2]: #example-claimable-balances
