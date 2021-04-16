@@ -93,7 +93,7 @@ function createPayment(to, asset, amount) {
 ## Integration points for listing XLM
 
 ### Setting the memo required flag on your account
-Before we get into the main integration points for adding XLM, make sure to configure your pooled account to require memos. This step is necessary to prevent users from forgetting to attach a memo, which can result in additional support needed from the custodial services and a less desirable user experience for new customers. [This article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
+Before we get into the main integration points for adding XLM support to your product or service, make sure to configure your pooled account to require memos. This step is necessary to prevent users from forgetting to attach a memo, which can increase customer support requests and a lead to a less desirable user experience for new customers. [This article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
 
 ### Listening for incoming payments from the Stellar network
 First, you need to listen for payments to the pooled account and debit any user that receives XLM there. For every payment received by the pooled account:
