@@ -35,9 +35,8 @@ custodialAcc = await server.loadAccount(CUSTODIAL_KEY.publicKey());
  * @param  {string}   to     A string representing the customer that's part of
  *     this pooled account. This could be a key, a database index, an object,
  *     or some other abstraction. The main point is that this is *NOT* a
- *     Stellar account.
- *       This value either directly comes from or somehow resolves from the
- *     transaction memo field on the payment.
+ *     Stellar account. This value either directly comes from or somehow
+ *     resolves from the transaction memo field on the payment.
  * @param  {Asset}    asset  The asset deposited into the customer's account.
  * @param  {string}   amount The quantity (as a string, conforming to the way
  *     payments are submitted on the Stellar network) of `asset` being
@@ -59,10 +58,9 @@ function depositIntoPool(from, to, asset, amount) {}
  * @param  {string} from    As in `depositIntoPool()`, this is some
  *     representation of a customer that's part of a pooled account but not
  *     on the Stellar network.
- *
  * @param  {Asset}  asset   The asset being credited from the customer.
  * @param  {string} amount  The quantity (again as a string to conform to
- *     `Operation.payment`) of `asset` to withdraw.
+ *     payment operations) of `asset` to withdraw.
  **/
 function withdrawFromPool(from, asset, amount) {}
 
