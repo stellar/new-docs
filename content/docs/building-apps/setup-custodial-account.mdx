@@ -99,7 +99,7 @@ Before we get into the main integration points for adding XLM support to your pr
 First, you need to listen for payments to the pooled account and credit any user that receives XLM there. For every payment received by the pooled account:
 
   * check the memo field to determine which user should receive the payment, and
-  * debit the user’s account with the amount of XLM they received.
+  * credit the user’s account with the amount of XLM they received.
 
 This is the role of `depositIntoPool`, described above. You pass this function as the `onmessage` option when you [stream payments](https://developers.stellar.org/docs/tutorials/follow-received-payments/):
 
