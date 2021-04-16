@@ -28,24 +28,22 @@ CUSTODIAL_KEY = StellarSdk.Keypair.fromSecret("...");
 custodialAcc = await server.loadAccount(CUSTODIAL_KEY.publicKey());
 
 /**
- * Credits a customer (`to`) with `amount` of a particular `asset`.
+ * Debits a customer (`to`) with `amount` of a particular `asset`.
  *
+ * @param  {string}   from   The public key of the Stellar account that
+ *     submitted this deposit.
  * @param  {string}   to     A string representing the customer that's part of
  *     this pooled account. This could be a key, a database index, an object,
  *     or some other abstraction. The main point is that this is *NOT* a
  *     Stellar account.
- *
- *     This value either directly comes from or somehow resolves from the
+ *       This value either directly comes from or somehow resolves from the
  *     transaction memo field on the payment.
- *
- * @param  {string}   from   The public key of the Stellar account that
- *                           submitted this deposit.
  * @param  {Asset}    asset  The asset deposited into the customer's account.
- * @param  {string}   amount The quantity (as a string, to conform to the way
+ * @param  {string}   amount The quantity (as a string, conforming to the way
  *     payments are submitted on the Stellar network) of `asset` being
- *     credited.
+ *     debited.
  **/
-function depositIntoPool(to, from, asset, amount) {}
+function depositIntoPool(from, to, asset, amount) {}
 
 /**
  * Withdraws an `amount` of `asset` from a customer (`from`).
@@ -145,13 +143,21 @@ The aforementioned function `withdrawFromPool` will prepare the corresponding op
 <CodeExample>
 
 ```js
-function onPooledPayment(customerId, dest, amount, asset) {
-  let tx = new sdk.TransactionBuilder(source, {
+/**
+ * Submit a payment received from an internal customer.
+ *
+ * Here, `customerId` is your internal representation of a customer in the
+ * pool, passed in to be part of the outgoing transaction's memo purely for
+ * clarity. The required `destination` parameter, however, is the actual
+ * Stellar address for the payment.
+ */
+function onPooledPayment(customerId, destination, amount, asset) {
+  let tx = new sdk.TransactionBuilder(custodialAcc, {
     fee: 100,
     networkPassphrase: sdk.Networks.TESTNET,
     memo: customerId,
   })
-    .addOperation(createPayment(dest, amount, asset))
+    .addOperation(createPayment(destination, amount, asset))
     .setTimeout(30)
     .build();
 
@@ -168,7 +174,7 @@ This code would be called whenever one of your customers submitted a payment thr
 
 
 ## Listing Other Stellar Assets
-Accepting other (non-native/lumen) assets into your custodial account is not very difficult from an implementation perspective. In fact, all of the code above is asset-agnostic. There are a few prerequisities, however:
+Accepting other (non-native/lumen) assets into your custodial account is achieved similarly to how it's done for native assets. In fact, all of the code above is asset-agnostic. There are a few prerequisities, however:
 
 First, you must open a [trustline](https://developers.stellar.org/docs/start/list-of-operations/#change-trust) with the issuing account of the token you’d like to list – without this, you cannot begin to accept the token. The [Issue an Asset](https://developers.stellar.org/docs/issuing-assets/how-to-issue-an-asset/) tutorial covers the code for this one-time process.
 
