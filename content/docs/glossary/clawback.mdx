@@ -82,9 +82,9 @@ async function preamble() {
   //
   // 1. Enable AuthClawbackEnabledFlag on the account.
   //
-  const enableClawback = function (issuer) {
+  const enableClawback = function (account, keys) {
     return server.submitTransaction(buildTx(
-      issuer, A, [
+      account, keys, [
         sdk.Operation.setOptions({
           setFlags: StellarSdk.AuthClawbackEnabledFlag | StellarSdk.AuthRevocableFlag,
         })
@@ -95,9 +95,9 @@ async function preamble() {
   //
   // 2. Establish a trustline from B and C to A's asset.
   //
-  const establishTrustline = function (recipient) {
+  const establishTrustline = function (recipient, key) {
     return server.submitTransaction(buildTx(
-      recipient, B, [
+      recipient, key, [
         sdk.Operation.changeTrust({
           asset: asset,
           limit: "1000",
@@ -109,11 +109,11 @@ async function preamble() {
   //
   // 3. Send the asset to B, then B sends it to C.
   //
-  const makePayment = function(to, from, amount) {
+  const makePayment = function(toAccount, fromAccount, fromKey, amount) {
     return server.submitTransaction(buildTx(
-      from, B, [
+      fromAccount, fromKey, [
         sdk.Operation.payment({
-          to: to,
+          to: to.accountId(),
           asset: asset,
           amount: amount,
         }),
@@ -124,11 +124,11 @@ async function preamble() {
   //
   // 4. A claws back some of the asset from C.
   //
-  const doClawback = function(by, from, amount) {
+  const doClawback = function(byAccount, byKey, fromAccount, amount) {
     return server.submitTransaction(buildTx(
-      recipient, B, [
+      byAccount, byKey, [
         sdk.Operation.clawback({
-          from: from,
+          from: fromAccount.accountId(),
           asset: asset,
           amount: amount;
         }),
@@ -137,13 +137,13 @@ async function preamble() {
   };
 
   return Promise.all([
-      enableClawback(accountA),
-      establishTrustline(accountB),
-      establishTrustline(accountC),
+      enableClawback(accountA, A),
+      establishTrustline(accountB, B),
+      establishTrustline(accountC, C),
     ])
-    .then(makePayment(accountA, accountB.accountId(), "500"))
-    .then(makePayment(accountB, accountC.accountId(), "250"))
-    .then(doClawback(accountA, accountB.accountId(), "125"))
+    .then(makePayment(accountB, accountA, A, "500"))
+    .then(makePayment(accountC, accountB, B, "250"))
+    .then(doClawback(accountA, A, accountB, "125"))
     .catch(handleTransactionError);
 }
 ```
