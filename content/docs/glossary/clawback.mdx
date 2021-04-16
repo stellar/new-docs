@@ -36,7 +36,7 @@ Once an account holds a particular asset for which clawbacks have been enabled, 
 
 
 ## Examples
-Here we'll cover the two main approaches to clawing back an asset. Account A will issue an asset and send some to Account B, who will then make it availble to Account C. (We'll add this level of indirection to demonstrate that clawbacks don't rely on direct relationships between accounts.) Finally, A will claw back half of that. 
+Here we'll cover the two main approaches to clawing back an asset. Account A will issue an asset and send some to Account B, who will then make it availble to Account C. (We'll add this level of indirection to demonstrate that clawbacks don't rely on direct relationships between accounts.) Finally, A will claw back half of that.
 
 In one scenario, Account B will pay Account C directly. In the other, Account B will give Account C the asset via a claimable balance.
 
@@ -55,55 +55,96 @@ const B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQY
 const C = sdk.Keypair.fromPublicKey("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
 
 
-function preamble() {
+function buildTx(source, signer, ops) {
+  var tx = new StellarSdk.TransactionBuilder(source, {
+    fee: 100,
+    networkPassphrase: StellarSdk.Networks.TESTNET,
+  });
+  ops.forEach((op) => tx.addOperation(op));
+  tx.sign(signer);
+  return tx;
+}
 
+async function preamble() {
   // NOTE: Proper error checks are omitted for brevity; always validate things!
   //
-  // Refer to https://developers.stellar.org/docs/tutorials/handling-errors/ 
+  // Refer to https://developers.stellar.org/docs/tutorials/handling-errors/
   // for error handling strategies.
 
-  return server
-    .loadAccount(A.publicKey())
-    .then(function (issuer) {
-      // 
-      // 1. Enable AuthClawbackEnabledFlag on the account.
-      // 
-      var tx = new StellarSdk.TransactionBuilder(issuer, {
-        fee: 100,
-        networkPassphrase: StellarSdk.Networks.TESTNET,
-      })
-        .addOperation(
-          sdk.Operation.setOptions({
-            setFlags: StellarSdk.AuthClawbackEnabledFlag | StellarSdk.AuthRevocableFlag,
-          }),
-        )
-        .setTimeout(130)
-        .build();
-      tx.sign(A);
-      return server.submitTransaction(tx);
-    })
-    .catch(handleTransactionError)
-    .loadAccount(B.publicKey())
-    .then(function (recipient) {
-      //
-      // 2. Establish a trustline from B to issue A's asset.
-      //
-      var tx = new StellarSdk.TransactionBuilder(recipient, {
-        fee: 100,
-        networkPassphrase: StellarSdk.Networks.TESTNET,
-      })
-        .addOperation(
-          sdk.Operation.changeTrust({
-            asset: asset,
-            limit: "10000",
-          }),
-        )
-        .setTimeout(130)
-        .build();
+  const asset = new sdk.Asset("NOT_YOURS", A.publicKey());
 
-      tx.sign(B);
-      return server.submitTransaction(tx);
-    });
+  const [ accountA, accountB, accountC ] = await Promise.all([
+    server.loadAccount(A.publicKey()),
+    server.loadAccount(B.publicKey()),
+    server.loadAccount(C.publicKey()),
+  ]);
+
+  //
+  // 1. Enable AuthClawbackEnabledFlag on the account.
+  //
+  const enableClawback = function (issuer) {
+    return server.submitTransaction(buildTx(
+      issuer, A, [
+        sdk.Operation.setOptions({
+          setFlags: StellarSdk.AuthClawbackEnabledFlag | StellarSdk.AuthRevocableFlag,
+        })
+      ],
+    ));
+  };
+
+  //
+  // 2. Establish a trustline from B and C to A's asset.
+  //
+  const establishTrustline = function (recipient) {
+    return server.submitTransaction(buildTx(
+      recipient, B, [
+        sdk.Operation.changeTrust({
+          asset: asset,
+          limit: "1000",
+        }),
+      ],
+    ));
+  };
+
+  //
+  // 3. Send the asset to B, then B sends it to C.
+  //
+  const makePayment = function(to, from, amount) {
+    return server.submitTransaction(buildTx(
+      from, B, [
+        sdk.Operation.payment({
+          to: to,
+          asset: asset,
+          amount: amount,
+        }),
+      ],
+    ));
+  };
+
+  //
+  // 4. A claws back some of the asset from C.
+  //
+  const doClawback = function(by, from, amount) {
+    return server.submitTransaction(buildTx(
+      recipient, B, [
+        sdk.Operation.clawback({
+          from: from,
+          asset: asset,
+          amount: amount;
+        }),
+      ],
+    ));
+  };
+
+  return Promise.all([
+      enableClawback(accountA),
+      establishTrustline(accountB),
+      establishTrustline(accountC),
+    ])
+    .then(makePayment(accountA, accountB.accountId(), "500"))
+    .then(makePayment(accountB, accountC.accountId(), "250"))
+    .then(doClawback(accountA, accountB.accountId(), "125"))
+    .catch(handleTransactionError);
 }
 ```
 
