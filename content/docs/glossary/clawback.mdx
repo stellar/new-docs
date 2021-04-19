@@ -42,14 +42,14 @@ Here we'll cover the two main approaches to clawing back an asset. An issuing ac
 
 Finally, A will perform a clawback on the asset from C. In one scenario, Account B will pay Account C directly. In the other, Account B will transfer the asset to Account C via a claimable balance.
 
-### Preamble: Issuing a Clawback-able Asset
-First, we'll set up an account to enable clawbacks and issue an asset accordingly. Note that *properly* issuing an asset (with separate issuing and distribution accounts) is a little more involved, but you can refer to the [tutorial](../issuing-assets/how-to-issue-an-asset.mdx) for more; we use a simpler method here for brevity.
-
 <Alert>
 
 In the following code samples, proper error checking is omitted for brevity. However, you should always validate your results, as there are many ways that requests can fail. You can refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors/index.mdx) for tips on error management strategies.
 
 </Alert>
+
+### Preamble: Issuing a Clawback-able Asset
+First, we'll set up an account to enable clawbacks and issue an asset accordingly. Note that *properly* issuing an asset (with separate issuing and distribution accounts) is a little more involved, but you can refer to the [tutorial](../issuing-assets/how-to-issue-an-asset.mdx) for more; we use a simpler method here for brevity.
 
 <CodeExample>
 
@@ -119,7 +119,6 @@ function buildTx(source, signer, ops) {
   tx.sign(signer);
   return tx;
 }
-
 ```
 
 </CodeExample>
@@ -127,12 +126,11 @@ function buildTx(source, signer, ops) {
 ### Example: Payments
 With the shared setup code out of the way, we can now demonstrate how clawback works for payments. This example will highlight how the asset issuer holds control over their asset regardless of how it gets distributed to the world.
 
-In our scenario, Account A will pay Account B with 1000 units of its custom asset; then, Account B will pay C 500 units in turn. Finally, Account A will "claw back" half of C's balance, burning 250 units forever. Let's dive in:
+In our scenario, Account A will pay Account B with 1000 units of its custom asset; then, B will pay Account C 500 units in turn. Finally, A will "claw back" half of C's balance, burning 250 units forever. Let's dive in to the helper functions:
 
 <CodeExample>
 
 ```js
-
 /// Make a payment to `toAccount` from `fromAccount` for `amount`.
 function makePayment(toAccount, fromAccount, fromKey, amount) {
   return server.submitTransaction(buildTx(
@@ -167,7 +165,6 @@ function getBalance(account) {
   });
   return balances.length > 0 ? balances[0].balance : "0";
 }
-
 ```
 
 </CodeExample>
@@ -195,7 +192,7 @@ async function examplePaymentClawback() {
 
 </CodeExample>
 
-After running `examplePaymentClawback()`, we should see the balances reflected after our process flow:
+After running `examplePaymentClawback()`, we should see the balances reflect  example flow:
 
 <CodeExample Title="Example Output">
 
@@ -243,8 +240,9 @@ function getBalanceId(txResponse) {
 
 function claimClaimable(claimantAccount, claimantKey, balanceId) {
   return server.submitTransaction(buildTx(
-    claimantAccount, claimantKey,
-    [ sdk.Operation.claimClaimableBalance({ balanceId }) ],
+    claimantAccount, claimantKey, [ 
+      sdk.Operation.claimClaimableBalance({ balanceId }) 
+    ],
   ));
 }
 ```
@@ -288,5 +286,5 @@ Note that after a particular claimable balance has been *claimed*, this method n
 
 Further note the divergence from the [earlier example][ex1]: you can't do a *partial* clawback of the claimable balance. It's an all-or-nothing operation. 
 
-[ex1]: #example-payments
-[ex2]: #example-claimable-balances
+[ex1]: #example:-payments
+[ex2]: #example:-claimable-balances
