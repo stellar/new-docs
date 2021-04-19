@@ -654,3 +654,20 @@ Possible errors:
 | CLAWBACK_UNDERFUNDED | -4 | The `From` account does not have a sufficient available balance of the asset (after accounting for selling liabilities). |
 
 ## Clawback Claimable Balance
+Claws back an unclaimed ClaimableBalanceEntry, burning the pending amount of the asset.
+
+Threshold: Medium
+
+Result: `ClaimClaimableBalanceResult`
+
+| Parameters | Type | Description |
+| --- | --- | --- |
+| BalanceID | claimableBalanceID | The BalanceID on the ClaimableBalanceEntry that the source account is claiming, which can be retrieved from a succesful `CreateClaimableBalanceResult`. See [ClaimableBalanceID](../glossary/miscellaneous-core-objects.mdx#ClaimableBalanceID) or the [Claimable Balance](../glossary/claimable-balance.mdx) glossary entries for more information. |
+
+Possible errors:
+
+| Error | Code | Description |
+| --- | --- | --- |
+| CLAWBACK_CLAIMABLE_BALANCE_DOES_NOT_EXIST | -1 | There is no existing ClaimableBalanceEntry that matches the input BalanceID. |
+| CLAWBACK_CLAIMABLE_BALANCE_NOT_ISSUER | -2 | The source account is not the issuer of the asset in the claimable balance. |
+| CLAWBACK_CLAIMABLE_BALANCE_NOT_CLAWBACK_ENABLED | -3 | The CLAIMABLE_BALANCE_CLAWBACK_ENABLED_FLAG is not set for this trustline. |
