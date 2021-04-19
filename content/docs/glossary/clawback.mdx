@@ -3,6 +3,8 @@ title: Clawbacks
 order:
 ---
 
+import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
 
 Protocol 17 introduces operations that allow asset issuers to maintain tighter control over how their asset is distributed to the world. Specifically, it gives them power to **burn their asset** after a [payment][ex1] or [claimable balance][ex2] to another account, effectively removing it from the recipient's balance sheet:
 
@@ -43,6 +45,12 @@ In one scenario, Account B will pay Account C directly. In the other, Account B 
 ### Preamble: Issuing a Clawback-able Asset
 First, we'll set up an account to enable clawbacks and issue an asset accordingly. Note that *properly* issuing an asset is more involved (refer to the [tutorial](../issuing-assets/how-to-issue-an-asset.mdx) for more on that); we use a simpler method here for brevity.
 
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should always validate your results, as there are many ways that requests can fail. You can refer to the [Handling Errors Gracefully](../tutorials/handling-errors/index.mdx) tutorial for tips on error handling strategies.
+
+</Alert>
+
 <CodeExample>
 
 ```js
@@ -54,7 +62,51 @@ const A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG
 const B = sdk.Keypair.fromPublicKey("GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP");
 const C = sdk.Keypair.fromPublicKey("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
 
+const ASSET = new sdk.Asset("CLAW", A.publicKey());
 
+/// Enables AuthClawbackEnabledFlag on an account.
+function enableClawback(account, keys) {
+  return server.submitTransaction(buildTx(
+    account, keys, [
+      sdk.Operation.setOptions({
+        setFlags: StellarSdk.AuthClawbackEnabledFlag | StellarSdk.AuthRevocableFlag,
+      })
+    ],
+  ));
+}
+
+/// Establishes a trustline for `recipient` for ASSET (from above).
+const establishTrustline = function (recipient, key) {
+  return server.submitTransaction(buildTx(
+    recipient, key, [
+      sdk.Operation.changeTrust({
+        asset: ASSET,
+        limit: "5000", // arbitrary
+      }),
+    ],
+  ));
+};
+
+async function getAccounts() {
+  return Promise.all([
+    server.loadAccount(A.publicKey()),
+    server.loadAccount(B.publicKey()),
+    server.loadAccount(C.publicKey()),
+  ]);
+}
+
+async function preamble() {
+  return getAccounts().then(function (accounts) {
+    let [ accountA, accountB, accountC] = accounts;
+    return Promise.all([
+      enableClawback(accountA, A),
+      establishTrustline(accountB, B),
+      establishTrustline(accountC, C),
+    ]);
+  });
+}
+
+/// Helps simplify creating & signing a transaction.
 function buildTx(source, signer, ops) {
   var tx = new StellarSdk.TransactionBuilder(source, {
     fee: 100,
@@ -65,86 +117,68 @@ function buildTx(source, signer, ops) {
   return tx;
 }
 
-async function preamble() {
-  // NOTE: Proper error checks are omitted for brevity; always validate things!
-  //
-  // Refer to https://developers.stellar.org/docs/tutorials/handling-errors/
-  // for error handling strategies.
+```
 
-  const asset = new sdk.Asset("NOT_YOURS", A.publicKey());
+</CodeExample>
 
-  const [ accountA, accountB, accountC ] = await Promise.all([
-    server.loadAccount(A.publicKey()),
-    server.loadAccount(B.publicKey()),
-    server.loadAccount(C.publicKey()),
-  ]);
+### Example: Payments
+With the shared setup code out of the way, we can now demonstrate how clawback works for payments. This example will highlight how the asset issuer holds control over their asset regardless of how it gets distributed to the world.
 
-  //
-  // 1. Enable AuthClawbackEnabledFlag on the account.
-  //
-  const enableClawback = function (account, keys) {
-    return server.submitTransaction(buildTx(
-      account, keys, [
-        sdk.Operation.setOptions({
-          setFlags: StellarSdk.AuthClawbackEnabledFlag | StellarSdk.AuthRevocableFlag,
-        })
-      ],
-    ));
-  };
+In our scenario, Account A will pay Account B with 1000 units of its custom asset; then, Account B will pay C 500 units in turn. Finally, Account A will "claw back" half of C's balance, burning 250 units forever. Let's dive in:
 
-  //
-  // 2. Establish a trustline from B and C to A's asset.
-  //
-  const establishTrustline = function (recipient, key) {
-    return server.submitTransaction(buildTx(
-      recipient, key, [
-        sdk.Operation.changeTrust({
-          asset: asset,
-          limit: "1000",
-        }),
-      ],
-    ));
-  };
+<CodeExample>
 
-  //
-  // 3. Send the asset to B, then B sends it to C.
-  //
-  const makePayment = function(toAccount, fromAccount, fromKey, amount) {
-    return server.submitTransaction(buildTx(
-      fromAccount, fromKey, [
-        sdk.Operation.payment({
-          to: to.accountId(),
-          asset: asset,
-          amount: amount,
-        }),
-      ],
-    ));
-  };
+```js
 
-  //
-  // 4. A claws back some of the asset from C.
-  //
-  const doClawback = function(byAccount, byKey, fromAccount, amount) {
-    return server.submitTransaction(buildTx(
-      byAccount, byKey, [
-        sdk.Operation.clawback({
-          from: fromAccount.accountId(),
-          asset: asset,
-          amount: amount;
-        }),
-      ],
-    ));
-  };
+/// Make a payment to `toAccount` from `fromAccount` for `amount`.
+function makePayment(toAccount, fromAccount, fromKey, amount) {
+  return server.submitTransaction(buildTx(
+    fromAccount, fromKey, [
+      sdk.Operation.payment({
+        to: toAccount.accountId(),
+        asset: ASSET, // defined in preamble
+        amount: amount,
+      }),
+    ],
+  ));
+};
 
-  return Promise.all([
-      enableClawback(accountA, A),
-      establishTrustline(accountB, B),
-      establishTrustline(accountC, C),
-    ])
-    .then(makePayment(accountB, accountA, A, "500"))
-    .then(makePayment(accountC, accountB, B, "250"))
-    .then(doClawback(accountA, A, accountB, "125"))
-    .catch(handleTransactionError);
+/// Perform a clawback by `byAccount` of `amount` from `fromAccount`.
+function doClawback(byAccount, byKey, fromAccount, amount) {
+  return server.submitTransaction(buildTx(
+    byAccount, byKey, [
+      sdk.Operation.clawback({
+        from: fromAccount.accountId(),
+        asset: ASSET, // defined in preamble
+        amount: amount,
+      }),
+    ],
+  ));
+};
+
+async function examplePaymentClawback() {
+  await getAccounts().then(function(accounts) {
+    let [ accountA, accountB, accountC] = accounts;
+
+    return makePayment(accountB, accountA, A, "1000")
+      .then(makePayment(accountC, accountB, B, "500"))
+      .then(doClawback(accountA, A, accountC, "250"))
+      .catch(onTxsubError);
+  });
+
+  // Let's check account balances to ensure that everything worked!
+  accounts.forEach((account) => {
+    console.log(`${account.accountId().substring(0, 5)} has ${getBalance(account)} of ${ASSET.code}`);
+  });
+}
+
+/// Retrieves the balance of ASSET in `account`.
+function getBalance(account) {
+  const balances = account.balances.filter((balance) => {
+    return (balance.asset_code == ASSET.code && 
+            balance.asset_issuer == ASSET.issuer);
+  });
+  return balances.length > 0 ? balances[0].balance : "0";
 }
 ```
 
@@ -152,7 +186,6 @@ async function preamble() {
 
 
 
-### Example: Payments
 ### Example: Claimable Balances
 
 
