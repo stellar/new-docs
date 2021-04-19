@@ -206,6 +206,8 @@ GC2BK: 250
 
 Notice that GCIHA (this is Account A, the issuer) holds none of the asset, despite clawing back 250 from Account C. This should drive home the fact that clawed-back assets are *burned*, not transferred.
 
+_(It may be strange that A does not hold any tokens of its custom asset, but that's exactly how issuing works: you create value where there used to be none. Auditing this is precisely the benefit of properly issuing an asset via a [distribution account](../issuing-assets/how-to-issue-an-asset.mdx#why-have-separate-accounts-for-issuing-and-distribution), which we avoid here for brevity.)_
+
 ### Example: Claimable Balances
 Direct payments aren't the only way to transfer assets between accounts: [claimable balances](./claimable-balance.mdx) essentially create a "two-part payment" in which a valid claimant must actively accept the transfer. As a separate payment mechanism, they also need a separate clawback mechanism.
 
