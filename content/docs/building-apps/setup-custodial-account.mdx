@@ -14,7 +14,7 @@ This guide describes how to add assets from the Stellar network to your custodia
 ### Pooled account
 Most custodial services, including cryptocurrency exchanges, choose to use a single pooled Stellar account to handle transactions on behalf of their users instead of creating a new Stellar account for each customer. Generally, they keep track of their customers in a separate, internal database and use the memo field of a Stellar transaction to map an incoming payment to the corresponding internal customer.
 
-The benefits of using a pooled account are *lower costs* – no base reserves are needed for each account – and *lower complexity* – you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual customer balances and payments. You can no longer rely on the Stellar ledger to accumulate value, handle errors and atomicity, or manage transactions on an account-by-account basis.
+The benefits of using a pooled account are *lower costs* – no base reserves are needed for each account – and *lower key complexity* – you only need to manage one account keypair. However, with a single pooled account, it is now your responsibility to manage all individual customer balances and payments. You can no longer rely on the Stellar ledger to accumulate value, handle errors and atomicity, or manage transactions on an account-by-account basis.
 
 
 ## Code Framework
@@ -160,15 +160,16 @@ function onPooledPayment(customerId, destination, amount, asset) {
     .build();
 
   tx.sign(CUSTODIAL_KEY);
-  return server.submitTransaction(tx).catch(onError).then((resp) => {
-    return withdrawFromPool(customerId, asset, amount);
+  withdrawFromPool(customerId, asset, amount);
+  return server.submitTransaction(tx).catch((err) => {
+    return reverseWithdrawal(customerId, asset, amount, error);
   });
 }
 ```
 
 </CodeExample>
 
-This code would be called whenever one of your customers submitted a payment through your platform.
+This code would be called whenever one of your customers submitted a payment through your platform. Note that the balances are adjusted *before* the transaction is confirmed, so you should take care to adjust them back if there's a failure (e.g. implement `reverseWithdrawal` for your architecture).
 
 
 ## Listing Other Stellar Assets
