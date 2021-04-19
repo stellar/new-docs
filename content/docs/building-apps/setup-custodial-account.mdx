@@ -14,7 +14,7 @@ This guide describes how to add assets from the Stellar network to your custodia
 ### Pooled account
 Most custodial services, including cryptocurrency exchanges, choose to use a single pooled Stellar account to handle transactions on behalf of their users instead of creating a new Stellar account for each customer. Generally, they keep track of their customers in a separate, internal database and use the memo field of a Stellar transaction to map an incoming payment to the corresponding internal customer.
 
-The benefit of using a pooled account are *lower costs* – no base reserves are needed for each account – and *lower complexity* – you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual customer balances and payments. You can no longer rely on the Stellar ledger to accumulate value, handle errors and atomicity, or manage transactions on an account-by-account basis.
+The benefits of using a pooled account are *lower costs* – no base reserves are needed for each account – and *lower complexity* – you only need to manage one account key. However, with a pooled account, it is your responsibility to manage all individual customer balances and payments. You can no longer rely on the Stellar ledger to accumulate value, handle errors and atomicity, or manage transactions on an account-by-account basis.
 
 
 ## Code Framework
@@ -28,7 +28,7 @@ CUSTODIAL_KEY = StellarSdk.Keypair.fromSecret("...");
 custodialAcc = await server.loadAccount(CUSTODIAL_KEY.publicKey());
 
 /**
- * Debits a customer (`to`) with `amount` of a particular `asset`.
+ * Credits a customer (`to`) with `amount` of a particular `asset`.
  *
  * @param  {string}   from   The public key of the Stellar account that
  *     submitted this deposit.
@@ -40,7 +40,7 @@ custodialAcc = await server.loadAccount(CUSTODIAL_KEY.publicKey());
  * @param  {Asset}    asset  The asset deposited into the customer's account.
  * @param  {string}   amount The quantity (as a string, conforming to the way
  *     payments are submitted on the Stellar network) of `asset` being
- *     debited.
+ *     credited.
  **/
 function depositIntoPool(from, to, asset, amount) {}
 
@@ -58,7 +58,7 @@ function depositIntoPool(from, to, asset, amount) {}
  * @param  {any}    from    As in `depositIntoPool()`, this is some
  *     representation of a customer that's part of a pooled account but not
  *     on the Stellar network.
- * @param  {Asset}  asset   The asset being credited from the customer.
+ * @param  {Asset}  asset   The asset being debited from the customer.
  * @param  {string} amount  The quantity of `asset` to withdraw.
  **/
 function withdrawFromPool(from, asset, amount) {}
@@ -72,8 +72,8 @@ function withdrawFromPool(from, asset, amount) {}
  * or you can batch many operations together; it's up to you.
  *
  * @param  {string} to      The Stellar account address of the recipient
- * @param  {Asset}  asset   The asset to credit from the source customer
- * @param  {string} amount  The amount of `asset` to credit
+ * @param  {Asset}  asset   The asset to debit from the source customer
+ * @param  {string} amount  The amount of `asset` to debit
  *
  * @return {xdr.paymentOp}
  */
@@ -93,7 +93,7 @@ function createPayment(to, asset, amount) {
 ## Integration points for listing XLM
 
 ### Setting the memo required flag on your account
-Before we get into the main integration points for adding XLM support to your product or service, make sure to configure your pooled account to require memos. This step is necessary to prevent users from forgetting to attach a memo, which can increase customer support requests and a lead to a less desirable user experience for new customers. [This article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
+Before we get into the main integration points for adding XLM support to your product or service, make sure to configure your pooled account to require memos. This step is necessary to prevent users from forgetting to attach a memo, which can increase customer support requests and lead to a less desirable user experience for new customers. [This article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
 
 ### Listening for incoming payments from the Stellar network
 First, you need to listen for payments to the pooled account and credit any user that receives XLM there. For every payment received by the pooled account:
