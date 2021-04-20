@@ -10,6 +10,7 @@ When Horizon returns information about an account, it uses the following format:
 
 <AttributeTable>
 
+
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
@@ -31,6 +32,15 @@ When Horizon returns information about an account, it uses the following format:
 - last_modified_ledger
   - number
   - The ID of the last ledger that included changes to this account.
+- num_sponsoring
+  - number
+  - The number of reserves sponsored by this account.
+- num_sponsored
+  - number
+  - The number of reserves sponsored for this account.
+- sponsor
+  - string (optional)
+  - The account ID of the sponsor who is paying the reserves for this account.
 - thresholds
   - object
   - Operations have varying levels of access. This field specifies thresholds for different access levels, as well as the weight of the master key.
@@ -79,6 +89,9 @@ When Horizon returns information about an account, it uses the following format:
     - asset_issuer
       - string (optional)
       - The Stellar address of this asset's issuer.
+    - sponsor
+      - string (optional)
+      - The account ID of the sponsor who is paying the reserves for this trustline.
 - signers
   - array of objects
   - The public keys and associated weights that can be used to authorize transactions for this account. Used for multi-sig.
@@ -88,6 +101,9 @@ When Horizon returns information about an account, it uses the following format:
     - weight
       - number
       - The numerical weight of a signer. Used to determine if a transaction meets the `threshold` requirements.
+    - sponsor
+      - string (optional)
+      - The account ID of the sponsor who is paying the reserves for this signer.
     - key
       - string
       - A hash of characters dependent on the signer type.
@@ -109,7 +125,9 @@ When Horizon returns information about an account, it uses the following format:
 
 </AttributeTable>
 
+
 <ExampleResponse>
+
 
 ```json
 {
@@ -153,6 +171,8 @@ When Horizon returns information about an account, it uses the following format:
   "inflation_destination": "GDI73WJ4SX7LOG3XZDJC3KCK6ED6E5NBYK2JUBQSPBCNNWEG3ZN7T75U",
   "home_domain": "tempo.eu.com",
   "last_modified_ledger": 23569316,
+  "num_sponsoring": 0,
+  "num_sponsored": 0,
   "thresholds": {
     "low_threshold": 5,
     "med_threshold": 0,
@@ -217,3 +237,4 @@ When Horizon returns information about an account, it uses the following format:
 ```
 
 </ExampleResponse>
+

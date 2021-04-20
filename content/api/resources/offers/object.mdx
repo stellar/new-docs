@@ -10,6 +10,7 @@ When Horizon returns information about an offer, it uses the following format:
 
 <AttributeTable>
 
+
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
@@ -49,10 +50,15 @@ When Horizon returns information about an offer, it uses the following format:
 - last_modified_time
   - string
   - An ISO 8601 formatted string of last modification time.
+- sponsor
+  - string (optional)
+  - The account id of the sponsor who is paying the reserves for this offer.
 
 </AttributeTable>
 
+
 <ExampleResponse>
+
 
 ```json
 {
@@ -87,3 +93,4 @@ When Horizon returns information about an offer, it uses the following format:
 ```
 
 </ExampleResponse>
+

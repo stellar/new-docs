@@ -5,13 +5,13 @@ order: 30
 
 import { CodeExample } from "components/CodeExample";
 
-This tutorial shows how easy it is to use Horizon to watch for incoming payments on an [account](../glossary/accounts.mdx) using JavaScript and `EventSource`. We will eschew using [`js-stellar-sdk`](https://github.com/stellar/js-stellar-sdk), the high-level helper library, to show that it is possible for you to perform this task on your own, with whatever programming language you would like to use.
+This tutorial shows how easy it is to use Horizon to watch for incoming payments on an [account](../glossary/accounts.mdx) using JavaScript and `EventSource`. We will eschew using [`js-stellar-sdk`](https://github.com/stellar/js-stellar-sdk), the high-level helper library, to show that it is possible for you to perform this task on your own with whatever programming language you would like to use.
 
 This tutorial assumes that you:
 
 - Have node.js installed locally on your machine.
 - Have curl installed locally on your machine.
-- Are running on Linux, OS X, or any other system that has access to a bash-like shell.
+- Are running on Linux, macOS, or any other system that has access to a bash-like shell.
 - Are familiar with launching and running commands in a terminal.
 
 In this tutorial we will learn:
@@ -45,7 +45,7 @@ $ node -e "require('stellar-base')"
 
 </CodeExample>
 
-Everything was successful if no output it generated from the above command. Now let's write a script to create a new account.
+Everything was successful if no output was generated from the above command. Now let's write a script to create a new account.
 
 ## Creating an account
 
@@ -111,7 +111,7 @@ After a few seconds, the Stellar network will perform consensus, close the ledge
 
 ## Following payments using `curl`
 
-To follow new payments connected to your account you simply need to send `Accept: text/event-stream` header to the [/payments](../.././api/resources/operations/object/payment.mdx) endpoint.
+To follow new payments connected to your account you simply need to send the `Accept: text/event-stream` header to the [/payments](../.././api/resources/operations/object/payment.mdx) endpoint.
 
 <CodeExample>
 
@@ -215,15 +215,15 @@ $ curl "https://horizon-testnet.stellar.org/accounts/GB7JFK56QXQ4DVJRNPDBXABNG3I
 
 </CodeExample>
 
-Sequence number can be found under the `sequence` field. The current sequence number is `713226564141056`. Save this value somewhere.
+Sequence number can be found under the `sequence` field. For our example, the current sequence number is `713226564141056`. Save your value somewhere.
 
-Now, create `make_payment.js` file and paste the following code into it:
+Now, create `make_payment.js` file and paste the following code into it, replacing the sequence number accordingly:
 
 <CodeExample>
 
 ```js
 var StellarBase = require("stellar-base");
-StellarBase.Network.useTestNetwork();
+var StellarSdk = require("stellar-sdk");
 
 var keypair = StellarBase.Keypair.fromSecret(
   "SCU36VV2OYTUMDSSU4EIVX4UUHY3XC7N44VL4IJ26IOG6HVNC7DY5UJO",
@@ -231,13 +231,17 @@ var keypair = StellarBase.Keypair.fromSecret(
 var account = new StellarBase.Account(keypair.publicKey(), "713226564141056");
 
 var amount = "100";
-var transaction = new StellarBase.TransactionBuilder(account)
+var transaction = new StellarSdk.TransactionBuilder(account, {
+    networkPassphrase: StellarBase.Networks.TESTNET,
+    fee: StellarSdk.BASE_FEE,
+  })
   .addOperation(
     StellarBase.Operation.createAccount({
       destination: StellarBase.Keypair.random().publicKey(),
       startingBalance: amount,
     }),
   )
+  .setTimeout(180)
   .build();
 
 transaction.sign(keypair);
@@ -247,14 +251,14 @@ console.log(transaction.toEnvelope().toXDR().toString("base64"));
 
 </CodeExample>
 
-After running this script you should see a signed transaction blob. To submit this transaction we send it to horizon or stellar-core. But before we do, let's open a new console and start our previous script by `node stream_payments.js`.
+After running this script you should see a signed transaction blob. To submit this transaction we send it to Horizon or Stellar-Core. But before we do, let's open a new console and start our previous script by `node stream_payments.js`.
 
-Now to send a transaction just use horizon:
+Now to send a transaction just use Horizon:
 
 <CodeExample>
 
 ```bash
-curl -H "Content-Type: application/json" -X POST -d '{"tx":"AAAAAH6Sq76F4cHVMWvGG4AtNtFVIvayUxSgR401rPY9ej3TAAAD6AACiK0AAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAKc1j3y10+nI+sxuXlmFz71JS35mp/RcPCP45Gw0obdAAAAAAAAAAAAExLQAAAAAAAAAAAT16PdMAAABAsJTBC5N5B9Q/9+ZKS7qkMd/wZHWlP6uCCFLzeD+JWT60/VgGFCpzQhZmMg2k4Vg+AwKJTwko3d7Jt3Y6WhjLCg=="}' "https://horizon-testnet.stellar.org/transactions"
+curl -H "Content-Type: application/json" -X POST -d '{"tx":"AAAAAgAAAAB+kqu+heHB1TFrxhuALTbRVSL2slMUoEeNNaz2PXo90wAAAGQAAoitAAAAAQAAAAEAAAAAAAAAAAAAAABgJHaDAAAAAAAAAAEAAAAAAAAAAAAAAAByS4gefO1iu/ZfYlr+PMA2AZsHJmSK/4NActJ1Oa1BIgAAAAA7msoAAAAAAAAAAAE9ej3TAAAAQPo1YHJMpdWKatEQxj7DqP1rrR6pA+OjK9q3WcU/sBwvKk6GhpdwA3gkUDrkREU0cFQSNKwugNFkGkR0zFmROgw="}' "https://horizon-testnet.stellar.org/transactions"
 ```
 
 </CodeExample>

@@ -29,8 +29,8 @@ export const REDESIGN_PALETTE = {
     // "-3": "",
     // "-2": "",
     // "-1": "",
-    "0": "#fafafa",
-    "1": "#f2f2f2",
+    0: "#fafafa",
+    1: "#f2f2f2",
     // "2": "",
     // "3": "",
     // "4": "",
@@ -44,9 +44,7 @@ export const THEME = {
   medium: PALETTE.mediumGrey,
   lightGrey: PALETTE.lightGrey,
   darkGrey: PALETTE.darkGrey,
-  link: tinycolor(PALETTE.dark)
-    .setAlpha(0.7)
-    .toRgbString(),
+  link: tinycolor(PALETTE.dark).setAlpha(0.7).toRgbString(),
   cta: {
     body: PALETTE.yellow,
     text: PALETTE.light,
@@ -55,7 +53,7 @@ export const THEME = {
 };
 
 export const FONT_FAMILY = {
-  base: '"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif',
+  base: '"IBM Plex Sans", Arial, sans-serif',
   monospace: '"IBM Plex Mono", Consolas, Menlo, monospace',
 };
 
