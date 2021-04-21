@@ -615,9 +615,11 @@ Result: `SetTrustLineFlagsResult`
 | Parameters | Type | Description |
 | --- | --- | --- |
 | Trustor | account ID | The account that established this trustline. |
-| Asset | asset | The asset whose flags are being modified. |
+| Asset | asset | The asset trustline whose flags are being modified. |
 | SetFlags | integer | One or more flags (combined via bitwise-OR) indicating which flags to **set**. Possible flags are: `1` if the trustor is authorized to transact with the asset xor `2` if the trustor is authorized to maintain offers but not to perform other transactions. |
 | ClearFlags | integer | One or more flags (combined via bitwise `OR`) indicating which flags to **clear**. Possibilities include those for `SetFlags`as well as `4`, which prevents the issuer from clawing back its asset (both from accounts and claimable balances). |
+
+Note that passing `0` to either `SetFlags` or `ClearFlags` will be a no-op (nothing will be set or cleared).
 
 Possible errors:
 
@@ -625,14 +627,14 @@ Possible errors:
 | --- | --- | --- |
 | SET_TRUST_LINE_FLAGS_MALFORMED | -1 | This can happen for a number of reasons: the asset specified by `AssetCode` and `AssetIssuer` is invalid; the asset issuer isn't the source account; the `Trustor` is the source account; the native asset is specified; or the flags being set/cleared conflict or are otherwise invalid. |
 | SET_TRUST_LINE_FLAGS_NO_TRUST_LINE | -2 | The `Trustor` does not have a trustline with the issuer performing this operation. |
-| SET_TRUST_LINE_FLAGS_CANT_REVOKE | -3 | The issuer is trying to revoke the trustline of the `Trustor`, but it cannot do so because `AUTH_REVOCABLE_FLAG` is not set on the account. |
+| SET_TRUST_LINE_FLAGS_CANT_REVOKE | -3 | The issuer is trying to revoke the trustline authorization of `Trustor`, but it cannot do so because `AUTH_REVOCABLE_FLAG` is not set on the account. |
 | SET_TRUST_LINE_FLAGS_INVALID_STATE | -4 | If the final state of the trustline has both `AUTHORIZED_FLAG` (1) and `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` (2) set, which are mutually exclusive. |
 
 ## Clawback
 
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.clawback) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ClawbackOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#Clawback)
 
-Reduces (burns) an amount in a specific asset from an account, provided the source account has clawback authorization for the asset trustline.
+Reduces (burns) an amount in a specific asset from an account.
 
 Threshold: Medium
 
