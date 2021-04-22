@@ -3,7 +3,7 @@ title: Prerequisites
 order: 20
 ---
 
-You can install Stellar Core a [number of different ways](./installation.mdx), and once you do, you can [configure](./configuring.mdx) it to participate in the network on a several [different levels](./index.mdx#types-of-nodes): it can be a Watcher, a Basic Validator, or a Full Validator. No matter how you install Stellar Core or what kind of node you run, however, you need to set up to connect to the peer-to-peer network, store the state of the ledger in a SQL [database](configuring.mdx#database), and most likely connect to [Horizon](../.././api/introduction/index.mdx), the Stellar API.
+You can install Stellar Core a [number of different ways](./installation.mdx), and once you do, you can [configure](./configuring.mdx) it to participate in the network on a several [different levels](./index.mdx#types-of-nodes): it can be either a Basic Validator or a Full Validator. No matter how you install Stellar Core or what kind of node you run, however, you need to set up to connect to the peer-to-peer network and store the state of the ledger in a SQL [database](configuring.mdx#database).
 
 ## Compute Requirements
 
@@ -18,7 +18,7 @@ Stellar Core is designed to run on relatively modest hardware so that a whole ra
 Stellar Core interacts with the peer-to-peer network to keep a distributed ledger in sync, which means that your node needs to make certain [TCP ports](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#TCP_ports) available for inbound and outbound communication.
 
 - **Inbound**: a Stellar Core node needs to allow all ips to connect to its `PEER_PORT` over TCP. You can specify a port when you [configure Stellar Core](./configuring.mdx), but most people use the default, which is **11625**.
-- **Outbound**: a Stellar Core needs to connect to other nodes via thier `PEER_PORT`s TCP. You can find information about other nodes' `PEER_PORT`s on a network explorer like [Stellarbeat](https://stellarbeat.io/), but most use the default port, which is, again, **11265**.
+- **Outbound**: a Stellar Core needs to connect to other nodes via thier `PEER_PORT`s TCP. You can find information about other nodes' `PEER_PORT`s on a network explorer like [Stellarbeat](https://stellarbeat.io/), but most use the default port, which is, again, **11625**.
 
 ## Internal System Access
 

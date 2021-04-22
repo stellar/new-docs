@@ -1,8 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
-
-import { MEDIA_QUERIES } from "constants/styles";
 
 import { loopAndExtractString } from "helpers/extractStringChildren";
 import { slugify } from "helpers/slugify";
@@ -19,43 +16,27 @@ export const makeLinkedHeader = (
   Component,
   { treatIdAsHref = false, LinkComponent = Link } = {},
 ) => {
-  const El = styled(Component)`
-    position: relative;
-    scroll-margin-top: 5rem;
-    padding-left: 1.25rem;
-    margin-left: -1.25rem;
-
-    @media (${MEDIA_QUERIES.canHover}) {
-      &:hover svg {
-        visibility: visible;
-      }
-    }
-
-    & svg {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      visibility: hidden;
-    }
-  `;
-
   const WrappedComponent = (props) => {
     const { children } = props;
     const id = props.id || slugify(loopAndExtractString(children));
 
     return (
-      <El {...props} id={id}>
+      <Component
+        {...props}
+        className={`${props.className} linkedHeading`}
+        id={id}
+      >
         <LinkComponent href={treatIdAsHref ? id : `#${id}`}>
           <LinkIcon width={16} height={16} />
         </LinkComponent>
         {props.children}
-      </El>
+      </Component>
     );
   };
   WrappedComponent.propTypes = {
     id: PropTypes.string,
     children: PropTypes.node.isRequired,
+    className: PropTypes.string,
   };
   return WrappedComponent;
 };

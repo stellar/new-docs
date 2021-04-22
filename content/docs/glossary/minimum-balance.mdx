@@ -4,16 +4,25 @@ order:
 ---
 
 import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
+
+<Alert>
+
+This doc explains minimum balance requirements.  If you want to know about transaction fees, check out the [Fees](./fees.mdx) doc.
+
+</Alert>
 
 All Stellar accounts must maintain a minimum balance of lumens. The minimum balance is calculated using the **base reserve,** which is currently **0.5 XLM**:
 
 <CodeExample>
 
+
 ```
-Minimum Balance = (2 + # of entries) * base reserve
+Minimum Balance = (2 + # of entries + # of sponsoring entries - # of sponsored entries) * base reserve
 ```
 
 </CodeExample>
+
 
 The absolute minimum balance for an account is 1 XLM, which is equal to `(2 + 0 entries) * 0.5 base reserve`. Each additional entry reserves an additional 0.5 XLM. Entries include:
 
@@ -23,6 +32,10 @@ The absolute minimum balance for an account is 1 XLM, which is equal to `(2 + 0 
 - Data entries
 
 For example, an account with 1 trustline and 2 offers would have a minimum balance of `(2 + 3 entries) * 0.5 base reserve = 2.5 XLM`.
+
+[Sponsored Reserves](./sponsored-reserves.mdx) will affect the # of sponsoring entries and # of sponsored entries.
+
+[Claimable Balances](./claimable-balance.mdx) are reflected in the # of sponsoring entries. Each claimant in a claimable balance will require an additional 0.5 XLM. For example, an account that creates a claimable balance with 2 claimants would have a minimum balance of `(2 + 0 entries + 2 sponsoring entries) * 0.5 base reserve = 2 XLM`.
 
 Any transaction that would reduce an account's balance to less than the minimum will be rejected with an `INSUFFICIENT_BALANCE` error. Likewise, lumen selling liabilities that would reduce an account's balance to less than the minimum plus lumen selling liabilities will be rejected with an `INSUFFICIENT_BALANCE` error.
 

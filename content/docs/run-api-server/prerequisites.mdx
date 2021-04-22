@@ -5,8 +5,12 @@ order: 10
 
 import { CodeExample } from "components/CodeExample";
 
-Currently, Horizon is dependent on a Stellar Core server. While we are working to reduce that dependence, at the moment it still needs access to both the SQL database and the HTTP API published by Stelar Core. See [Run a Core Node](../run-core-node/index.mdx) to learn how to set up and administer a Stellar Core node.
+Horizon only has one dependency: a PostgreSQL server that it uses to store data that has been processed and ingested from Stellar Core. Horizon requires PostgreSQL version >= 9.5.
 
-Horizon is also dependent upon a postgres server, which it uses to store processed Core data for ease of use. Horizon requires postgres version >= 9.5.
+As far as system requirements go, there are a few main things to keep in mind:
 
-In addition to the two prerequisites above, you may optionally install a redis server to be used for rate limiting requests.
+- If you plan on [ingesting](./running.mdx#ingesting-transactions) live transaction data from the Stellar network, your machines should have enough extra RAM to hold Captive Core's in-memory database (~3GB).
+
+- In the above case, you should also take care to allocate enough space (on the order of ~20 GBs to your `/tmp` directory for Captive Core to cache ledger information while it runs. You can also set a `TMPDIR` environmental variable ([or equivalent](https://golang.org/pkg/os/#TempDir) for your OS) to change the directory being used, at least until a flag is [introduced](https://github.com/stellar/go/issues/3437) to customize this through Horizon itself.
+
+- Other disk space requirements depend on how much of the network's history you'd like to serve from your Horizon instance; this could be anywhere from a few GBs to tens of TBs for the full ingested pubnet ledger history.

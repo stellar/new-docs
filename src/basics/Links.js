@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link as GatsbyLink } from "gatsby";
 import styled, { css } from "styled-components";
 import urlLib from "url";
-import { useLocation } from "@reach/router";
+import { useLocation, navigate } from "@reach/router";
 
 import { IS_PRODUCTION } from "constants/env";
 import { LINK_DESTINATIONS } from "constants/routes";
@@ -167,7 +167,7 @@ export const Link = ({ href, newTab, ...props }) => {
       return <BasicLink href={url} {...props} />;
     case LINK_DESTINATIONS.docs:
     case LINK_DESTINATIONS.hash:
-      return <BasicLink href={url} {...props} />;
+      return <BasicLink onClick={() => navigate(url)} href={url} {...props} />;
     case LINK_DESTINATIONS.external:
     default:
       return <BasicLink newTab href={url} {...props} />;

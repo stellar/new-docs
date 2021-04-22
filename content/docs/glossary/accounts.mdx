@@ -9,9 +9,9 @@ In addition to a valid keypair, an account needs a balance of XLM sufficient to 
 
 ## Keypair
 
-Stellar relies on public key cryptography to ensure that transactions are secure: every account requires a valid keypair consisting of a _public key_ a _private key_. The public key is, as the name suggests, public. It’s visible on the ledger, anyone can look it up, and it’s what others use to send payments to the account, identify the issuer an asset, and verify that a given transaction is authorized.
+Stellar relies on public key cryptography to ensure that transactions are secure: every account requires a valid keypair consisting of a _public key_ and a _private key_. The public key is, as the name suggests, public. It’s visible on the ledger, anyone can look it up, and it’s what others use to send payments to the account, identify the issuer of an asset, and verify that a given transaction is authorized.
 
-The private key, however, is something an account holder should guard closely. It’s kind of like the combination to a lock — anyone who knows it can access the account, sign transactions, send funds, whatever. Do not share your private key with anyone.
+The private key, however, is something an account holder should guard closely. It’s kind of like the combination to a lock — anyone who knows it can access the account, sign transactions, send funds, etc. Do not share your private key with anyone.
 
 You can use any Stellar wallet or SDK to generate a valid keypair.
 
@@ -27,7 +27,7 @@ Accounts have the following fields:
 
 ### Account ID
 
-The public key that was used to create the account. Even if you replace the signer on the with a different key, the original account ID will always be used to identify the account.
+The public key that was used to create the account. Even if you replace the signer with a different key, the original account ID will always be used to identify the account.
 
 ### Sequence number
 
@@ -37,7 +37,10 @@ The current transaction sequence number of the account. This number starts equal
 
 Number of entries the account owns. This number is used to calculate the account's minimum balance: each subentry increases an account’s reserve by 0.5XLM. Subentries include:
 
-*Trustlines *Offers *Signers *Data entries
+* Trustlines
+* Offers
+* Signers
+* Data entries
 
 ### Thresholds
 

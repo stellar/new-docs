@@ -122,7 +122,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
           pageContext={pageContext}
           viewport="width=1366, initial-scale=.1"
           path="/api/"
-          omitSeoHeadersPredicate={(header) => !header.rel === "canonical"}
+          omitSeoHeadersPredicate={(header) => header.rel !== "canonical"}
         >
           <PrismStyles />
           <ApiReferenceRow>

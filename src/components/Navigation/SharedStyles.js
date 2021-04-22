@@ -28,7 +28,7 @@ export const NavAbsoluteEl = styled.div`
   @media (${MEDIA_QUERIES.canHover}) {
     overflow: hidden;
     &:hover {
-      overflow-y: scroll;
+      overflow-y: auto;
     }
   }
   // <SideNav/> does not have mobile friendly design (API REF)

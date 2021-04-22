@@ -14,13 +14,16 @@ The balances section in the response will also list all the trustlines this acco
 
 <Endpoint>
 
+
 |     |                       |
 | --- | --------------------- |
 | GET | /accounts/:account_id |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -31,7 +34,9 @@ The balances section in the response will also list all the trustlines this acco
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA"
@@ -53,7 +58,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -95,6 +102,8 @@ server
   "sequence": "120192344791187470",
   "subentry_count": 5,
   "last_modified_ledger": 28105812,
+  "num_sponsoring": 0,
+  "num_sponsored": 0,
   "thresholds": {
     "low_threshold": 0,
     "med_threshold": 0,
@@ -181,3 +190,4 @@ server
 ```
 
 </ExampleResponse>
+
