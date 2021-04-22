@@ -2,7 +2,7 @@
 title: Fee-Bump Transactions
 order:
 ---
-A fee-bump transaction enables any account to pay the fee for an existing [transaction](./transactions.mdx) without the need to re-sign the existing transaction or manage sequence numbers.  They're useful if you need to increase the fee on a pre-signed transaction, or if you want to build a service that covers user fees.  Unlike a regular transaction, which contains 1-100 [operations](./operations.mdx), a fee-bump transaction contains a single [transaction envelope](./transactions.mdx/#transaction-envelopes).     
+A fee-bump transaction enables any account to pay the fee for an existing [transaction](./transactions.mdx) without the need to re-sign the existing transaction or manage sequence numbers.  They're useful if you need to increase the fee on a pre-signed transaction, or if you want to build a service that covers user fees.  Like a regular transaction, these are submitted to the [`/transactions` endpoint](../../../api/resources/transactions/index.mdx).  *Unlike* a regular transaction, however, which contains 1-100 [operations](./operations.mdx), a fee-bump transaction contains a single [transaction envelope](./transactions.mdx/#transaction-envelopes). 
 
 ## Fee-Bump Transaction Attributes
 
@@ -47,7 +47,7 @@ The sole purpose of a fee-bump transaction is to get an inner transaction includ
 Every fee-bump transaction result contains a complete inner transaction result. This inner-transaction result is exactly what would have been produced had there been no fee-bump transaction, except that the inner fee will always be 0.
 
 
-A fee-bump transaction is essentially a wrapper around a transaction that has been bundled with requisite signatures into a transaction envelope.  Therefore, before creating a fee-bump transaction, you must first create a regular transaction and transacrtion envelope.  For more on regular transaction creation and a summary of the lifecycle of a transaction, see [Transactions](./transactions.mdx).   
+A fee-bump transaction is essentially a wrapper around a transaction that has been bundled with requisite signatures into a transaction envelope.  Therefore, before creating a fee-bump transaction, you must first create a regular transaction and transaction envelope.  For more on regular transaction creation and a summary of the lifecycle of a transaction, see [Transactions](./transactions.mdx).   
 
 
 
@@ -56,7 +56,7 @@ Fee-bump transactions share result codes with regular transactions.  They're lis
 
 | Result | Code | Description |
 | --- | --- | --- |
-| FEE_BUMP_INNNER_SUCCESS | 1 | The inner transaction contained in the fee bump succeeded. |
+| FEE_BUMP_INNER_SUCCESS | 1 | The inner transaction contained in the fee bump succeeded. |
 | SUCCESS | 0 | All operations contained in the transaction succeeded. |
 | FAILED | -1 | One of the operations failed (check [List of operations](../start/list-of-operations.mdx) for errors). |
 | TOO_EARLY | -2 | Ledger `closeTime` before `minTime` value in the transaction. |

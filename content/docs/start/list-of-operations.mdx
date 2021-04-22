@@ -82,11 +82,10 @@ Possible errors:
 | PAYMENT_UNDERFUNDED | -2 | The source account (sender) does not have enough funds to send `amount` and still satisfy its selling liabilities. Note that if sending XLM then the sender must additionally maintain its minimum XLM reserve. |
 | PAYMENT_SRC_NO_TRUST | -3 | The source account does not trust the issuer of the asset it is trying to send. |
 | PAYMENT_SRC_NOT_AUTHORIZED | -4 | The source account is not authorized to send this payment. |
-| PAYMENT_NO_DESTINATION | -5 | The receiving account does not exist. |
+| PAYMENT_NO_DESTINATION | -5 | The receiving account does not exist. Note that this error will **not** be returned if the receiving account is the issuer of `asset`. |
 | PAYMENT_NO_TRUST | -6 | The receiver does not trust the issuer of the asset being sent. For more information, see the [assets doc](../glossary/assets.mdx). |
 | PAYMENT_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PAYMENT_LINE_FULL | -8 | The destination account (receiver) does not have sufficient limits to receive `amount` and still satisfy its buying liabilities. |
-| PAYMENT_NO_ISSUER | -9 | The issuer of the asset does not exist. |
 
 ## Path Payment Strict Send
 
@@ -130,7 +129,6 @@ Possible errors:
 | PATH_PAYMENT_STRICT_SEND_NO_TRUST | -6 | The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](../glossary/assets.mdx). |
 | PATH_PAYMENT_STRICT_SEND_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PATH_PAYMENT_STRICT_SEND_LINE_FULL | -8 | The destination account does not have sufficient limits to receive `destination amount` and still satisfy its buying liabilities. |
-| PATH_PAYMENT_STRICT_SEND_NO_ISSUER | -9 | The issuer of one of the assets is missing. |
 | PATH_PAYMENT_STRICT_SEND_TOO_FEW_OFFERS | -10 | There is no path of offers connecting the `send asset` and `destination asset`. Stellar only considers paths of length 5 or shorter. |
 | PATH_PAYMENT_STRICT_SEND_OFFER_CROSS_SELF | -11 | The payment would cross one of its own offers. |
 | PATH_PAYMENT_STRICT_SEND_UNDER_DESTMIN | -12 | The paths that could send `destination amount` of `destination asset` would fall short of `destination min`. |
@@ -177,7 +175,6 @@ Possible errors:
 | PATH_PAYMENT_STRICT_RECEIVE_NO_TRUST | -6 | The destination account does not trust the issuer of the asset being sent. For more, see the [assets doc](../glossary/assets.mdx). |
 | PATH_PAYMENT_STRICT_RECEIVE_NOT_AUTHORIZED | -7 | The destination account is not authorized by the asset's issuer to hold the asset. |
 | PATH_PAYMENT_STRICT_RECEIVE_LINE_FULL | -8 | The destination account does not have sufficient limits to receive `destination amount` and still satisfy its buying liabilities. |
-| PATH_PAYMENT_STRICT_RECEIVE_NO_ISSUER | -9 | The issuer of one the of assets is missing. |
 | PATH_PAYMENT_STRICT_RECEIVE_TOO_FEW_OFFERS | -10 | There is no path of offers connecting the `send asset` and `destination asset`. Stellar only considers paths of length 5 or shorter. |
 | PATH_PAYMENT_STRICT_RECEIVE_OFFER_CROSS_SELF | -11 | The payment would cross one of its own offers. |
 | PATH_PAYMENT_STRICT_RECEIVE_OVER_SENDMAX | -12 | The paths that could send `destination amount` of `destination asset` would exceed `send max`. |
@@ -218,8 +215,6 @@ Possible errors:
 | MANAGE_BUY_OFFER_LINE_FULL | -6 | The account creating the offer does not have sufficient limits to receive `buying` and still satisfy its buying liabilities. |
 | MANAGE_BUY_OFFER_UNDERFUNDED | -7 | The account creating the offer does not have sufficient limits to send `selling` and still satisfy its selling liabilities. Note that if selling XLM then the account must additionally maintain its minimum XLM reserve, which is calculated assuming this offer will not completely execute immediately. |
 | MANAGE_BUY_OFFER_CROSS_SELF | -8 | The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself. |
-| MANAGE_BUY_OFFER_SELL_NO_ISSUER | -9 | The issuer of selling asset does not exist. |
-| MANAGE_BUY_OFFER_BUY_NO_ISSUER | -10 | The issuer of buying asset does not exist. |
 | MANAGE_BUY_OFFER_NOT_FOUND | -11 | An offer with that `offerID` cannot be found. |
 | MANAGE_BUY_OFFER_LOW_RESERVE | -12 | The account creating this offer does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every offer an account creates, the minimum amount of XLM that account must hold will increase. |
 
@@ -259,8 +254,6 @@ Possible errors:
 | MANAGE_SELL_OFFER_LINE_FULL | -6 | The account creating the offer does not have sufficient limits to receive `buying` and still satisfy its buying liabilities. |
 | MANAGE_SELL_OFFER_UNDERFUNDED | -7 | The account creating the offer does not have sufficient limits to send `selling` and still satisfy its selling liabilities. Note that if selling XLM then the account must additionally maintain its minimum XLM reserve, which is calculated assuming this offer will not completely execute immediately. |
 | MANAGE_SELL_OFFER_CROSS_SELF | -8 | The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself. |
-| MANAGE_SELL_OFFER_SELL_NO_ISSUER | -9 | The issuer of selling asset does not exist. |
-| MANAGE_SELL_OFFER_BUY_NO_ISSUER | -10 | The issuer of buying asset does not exist. |
 | MANAGE_SELL_OFFER_NOT_FOUND | -11 | An offer with that `offerID` cannot be found. |
 | MANAGE_SELL_OFFER_LOW_RESERVE | -12 | The account creating this offer does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every offer an account creates, the minimum amount of XLM that account must hold will increase. |
 
@@ -268,7 +261,7 @@ Possible errors:
 
 [JavaScript](https://stellar.github.io/js-stellar-sdk/Operation.html#.createPassiveSellOffer) | [Java](https://stellar.github.io/java-stellar-sdk/org/stellar/sdk/CreatePassiveSellOfferOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#CreatePassiveSellOffer)
 
-Creates, updates, or deletes an offer to sell one asset for another, otherwise known as a "ask" order or "offer" on a traditional orderbook, _without taking a reverse offer of equal price_.
+Creates an offer to sell one asset for another, otherwise known as a "ask" order or "offer" on a traditional orderbook, _without taking a reverse offer of equal price_.
 
 A passive sell offer is an offer that does not act on and take a reverse offer of equal price. Instead, they only take offers of lesser price. For example, if an offer exists to buy 5 BTC for 30 XLM, and you make a passive offer to buy 30 XLM for 5 BTC, your passive offer _does not_ take the first offer. Passive offers in Stellar are always expressed as "ask" or "offer" orders in a traditional orderbook.
 
@@ -286,7 +279,7 @@ Result: `ManageSellOfferResult`
 | --- | --- | --- |
 | Selling | asset | Asset the offer creator is selling. |
 | Buying | asset | Asset the offer creator is buying. |
-| Amount | integer | Amount of `selling` being sold. Set to `0` if you want to delete an existing offer. |
+| Amount | integer | Amount of `selling` being sold. |
 | Price | {numerator, denominator} | Price of 1 unit of `selling` in terms of `buying`. For example, if you wanted to sell 30 XLM and buy 5 BTC, the price would be {5,30}. |
 
 Possible errors:
@@ -301,8 +294,6 @@ Possible errors:
 | MANAGE_SELL_OFFER_LINE_FULL | -6 | The account creating the offer does not have sufficient limits to receive `buying` and still satisfy its buying liabilities. |
 | MANAGE_SELL_OFFER_UNDERFUNDED | -7 | The account creating the offer does not have sufficient limits to send `selling` and still satisfy its selling liabilities. Note that if selling XLM then the account must additionally maintain its minimum XLM reserve, which is calculated assuming this offer will not completely execute immediately. |
 | MANAGE_SELL_OFFER_CROSS_SELF | -8 | The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself. |
-| MANAGE_SELL_OFFER_SELL_NO_ISSUER | -9 | The issuer of selling asset does not exist. |
-| MANAGE_SELL_OFFER_BUY_NO_ISSUER | -10 | The issuer of buying asset does not exist. |
 | MANAGE_SELL_OFFER_NOT_FOUND | -11 | An offer with that `offerID` cannot be found. |
 | MANAGE_SELL_OFFER_LOW_RESERVE | -12 | The account creating this offer does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every offer an account creates, the minimum amount of XLM that account must hold will increase. |
 
@@ -547,7 +538,7 @@ Result: `BeginSponsoringFutureReservesResult`
 
 | Parameters  | Type       | Description                                     |
 | ----------- | ---------- | ----------------------------------------------- |
-| SponsoredID | account ID | Account that will have it's reserves sponsored. |
+| SponsoredID | account ID | Account that will have its reserves sponsored.  |
 
 Possible errors:
 
@@ -583,13 +574,13 @@ This operation is a union with **two** possible types -
 
 | Union Type | Parameters | Type | Description |
 | --- | --- | --- | --- |
-| REVOKE_SPONSORSHIP_LEDGER_ENTRY | LedgerKey | ledgerKey | Ledger key that holds information to identify a specific ledgerEntry that may have it's sponsorship modified. See [LedgerKey](../glossary/miscellaneous-core-objects.mdx#LedgerKey) for more information. |
+| REVOKE_SPONSORSHIP_LEDGER_ENTRY | LedgerKey | ledgerKey | Ledger key that holds information to identify a specific ledgerEntry that may have its sponsorship modified. See [LedgerKey](../glossary/miscellaneous-core-objects.mdx#LedgerKey) for more information. |
 
 Or
 
 | Union Type | Parameters | Type | Description |
 | --- | --- | --- | --- |
-| REVOKE_SPONSORSHIP_SIGNER | Signer | {account ID, Signer Key} | Signer that may have it's sponsorship modified. |
+| REVOKE_SPONSORSHIP_SIGNER | Signer | {account ID, Signer Key} | Signer that may have its sponsorship modified. |
 
 Possible errors:
 
