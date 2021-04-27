@@ -28,13 +28,15 @@ Note an important corequirement described in [the CAP](https://github.com/stella
 
 > If an issuer wishes to set `AUTH_CLAWBACK_ENABLED_FLAG`, it must also have `AUTH_REVOCABLE_FLAG` set.
 
-If you'd like to control which specific trustlines have clawbacks enabled, you need to clear the flag on the trustline via [SetTrustLineFlags](../start/list-of-operations.mdx#set-trustline-flags). Note that you can **only** clear the flag, not set it, in order to give asset holders perpetual confidence about the state of their holdings.
+This allows an asset issuer to clawback balances locked up in offers by first revoking authorization from a trustline, which pulls all offers that involve that trustline. The issuer can then perform the clawback.
+
+If you'd like to control which specific trustlines have clawbacks enabled, you need to clear the flag on the trustline via [SetTrustLineFlags](../start/list-of-operations.mdx#set-trustline-flags). Note that you can **only** clear the flag, not set it, in order to give asset holders perpetual confidence about the future state of their holdings.
 
 ### Clawback
 Once an account holds a particular asset for which clawbacks have been enabled, you can claw it back (provided you are the issuer, obviously). You need to provide the asset, a quantity, and the account from which you're clawing the asset back.
 
 ### Clawback Claimable Balance
-[Claimable balances](./claimable-balance.mdx), introduced in [Protocol 15](https://www.stellar.org/blog/protocol-14-improvements), provide another way for accounts to acquire assets. They are a special, two-part payment, and thus need to be clawed back differently. All you need to do is provide the claimable balance ID.
+[Claimable balances](./claimable-balance.mdx), introduced in [Protocol 15](https://www.stellar.org/blog/protocol-14-improvements), provides another way for accounts to acquire assets. They are a special, two-part payment, and thus need to be clawed back differently. All you need to do is provide the claimable balance ID.
 
 
 ## Examples
@@ -126,7 +128,7 @@ function buildTx(source, signer, ops) {
 ### Example: Payments
 With the shared setup code out of the way, we can now demonstrate how clawback works for payments. This example will highlight how the asset issuer holds control over their asset regardless of how it gets distributed to the world.
 
-In our scenario, Account A will pay Account B with 1000 units of its custom asset; then, B will pay Account C 500 units in turn. Finally, A will "claw back" half of C's balance, burning 250 units forever. Let's dive in to the helper functions:
+In our scenario, Account A will pay Account B with 1000 tokens of its custom asset; then, B will pay Account C 500 tokens in turn. Finally, A will "claw back" half of C's balance, burning 250 tokens forever. Let's dive in to the helper functions:
 
 <CodeExample>
 
@@ -206,7 +208,7 @@ GC2BK: 250
 
 Notice that GCIHA (this is Account A, the issuer) holds none of the asset, despite clawing back 250 from Account C. This should drive home the fact that clawed-back assets are *burned*, not transferred.
 
-_(It may be strange that A never holds any tokens of its custom asset, but that's exactly how issuing works: you create value where there used to be none. Sending an asset to its issuing account is *equivalent* to burning it, and auditing the total amount of an asset in existence is precisely the benefit of properly issuing an asset via a [distribution account](../issuing-assets/how-to-issue-an-asset.mdx#why-have-separate-accounts-for-issuing-and-distribution), which we avoid here for brevity.)_
+_(It may be strange that A never holds any tokens of its custom asset, but that's exactly how issuing works: you create value where there used to be none. Sending an asset to its issuing account is *equivalent* to burning it, and auditing the total amount of an asset in existence is one of the benefits of properly distributing an asset via a [distribution account](../issuing-assets/how-to-issue-an-asset.mdx#why-have-separate-accounts-for-issuing-and-distribution), which we avoid doing here for example brevity.)_
 
 ### Example: Claimable Balances
 Direct payments aren't the only way to transfer assets between accounts: [claimable balances](./claimable-balance.mdx) essentially create a "two-part payment" in which a valid claimant must actively accept the transfer. As a separate payment mechanism, they also need a separate clawback mechanism.
@@ -284,14 +286,9 @@ GC2BK: 0
 
 </CodeExample>
 
-Note that after a particular claimable balance has been *claimed*, this method no longer applies: you should claw back your asset directly using the [previous method][ex1], via `Operation.clawback`. This method is for unclaimed, pending claimable balances.
+Note that after a particular claimable balance has been *claimed*, this method no longer applies: you should claw back your asset directly using the [previous method][ex1], via `Operation.clawback`. This method is for unclaimed, *pending* claimable balances.
 
 Further note the divergence from the [earlier example][ex1]: you can't do a *partial* clawback of the claimable balance. It's an all-or-nothing operation. 
 
-### Example: Disabling Clawback on Specific Trustlines
-
-    TODO
-
 [ex1]: #example:-payments
 [ex2]: #example:-claimable-balances
-[ex3]: #example:-clearing-trustline
