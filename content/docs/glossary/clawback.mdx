@@ -1,0 +1,297 @@
+---
+title: Clawbacks
+order:
+---
+
+import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
+
+Protocol 17 introduces operations that allow asset issuers to maintain tighter control over how their asset is distributed to the world. Specifically, it gives them power to **burn their asset** from a trustline or claimable balance, effectively removing it from the recipient's balance sheet:
+
+> The amount of the asset clawed back is burned and is not sent to any other address. The issuer may reissue the asset to the same account or to another account if the intent of the clawback is to move the asset to another account.
+
+This allows for things like regulatory enforcement, safety and control over certain assets, etc. You can refer to [CAP-35](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0035.md) for more motivations or technical details behind these new features.
+
+
+## Relevant operations
+Configuring and performing a clawback involves several discrete steps:
+
+ - setting up your account to enable clawbacks (via [SetOptions](../start/list-of-operations.mdx#set-options)),
+ - establishing trustlines for a particular asset (via [ChangeTrust](../start/list-of-operations.mdx#change-trust)),
+ - making a payment with a particular asset (e.g. via a [Payment](../start/list-of-operations.mdx#payment)), and finally
+ - clawing back some or all of the asset (via [Clawback](../start/list-of-operations.mdx#clawback) or [Clawback Claimable Balance](../start/list-of-operations.mdx#clawback-claimable-balance)).
+
+### Setting Account Options
+In order to enable clawback, the issuer account must first set the `AUTH_CLAWBACK_ENABLED` flag on itself. This will cause *every* subsequent trustline established from this account to have its corresponding `TRUSTLINE_CLAWBACK_ENABLED_FLAG` set automatically.
+
+Note an important corequirement described in [the CAP](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0035.md#semantics):
+
+> If an issuer wishes to set `AUTH_CLAWBACK_ENABLED_FLAG`, it must also have `AUTH_REVOCABLE_FLAG` set.
+
+If you'd like to control which specific trustlines have clawbacks enabled, you need to clear the flag on the trustline via [SetTrustLineFlags](../start/list-of-operations.mdx#set-trustline-flags). Note that you can **only** clear the flag, not set it, in order to give asset holders perpetual confidence about the state of their holdings.
+
+### Clawback
+Once an account holds a particular asset for which clawbacks have been enabled, you can claw it back (provided you are the issuer, obviously). You need to provide the asset, a quantity, and the account from which you're clawing the asset back.
+
+### Clawback Claimable Balance
+[Claimable balances](./claimable-balance.mdx), introduced in [Protocol 15](https://www.stellar.org/blog/protocol-14-improvements), provide another way for accounts to acquire assets. They are a special, two-part payment, and thus need to be clawed back differently. All you need to do is provide the claimable balance ID.
+
+
+## Examples
+Here we'll cover the two main approaches to clawing back an asset. An issuing account ("Account A") will create an asset and send some to a top-level recipient ("Account B"), who will then make it available to a third party ("Account C"). We'll add this level of indirection to demonstrate that clawbacks don't rely on direct relationships between accounts. 
+
+Finally, A will perform a clawback on the asset from C. In one scenario, Account B will pay Account C directly. In the other, Account B will transfer the asset to Account C via a claimable balance.
+
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should always validate your results, as there are many ways that requests can fail. You can refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors/index.mdx) for tips on error management strategies.
+
+</Alert>
+
+### Preamble: Issuing a Clawback-able Asset
+First, we'll set up an account to enable clawbacks and issue an asset accordingly. Note that *properly* issuing an asset (with separate issuing and distribution accounts) is a little more involved, but you can refer to the [tutorial](../issuing-assets/how-to-issue-an-asset.mdx) for more; we use a simpler method here for brevity.
+
+<CodeExample>
+
+```js
+const sdk = require("stellar-sdk");
+
+let server = new sdk.Server("https://horizon-testnet.stellar.org");
+
+const A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
+const B = sdk.Keypair.fromPublicKey("SAAY2H7SANIS3JLFBFPLJRTYNLUYH4UTROIKRVFI4FEYV4LDW5Y7HDZ4");
+const C = sdk.Keypair.fromSecret("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
+
+const ASSET = new sdk.Asset("CLAW", A.publicKey());
+
+/// Enables AuthClawbackEnabledFlag on an account.
+function enableClawback(account, keys) {
+  return server.submitTransaction(buildTx(
+    account, keys, [
+      sdk.Operation.setOptions({
+        setFlags: StellarSdk.AuthClawbackEnabledFlag | 
+                  StellarSdk.AuthRevocableFlag,
+      })
+    ],
+  ));
+}
+
+/// Establishes a trustline for `recipient` for ASSET (from above).
+const establishTrustline = function (recipient, key) {
+  return server.submitTransaction(buildTx(
+    recipient, key, [
+      sdk.Operation.changeTrust({
+        asset: ASSET,
+        limit: "5000", // arbitrary
+      }),
+    ],
+  ));
+};
+
+/// Retrieves latest account info for all accounts.
+async function getAccounts() {
+  return Promise.all([
+    server.loadAccount(A.publicKey()),
+    server.loadAccount(B.publicKey()),
+    server.loadAccount(C.publicKey()),
+  ]);
+}
+
+/// Enables clawback on A, and establishes trustlines from C, B -> A.
+async function preamble() {
+  return getAccounts().then(function (accounts) {
+    let [ accountA, accountB, accountC] = accounts;
+    return Promise.all([
+      enableClawback(accountA, A),
+      establishTrustline(accountB, B),
+      establishTrustline(accountC, C),
+    ]);
+  });
+}
+
+/// Helps simplify creating & signing a transaction.
+function buildTx(source, signer, ops) {
+  var tx = new StellarSdk.TransactionBuilder(source, {
+    fee: 100,
+    networkPassphrase: StellarSdk.Networks.TESTNET,
+  });
+  ops.forEach((op) => tx.addOperation(op));
+  tx.sign(signer);
+  return tx;
+}
+```
+
+</CodeExample>
+
+### Example: Payments
+With the shared setup code out of the way, we can now demonstrate how clawback works for payments. This example will highlight how the asset issuer holds control over their asset regardless of how it gets distributed to the world.
+
+In our scenario, Account A will pay Account B with 1000 units of its custom asset; then, B will pay Account C 500 units in turn. Finally, A will "claw back" half of C's balance, burning 250 units forever. Let's dive in to the helper functions:
+
+<CodeExample>
+
+```js
+/// Make a payment to `toAccount` from `fromAccount` for `amount`.
+function makePayment(toAccount, fromAccount, fromKey, amount) {
+  return server.submitTransaction(buildTx(
+    fromAccount, fromKey, [
+      sdk.Operation.payment({
+        to: toAccount.accountId(),
+        asset: ASSET,   // defined in preamble
+        amount: amount,
+      }),
+    ],
+  ));
+};
+
+/// Perform a clawback by `byAccount` of `amount` from `fromAccount`.
+function doClawback(byAccount, byKey, fromAccount, amount) {
+  return server.submitTransaction(buildTx(
+    byAccount, byKey, [
+      sdk.Operation.clawback({
+        from: fromAccount.accountId(),
+        asset: ASSET,   // defined in preamble
+        amount: amount,
+      }),
+    ],
+  ));
+};
+
+/// Retrieves the balance of ASSET in `account`.
+function getBalance(account) {
+  const balances = account.balances.filter((balance) => {
+    return (balance.asset_code   == ASSET.code && 
+            balance.asset_issuer == ASSET.issuer);
+  });
+  return balances.length > 0 ? balances[0].balance : "0";
+}
+```
+
+</CodeExample>
+
+These snippets will help us with the final composition: making some payments to distribute the asset to the world and clawing some of it back.
+
+<CodeExample>
+
+```js
+async function examplePaymentClawback() {
+  await getAccounts().then(function(accounts) {
+    let [ accountA, accountB, accountC] = accounts;
+    return makePayment(accountB, accountA, A, "1000"
+      ).then(makePayment(accountC, accountB, B, "500")
+      ).then(doClawback(accountA, A, accountC, "250")
+      ).catch(onTxsubError);
+  });
+
+  // Let's check account balances to ensure that everything worked!
+  (await getAccounts()).forEach((acc) => {
+    console.log(`${acc.accountId().substring(0, 5)}: ${getBalance(account)}`);
+  });
+}
+```
+
+</CodeExample>
+
+After running `examplePaymentClawback()`, we should see the balances reflect  example flow:
+
+<CodeExample Title="Example Output">
+
+```txt
+GCIHA: 0
+GDS5N: 500
+GC2BK: 250
+```
+
+</CodeExample>
+
+Notice that GCIHA (this is Account A, the issuer) holds none of the asset, despite clawing back 250 from Account C. This should drive home the fact that clawed-back assets are *burned*, not transferred.
+
+_(It may be strange that A never holds any tokens of its custom asset, but that's exactly how issuing works: you create value where there used to be none. Sending an asset to its issuing account is *equivalent* to burning it, and auditing the total amount of an asset in existence is precisely the benefit of properly issuing an asset via a [distribution account](../issuing-assets/how-to-issue-an-asset.mdx#why-have-separate-accounts-for-issuing-and-distribution), which we avoid here for brevity.)_
+
+### Example: Claimable Balances
+Direct payments aren't the only way to transfer assets between accounts: [claimable balances](./claimable-balance.mdx) essentially create a "two-part payment" in which a valid claimant must actively accept the transfer. As a separate payment mechanism, they also need a separate clawback mechanism.
+
+We need some additional helper methods to get started working efficiently with claimable balances:
+
+<CodeExample>
+
+```js
+function createClaimable(fromAccount, fromKey, toAccount, amount) {
+  return server.submitTransaction(buildTx(
+    fromAccount, fromKey, [
+      sdk.Operation.createClaimableBalance({
+        asset: ASSET,
+        amount: amount,
+        claimants: [
+          new sdk.Claimant(toAccount.accountId()),
+        ],
+      }),
+    ],
+  ));
+}
+
+// https://developers.stellar.org/docs/glossary/claimable-balance/#example
+function getBalanceId(txResponse) {
+  const txResult = sdk.xdr.TransactionResult.fromXDR(
+    txResponse.result_xdr, "base64");
+  const operationResult = txResult.result().results()[0];
+
+  let creationResult = operationResult.value().createClaimableBalanceResult();
+  return creationResult.balanceId().toXDR("hex");
+}
+
+function claimClaimable(claimantAccount, claimantKey, balanceId) {
+  return server.submitTransaction(buildTx(
+    claimantAccount, claimantKey, [ 
+      sdk.Operation.claimClaimableBalance({ balanceId }) 
+    ],
+  ));
+}
+```
+
+</CodeExample>
+
+Now, we can fulfill the flow: A pays B, who sends a claimable balance to C, who gets it clawed back by A. (Note that we rely on the `makePayment` helper from the [earlier example][ex1].)
+
+<CodeExample>
+
+```js
+async function exampleClaimableBalanceClawback() {
+  await makePayment(accountB, accountA, A, "1000"
+    ).then(createClaimable(accountB, B, accountC, "500")
+    ).then(function (txResponse) {
+      return claimClaimable(accountA, A, getBalanceId(txResponse));
+    });
+
+  // Let's check account balances to ensure that everything worked!
+  (await getAccounts()).forEach((acc) => {
+    console.log(`${acc.accountId().substring(0, 5)}: ${getBalance(account)}`);
+  });
+}
+```
+
+</CodeExample>
+
+After running `examplePaymentClawback()`, we should see the balances reflect our flow:
+
+<CodeExample Title="Example Output">
+
+```txt
+GCIHA: 0
+GDS5N: 500
+GC2BK: 0
+```
+
+</CodeExample>
+
+Note that after a particular claimable balance has been *claimed*, this method no longer applies: you should claw back your asset directly using the [previous method][ex1], via `Operation.clawback`. This method is for unclaimed, pending claimable balances.
+
+Further note the divergence from the [earlier example][ex1]: you can't do a *partial* clawback of the claimable balance. It's an all-or-nothing operation. 
+
+### Example: Disabling Clawback on Specific Trustlines
+
+    TODO
+
+[ex1]: #example:-payments
+[ex2]: #example:-claimable-balances
+[ex3]: #example:-clearing-trustline
