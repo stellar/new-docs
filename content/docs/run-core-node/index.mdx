@@ -32,7 +32,7 @@ In addition to those basic functions, there are two key configuration options th
 - Participate in consensus to [validate transactions](./configuring.mdx#validating)
 - Publish an [archive](./publishing-history-archives.mdx) that other nodes can consult to find the complete history of the network.
 
-To make things easier, we’ll define four types of nodes based on permutations of those two options: **Basic Validator**, **Full Validator**, and **Archiver**. You’ll notice that they _all_ support Horizon and submit transactions to the network:
+To make things easier, we’ll define three types of nodes based on permutations of those two options: **Basic Validator**, **Full Validator**, and **Archiver**. You’ll notice that they _all_ support Horizon and submit transactions to the network:
 
 | Type of Node | Supports Horizon | Submits Transactions | Validates Transactions | Publishes History |
 | --- | --- | --- | --- | --- |
@@ -70,6 +70,6 @@ Generally, organizations that run Full Validators don't use them to query networ
 
 An Archiver is a rare bird: like a Full Validator, it publishes the activity of the network in long-term storage; unlike a Full Validator, it does not participate in consensus.
 
-Archivers help with decentralization a bit by offering redundant accounts of the network’s history, but they don’t vote or sign ledgers, so their usefulness is fairly limited. If you run a Stellar-facing service, like a blockchain explorer, you may want to run one. Otherwise, you’re probably better off choosing one of the other three types.
+Archivers help with decentralization a bit by offering redundant accounts of the network’s history, but they don’t vote or sign ledgers, so their usefulness is fairly limited. If you run a Stellar-facing service, like a blockchain explorer, you may want to run one. Otherwise, you’re probably better off choosing one of the other two types.
 
 **Use an archiver if you want to referee the network. Which is unlikely.**
