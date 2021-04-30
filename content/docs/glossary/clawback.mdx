@@ -16,10 +16,10 @@ This allows for things like regulatory enforcement, safety and control over cert
 ## Relevant operations
 Configuring and performing a clawback involves several discrete steps:
 
- - setting up your account to enable clawbacks (via [SetOptions](../start/list-of-operations.mdx#set-options)),
- - establishing trustlines for a particular asset (via [ChangeTrust](../start/list-of-operations.mdx#change-trust)),
- - making a payment with a particular asset (e.g. via a [Payment](../start/list-of-operations.mdx#payment)), and finally
- - clawing back some or all of the asset (via [Clawback](../start/list-of-operations.mdx#clawback) or [Clawback Claimable Balance](../start/list-of-operations.mdx#clawback-claimable-balance)).
+ - **the issuer**: sets up their account to enable clawbacks (via [SetOptions](../start/list-of-operations.mdx#set-options)),
+ - **the recipients**: establish trustlines for the issuer's asset (via [ChangeTrust](../start/list-of-operations.mdx#change-trust)),
+ - someone transfers value with the issued asset (e.g. via a [Payment](../start/list-of-operations.mdx#payment) or other mechanism), and finally
+ - **the issuer** claws back 3some or all of the asset (via [Clawback](../start/list-of-operations.mdx#clawback) or [Clawback Claimable Balance](../start/list-of-operations.mdx#clawback-claimable-balance)).
 
 ### Setting Account Options
 In order to enable clawback, the issuer account must first set the `AUTH_CLAWBACK_ENABLED` flag on itself. This will cause *every* subsequent trustline established from this account to have its corresponding `TRUSTLINE_CLAWBACK_ENABLED_FLAG` set automatically.
