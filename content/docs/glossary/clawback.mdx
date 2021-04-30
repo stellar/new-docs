@@ -61,7 +61,7 @@ const sdk = require("stellar-sdk");
 let server = new sdk.Server("https://horizon-testnet.stellar.org");
 
 const A = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
-const B = sdk.Keypair.fromPublicKey("SAAY2H7SANIS3JLFBFPLJRTYNLUYH4UTROIKRVFI4FEYV4LDW5Y7HDZ4");
+const B = sdk.Keypair.fromSecret("SAAY2H7SANIS3JLFBFPLJRTYNLUYH4UTROIKRVFI4FEYV4LDW5Y7HDZ4");
 const C = sdk.Keypair.fromSecret("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
 
 const ASSET = new sdk.Asset("CLAW", A.publicKey());
@@ -100,14 +100,15 @@ async function getAccounts() {
 }
 
 /// Enables clawback on A, and establishes trustlines from C, B -> A.
-async function preamble() {
+function preamble() {
   return getAccounts().then(function (accounts) {
     let [ accountA, accountB, accountC] = accounts;
-    return Promise.all([
-      enableClawback(accountA, A),
-      establishTrustline(accountB, B),
-      establishTrustline(accountC, C),
-    ]);
+    return enableClawback(accountA, A)
+      .then(Promise.all([
+        establishTrustline(accountB, B),
+        establishTrustline(accountC, C),
+      ])
+    );
   });
 }
 
@@ -118,12 +119,22 @@ function buildTx(source, signer, ops) {
     networkPassphrase: StellarSdk.Networks.TESTNET,
   });
   ops.forEach((op) => tx.addOperation(op));
+  tx = tx.setTimeout(30).build();
   tx.sign(signer);
   return tx;
+}
+
+/// Prints the balances of a list of accounts.
+function showBalances(accounts) {
+  accounts.forEach((acc) => {
+    console.log(`${acc.accountId().substring(0, 5)}: ${getBalance(acc)}`);
+  });
 }
 ```
 
 </CodeExample>
+
+Note that above we first enabled clawback and *then* established trustlines, since you cannot retroactively enable clawback on existing trustlines.
 
 ### Example: Payments
 With the shared setup code out of the way, we can now demonstrate how clawback works for payments. This example will highlight how the asset issuer holds control over their asset regardless of how it gets distributed to the world.
@@ -138,7 +149,7 @@ function makePayment(toAccount, fromAccount, fromKey, amount) {
   return server.submitTransaction(buildTx(
     fromAccount, fromKey, [
       sdk.Operation.payment({
-        to: toAccount.accountId(),
+        destination: toAccount.accountId(),
         asset: ASSET,   // defined in preamble
         amount: amount,
       }),
@@ -179,22 +190,21 @@ These snippets will help us with the final composition: making some payments to 
 async function examplePaymentClawback() {
   await getAccounts().then(function(accounts) {
     let [ accountA, accountB, accountC] = accounts;
-    return makePayment(accountB, accountA, A, "1000"
-      ).then(makePayment(accountC, accountB, B, "500")
-      ).then(doClawback(accountA, A, accountC, "250")
-      ).catch(onTxsubError);
+    return  makePayment(accountB, accountA, A, "1000")
+      .then(makePayment(accountC, accountB, B, "500"))
+      .then(doClawback( accountA, A, accountC, "250"));
   });
 
   // Let's check account balances to ensure that everything worked!
-  (await getAccounts()).forEach((acc) => {
-    console.log(`${acc.accountId().substring(0, 5)}: ${getBalance(account)}`);
-  });
+  await getAccounts().then(showBalances);
 }
+
+preamble().then(examplePaymentClawback());
 ```
 
 </CodeExample>
 
-After running `examplePaymentClawback()`, we should see the balances reflect  example flow:
+After running our example (e.g. via `preamble().then(examplePaymentClawback());`), we should see the balances reflect the example flow:
 
 <CodeExample Title="Example Output">
 
@@ -242,10 +252,10 @@ function getBalanceId(txResponse) {
   return creationResult.balanceId().toXDR("hex");
 }
 
-function claimClaimable(claimantAccount, claimantKey, balanceId) {
+function clawbackClaimable(issuerAccount, issuerKey, balanceId) {
   return server.submitTransaction(buildTx(
-    claimantAccount, claimantKey, [ 
-      sdk.Operation.claimClaimableBalance({ balanceId }) 
+    issuerAccount, issuerKey, [
+      sdk.Operation.clawbackClaimableBalance({ balanceId })
     ],
   ));
 }
@@ -258,17 +268,18 @@ Now, we can fulfill the flow: A pays B, who sends a claimable balance to C, who 
 <CodeExample>
 
 ```js
-async function exampleClaimableBalanceClawback() {
-  await makePayment(accountB, accountA, A, "1000"
-    ).then(createClaimable(accountB, B, accountC, "500")
-    ).then(function (txResponse) {
-      return claimClaimable(accountA, A, getBalanceId(txResponse));
-    });
+function exampleClaimableBalanceClawback() {
+  return getAccounts()
+    .then(function(accounts) {
+      let [ accountA, accountB, accountC ] = accounts;
 
-  // Let's check account balances to ensure that everything worked!
-  (await getAccounts()).forEach((acc) => {
-    console.log(`${acc.accountId().substring(0, 5)}: ${getBalance(account)}`);
-  });
+      return makePayment(accountB, accountA, A, "1000").catch(txCheck)
+        .then(() => createClaimable(accountB, B, accountC, "500").catch(txCheck))
+        .then((txResp) => clawbackClaimable(accountA, A, getBalanceId(txResp)))
+        .catch(txCheck);
+    })
+    .then(getAccounts)
+    .then(showBalances);
 }
 ```
 
