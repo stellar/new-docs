@@ -30,13 +30,13 @@ Note an important corequirement described in [the CAP](https://github.com/stella
 
 This allows an asset issuer to clawback balances locked up in offers by first revoking authorization from a trustline, which pulls all offers that involve that trustline. The issuer can then perform the clawback.
 
-If you'd like to control which specific trustlines have clawbacks enabled, you need to clear the flag on the trustline via [SetTrustLineFlags](../start/list-of-operations.mdx#set-trustline-flags). Note that you can **only** clear the flag, not set it, in order to give asset holders perpetual confidence about the future state of their holdings.
+If you'd like to forgo clawback capability on a specific account, you can clear the flag on that account's trustline via [SetTrustLineFlags](../start/list-of-operations.mdx#set-trustline-flags). Note that you can **only** clear the flag, not set it, in order to give asset holders perpetual confidence about the future state of their holdings.
 
 ### Clawback
-Once an account holds a particular asset for which clawbacks have been enabled, you can claw it back (provided you are the issuer, obviously). You need to provide the asset, a quantity, and the account from which you're clawing the asset back.
+Once an account holds a particular asset for which clawbacks have been enabled, you can claw it back (provided you are the issuer, obviously). You need to provide the asset, a quantity, and the account from which you're clawing back the asset.
 
 ### Clawback Claimable Balance
-[Claimable balances](./claimable-balance.mdx), introduced in [Protocol 15](https://www.stellar.org/blog/protocol-14-improvements), provides another way for accounts to acquire assets. They are a special, two-part payment, and thus need to be clawed back differently. All you need to do is provide the claimable balance ID.
+[Claimable balances](./claimable-balance.mdx), introduced in [Protocol 15](https://www.stellar.org/blog/protocol-14-improvements), provide another way for accounts to acquire assets. They are a special, two-part payment, and thus need to be clawed back differently. All you need to do is provide the claimable balance ID.
 
 
 ## Examples
