@@ -112,7 +112,8 @@ server
   "flags": {
     "auth_required": false,
     "auth_revocable": false,
-    "auth_immutable": false
+    "auth_immutable": false,
+    "auth_clawback_enabled": false
   },
   "balances": [
     {
@@ -122,42 +123,10 @@ server
       "selling_liabilities": "0.0000000",
       "last_modified_ledger": 27984507,
       "is_authorized": true,
+      "is_clawback_enabled": false,
       "asset_type": "credit_alphanum4",
       "asset_code": "EURT",
       "asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
-    },
-    {
-      "balance": "20.0000000",
-      "limit": "922337203685.4775807",
-      "buying_liabilities": "0.0000000",
-      "selling_liabilities": "0.0000000",
-      "last_modified_ledger": 27984988,
-      "is_authorized": true,
-      "asset_type": "credit_alphanum4",
-      "asset_code": "CNY",
-      "asset_issuer": "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"
-    },
-    {
-      "balance": "199.9999990",
-      "limit": "922337203685.4775807",
-      "buying_liabilities": "0.0000000",
-      "selling_liabilities": "0.0000000",
-      "last_modified_ledger": 27984513,
-      "is_authorized": true,
-      "asset_type": "credit_alphanum4",
-      "asset_code": "NGNT",
-      "asset_issuer": "GAWODAROMJ33V5YDFY3NPYTHVYQG7MJXVJ2ND3AOGIHYRWINES6ACCPD"
-    },
-    {
-      "balance": "1.0000000",
-      "limit": "922337203685.4775807",
-      "buying_liabilities": "0.0000000",
-      "selling_liabilities": "0.0000000",
-      "last_modified_ledger": 27984972,
-      "is_authorized": true,
-      "asset_type": "credit_alphanum4",
-      "asset_code": "BB1",
-      "asset_issuer": "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN"
     },
     {
       "balance": "4.0000000",
@@ -166,6 +135,7 @@ server
       "selling_liabilities": "0.0000000",
       "last_modified_ledger": 27985131,
       "is_authorized": true,
+      "is_clawback_enabled": true,
       "asset_type": "credit_alphanum4",
       "asset_code": "USD",
       "asset_issuer": "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"
