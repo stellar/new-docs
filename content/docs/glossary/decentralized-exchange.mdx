@@ -34,7 +34,7 @@ For more information, take a look at [our guide on fees in Stellar](./fees.mdx).
 
 ## Passive Order
 
-**Passive orders** allow markets to have zero spread. If you want to exchange USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive orders so the two orders don't fill each other. (will this actually be a zero spread? it should still be a tick wide right? or would it be a "locked market", where the bid and the ask is at the same price?)
+**Passive orders** allow markets to have zero spread. If you want to exchange USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive orders so the two orders don't fill each other.
 
 A passive order is an order that does not execute against a marketable counter order with the same price. It will only fill if the prices are not equal. For example, if the best order to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer _does not_ take that existing offer. If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC. 
 
