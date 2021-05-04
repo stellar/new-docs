@@ -142,7 +142,8 @@ server
         "flags": {
           "auth_required": false,
           "auth_revocable": false,
-          "auth_immutable": false
+          "auth_immutable": false,
+          "auth_clawback_enabled": false
         },
         "balances": [
           {
@@ -154,7 +155,8 @@ server
             "asset_type": "credit_alphanum4",
             "asset_code": "FOO",
             "asset_issuer": "GAGLYFZJMN5HEULSTH5CIGPOPAVUYPG5YSWIYDJMAPIECYEBPM2TA3QR",
-            "is_authorized": true
+            "is_authorized": true,
+            "is_clawback_enabled": true
           },
           {
             "balance": "10000.0000000",
