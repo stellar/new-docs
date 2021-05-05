@@ -2,7 +2,7 @@
 
 # Contents
 
-- [Stellar Documentation and [API Reference](https://developers.stellar.org/api/)](#stellar-documentation-and-api-reference)
+- [Stellar Documentation and API Reference](#stellar-documentation-and-api-reference)
 - [Contents](#contents)
 - [How to Run](#how-to-run)
   - [Dependencies](#dependencies)
