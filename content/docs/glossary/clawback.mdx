@@ -71,9 +71,8 @@ function enableClawback(account, keys) {
   return server.submitTransaction(buildTx(
     account, keys, [
       sdk.Operation.setOptions({
-        setFlags: StellarSdk.AuthClawbackEnabledFlag | 
-                  StellarSdk.AuthRevocableFlag,
-      })
+        setFlags: sdk.AuthClawbackEnabledFlag | sdk.AuthRevocableFlag,
+      }),
     ],
   ));
 }
@@ -91,7 +90,7 @@ const establishTrustline = function (recipient, key) {
 };
 
 /// Retrieves latest account info for all accounts.
-async function getAccounts() {
+function getAccounts() {
   return Promise.all([
     server.loadAccount(A.publicKey()),
     server.loadAccount(B.publicKey()),
@@ -102,7 +101,7 @@ async function getAccounts() {
 /// Enables clawback on A, and establishes trustlines from C, B -> A.
 function preamble() {
   return getAccounts().then(function (accounts) {
-    let [ accountA, accountB, accountC] = accounts;
+    let [ accountA, accountB, accountC ] = accounts;
     return enableClawback(accountA, A)
       .then(Promise.all([
         establishTrustline(accountB, B),
@@ -187,24 +186,23 @@ These snippets will help us with the final composition: making some payments to 
 <CodeExample>
 
 ```js
-async function examplePaymentClawback() {
-  await getAccounts().then(function(accounts) {
-    let [ accountA, accountB, accountC] = accounts;
+function examplePaymentClawback() {
+  return getAccounts().then(function(accounts) {
+    let [ accountA, accountB, accountC ] = accounts;
     return  makePayment(accountB, accountA, A, "1000")
       .then(makePayment(accountC, accountB, B, "500"))
       .then(doClawback( accountA, A, accountC, "250"));
-  });
-
-  // Let's check account balances to ensure that everything worked!
-  await getAccounts().then(showBalances);
+  })
+  .then(getAccounts)
+  .then(showBalances);
 }
 
-preamble().then(examplePaymentClawback());
+preamble().then(examplePaymentClawback);
 ```
 
 </CodeExample>
 
-After running our example (e.g. via `preamble().then(examplePaymentClawback());`), we should see the balances reflect the example flow:
+After running our example, we should see the balances reflect the example flow:
 
 <CodeExample Title="Example Output">
 
@@ -216,7 +214,7 @@ GC2BK: 250
 
 </CodeExample>
 
-Notice that GCIHA (this is Account A, the issuer) holds none of the asset, despite clawing back 250 from Account C. This should drive home the fact that clawed-back assets are *burned*, not transferred.
+Notice that `GCIHA` (this is Account A, the issuer) holds none of the asset, despite clawing back 250 from Account C. This should drive home the fact that clawed-back assets are *burned*, not transferred.
 
 _(It may be strange that A never holds any tokens of its custom asset, but that's exactly how issuing works: you create value where there used to be none. Sending an asset to its issuing account is *equivalent* to burning it, and auditing the total amount of an asset in existence is one of the benefits of properly distributing an asset via a [distribution account](../issuing-assets/how-to-issue-an-asset.mdx#why-have-separate-accounts-for-issuing-and-distribution), which we avoid doing here for example brevity.)_
 
@@ -273,10 +271,9 @@ function exampleClaimableBalanceClawback() {
     .then(function(accounts) {
       let [ accountA, accountB, accountC ] = accounts;
 
-      return makePayment(accountB, accountA, A, "1000").catch(txCheck)
-        .then(() => createClaimable(accountB, B, accountC, "500").catch(txCheck))
-        .then((txResp) => clawbackClaimable(accountA, A, getBalanceId(txResp)))
-        .catch(txCheck);
+      return makePayment(accountB, accountA, A, "1000")
+        .then(() => createClaimable(accountB, B, accountC, "500"))
+        .then((txResp) => clawbackClaimable(accountA, A, getBalanceId(txResp)));
     })
     .then(getAccounts)
     .then(showBalances);
@@ -285,7 +282,7 @@ function exampleClaimableBalanceClawback() {
 
 </CodeExample>
 
-After running `examplePaymentClawback()`, we should see the balances reflect our flow:
+After running `preamble().then(examplePaymentClawback)`, we should see the balances reflect our flow:
 
 <CodeExample Title="Example Output">
 
@@ -301,5 +298,105 @@ Note that after a particular claimable balance has been *claimed*, this method n
 
 Further note the divergence from the [earlier example][ex1]: you can't do a *partial* clawback of the claimable balance. It's an all-or-nothing operation. 
 
+### Example: Selectively Enabling Clawback
+When you enable the `AUTH_CLAWBACK_ENABLED_FLAG` on your account, it will make all future trustlines have clawback enabled for any of your issued assets. This may not always be desireable: you may want certain assets to behave as they did before. Though you could work around this by reissuing assets from a "dedicated clawback" account, you can also simply disable clawbacks for certain trustlines by clearing the `TRUST_LINE_CLAWBACK_ENABLED_FLAG` on a trustline.
+
+In the following example, we'll have an account (Account A, as before) issue a new asset and distribute it to a second account (Account B). We won't reintroduce Account C like in the earlier examples in order to keep things simple. Then, we'll demonstrate how A claws back some of the asset from B, then clears the trustline and can no longer claw back the asset.
+
+First, let's prepare the accounts (note that we are relying here on helper functions defined in the earlier examples):
+
+<CodeExample title="Preamble, Redux">
+
+```js
+function getAccounts() {
+  return Promise.all([
+    server.loadAccount(A.publicKey()),
+    server.loadAccount(B.publicKey()),
+  ]);
+}
+
+function preambleRedux() {
+  return getAccounts().then((accounts) => {
+    return enableClawback(accounts[0], A)
+      .then(() => establishTrustline(accounts[1], B));
+  });
+}
+```
+
+</CodeExample>
+
+Now, let's distribute some of our asset to Account B, just to claw it back. Then, we'll clear the flag from the trustline and show that another clawback isn't possible:
+
+<CodeExample title="Selectively Enabling Clawback">
+
+```js
+function disableClawback(issuerAccount, issuerKeys, forTrustor) {
+  return server.submitTransaction(buildTx(
+    issuerAccount, issuerKeys, [
+      sdk.Operation.setTrustLineFlags({
+        trustor: forTrustor.accountId(), 
+        asset: ASSET,   // defined in the (original) preamble
+        flags: {
+          clawbackEnabled: false,
+        },
+      }),
+    ]
+  ));
+}
+
+function exampleSelectiveClawback() {
+  return getAccounts().then((accounts) => {
+    let [ accountA, accountB ] = accounts;
+    return makePayment(accountB, accountA, A, "1000")
+      .then(getAccounts).then(showBalances)
+      .then(() => doClawback(accountA, A, accountB, "500"))
+      .then(getAccounts).then(showBalances)
+      .then(() => disableClawback(accountA, A, accountB))
+      .then(() => doClawback(accountA, A, accountB, "500"))
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          // Note that this is a *very* specific way to check for an error, and
+          // you should probably never do it this way.
+          // We do this here to demonstrate that the clawback error *does*
+          // occur as expected.
+          const opErrors = err.response.data.extras.result_codes.operations;
+          if (opErrors && opErrors.length > 0 &&
+              opErrors[0] === "op_no_clawback_enabled") {
+            console.info("Clawback failed, as expected!");
+          } else {
+            console.error("Uh-oh, some other failure occurred:", err.response.data.extras);
+          }
+        } else {
+          console.error("Uh-oh, unknown failure:", err);
+        }
+      });
+  })
+  .then(getAccounts)
+  .then(showBalances);
+}
+```
+
+</CodeExample>
+
+Run the example (e.g. via `preambleRedux().then(exampleSelectiveClawback)`) and observe its result:
+
+<CodeExample>
+
+```txt
+GCIHA: 0
+GDS5N: 1000
+GCIHA: 0
+GDS5N: 500
+Clawback failed, as expected!
+GCIHA: 0
+GDS5N: 500
+```
+
+</CodeExample>
+
+It's important to note that **clearing the clawback flag on a trustline is irreversible**: you cannot *set* the flag, only clear it. This behavior is intended and aligns with the earlier caveat that only *new* trustlines follow the [account's clawback flag](#setting-account-options): it's done so that you cannot retroactively "change the rules" on your asset's holders after they've established trustlines. If you'd like to enable clawback again, holders need to reissue their trustlines.
+
+
 [ex1]: #example:-payments
 [ex2]: #example:-claimable-balances
+[ex3]: #example:-selectively-enable-clawback
