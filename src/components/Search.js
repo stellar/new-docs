@@ -12,6 +12,7 @@ const SearchContainerEl = styled.form`
   border-bottom: 1px solid ${PALETTE.white60};
 
   @media (${MEDIA_QUERIES.ltLaptop}) {
+    width: 100%;
     height: auto;
     margin-top: 6.5rem;
     border-bottom: none;
@@ -20,6 +21,7 @@ const SearchContainerEl = styled.form`
 
 const SearchInputWrapperEl = styled.div`
   position: relative;
+  width: 100%;
 
   svg {
     position: absolute;
@@ -33,12 +35,13 @@ const SearchInputWrapperEl = styled.div`
 `;
 
 const SearchInputEl = styled.input`
+  width: 100%;
   transition: border ${CSS_TRANSITION_SPEED.default} ease;
   color: ${PALETTE.black80};
   background: none;
   padding: 0.5rem 1rem;
   padding-left: 2rem;
-  border: 1px solid ${PALETTE.white};
+  border: 1px solid ${PALETTE.white60};
   border-radius: 2px;
   line-height: 1.75;
   vertical-align: middle;
@@ -66,7 +69,7 @@ export const Search = () => {
   }, []);
 
   return (
-    <SearchContainerEl>
+    <SearchContainerEl id="stellar-docsearch-form">
       <SearchInputWrapperEl>
         <SearchInputEl
           type="search"
