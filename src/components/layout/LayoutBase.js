@@ -54,7 +54,10 @@ export const LayoutBase = ({
   return (
     <>
       <Helmet
-        link={[{ rel: "stylesheet", type: "text/css", href: "/fonts.css" }]}
+        link={[
+          { rel: "stylesheet", type: "text/css", href: "/fonts.css" },
+          { rel: "stylesheet", type: "text/css", href: "/custom.css" },
+        ]}
         meta={[
           {
             name: "viewport",

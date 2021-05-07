@@ -13,6 +13,10 @@ export default function HTML(props) {
           <script async src="https://www.google-analytics.com/analytics.js" />
         )}
         {props.headComponents}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"
+        />
       </head>
       <body {...props.bodyAttributes}>
         {props.preBodyComponents}
@@ -34,6 +38,11 @@ if (document.location.pathname.startsWith('/api')) {
           }}
         />
         {props.postBodyComponents}
+
+        <script
+          type="text/javascript"
+          src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"
+        ></script>
 
         {Object.values(PORTAL_TARGETS).map((name) => (
           <div key={name} id={name} />
