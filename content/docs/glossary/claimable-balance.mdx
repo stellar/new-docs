@@ -118,8 +118,13 @@ import (
 	"github.com/stellar/go/keypair"
 	"github.com/stellar/go/network"
 	"github.com/stellar/go/txnbuild"
-	"github.com/stellar/go/xdr"
 )
+
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func main() {
 	client := sdk.DefaultTestNetClient
@@ -133,6 +138,7 @@ func main() {
 	aAccount, err := client.AccountDetail(sdk.AccountRequest{
 		AccountID: aKeys.Address(),
 	})
+	check(err)
 
 	// Create a claimable balance with our two above-described conditions.
 	soon := time.Now().Add(time.Second * 60)
@@ -170,6 +176,7 @@ func main() {
 	txResp, err := client.SubmitTransaction(tx)
 	check(err)
 
+	fmt.Println(txResp)
 	fmt.Println("Claimable balance created!")
 }
 ```
