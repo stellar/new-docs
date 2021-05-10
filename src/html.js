@@ -35,6 +35,12 @@ if (document.location.pathname.startsWith('/api')) {
         />
         {props.postBodyComponents}
 
+        <script
+          src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"
+          integrity="sha384-8uEk67aWSZHvjtAX9hf2AB+KzYcssy31vRRTi9oP81zHtyIj7PQGAykGbQpB1L2J"
+          crossorigin="anonymous"
+        ></script>
+
         {Object.values(PORTAL_TARGETS).map((name) => (
           <div key={name} id={name} />
         ))}

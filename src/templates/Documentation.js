@@ -39,6 +39,7 @@ import {
   NavLogo,
   NavColumn,
 } from "components/Navigation/SharedStyles";
+import { Search } from "components/Search";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
@@ -64,7 +65,7 @@ const NavItemEl = styled(BasicButton)`
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${(props) => (props.isActive ? THEME.text : THEME.lightGrey)};
-  padding: 0.5rem 0;
+  padding: 0.25rem 0;
   text-align: left;
 
   &:focus {
@@ -173,6 +174,7 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const center = (
     <OriginalFileContext.Provider value={originalFilePath}>
+      <Search />
       <BetaNotice />
       <Article>
         <H1>{header}</H1>

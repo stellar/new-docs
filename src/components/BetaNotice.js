@@ -8,7 +8,11 @@ import { Link } from "basics/Links";
 
 const BetaNoticeEl = styled(Text)`
   font-size: 1rem;
-  margin: 2rem 0;
+  margin: 1rem 0;
+
+  & + hr {
+    margin-top: 1rem;
+  }
 
   @media (${MEDIA_QUERIES.ltTablet}) {
     display: none;
