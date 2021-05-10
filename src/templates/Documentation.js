@@ -65,7 +65,7 @@ const NavItemEl = styled(BasicButton)`
   font-size: 0.875rem;
   font-weight: ${FONT_WEIGHT.normal};
   color: ${(props) => (props.isActive ? THEME.text : THEME.lightGrey)};
-  padding: 0.5rem 0;
+  padding: 0.25rem 0;
   text-align: left;
 
   &:focus {

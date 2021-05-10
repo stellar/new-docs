@@ -2,14 +2,17 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 
 import { PALETTE, MEDIA_QUERIES, CSS_TRANSITION_SPEED } from "constants/styles";
+import {
+  DOCSEARCH_DOCS_KEY,
+  DOCSEARCH_DOCS_INDEX_NAME,
+} from "constants/config";
 
 import SearchIcon from "assets/icons/icon-search.svg";
 
 const SearchContainerEl = styled.form`
-  height: 4.5rem;
+  height: 5rem;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid ${PALETTE.white60};
 
   @media (${MEDIA_QUERIES.ltLaptop}) {
     width: 100%;
@@ -42,7 +45,7 @@ const SearchInputEl = styled.input`
   padding: 0.5rem 1rem;
   padding-left: 2rem;
   border: 1px solid ${PALETTE.white60};
-  border-radius: 2px;
+  border-radius: 4px;
   line-height: 1.75;
   vertical-align: middle;
 
@@ -61,8 +64,8 @@ const SearchInputEl = styled.input`
 export const Search = () => {
   useEffect(() => {
     window.docsearch({
-      apiKey: "a90bee98943eff1ca1adfdaac1e434d8",
-      indexName: "stellar",
+      apiKey: DOCSEARCH_DOCS_KEY,
+      indexName: DOCSEARCH_DOCS_INDEX_NAME,
       inputSelector: "#stellar-docsearch",
       debug: false,
     });
