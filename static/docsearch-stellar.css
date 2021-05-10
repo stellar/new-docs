@@ -415,6 +415,7 @@
   .algolia-autocomplete
   .algolia-docsearch-suggestion.algolia-docsearch-suggestion__secondary {
   display: block;
+  text-decoration: none;
 }
 @media all and (min-width: 300px) {
   #stellar-docsearch-form
