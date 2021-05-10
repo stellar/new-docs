@@ -30,7 +30,7 @@ const SearchInputWrapperEl = styled.div`
     transform: translateY(-50%);
     width: 1rem;
     height: 1rem;
-    fill: #333333;
+    fill: ${PALETTE.black60};
   }
 `;
 
