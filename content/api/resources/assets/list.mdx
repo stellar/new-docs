@@ -12,13 +12,16 @@ This endpoint lists all assets.
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /assets?asset_code{:asset_code}&asset_issuer={:account_id}&cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -41,7 +44,9 @@ This endpoint lists all assets.
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/assets?asset_code=CNY&limit=3"
@@ -65,7 +70,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -92,6 +99,18 @@ server
         "asset_code": "CNY",
         "asset_issuer": "GAOT23KBW2HL6HVZFPNFLLT5VGIKGTLGR3AFDHYSRIWS4QKBYRPUW4N3",
         "paging_token": "CNY_GAOT23KBW2HL6HVZFPNFLLT5VGIKGTLGR3AFDHYSRIWS4QKBYRPUW4N3_credit_alphanum4",
+        "accounts": {
+          "authorized": 23,
+          "authorized_to_maintain_liabilities": 11,
+          "unauthorized": 6
+        },
+        "num_claimable_balances": 3,
+        "balances": {
+          "authorized": "997268.0000000",
+          "authorized_to_maintain_liabilities": "498634.0000000",
+          "unauthorized": "249317.0000000"
+        },
+        "claimable_balances_amount": "124658.5000000",
         "amount": "997268.0000000",
         "num_accounts": 23,
         "flags": {
@@ -110,6 +129,18 @@ server
         "asset_code": "CNY",
         "asset_issuer": "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX",
         "paging_token": "CNY_GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX_credit_alphanum4",
+        "accounts": {
+          "authorized": 5514,
+          "authorized_to_maintain_liabilities": 2757,
+          "unauthorized": 1378
+        },
+        "num_claimable_balances": 551,
+        "balances": {
+          "authorized": "18318343.2623217",
+          "authorized_to_maintain_liabilities": "7327337.3049290",
+          "unauthorized": "2930934.9219720"
+        },
+        "claimable_balances_amount": "1172373.9687890",
         "amount": "18318343.2623217",
         "num_accounts": 5514,
         "flags": {
@@ -128,6 +159,18 @@ server
         "asset_code": "CNY",
         "asset_issuer": "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH",
         "paging_token": "CNY_GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH_credit_alphanum4",
+        "accounts": {
+          "authorized": 1,
+          "authorized_to_maintain_liabilities": 0,
+          "unauthorized": 0
+        },
+        "num_claimable_balances": 0,
+        "balances": {
+          "authorized": "0.0000000",
+          "authorized_to_maintain_liabilities": "0.0000000",
+          "unauthorized": "0.0000000"
+        },
+        "claimable_balances_amount": "0.0000000",
         "amount": "0.0000000",
         "num_accounts": 1,
         "flags": {
@@ -143,7 +186,9 @@ server
 
 </ExampleResponse>
 
+
 <CodeExample title="JavaScript Streaming Example">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -161,3 +206,4 @@ var es = server
 ```
 
 </CodeExample>
+

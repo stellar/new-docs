@@ -74,6 +74,14 @@ When Horizon returns information about a claimable balance, it uses the followin
   "_links": {
     "self": {
       "href": "https://horizon.stellar.org/claimable_balances/000000000102030000000000000000000000000000000000000000000000000000000000"
+    },
+    "operations": {
+      "href": "https://horizon.stellar.org/claimable_balances/000000000102030000000000000000000000000000000000000000000000000000000000/operations{?cursor,limit,order}",
+      "templated": true
+    },
+    "transactions": {
+      "href": "https://horizon.stellar.org/claimable_balances/000000000102030000000000000000000000000000000000000000000000000000000000/transactions{?cursor,limit,order}",
+      "templated": true
     }
   },
   "id": "000000000102030000000000000000000000000000000000000000000000000000000000",
