@@ -21,6 +21,7 @@ Stellar stores and communicates transaction data in a binary format called [XDR]
 
 <CodeExample>
 
+
 ```js
 var StellarSdk = require("stellar-sdk");
 var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
@@ -158,7 +159,7 @@ func main () {
     // Build transaction
     tx, err := txnbuild.NewTransaction(
       txnbuild.TransactionParams{
-        SourceAccount:        &sourceAccount,
+        SourceAccount:        sourceAccount.AccountID,
         IncrementSequenceNum: true,
         BaseFee:              txnbuild.MinBaseFee,
         Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
@@ -251,11 +252,13 @@ except (BadRequestError, BadResponseError) as err:
 
 </CodeExample>
 
+
 What exactly happened there? Let’s break it down.
 
 1. Confirm that the account ID (aka the _public key_) you are sending to actually exists by loading the associated account data from the Stellar network. It's okay to skip this step, but it gives you an opportunity to avoid making a transaction that will inevitably fail.
 
 <CodeExample>
+
 
 ```js
 server.loadAccount(destinationId).then(function (account) {
@@ -281,9 +284,11 @@ server.load_account(destination_id)
 
 </CodeExample>
 
+
 2. Load data for the account you are sending from. An account can only perform one transaction at a time and has something called a [sequence number](../glossary/accounts.mdx#sequence-number), which helps Stellar verify the order of transactions. A transaction’s sequence number needs to match the account’s sequence number, so you need to get the account’s current sequence number from the network.
 
 <CodeExample>
+
 
 ```js
 .then(function() {
@@ -310,11 +315,13 @@ source_account = server.load_account(source_key.public_key)
 
 </CodeExample>
 
+
 The SDK will automatically increment the account’s sequence number when you build a transaction, so you won’t need to retrieve this information again if you want to perform a second transaction.
 
 3. Start building a transaction. This requires an account object, not just an account ID, because it will increment the account’s sequence number.
 
 <CodeExample>
+
 
 ```js
 var transaction = new StellarSdk.TransactionBuilder(sourceAccount);
@@ -327,7 +334,7 @@ Transaction transaction = new Transaction.Builder(sourceAccount, Network.TESTNET
 ```go
 tx, err := txnbuild.NewTransaction(
   txnbuild.TransactionParams{
-    SourceAccount:        &sourceAccount,
+    SourceAccount:        sourceAccount.AccountID,
     IncrementSequenceNum: true,
     BaseFee:              MinBaseFee,
     Timebounds:           txnbuild.NewInfiniteTimeout(), // Use a real timeout in production!
@@ -350,9 +357,11 @@ transaction = TransactionBuilder(
 
 </CodeExample>
 
+
 4. Add the payment operation to the account. Note that you need to specify the type of asset you are sending: Stellar’s network currency is the [lumen](https://www.stellar.org/lumens), but you can send any asset issued on the network. We'll cover sending non-lumen assets [below](#transacting-in-other-currencies). For now, though, we’ll stick to lumens, which are called “native” assets in the SDK:
 
 <CodeExample>
+
 
 ```js
 .addOperation(StellarSdk.Operation.payment({
@@ -382,11 +391,13 @@ Operations: []txnbuild.Operation{
 
 </CodeExample>
 
+
 You should also note that the amount is a string rather than a number. When working with extremely small fractions or large values, [floating point math can introduce small inaccuracies](https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems). Since not all systems have a native way to accurately represent extremely small or large decimals, Stellar uses strings as a reliable way to represent the exact amount across any system.
 
 5. Optionally, you can add your own metadata, called a [memo](../glossary/transactions.mdx#memo), to a transaction. Stellar doesn’t do anything with this data, but you can use it for any purpose you’d like. Many exchanges require memos for incoming transactions because they use a single Stellar account for all their users and rely on the memo to differentiate between internal user accounts.
 
 <CodeExample title="Add a Memo">
+
 
 ```js
 .addMemo(StellarSdk.Memo.text('Test Transaction'))
@@ -406,9 +417,11 @@ Memo: txnbuild.MemoText("Test Transaction")
 
 </CodeExample>
 
+
 6. Now that the transaction has all the data it needs, you have to cryptographically sign it using your secret key. This proves that the data actually came from you and not someone impersonating you.
 
 <CodeExample>
+
 
 ```js
 transaction.sign(sourceKeys);
@@ -431,9 +444,11 @@ transaction.sign(source_key)
 
 </CodeExample>
 
+
 7. And finally, submit it to the Stellar network!
 
 <CodeExample>
+
 
 ```js
 server.submitTransaction(transaction);
@@ -456,6 +471,7 @@ server.submit_transaction(transaction)
 
 </CodeExample>
 
+
 In this example, we're submitting the transaction to the SDF-maintained public testnet instance of Horizon, the Stellar API. When submitting transactions to a Horizon server — which is what most people do — it's possible that you will not receive a response from the server due to a bug, network conditions, etc. In such a situation it's impossible to determine the status of your transaction. That's why you should always save a built transaction (or transaction encoded in XDR format) in a variable or a database and resubmit it if you don't know its status. If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
 
 ## Receive a Payment
@@ -465,6 +481,7 @@ You don’t actually need to do anything to receive payments into a Stellar acco
 However, you may want to keep an eye out for incoming payments. A simple program that watches the network for payments and prints each one might look like:
 
 <CodeExample title="Receive Payments">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -574,10 +591,10 @@ paymentsRequest.stream(new EventListener<OperationResponse>() {
       System.out.println(output.toString());
     }
   }
-  
+
   @Override
   public void onFailure(Optional<Throwable> optional, Optional<Integer> optional1) {
-  
+
   }
 });
 ```
@@ -663,9 +680,11 @@ for payment in payments.stream():
 
 </CodeExample>
 
+
 There are two main parts to this program. First, you create a query for payments involving a given account. Like most queries in Stellar, this could return a huge number of items, so the API returns paging tokens, which you can use later to start your query from the same point where you previously left off. In the example above, the functions to save and load paging tokens are left blank, but in a real application, you’d want to save the paging tokens to a file or database so you can pick up where you left off in case the program crashes or the user closes it.
 
 <CodeExample>
+
 
 ```js
 var payments = server.payments().forAccount(accountId);
@@ -697,11 +716,13 @@ if last_token:
 
 </CodeExample>
 
+
 Second, the results of the query are streamed. This is the easiest way to watch for payments or other transactions. Each existing payment is sent through the stream, one by one. Once all existing payments have been sent, the stream stays open and new payments are sent as they are made.
 
 Try it out: Run this program, and then, in another window, create and submit a payment. You should see this program log the payment.
 
 <CodeExample>
+
 
 ```js
 payments.stream({
@@ -744,9 +765,11 @@ for payment in payments.stream():
 
 </CodeExample>
 
+
 You can also request payments in groups or pages. Once you’ve processed each page of payments, you’ll need to request the next one until there are none left.
 
 <CodeExample>
+
 
 ```js
 payments.call().then(function handlePage(paymentsPage) {
@@ -773,6 +796,7 @@ payments_next = payments.next()
 ```
 
 </CodeExample>
+
 
 ## Transacting in Other Currencies
 
