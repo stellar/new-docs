@@ -238,7 +238,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 	//
 	sponsorTrustline := []txnbuild.Operation{
 		&txnbuild.BeginSponsoringFutureReserves{
-			SourceAccount: &s1Account,
+			SourceAccount: s1Account.AccountID,
 			SponsoredID:   addressA,
 		},
 		&txnbuild.ChangeTrust{
@@ -249,7 +249,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 	}
 
 	// Note that while A can submit this transaction, both sign it.
-	SignAndSend(client, &aAccount, []*keypair.Full{S1, A}, sponsorTrustline...)
+	SignAndSend(client, aAccount.AccountID, []*keypair.Full{S1, A}, sponsorTrustline...)
 	fmt.Println("Sponsored a trustline of", A.Address())
 
 	//
@@ -257,7 +257,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 	//
 	sponsorTrustline = []txnbuild.Operation{
 		&txnbuild.BeginSponsoringFutureReserves{
-			SourceAccount: &s1Account,
+			SourceAccount: s1Account.AccountID,
 			SponsoredID:   addressA,
 		},
 		&txnbuild.ChangeTrust{
@@ -267,7 +267,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 		&txnbuild.EndSponsoringFutureReserves{},
 
 		&txnbuild.BeginSponsoringFutureReserves{
-			SourceAccount: &s2Account,
+			SourceAccount: s2Account.AccountID,
 			SponsoredID:   addressA,
 		},
 		&txnbuild.ChangeTrust{
@@ -278,7 +278,7 @@ Now, let's sponsor trustlines for Account A. Notice how the `CHANGE_TRUST` opera
 	}
 
 	// Note that all 3 accounts must approve/sign this transaction.
-	SignAndSend(client, &aAccount, []*keypair.Full{S1, S2, A}, sponsorTrustline...)
+	SignAndSend(client, aAccount.AccountID, []*keypair.Full{S1, S2, A}, sponsorTrustline...)
 	fmt.Println("Sponsored two trustlines of", A.Address())
 ```
 
@@ -325,7 +325,7 @@ An intuitive way to think of a sponsorship transfer is that the very act of spon
 	//
 	transferOps := []txnbuild.Operation{
 		&txnbuild.BeginSponsoringFutureReserves{
-			SourceAccount: &s2Account,
+			SourceAccount: s2Account.AccountID,
 			SponsoredID:   S1.Address(),
 		},
 		&txnbuild.RevokeSponsorship{
@@ -341,7 +341,7 @@ An intuitive way to think of a sponsorship transfer is that the very act of spon
 
 	// Notice that while the old sponsor *sends* the transaction (in this case),
 	// both sponsors must *approve* the transfer.
-	SignAndSend(client, &s1Account, []*keypair.Full{S1, S2}, transferOps...)
+	SignAndSend(client, s1Account.AccountID, []*keypair.Full{S1, S2}, transferOps...)
 	fmt.Println("Transferred sponsorship for", A.Address())
 ```
 
@@ -404,7 +404,7 @@ Finally, we can demonstrate complete revocation of sponsorships. Below, Signer 2
 		},
 	}
 
-	SignAndSend(client, &s2Account, []*keypair.Full{S2}, revokeOps...)
+	SignAndSend(client, s2Account.AccountID, []*keypair.Full{S2}, revokeOps...)
 	fmt.Println("Revoked sponsorship for", A.Address())
 } // ends main()
 ```
@@ -429,18 +429,18 @@ For example, the following is an identical expression of the [earlier Golang exa
 			SponsoredID: addressA,
 		},
 		&txnbuild.ChangeTrust{
-			SourceAccount: &aAccount,
+			SourceAccount: aAccount.AccountID,
 			Line:          &assets[0],
 			Limit:         txnbuild.MaxTrustlineLimit,
 		},
 		&txnbuild.EndSponsoringFutureReserves{
-			SourceAccount: &aAccount,
+			SourceAccount: aAccount.AccountID,
 		},
 	}
 
 	// Again, both participants must still sign the transaction: the sponsored
 	// account must consent to the sponsorship.
-	SignAndSend(client, &s1Account, []*keypair.Full{S1, A}, sponsorTrustline...)
+	SignAndSend(client, s1Account.AccountID, []*keypair.Full{S1, A}, sponsorTrustline...)
 ```
 
 </CodeExample>

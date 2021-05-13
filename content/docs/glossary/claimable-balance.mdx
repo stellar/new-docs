@@ -156,7 +156,7 @@ func main() {
 	// Build, sign, and submit the transaction
 	tx, err := txnbuild.NewTransaction(
 		txnbuild.TransactionParams{
-			SourceAccount:        &aAccount,
+			SourceAccount:        aAccount.AccountID,
 			IncrementSequenceNum: true,
 			BaseFee:              txnbuild.MinBaseFee,
 			// Use a real timeout in production!
@@ -269,7 +269,7 @@ await server.submitTransaction(tx).catch(function (err) {
 claimBalance := txnbuild.ClaimClaimableBalance{BalanceID: balanceId}
 tx, err = txnbuild.NewTransaction(
 	txnbuild.TransactionParams{
-		SourceAccount:        &aAccount, // or Account B, depending on the condition!
+		SourceAccount:        aAccount.AccountID, // or Account B, depending on the condition!
 		IncrementSequenceNum: true,
 		BaseFee:              txnbuild.MinBaseFee,
 		Timebounds:           txnbuild.NewInfiniteTimeout(),
