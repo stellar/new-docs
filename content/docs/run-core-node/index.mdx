@@ -40,6 +40,15 @@ To make things easier, we’ll define three types of nodes based on permutations
 | **Full Validator** | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 | **Archiver** | :heavy_check_mark: | :heavy_check_mark: |  | :heavy_check_mark: |
 
+<Alert>
+
+  In the past, there was also a **Watcher** node, which was designed to run alongside Horizon for transaction submission and observing ledger changes, but not participate in validation or history publication.
+
+  This architecture was **deprecated** as of [Horizon 2.0](https://www.stellar.org/developers-blog/a-new-sun-on-the-horizon), which bundles an optimized "Captive" Core for its operational needs.
+
+</Alert>
+
+
 So why choose one type over another? Let’s break it down a bit and take a look at what each type is good for.
 
 ### Basic Validator
@@ -50,7 +59,7 @@ A Basic Validator keeps track of the ledger and submits transactions for possibl
 
 The advantage: signatures can serve as official endorsements of specific ledgers in real time. That’s important if, for instance, you issue an asset on Stellar that represents a real-world asset: you can let your customers know that you will only honor transactions and redeem assets from ledgers signed by your validator, and in the unlikely scenario that something happens to the network, you can use your node as the final arbiter of truth. Setting up your node as a validator allows you to resolve any questions _up front and in writing_ about how you plan to deal with disasters and disputes.
 
-**Use a Basic Validator to run Horizon, ensure reliable access to the network, and sign off on transactions.**
+**Use a Basic Validator to ensure reliable access to the network and sign off on transactions.**
 
 ### Full Validator
 
