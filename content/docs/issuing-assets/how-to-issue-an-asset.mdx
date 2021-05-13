@@ -224,7 +224,7 @@ func main() {
   // issuer.
   tx, err := txnbuild.NewTransaction(
     txnbuild.TransactionParams{
-      SourceAccount:        distributorAccount.AccountID,
+      SourceAccount:        &distributorAccount,
       IncrementSequenceNum: true,
       BaseFee:              txnbuild.MinBaseFee,
       Timebounds:           txnbuild.NewInfiniteTimeout(),
@@ -248,7 +248,7 @@ func main() {
   // Second, the issuing account actually sends a payment using the asset
   tx, err = txnbuild.NewTransaction(
     txnbuild.TransactionParams{
-      SourceAccount:        issuerAccount.AccountID,
+      SourceAccount:        &issuerAccount,
       IncrementSequenceNum: true,
       BaseFee:              txnbuild.MinBaseFee,
       Timebounds:           txnbuild.NewInfiniteTimeout(),
