@@ -5,7 +5,7 @@ order: 40
 
 import { CodeExample } from "components/CodeExample";
 
-After you've [installed](./installation.mdx) Stellar Core, your next step is to complete a configuration file that specifies crucial things about your node — like whether it connects to the testnet or the public network, what database it writes to, and which other nodes are in its [quorum set](#choosing-your-quorum-set). You do that using a [TOML](https://github.com/toml-lang/toml), and by default Stellar Core loads that file from `./stellar-core.cfg`. You can specify a different file to load using the command line:
+After you've [installed](./installation.mdx) Stellar Core, your next step is to complete a configuration file that specifies crucial things about your node — like whether it connects to the testnet or the public network, what database it writes to, and which other nodes are in its [quorum set](#choosing-your-quorum-set). You do that using [TOML](https://github.com/toml-lang/toml), and by default Stellar Core loads that file from `./stellar-core.cfg`. You can specify a different file to load using the command line:
 
 `$ stellar-core --conf betterfile.cfg <COMMAND>`
 
@@ -19,15 +19,15 @@ This doc works best in conjunction with concrete config examples, so as you read
 
 - If you want to connect to the testnet, check out the [example test network config](https://github.com/stellar/docker-stellar-core-horizon/blob/master/testnet/core/etc/stellar-core.cfg). As you can see, most of the fields from the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg) are omitted since the default settings work fine. You can easily tailor this config to meet your testnet needs.
 
-- If you want to connect to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg). It includes a properly crafted quorum set with all the current [Tier 1 validators](./tier-1-orgs.mdx), which is a good place to start for most configurations. This node is set up to both [validate](#validating) and write history to a [public archive](./publishing-history-archives.mdx), but you can disable either feature to adjust this config so it's a little lighter.
+- If you want to connect to the public network, check out this [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg). It includes a properly crafted quorum set with all the current [Tier 1 validators](./tier-1-orgs.mdx), which is a good place to start for most configurations. This node is set up to both [validate](#validating) and write history to a [public archive](./publishing-history-archives.mdx), but you can disable either feature by adjusting this config so it's a little lighter.
 
 ## Database
 
 Stellar Core stores two copies of the ledger: one in a SQL database and one in XDR files on local disk called [buckets](#buckets). The database is consulted during consensus, and modified atomically when a transaction set is applied to the ledger. It's random access, fine-grained, and fast.
 
-While a SQLite database works with Stellar Core, we generally recommend using a separate PostgreSQL server. Horizon, for instance, requires PostgreSQL. A Postgres database is the bread and butter of Stellar Core.
+While a SQLite database works with Stellar Core, we generally recommend using a separate PostgreSQL server. A Postgres database is the bread and butter of Stellar Core.
 
-You specify your node's database in the aptly named `DATABASE` field of your config file, which you can can read more about in the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23). It defaults to an in-memory database, but you can specify a path as per the example config.
+You specify your node's database in the aptly named `DATABASE` field of your config file, which you can can read more about in the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23). It defaults to an in-memory database, but you can specify a path as per the example.
 
 ## Buckets
 
@@ -68,7 +68,7 @@ If you run more than one node, set the `HOME_DOMAIN` common to those nodes using
 
 ## Choosing Your Quorum Set
 
-No matter what kind of node you run — Basic Validator, Full Validator, or Archiver — you need to select a quorum set, which consists of validators (grouped by organization) that your node checks with to determine whether to apply a transaction set to a ledger. If you want to know more about how qorum sets work, check this article about [how Stellar approaches quorums](https://www.stellar.org/developers-blog/why-quorums-matter-and-how-stellar-approaches-them). If you want to see what a quorum set consisting of all the Tier 1 validators looks like — at tried and true setup — check out the [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg)
+No matter what kind of node you run — Basic Validator, Full Validator, or Archiver — you need to select a quorum set, which consists of validators (grouped by organization) that your node checks with to determine whether to apply a transaction set to a ledger. If you want to know more about how quorum sets work, check this article about [how Stellar approaches quorums](https://www.stellar.org/developers-blog/why-quorums-matter-and-how-stellar-approaches-them). If you want to see what a quorum set consisting of all the Tier 1 validators looks like — a tried and true setup — check out the [public network config for a Full Validator](https://github.com/stellar/packages/blob/master/docs/examples/pubnet-validator-full/stellar-core.cfg)
 
 A good quorum set:
 
@@ -84,13 +84,13 @@ To generate a quorum set, stellar core:
 - Sets the threshold for each of those subquorums
 - Gives weights to those subquorums based on quality
 
-While this does not absolve you of all responsibility — you still need to pick trustworthy validators and keep an eye on them to ensure that they’re consistent and reliable — it does make your life easier, and reduces the chances for human error.
+While this does not absolve you of all responsibility — you still need to pick trustworthy validators and keep an eye on them to ensure that they’re consistent and reliable — it does make your life easier and reduces the chances for human error.
 
 ### Validator discovery
 
 When you add a validating node to your quorum set, it’s generally because you trust the _organization_ running the node: you trust SDF, not some anonymous Stellar public key.
 
-In order to create a self-verified link between a node and the organization that runs it, a validator declares a home domain on-chain using a `set_options` operation, and publishes organizational information in a stellar.toml file hosted on that domain. To find out how that works, take a look at [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md).
+In order to create a self-verified link between a node and the organization that runs it, a validator declares a home domain on-chain using a [`set_options` operation](../start/list-of-operations.mdx#set-options), and publishes organizational information in a stellar.toml file hosted on that domain. To find out how that works, take a look at [SEP-20](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0020.md).
 
 As a result of that link, you can look up a node by its Stellar public key and check the stellar.toml to find out who runs it. It’s possible to do that manually, but you can also just consult the list of nodes on [Stellarbeat.io](https://stellarbeat.io/nodes). If you decide to trust an organization, you can use that list to collect the information necessary to add their nodes to your configuration.
 
@@ -177,14 +177,14 @@ ADDRESS="core.rando.com"
 
 **HIGH** quality validators are given the most weight in automatic quorum set configuration. Before assigning a high quality rating to a node, make sure it has low latency and good uptime, and that the organization running the node is reliable and trustworthy.
 
-A high quality a validator:
+A high quality validator:
 
 - publishes an archive
 - belongs to a suite of nodes that provide redundancy
 
 Choosing redundant nodes is good practice. The archive requirement is programmatically enforced.
 
-**MEDIUM** quality validators are nested below high quality validators, and their combined weight is equivalent to a _single high quality entity_. If a node doesn't publish an archive, but you deem it reliable, or have an organizational interest in including in your quorum set, give it a medium quality rating.
+**MEDIUM** quality validators are nested below high quality validators, and their combined weight is equivalent to a _single high quality entity_. If a node doesn't publish an archive, but you deem it reliable or have an organizational interest in including in your quorum set, give it a medium quality rating.
 
 **LOW** quality validators are nested below medium quality validators, and their combined weight is equivalent to a _single medium quality entity_. Should they prove reliable over time, you can upgrade their rating to medium to give them a bigger role in your quorum set configuration.
 
@@ -247,7 +247,7 @@ If you need to regenerate the metadata, the simplest way is to replay ledgers fo
 
 Some deployments of Stellar Core and Horizon will want to retain metadata for the _entire history_ of the network. This metadata can be quite large and computationally expensive to regenerate anew by replaying ledgers in stellar-core from an empty initial database state, as described in the previous section.
 
-This can be especially costly if run more than once. For instance, when bringing a new node online. Or even if running a single node with Horizon, having already ingested the meta data _once_: a subsequent version of Horizon may have a schema change that entails re-ingesting it _again_.
+This can be especially costly if run more than once. For instance, when bringing a new node online. Or even if running a single node with Horizon, having already ingested the metadata _once_: a subsequent version of Horizon may have a schema change that entails re-ingesting it _again_.
 
 Some operators therefore prefer to shut down their stellar-core (and/or Horizon) processes and _take filesystem-level snapshots_ or _database-level dumps_ of the contents of Stellar Core's database and bucket directory, and/or Horizon's database, after metadata generation has occurred the first time. Such snapshots can then be restored, putting stellar-core and/or Horizon in a state containing metadata without performing full replay.
 
