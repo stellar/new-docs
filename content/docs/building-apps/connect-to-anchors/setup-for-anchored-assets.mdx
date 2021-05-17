@@ -284,19 +284,19 @@ Let's look at some concrete examples: here’s [StellarX.com’s stellar.toml fi
 <CodeExample>
 
 ```toml
+# StellarX <stellarx.com>
+VERSION="2.2.0"
 FEDERATION_SERVER="https://federation.stellarx.com/federation"
-
 ACCOUNTS=[
 "GDM4UWTGHCWSTM7Z46PNF4BLH35GS6IUZYBWNNI4VU5KVIHYSIVQ55Y6"
 ]
-
 [DOCUMENTATION]
-ORG_NAME="Diamond Ltd."
+ORG_NAME="Ultra Stellar LLC"
 ORG_DBA="StellarX"
 ORG_URL="https://www.stellarx.com"
 ORG_LOGO="https://www.stellarx.com/emailAssets/stellarx.png"
 ORG_DESCRIPTION="The first full-featured trading app for Stellar's universal marketplace"
-ORG_PHYSICAL_ADDRESS="Hamilton, Bermuda"
+ORG_PHYSICAL_ADDRESS="Tallinn, Estonia"
 ORG_OFFICIAL_EMAIL="support@stellarx.com"
 ```
 
@@ -313,13 +313,15 @@ NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
 
 ACCOUNTS=["GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX", "GASWJWFRYE55KC7MGANZMMRBK5NPXT3HMPDQ6SEXZN6ZPWYXVVYBFRTE"]
 TRANSFER_SERVER="https://api.anchorusd.com/transfer/"
+TRANSFER_SERVER_SEP0024="https://api.anchorusd.com/transfer/"
 WEB_AUTH_ENDPOINT="https://api.anchorusd.com/api/webauth"
+SIGNING_KEY="GASWJWFRYE55KC7MGANZMMRBK5NPXT3HMPDQ6SEXZN6ZPWYXVVYBFRTE"
 
 [DOCUMENTATION]
 ORG_NAME="AnchorCoin LLC"
 ORG_DBA="AnchorUSD"
 ORG_URL="https://www.anchorusd.com"
-ORG_LOGO="https://www.anchorusd.com/assets/images/logo/logo.png"
+ORG_LOGO="https://stablecoin.anchorusd.com/img/anchorusd.png"
 ORG_DESCRIPTION="AnchorUSD develops a stable cryptocurrency backed one-for-one to the US dollar."
 ORG_TWITTER="AnchorUSD"
 ORG_OFFICIAL_EMAIL="support@anchorusd.com"
@@ -327,18 +329,18 @@ ORG_OFFICIAL_EMAIL="support@anchorusd.com"
 [[PRINCIPALS]]
 name="Jim Berkley-Danz"
 email="j@anchorusd.com"
-twitter="jimdanz"
-github="jimdanz"
 
 [[CURRENCIES]]
 code="USD"
 issuer="GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"
 display_decimals=2
+status="live"
+is_asset_anchored=true
 anchor_asset_type="fiat"
 anchor_asset="USD"
 name="US Dollar"
 desc="Cryptocurrency backed one-for-one to the US dollar.  All dollar deposits are held in an audited, US-domiciled escrow account for the exclusive benefit of AnchorUSD token holders."
-image="https://www.anchorusd.com/img/usdx.png"
+image="https://stablecoin.anchorusd.com/img/usdx.png"
 ```
 
 </CodeExample>
@@ -349,7 +351,7 @@ Once we’ve found an Anchor that supports deposit and withdrawal, we can begin 
 
 [1]: https://github.com/stellar/docs-wallet/tree/trustline
 [2]: https://www.stellarx.com/.well-known/stellar.toml
-[3]: https://www.anchorusd.com/.well-known/stellar.toml
+[3]: https://stablecoin.anchorusd.com/.well-known/stellar.toml
 [4]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md
 [5]: https://stellar-anchor-server.herokuapp.com/.well-known/stellar.toml
 [6]: /4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/1%20SEP-0024%20Explained.md
