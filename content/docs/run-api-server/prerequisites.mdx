@@ -11,6 +11,6 @@ As far as system requirements go, there are a few main things to keep in mind:
 
 - If you plan on [ingesting](./running.mdx#ingesting-transactions) live transaction data from the Stellar network, your machines should have enough extra RAM to hold Captive Core's in-memory database (~3GB).
 
-- In the above case, you should also take care to allocate enough space (on the order of ~20 GBs to your `/tmp` directory for Captive Core to cache ledger information while it runs. You can also set a `TMPDIR` environmental variable ([or equivalent](https://golang.org/pkg/os/#TempDir) for your OS) to change the directory being used, at least until a flag is [introduced](https://github.com/stellar/go/issues/3437) to customize this through Horizon itself.
+- In the above case, you should also take care to allocate enough space (on the order of ~20 GBs) in the directory from which you run Horizon in order for Captive Core to cache ledger information while it runs. You can customize the location of this storage directory via `--captive-core-storage-path` as of [v2.1](https://github.com/stellar/go/releases/tag/horizon-v2.1.0).
 
 - Other disk space requirements depend on how much of the network's history you'd like to serve from your Horizon instance; this could be anywhere from a few GBs to tens of TBs for the full ingested pubnet ledger history.
