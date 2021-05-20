@@ -7,15 +7,34 @@ There are three ways to install Stellar Core: you can use a Docker image, use pr
 
 ## Docker-based installation
 
-SDF maintains a [quickstart image](https://github.com/stellar/docker-stellar-core-horizon) that bundles Stellar Core with Horizon and postgreSQL databases. It's a quick way to set up a default, non-validating, ephemeral configuration that should work for most developers.
+### Development environments
 
-The SDF also maintains a Stellar-Core-only [standalone image](https://github.com/stellar/docker-stellar-core) that starts a 3 node local stellar-core network, all on the same docker host
+SDF maintains a [quickstart image](https://github.com/stellar/docker-stellar-core-horizon) that bundles Stellar Core with Horizon and postgreSQL databases. It's a quick way to set up a default, non-validating, ephemeral configuration that should work for most developers.
 
 In addition to SDF images, Satoshipay maintains separate Docker images for [Stellar Core](https://github.com/satoshipay/docker-stellar-core) and [Horizon](https://github.com/satoshipay/docker-stellar-horizon). The Satoshipay Stellar Core Docker image comes in a few flavors, including one with the AWS CLI installed and one with the Google Cloud SDK installed. The Horizon image supports all Horizon environment variables.
 
+### Production environments
+
+The SDF also maintains a Stellar-Core-only [standalone image](https://hub.docker.com/repository/docker/stellar/stellar-core). The image utilizes deb packages so the stellar-core binary checksum can be verified.
+
+Example usage:
+
+```
+docker run stellar/stellar-core:latest help
+docker run stellar/stellar-core:latest gen-seed
+```
+
+To run daemon you need to provide a configuration file:
+```
+# Initialize postgres DB (see DATABASE config option)
+docker run -v "/path/to/config/dir:/etc/stellar/" stellar/stellar-core:latest new-db
+# Run stellar-core daemon in the background
+docker run -d -v "/path/to/config/dir:/etc/stellar/" stellar/stellar-core:latest run
+```
+
 ## Package-based Installation
 
-If you are using Ubuntu 16.04 LTS, we provide the latest stable releases of [stellar-core](https://github.com/stellar/stellar-core) and [stellar-horizon](https://github.com/stellar/go/tree/master/services/horizon) in Debian binary package format.
+If you are using Ubuntu 18.04 LTS or later, we provide the latest stable releases of [stellar-core](https://github.com/stellar/stellar-core) and [stellar-horizon](https://github.com/stellar/go/tree/master/services/horizon) in Debian binary package format.
 
 You may choose to install these packages individually, which offers the greatest flexibility but requires **manual** creation of the relevant configuration files and configuration of a **PostgreSQL** database.
 
