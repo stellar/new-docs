@@ -6,7 +6,7 @@ order: 40
 import { CodeExample } from "components/CodeExample";
 
 
-Once your Horizon database and Captive Core configuration is set up properly, you're ready to run Horizon. Simply run `stellar-horizon` with the [appropriate parameters](./configuring.mdx#parameters) set (or `stellar-horizon-cmd serve` if you [installed via the package manager](./installing.mdx#package-manager), which will automatically import your configuration), which starts the HTTP server and starts logging to standard out. When run, you should see output similar to:
+Once your Horizon database and Captive Core configuration is set up properly, you're ready to run Horizon. Simply run `stellar-horizon` with the [appropriate parameters](./configuring.mdx#parameters) set (or `stellar-horizon-cmd serve` if you [installed via the package manager](./installing.mdx#package-manager), which will automatically import your configuration from `/etc/default/stellar-horizon`), which starts the HTTP server and starts logging to standard out. When run, you should see output similar to:
 
 <CodeExample>
 
@@ -16,9 +16,9 @@ INFO[...] Starting horizon on :8000                     pid=29013
 
 </CodeExample>
 
-**Note**: the numbers shown above may be different for your installation.
+Note that the numbers shown above may naturally be different for your installation. The log line above announces that Horizon is ready to serve client requests.
 
-The log line above announces that Horizon is ready to serve client requests. Next, you can confirm that Horizon is responding correctly by loading the root resource. In the example above, that URL would be http://127.0.0.1:8000/, and simply running `curl http://127.0.0.1:8000/` shows you that the root resource can be loaded correctly:
+Next, you can confirm that Horizon is responding correctly by loading the root resource. In the example above, that URL would be http://127.0.0.1:8000/, and simply running `curl http://127.0.0.1:8000/` would show you that the root resource loads correctly:
 
 <CodeExample>
 
@@ -33,7 +33,8 @@ The log line above announces that Horizon is ready to serve client requests. Nex
       "href": "http://127.0.0.1:8000/accounts{?signer,sponsor,asset,cursor,limit,order}",
       "templated": true
     }
-  }
+  },
+  // etc.
 }
 ```
 
@@ -47,20 +48,20 @@ Horizon provides most of its utility through ingested data, and your Horizon ser
 **We highly recommend having more than one ingesting instance**, as this makes it easier to avoid downtime during upgrades and adds resilience to your infrastructure, ensuring you always have the latest network data.
 
 ### Ingesting Live Data 
-To **enable** ingestion, you must either pass `--ingest=true` on the command line or set the `INGEST` environment variable to "true". Note that you can have multiple ingesting machines in your cluster.
+To **enable** ingestion, you must either pass `--ingest=true` on the command line or set the `INGEST=true` in your environment. Again, note that you can have multiple ingesting machines in your cluster.
 
 ### Ingesting Historical Data
-To ingest *historical* data from Stellar Core, you need to run `horizon db reingest range <start> <end>`. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive(s), for example, you might want to ingest the network's entire history. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your `/metrics` endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
+To ingest *historical* data from the Stellar network, you need to run Horizon `db reingest range <start> <end>` command. If you're running a [full validator](../run-core-node/index.mdx#full-validator) with published history archive(s), for example, you might want to ingest the network's entire history. You can run this process in the background while your Horizon server is up. This continuously decrements the `history.elder_ledger` in your `/metrics` endpoint until `NUM_LEDGERS` is reached and the backfill is complete.
 
 ### Reingesting Ledgers
-To reingest older ledgers—occasionally necessary after a version upgrade—or to ingest ledgers closed by the network before you started Horizon use the `horizon db reingest range <start> <end>` command:
+To reingest older ledgers—occasionally necessary after a version upgrade—or to ingest ledgers closed by the network before you started Horizon use the `db reingest range <start> <end>` command:
 
 <CodeExample>
 
 ```
-horizon1> horizon db reingest range 1 10000
-horizon2> horizon db reingest range 10001 20000
-horizon3> horizon db reingest range 20001 30000
+horizon1> stellar-horizon db reingest range 1 10000
+horizon2> stellar-horizon db reingest range 10001 20000
+horizon3> stellar-horizon db reingest range 20001 30000
 # ... etc.
 ```
 
@@ -69,9 +70,9 @@ horizon3> horizon db reingest range 20001 30000
 This allows reingestion to be split up and done in parallel by multiple Horizon processes.
 
 ### Managing Storage for Historical Data
-Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you may configure Horizon to only retain a certain number of ledgers in the database. This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, you may execute the command `horizon db reap` to force a collection.
+Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you may configure Horizon to only retain a certain number of ledgers in the database. 
 
-If you configure this value, we also recommend [configuring](./configuring.mdx#configuring-captive-core) the `CATCHUP_RECENT` value for your Captive Core instance. 
+This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, you may execute the command `stellar-horizon db reap` to force a collection. If you configure this value, we also recommend [configuring](./configuring.mdx#configuring-captive-core) the `CATCHUP_RECENT` value for your Captive Core instance. 
 
 ### Common Issues
 
@@ -81,7 +82,7 @@ Endpoints that display state information are not available during initial state 
 #### State ingestion is taking a lot of time
 State ingestion shouldn't take more than a couple of minutes on an AWS `c5.xlarge` instance or equivalent.
 
-It's possible that the progress logs (see below) will not show anything new for a longer period of time or print a lot of progress entries every few seconds. This happens because of the way history archives are designed. The ingestion is still working but it's processing entries of type `DEADENTRY`. If there is a lot of them in the bucket, there are no _active_ entries to process. We plan to improve the progress logs to display actual percentage progress so it's easier to estimate an ETA.
+It's possible that the progress logs (see [below](#reading-the-logs)) will not show anything new for a longer period of time or print a lot of progress entries every few seconds. This happens because of the way history archives are designed. The ingestion is still working but it's processing entries of type `DEADENTRY`. If there is a lot of them in the bucket, there are no _active_ entries to process. We plan to improve the progress logs to display actual percentage progress so it's easier to estimate an ETA.
 
 If you see that ingestion is not proceeding for a very long period of time:
 
@@ -104,7 +105,7 @@ It starts with informing you about state ingestion:
 
 ```
 INFO[...] Starting ingestion system from empty state...  pid=5965 service=ingest temp_set="*io.MemoryTempSet"
-INFO[...] Reading from History Archive Snapshot         ledger=25565887 pid=5965 service=ingest
+INFO[...] Reading from History Archive Snapshot          pid=5965 service=ingest ledger=25565887
 ```
 
 </CodeExample>
@@ -123,7 +124,7 @@ INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numE
 
 </CodeExample>
 
-When state ingestion is finished, it will proceed to ledger ingestion starting from the next ledger after checkpoint ledger (25565887+1 in this example) to update the state using transaction metadata:
+When state ingestion is finished, it will proceed to ledger ingestion starting from the next ledger after the checkpoint ledger (25565887+1 in this example) to update the state using transaction metadata:
 
 <CodeExample>
 

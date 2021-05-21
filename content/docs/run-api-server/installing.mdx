@@ -7,7 +7,7 @@ import { CodeExample } from "components/CodeExample";
 
 To install Horizon, you have a few choices. You can...
   - install prebuilt binaries [from our repositories](#package-manager) via your package manager if running a Debian-based system,
-  - download a [prebuilt release](https://github.com/stellar/go/releases) for your target architecture and operation system, or
+  - download a [prebuilt release](https://github.com/stellar/go/releases/latest) for your target architecture and operation system, or
   - [build Horizon yourself](#building) from scratch.
 
 The first method is recommended: not only do you ensure OS compatibility and dependency management, you'll also install some convenient wrappers that make running Horizon and Stellar Core much simpler.
@@ -24,6 +24,8 @@ sudo apt update && sudo apt install stellar-core stellar-horizon
 </CodeExample>
 
 [This page](https://github.com/stellar/packages/blob/master/docs/installing-individual-packages.md#installing-individual-packages) outlines the various commands that these packages make available.
+
+Next, jump to [Testing Your Installation](#completing-and-testing-your-installation), or try [installing](#installing-remote-captive-core) a remote Captive Core instance.
 
 ### Building
 Should you decide not to use one of our prebuilt releases, you may instead build Horizon from source. To do so, you need to prepare a developer environment, including:
