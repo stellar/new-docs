@@ -8,15 +8,19 @@ import { CodeExample } from "components/CodeExample";
 
 <Alert>
 
-If you aren't coming from an existing deployment of Horizon, feel free to skip this section and move on to [Configuring](./configuring.mdx) Horizon!
+If you aren't coming from an existing deployment of Horizon, feel free to skip this section and move on to [configuring Horizon](./configuring.mdx)!
 
 </Alert>
 
 ## Introduction
 
-Starting with version v1.6.0, Horizon allows using Stellar-Core in captive mode. Core's captive mode is enabled by default since Horizon 2.0.
+Starting with version v1.6.0, Horizon allows using Stellar Core in captive mode for ingestion. This mode is enabled by default since Horizon 2.0.
 
-> Please note that Horizon team will support the previous non-captive mode for the time being. To use the previous method, set `ENABLE_CAPTIVE_CORE_INGESTION=false` in your ingesting instances. After 6 months, this feature flag will be removed.
+<Alert>
+
+Please note that Horizon team will support the previous non-captive mode for the time being. To use the previous method, set `ENABLE_CAPTIVE_CORE_INGESTION=false` in your ingesting instances. After 6 months, this feature flag will be removed.
+
+</Alert>
 
 When Captive Core mode is disabled, this is how Horizon interacts with Core:
 
@@ -48,11 +52,10 @@ To enable captive mode you will need to initialize some configuration variables:
   * (required) `ENABLE_CAPTIVE_CORE_INGESTION=true` (enabled by default since Horizon 2.0).
   * (required) If you run Captive Core ...
 
-    1. ... as a subprocess:
-       * `STELLAR_CORE_BINARY_PATH` - defines a path to the `stellar-core` binary,
+    - ... as a subprocess:
        * (not required when running `horizon db reingest range`) `CAPTIVE_CORE_CONFIG_APPEND_PATH` - defines a path to a file to append to the Stellar Core configuration file used by captive core. It must, at least, include enough details to define a quorum set. Refer [below](#configure-captive-core) for an example stub connecting to the Stellar testnet SDF servers.
 
-    2. ... using the experimental Captive Core server:
+    - ... using the experimental Captive Core server:
        * `REMOTE_CAPTIVE_CORE_URL` - URL to access the remote captive core server
     
   * (optional) `CAPTIVE_CORE_HTTP_PORT` - HTTP port for Captive Core to listen on (0 disables the HTTP server)
@@ -107,13 +110,19 @@ The process for upgrading both Stellar Core and Horizon are covered [here](https
 
 Then, you can install the Captive Core packages:
 
+<CodeExample>
+
 ```bash
 sudo apt install stellar-captive-core
 ```
 
+</CodeExample>
+
 And you're ready to upgrade.
 
 **Note**: To avoid building the bleeding edge from the `master` branch, you'll need to build Horizon from the stable `horizon-v2.0.0` branch. That's pretty simple, given a valid Go environment:
+
+<CodeExample>
 
 ```bash
 git clone https://github.com/stellar/go monorepo && cd monorepo
@@ -122,6 +131,7 @@ go install -v ./services/horizon
 sudo cp $(go env GOPATH)/bin/horizon $(which stellar-horizon)
 ```
 
+</CodeExample>
 
 #### Upgrading
 At this point, all that is left to do is to:
@@ -139,6 +149,8 @@ Captive Core runs with a trimmed down configuration "stub": at minimum, it must 
 
 
 For example, if relying exclusively on SDF's validators:
+
+<CodeExample>
 
 ```toml
 [[HOME_DOMAINS]]
@@ -166,6 +178,8 @@ PUBLIC_KEY="GC2V2EFSXN6SQTWVYA5EPJPBWWIMSD2XQNKUOHGEKB535AQE2I6IXV2Z"
 ADDRESS="core-testnet3.stellar.org"
 HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{0} -o {1}"
 ```
+
+</CodeExample>
 
 (We'll assume this stub lives at `/etc/default/stellar-captive-core-stub.toml`.) The rest of the configuration will be generated automagically at runtime.
 
@@ -208,6 +222,8 @@ sudo apt install stellar-captive-core stellar-captive-core-api
 
 Alternatively, you can install the bleeding edge [from source](https://github.com/stellar/go/exp/services/captivecore):
 
+<CodeExample>
+
 ```bash
 git clone https://github.com/stellar/go monorepo && cd monorepo
 git checkout release-horizon-v2.0.0-beta
@@ -215,7 +231,11 @@ go install -v ./exp/services/captivecore
 sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
 ```
 
+</CodeExample>
+
 Now, let's configure the Captive Core environment:
+
+<CodeExample>
 
 ```bash
 export NETWORK_PASSPHRASE='Test SDF Network ; September 2015'
@@ -225,13 +245,19 @@ export CAPTIVE_CORE_CONFIG_APPEND_PATH=/etc/default/stellar-captive-core-stub.to
 export STELLAR_CORE_BINARY_PATH=$(which stellar-core)
 ```
 
+</CodeExample>
+
 (There's no `-cmd` wrapper à la Horizon/Core for this binary yet; you can run these commands directly or `source` them into your shell from a script.) The parameters should all be familiar from earlier sections.
 
 Finally, let's run the Captive Core instance:
 
+<CodeExample>
+
 ```bash
 stellar-captive-core-api
 ```
+
+</CodeExample>
 
 This will start serving *two* endpoints: a Captive Core wrapper API on port 8000 (by default), which serves up processed ledgers and can be queried by Horizon, and the underlying Core API on port 11626 (by default). See the `--help` for how to configure the ports.
 
@@ -239,6 +265,8 @@ This will start serving *two* endpoints: a Captive Core wrapper API on port 8000
 Returning to the Horizon instance that will be doing ingestion, we just need to supply the appropriate URLs and ports. 
 
 Suppose the above server can be resolved on the `captivecore.local` hostname; then, we need to configure Horizon accordingly:
+
+<CodeExample>
 
 ```bash
 echo "DATABASE_URL='postgres://postgres@db.local:5432/horizon?sslmode=disable'
@@ -250,7 +278,11 @@ REMOTE_CAPTIVE_CORE_URL='http://captivecore.local:8000'
 " | sudo tee /etc/default/stellar-horizon
 ```
 
+</CodeExample>
+
 Then just run it as usual, directly from the command-line or as a service:
+
+<CodeExample>
 
 ```
 stellar-horizon-cmd serve
@@ -258,8 +290,12 @@ stellar-horizon-cmd serve
 sudo systemctl restart stellar-horizon
 ```
 
+</CodeExample>
+
 #### Serving Instance
 This configuration is almost identical, except we flip the ingestion parameters:
+
+<CodeExample>
 
 ```bash
 echo "DATABASE_URL='postgres://postgres@db.local:5432/horizon?sslmode=disable'
@@ -273,6 +309,8 @@ REMOTE_CAPTIVE_CORE_URL='http://captivecore.local:8000'
 sudo systemctl restart stellar-horizon
 ```
 
+</CodeExample>
+
 At this point, you should be able to hit port 8000 on the above instance and watch the `ingest_latest_ledger` value grow.
 
 ### Private Networks
@@ -280,6 +318,8 @@ At this point, you should be able to hit port 8000 on the above instance and wat
 If you want your Captive Core instance to connect to a private Stellar network, you will need to specify the validator of the private network in the Captive Core append path.
 
 Assuming the validator of your private network has a public key of `GD5KD2KEZJIGTC63IGW6UMUSMVUVG5IHG64HUTFWCHVZH2N2IBOQN7PS` and can be accessed at `private1.validator.com`, then the Captive Core append path would consist of the following file:
+
+<CodeExample>
 
 ```toml
 UNSAFE_QUORUM=true
@@ -292,6 +332,8 @@ PUBLIC_KEY="GD5KD2KEZJIGTC63IGW6UMUSMVUVG5IHG64HUTFWCHVZH2N2IBOQN7PS"
 ADDRESS="private1.validator.com"
 QUALITY="MEDIUM"
 ```
+
+</CodeExample>
 
 `UNSAFE_QUORUM=true` and `FAILURE_SAFETY=0` are required when there are too few validators in the private network to form a quorum.
 
@@ -387,6 +429,8 @@ grows, a larger number of workers should be considered.
 
 In order to run the reingestion, first set the following environment variables in the configuration:
 
+<CodeExample>
+
 ```bash
 export DATABASE_URL=postgres://postgres:secret@db.local:5432/horizon
 export APPLY_MIGRATIONS=true
@@ -401,6 +445,8 @@ export PARALLEL_JOB_SIZE=100000
 export RETRIES=10
 export RETRY_BACKOFF_SECONDS=20
 ```
+
+</CodeExample>
 
 (Naturally, you can also edit the configuration file at `/etc/default/stellar-horizon` directly.) If Horizon was previously running, ensure it is stopped. Then, run the following commands in parallel:
 
