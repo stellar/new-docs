@@ -3,17 +3,18 @@ title: Remote Captive Core
 order: 35
 ---
 
+import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
 
-As briefly alluded to in the [Installation](./installing.mdx) page, there is a way to decouple the Horizon instance from its Captive Core ingesting instance is to configure Captive Core to operate remotely.
+As briefly alluded to in the [Installation](./installing.mdx) page, there is a way to decouple the Horizon instance from its Captive Core ingesting instance by configuring Captive Core to operate remotely.
 
 This allows for greater flexibility in architectural scaling: you can scale your request-serving Horizon, ingesting Horizon, and Captive Core instances separately. There's also nothing wrong with running Horizon and Remote Captive Core on the same machine, e.g. if you just want them to be in different processes or are running a containerized setup.
 
 <Alert>
 
-  **This architecture is still considered experimental.**
+**This architecture is still considered experimental.**
 
-  While we expect to continue to support this architecture moving forward, the implementation itself is subject to changes. You will have to build the package from source, and the JSON API responses should not be considered stable: though Horizon will stay up-to-date and be compatible with the response format, it's not recommended to build custom functionality on top of the API.
+While we expect to continue to support this architecture moving forward, the implementation itself is subject to changes. You will have to build the package from source, and the JSON API responses should not be considered stable: though Horizon will stay up-to-date and be compatible with the response format, it's not recommended to build custom functionality on top of the API.
 
 </Alert>
 
@@ -28,14 +29,14 @@ Note that this section requires a properly configured [Golang](https://golang.or
 
 ```bash
 git clone https://github.com/stellar/go monorepo && cd monorepo
-git switch --detach tags/horizon-v2.3.0
+git checkout tags/horizon-v2.3.0
 go install -v ./exp/services/captivecore
 sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
 ```
 
 </CodeExample>
 
-**Note**: Replace the `git switch` command above to the [latest release](https://github.com/stellar/go/releases/latest) of Horizon; it's v2.3.0 as of this writing.)
+**Note**: You should replace the `git switch` command above to the [latest release](https://github.com/stellar/go/releases/latest) of Horizon; it's v2.3.0 as of this writing.)
 
 
 ## Running Captive Core
@@ -47,20 +48,20 @@ Running the API requires some familiar parameters:
 | `--captive-core-config-append-path` | `CAPTIVE_CORE_CONFIG_APPEND_PATH` | /etc/default/stellar-captive-core-stub.toml |
 | `--history-archive-urls` | `HISTORY_ARCHIVE_URLS` | https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002 |
 
-The parameters should be self-explanatory if you've read the earlier sections. There are a few others that you can see under the `--help` text that may be of interest, particularly the ones related to ports if you want to expose the underlying Stellar-Core or ensure Remote Captive Core and Horizon APIs don't conflict (both default to port 8000).
+These should be self-explanatory if you've read the [earlier sections](./configuring.mdx#parameters). There are a few others that you can see under the `--help` text that may be of interest, particularly the ones related to ports if you want to expose the underlying Stellar Core or ensure the Remote Captive Core and Horizon ports don't conflict (both default to 8000).
 
-For example, if you wanted to rely on SDF for history archives and connect to the test network, you might prepare your environment and run the Remote Captive Core API as follows:
+If you wanted to rely on SDF for history archives and connect to the test network, you might prepare your environment and run the Remote Captive Core API as follows:
 
 <CodeExample>
 
-```
-$ stellar-captive-core-api \
+```bash
+stellar-captive-core-api \
   --stellar-core-binary-path=$(which stellar-core) \
   --captive-core-config-append-path=/etc/default/stellar-captive-core-stub.toml \
-   --history-archive-urls="https://history.stellar.org/prd/core-testnet/core_testnet_001" \
-   --port=8001
+  --history-archive-urls="https://history.stellar.org/prd/core-testnet/core_testnet_001" \
+  --port=8001
 
-INFO[...] Starting Captive Core server on 8001          pid=9450
+# INFO[...] Starting Captive Core server on 8001          pid=9450
 ```
 
 </CodeExample>
@@ -69,8 +70,8 @@ After this, you should be able to hit endpoints locally and see results, e.g.:
 
 <CodeExample>
 
-```
-$ curl http://localhost:8001/latest-sequence
+```bash
+curl http://localhost:8001/latest-sequence
 PrepareRange must be called before any other operations
 ```
 
@@ -79,7 +80,7 @@ PrepareRange must be called before any other operations
 
 ## Running Horizon
 
-With the API server running, you can now point Horizon to this remote instance for ingestion. Rather than passing the parameters described [earlier](./configuring.mdx#parameters), we only need a single parameter:
+With the Captive Core API server running, you can now point Horizon to this remote instance for ingestion. Rather than passing the parameters described [earlier](./configuring.mdx#parameters), we only need a single parameter:
 
 | flag | envvar | example |
 | ---- | ------ | ------- |
@@ -89,7 +90,7 @@ This URL should point to a running Captive Core API (like the one we set up abov
 
 <CodeExample>
 
-```
+```bash
 stellar-horizon-cmd serve --remote-captive-core-url=http://localhost:8001
 ```
 

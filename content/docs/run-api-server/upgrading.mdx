@@ -8,7 +8,7 @@ import { CodeExample } from "components/CodeExample";
 
 <Alert>
 
-If you aren't coming from an existing deployment of Horizon, feel free to skip this section and move on to [configuring Horizon](./configuring.mdx)!
+If you aren't coming from an existing deployment of Horizon, feel free to skip this section and move on to [installing Horizon](./installing.mdx)!
 
 </Alert>
 
@@ -26,9 +26,9 @@ When Captive Core mode is disabled, this is how Horizon interacts with Core:
 
 ![Horizon without Captive Core](https://raw.githubusercontent.com/stellar/go/master/services/horizon/internal/docs/HorizonWithoutCaptiveCore.png)
 
-Captive Core mode relaxes Horizon's operational requirements. It allows running Horizon without a fully fledged Core instance and, most importantly, without a Core database. 
+Captive Core mode relaxes Horizon's operational requirements. It allows running Horizon without a fully fledged Core instance and, most importantly, **without a Core database**.
 
-Captive Core is a specialized narrowed-down Stellar-Core instance with the sole aim of emitting transaction metadata (often abbreviated in documentation as "txmeta") to Horizon. Captive Core does all the work in-memory, without a database; for this reason, it has higher memory requirements (which will be covered in a section below) but is much more performant.
+Captive Core is a specialized, narrowed-down Stellar-Core instance with the sole aim of emitting transaction metadata (often abbreviated in documentation as "txmeta") to Horizon. Captive Core does all the work in-memory, without a database; for this reason, it has higher memory requirements (which will be covered in a section below) but is *much* more performant.
 
 The Captive Core instance can be started as:
 
