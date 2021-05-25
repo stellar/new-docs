@@ -23,20 +23,19 @@ While we expect to continue to support this architecture moving forward, the imp
 
 As noted above, this setup requires building packages from source. It will eventually make its way into the [unstable SDF repository](https://github.com/stellar/packages/blob/master/docs/adding-the-sdf-stable-repository-to-your-system.md#adding-the-bleeding-edge-testing-repository), then into the stable one. For now, though, we will build the [package](https://github.com/stellar/go/blob/ec5600bd6b2b6900d26988ff670b9ca7992313b8/exp/services/captivecore/README.md) directly.
 
-Note that this section requires a properly configured [Golang](https://golang.org/doc/install) development environment as well as [`git`](https://git-scm.com/). With those set up, 
+The requirements here are the same as for [building Horizon](./installing.mdx#building): a Unix-like OS, [Golang](https://golang.org/doc/install), and [`git`](https://git-scm.com/). With those set up, 
 
 <CodeExample>
 
 ```bash
 git clone https://github.com/stellar/go monorepo && cd monorepo
-git checkout tags/horizon-v2.3.0
 go install -v ./exp/services/captivecore
 sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
 ```
 
 </CodeExample>
 
-**Note**: You should replace the `git switch` command above to the [latest release](https://github.com/stellar/go/releases/latest) of Horizon; it's v2.3.0 as of this writing.)
+_(You should refer to the list of [Horizon releases](https://github.com/stellar/go/releases) and `git checkout` accordingly before building if you're looking for a stable release rather than the bleeding edge `master` branch.)_
 
 
 ## Running Captive Core
