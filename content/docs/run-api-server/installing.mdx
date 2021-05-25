@@ -10,7 +10,7 @@ To install Horizon, you have a few choices. You can...
   - download a [prebuilt release](https://github.com/stellar/go/releases/latest) for your target architecture and operation system, or
   - [build Horizon yourself](#building) from scratch.
 
-The first method is recommended: not only do you ensure OS compatibility and dependency management, you'll also install some convenient wrappers that make running Horizon and Stellar Core much simpler.
+**The first method is recommended**: not only do you ensure OS compatibility and dependency management, you'll also install some convenient wrappers that make running Horizon and Stellar Core in their respective environments much simpler.
 
 ### Package Manager
 SDF publishes new releases to its custom Ubuntu repositories. Follow [this guide](https://github.com/stellar/packages/blob/master/docs/adding-the-sdf-stable-repository-to-your-system.md#adding-the-sdf-stable-repository-to-your-system) to add the stable SDF repository to your system. Then, 
@@ -18,7 +18,7 @@ SDF publishes new releases to its custom Ubuntu repositories. Follow [this guide
 <CodeExample>
 
 ```bash
-sudo apt update && sudo apt install stellar-core stellar-horizon
+sudo apt update && sudo apt install stellar-horizon stellar-captive-core
 ```
 
 </CodeExample>
@@ -59,36 +59,11 @@ export PATH=$(go env GOPATH)/bin:$PATH
 
 </CodeExample>
 
-
 ## Installing Remote Captive Core
 
 If you want to run Captive Core instances (for [transaction ingestion](./running.mdx#ingesting-transactions)) separately from other Horizon instances, the architecture supports that. This allows flexibility in scaling and redundancy. For example, you may want to have your ingesting Horizon instances have dedicated Captive Cores, while request-serving instances all use the same Remote Captive Core for transaction submission. Or, perhaps you want a dedicated Remote Captive Core for ingestion living on more-powerful hardware.
 
-If you are interested in this approach, you'll need some additional binaries on that machine.
-
-### From Repositories
-After setting up repositories as [described above](#package-manager), you'll need to install the following packages on that machine:
-
-<CodeExample>
-
-```bash
-sudo apt install stellar-captive-core stellar-captive-core-api
-```
-
-</CodeExample>
-
-### From Source
-Alternatively, you can install the bleeding edge [from source](https://github.com/stellar/go/tree/master/exp/services/captivecore):
-
-<CodeExample>
-
-```bash
-git clone https://github.com/stellar/go monorepo && cd monorepo
-go install -v ./exp/services/captivecore
-sudo cp $(go env GOPATH)/bin/captivecore /usr/bin/stellar-captive-core-api
-```
-
-</CodeExample>
+If you are interested in this approach, you'll need some additional binaries on that machine. Refer to the [Remote Captive Core](./remote-core.mdx) page for details.
 
 
 ## Completing and Testing Your Installation

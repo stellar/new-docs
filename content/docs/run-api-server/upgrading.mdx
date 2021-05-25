@@ -52,11 +52,9 @@ To enable captive mode you will need to initialize some configuration variables:
   * (required) `ENABLE_CAPTIVE_CORE_INGESTION=true` (enabled by default since Horizon 2.0).
   * (required) If you run Captive Core ...
 
-    - ... as a subprocess:
-       * (not required when running `horizon db reingest range`) `CAPTIVE_CORE_CONFIG_APPEND_PATH` - defines a path to a file to append to the Stellar Core configuration file used by captive core. It must, at least, include enough details to define a quorum set. Refer [below](#configure-captive-core) for an example stub connecting to the Stellar testnet SDF servers.
+    - ... as a subprocess, and not reingesting: `CAPTIVE_CORE_CONFIG_APPEND_PATH` defines a path to a file to configuration stub file used by Captive Core. It must, at least, include enough details to define a quorum set. Refer [below](#configure-captive-core) for an example stub connecting to the Stellar testnet SDF servers.
 
-    - ... using the experimental Captive Core server:
-       * `REMOTE_CAPTIVE_CORE_URL` - URL to access the remote captive core server
+    - ... using the experimental Captive Core server: `REMOTE_CAPTIVE_CORE_URL` to define the URL to access the remote Captive Core server
     
   * (optional) `CAPTIVE_CORE_HTTP_PORT` - HTTP port for Captive Core to listen on (0 disables the HTTP server)
 
@@ -70,13 +68,13 @@ To enable captive mode you will need to initialize some configuration variables:
 
 ## How It Works
 
-When using Captive Stellar-Core, Horizon runs the `stellar-core` binary as a subprocess. Then both processes communicate over filesystem pipe: Stellar-Core sends `xdr.LedgerCloseMeta` structs with information about each ledger and Horizon reads it.
+When using Captive Core, Horizon runs the `stellar-core` binary as a subprocess. Then, both processes communicate over filesystem pipe: Stellar Core sends `xdr.LedgerCloseMeta` structs with information about each ledger and Horizon reads it.
 
 The behaviour is slightly different when reingesting old ledgers and when reading recently closed ledgers.
 
-When reingesting, Stellar-Core is started in a special `catchup` mode that simply replays the requested range of ledgers. This mode requires an additional 3GB of RAM because all ledger entries are stored in memory, making it extremely fast. This mode only depends on the history archives, so a Stellar-Core configuration file is not required.
+When reingesting, Stellar-Core is started in a special `catchup` mode that simply replays the requested range of ledgers. This mode requires an additional 3GiB of RAM because all ledger entries are stored in memory, making it extremely fast. This mode only depends on the history archives, so a Stellar Core configuration file is not required.
 
-When reading recently closed ledgers, Stellar-Core is started with a normal `run` command. This requires a persistent database, so extra RAM is not needed, but it makes the initial stage of applying buckets slower than when reingesting. In this case a Stellar-Core configuration file **is** required to configure a quorum set so that it can connect to the Stellar network.
+When reading recently closed ledgers, Core is started with a normal `run` command. This requires a persistent database, so extra RAM is not needed, but it makes the initial stage of applying buckets slower than when reingesting. In this case a Stellar-Core configuration file **is** required to configure a quorum set so that it can connect to the Stellar network.
 
 ### Known Issues
 
