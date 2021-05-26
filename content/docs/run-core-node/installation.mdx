@@ -15,7 +15,7 @@ In addition to SDF images, Satoshipay maintains separate Docker images for [Stel
 
 ### Production environments
 
-The SDF also maintains a Stellar-Core-only [standalone image](https://hub.docker.com/repository/docker/stellar/stellar-core). The image utilizes deb packages so the stellar-core binary checksum can be verified.
+The SDF also maintains a Stellar-Core-only [standalone image](https://hub.docker.com/repository/docker/stellar/stellar-core).
 
 Example usage:
 
@@ -30,6 +30,11 @@ To run daemon you need to provide a configuration file:
 docker run -v "/path/to/config/dir:/etc/stellar/" stellar/stellar-core:latest new-db
 # Run stellar-core daemon in the background
 docker run -d -v "/path/to/config/dir:/etc/stellar/" stellar/stellar-core:latest run
+```
+
+The image utilizes deb packages so it's possible to confirm checksum of the stellar-core binary in the docker image matches that in the cryptographically signed deb package. See [packages](https://github.com/stellar/packages/) documentation for information on installing Ubuntu packages. To calculate checksum in the docker image you can run:
+```
+docker run --entrypoint=/bin/sha256sum stellar/stellar-core:latest /usr/bin/stellar-core
 ```
 
 ## Package-based Installation
