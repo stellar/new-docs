@@ -1,5 +1,5 @@
 ---
-title: Migrating
+title: Migrating From 1.x
 order: 15
 ---
 
@@ -32,7 +32,7 @@ Please give the [blog post](https://www.stellar.org/developers-blog/a-new-sun-on
 Captive Core completely eliminates all Horizon issues connected Stellar-Core's database, but it requires extra time to initialize and manage its Stellar-Core subprocess. Captive Stellar-Core can be used in both reingestion (`horizon db reingest range`) and normal Horizon operation (`horizon serve`). In fact, using Captive Core to reingest historical data is considerably faster than without it.
 
 
-## How It Works
+### How It Works
 
 The blog post linked above gives a high-level overview, while this section dives a little deeper into the technical differences relative to Horizon's relationship with standalone, Watcher Core.
 
@@ -43,22 +43,6 @@ The behaviour is slightly different when reingesting old ledgers and when readin
   - **When reingesting**, Stellar Core is started in a special `catchup` mode that simply replays the requested range of ledgers. This mode requires an additional 3GiB of RAM because all ledger entries are stored in memory, making it extremely fast. This mode only depends on the history archives, so a configuration stub (see [below](#configuration)) **is not** required.
 
   - **When reading recently closed ledgers**, Core is started with a normal `run` command. This requires a persistent database, so extra RAM is not needed, but it makes the initial stage of applying buckets slower than when reingesting. In this case, a configuration stub (again, read on [below](#configuration)) **is** required, in order to configure a quorum set so that it can connect to the Stellar network.
-
-
-## Requirements
-
-Captive Core changes the system requirements slightly: more RAM and less disk space. You can refer to the earlier [Prerequisites](./prerequisites.mdx) page for details.
-
-
-## Configuration
-
-The first major change from 1.x is how you will configure Horizon. You will no longer need your Stellar Core configuration, but will rather need to create a configuration stub describing Captive Core's behavior. Read [this section](./configuring.mdx#configuring-captive-core) to understand what the stub should contain.
-
-**Note**: While this may appears to just be a subset of Stellar Core's configuration, you shouldn't think about it that way and treat it as its own configuration. Eventually, all of Horizon will be configured this way.
-
-You should pass the location of this new configuration stub to the `--captive-core-config-append-path`/`CAPTIVE_CORE_CONFIG_APPEND_PATH` command-line flag / environmental variable.
-
-If you want to continue to have access to the underlying Stellar Core subprocess (like you did previously with a standalone Watcher Core), you should set the `--captive-core-http-port`/`CAPTIVE_CORE_HTTP_PORT` parameter accordingly, or include the `HTTP_PORT` field in your configuration stub.
 
 
 ### Known Issues
@@ -72,27 +56,45 @@ As discussed earlier, Captive Core provides much better decoupling for Horizon a
 To mitigate these issues, we recommend running multiple ingesting Horizon servers in a single cluster. This allows other ingesting instances to maintain service without interruptions if a Captive Core instance is restarted.
 
 
-### Migration
+## Requirements
 
-In this section, we'll discuss migrating existing systems running the pre-2.0 versions of Horizon to the new 2.x world.
+Captive Core changes the system requirements slightly: more RAM and less disk space. You can refer to the earlier [Prerequisites](./prerequisites.mdx) page for details.
 
-**Environment assumptions**:
+
+## Migration
+
+Now, we'll discuss migrating existing systems running the pre-2.0 versions of Horizon to the new 2.x world.
+
+### Environment Assumptions
 
   - We assume that the **PostgreSQL server** lives at the `db.local` hostname, and has a `horizon` database accessible by the `postgres:secret` username-password combo.
 
-  - We assume your machine has **enough extra RAM** to hold Captive Core's in-memory database (~3GB), which is a larger memory requirement than a traditional Core setup (which would have an on-disk database).
+  - We assume your machine has **enough extra RAM** to hold Captive Core's in-memory database (~3GiB): a larger memory requirement than a traditional Core setup (which would have an on-disk database).
 
   - The examples here refer to the **testnet for safety**; replace the appropriate references with the pubnet equivalents when you're ready.
 
   - In some places, bleeding-edge versions of packages can be built from scratch. We assume a sane **[Golang](https://golang.org/doc/install) development environment** for this.
 
-To start off simply, we assume a **single-machine Ubuntu setup** running both Horizon and Core with a single local PostgreSQL server. This assumption is loosened in a [later section](#multi-machine-setup).
+To start off simply, we assume you start with a **single-machine Ubuntu setup** running both Horizon and Core with a single local PostgreSQL server. This assumption is loosened in a [later section](#migration:-multi-machine-setup).
+
+### Configuration
+
+The first major change from 1.x is how you will configure Horizon. You will no longer need your Stellar Core configuration, but will rather need to create a configuration stub describing Captive Core's behavior. Read [this section](./configuring.mdx#configuring-captive-core) to understand what the stub should contain.
+
+**Your old configuration cannot be used directly**: Horizon needs special settings for Captive Core. Otherwise, running Horizon will fail with the following error, or errors like it:
+
+    default: Config from ./captive-core-38cff455/stellar-core.conf
+    default: Got an exception: Failed to parse './captive-core-38cff455/stellar-core.conf' :Key HTTP_PORT already present at line 10 [CommandLine.cpp:1064]
+
+While the stub may appear to just be a subset of Stellar Core's configuration, you shouldn't think about it that way and treat it as its own format. Eventually, all of Horizon will be configured this way. 
+
+You should pass the location of this new configuration stub to the `--captive-core-config-append-path`/`CAPTIVE_CORE_CONFIG_APPEND_PATH` command-line flag / environmental variable.
+
+If you want to continue to have access to the underlying Stellar Core subprocess (like you did previously with a standalone Watcher Core), you should set the `--captive-core-http-port`/`CAPTIVE_CORE_HTTP_PORT` parameter accordingly, or include the `HTTP_PORT` field in your configuration stub.
 
 
-#### Installing
-The process for upgrading both Stellar Core and Horizon are covered [here](https://github.com/stellar/packages/blob/master/docs/upgrading.md#upgrading). The only difference is that since we're migrating to a beta Horizon release, we need to first add the unstable repository; this is described [here](https://github.com/stellar/packages/blob/master/docs/adding-the-sdf-stable-repository-to-your-system.md#adding-the-bleeding-edge-unstable-repository).
-
-Then, you can install the Captive Core packages:
+### Installing
+Once you have a configuration stub ready, you can install the Captive Core package to prepare the Horizon configuration: 
 
 <CodeExample>
 
@@ -102,84 +104,24 @@ sudo apt install stellar-captive-core
 
 </CodeExample>
 
-And you're ready to upgrade.
-
-**Note**: To avoid building the bleeding edge from the `master` branch, you'll need to build Horizon from the stable `horizon-v2.0.0` branch. That's pretty simple, given a valid Go environment:
-
-<CodeExample>
+Note the new block inserted into your `/etc/default/stellar-horizon`:
 
 ```bash
-git clone https://github.com/stellar/go monorepo && cd monorepo
-git checkout horizon-v2.0.0
-go install -v ./services/horizon
-sudo cp $(go env GOPATH)/bin/horizon $(which stellar-horizon)
+# Captive Core Ingestion Config
+ENABLE_CAPTIVE_CORE_INGESTION=true
+STELLAR_CORE_BINARY_PATH=/usr/bin/stellar-core
+CAPTIVE_CORE_CONFIG_APPEND_PATH=/etc/default/stellar-captive-core-stub.toml
+CAPTIVE_CORE_STORAGE_PATH=/var/lib/stellar
+# end Captive Core
 ```
 
-</CodeExample>
+You will need to adjust these accordingly, specifically by pointing `CAPTIVE_CORE_CONFIG_APPEND_PATH` to your configuration stub and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (these can grow quite large, so make sure you have disk space there).
 
-#### Upgrading
-At this point, all that is left to do is to:
-
- - create a Captive Core configuration stub
- - modify the Horizon configuration to enable Captive Core (we will assume it lives in `/etc/default/stellar-horizon`, the default)
- - stop the existing Stellar Core instance
- - restart Horizon
-
-### Configure Captive Core
-Captive Core runs with a trimmed down configuration "stub": at minimum, it must contain enough info to set up a quorum (see [above](#configuration)). **Your old configuration cannot be used directly**: Horizon needs special settings for Captive Core. Otherwise, running Horizon will fail with the following error, or errors like it:
-
-    default: Config from ./captive-core-38cff455/stellar-core.conf
-    default: Got an exception: Failed to parse './captive-core-38cff455/stellar-core.conf' :Key HTTP_PORT already present at line 10 [CommandLine.cpp:1064]
-
-
-For example, if relying exclusively on SDF's validators:
-
-<CodeExample>
-
-```toml
-[[HOME_DOMAINS]]
-HOME_DOMAIN="testnet.stellar.org"
-QUALITY="HIGH"
-
-[[VALIDATORS]]
-NAME="sdf_testnet_1"
-HOME_DOMAIN="testnet.stellar.org"
-PUBLIC_KEY="GDKXE2OZMJIPOSLNA6N6F2BVCI3O777I2OOC4BV7VOYUEHYX7RTRYA7Y"
-ADDRESS="core-testnet1.stellar.org"
-HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_001/{0} -o {1}"
-
-[[VALIDATORS]]
-NAME="sdf_testnet_2"
-HOME_DOMAIN="testnet.stellar.org"
-PUBLIC_KEY="GCUCJTIYXSOXKBSNFGNFWW5MUQ54HKRPGJUTQFJ5RQXZXNOLNXYDHRAP"
-ADDRESS="core-testnet2.stellar.org"
-HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_002/{0} -o {1}"
-
-[[VALIDATORS]]
-NAME="sdf_testnet_3"
-HOME_DOMAIN="testnet.stellar.org"
-PUBLIC_KEY="GC2V2EFSXN6SQTWVYA5EPJPBWWIMSD2XQNKUOHGEKB535AQE2I6IXV2Z"
-ADDRESS="core-testnet3.stellar.org"
-HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{0} -o {1}"
-```
-
-</CodeExample>
-
-(We'll assume this stub lives at `/etc/default/stellar-captive-core-stub.toml`.) The rest of the configuration will be generated automagically at runtime.
-
-#### Configure Horizon
-First, add the following lines to the Horizon configuration to enable a Captive Core subprocess:
-
-```bash
-echo "CAPTIVE_CORE_CONFIG_APPEND_PATH=/etc/default/stellar-captive-core-stub.toml" | sudo tee -a /etc/default/stellar-horizon
-```
-
-(Note that setting `ENABLE_CAPTIVE_CORE_INGESTION=true` is not necessary in 2.x because it's the new default.)
-
+Finally, the process for upgrading both Stellar Core and Horizon are covered [here](https://github.com/stellar/packages/blob/master/docs/upgrading.md#upgrading). 
 
 **Note**: Depending on the version you're migrating from, you may need to include an additional step here: manual reingestion. This can still be accomplished with Captive Core; see [below](#reingestion).
 
-#### Restarting Services
+### Restarting Services
 Now, we can stop Core and restart Horizon:
 
 ```bash
@@ -190,7 +132,7 @@ sudo systemctl restart stellar-horizon
 The logs should show Captive Core running successfully as a subprocess, and eventually Horizon will be running as usual, except with Captive Core rapidly generating transaction metadata in-memory!
 
 
-#### Multi-Machine Setup
+## Migration: Multi-Machine Setup
 If you plan on running Horizon and Captive Core on separate machines, you'll need to change only a few things. Namely, rather than configuring the `STELLAR_CORE_BINARY` variable, you'll need to point Horizon at the Remote Captive Core instance via `REMOTE_CAPTIVE_CORE_URL` (for the wrapper API) and `STELLAR_CORE_URL` (for the raw Core API).
 
 In this section, we'll work through a hypothetical architecture with two Horizon instances (only one of which does ingestion) and a single Captive Core instance.
