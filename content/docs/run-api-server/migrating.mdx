@@ -1,5 +1,5 @@
 ---
-title: "Migrating"
+title: Migrating
 order: 15
 ---
 
@@ -12,9 +12,10 @@ If you aren't coming from an existing deployment of Horizon, feel free to skip t
 
 </Alert>
 
+
 ## Introduction
 
-Starting with version v1.6.0, Horizon allows using Stellar Core in captive mode for ingestion. This mode is enabled by default since Horizon 2.0.
+Starting with version v1.6.0, Horizon allows using Stellar Core in captive mode for ingestion. This mode is enabled by default since Horizon 2.0. Even though you can enable captive mode on 1.6+, this migration guide is catered towards upgrading to 2.x due to the stability and configuration improvements that happened in the later versions.
 
 <Alert>
 
@@ -22,69 +23,54 @@ Please note that Horizon team will support the previous non-captive mode for the
 
 </Alert>
 
-When Captive Core mode is disabled, this is how Horizon interacts with Core:
+Please give the [blog post](https://www.stellar.org/developers-blog/a-new-sun-on-the-horizon) a read to understand the major changes that Horizon 2.0 / the Captive Core architecture introduces. In summary, Captive Core is a specialized, narrowed-down Stellar-Core instance with the sole aim of emitting transaction metadata to Horizon. It means:
 
-![Horizon without Captive Core](https://raw.githubusercontent.com/stellar/go/master/services/horizon/internal/docs/HorizonWithoutCaptiveCore.png)
+  - no separate Stellar Core instance
+  - no Core database, all done in-memory
+  - *much* faster ingestion
 
-Captive Core mode relaxes Horizon's operational requirements. It allows running Horizon without a fully fledged Core instance and, most importantly, **without a Core database**.
-
-Captive Core is a specialized, narrowed-down Stellar-Core instance with the sole aim of emitting transaction metadata (often abbreviated in documentation as "txmeta") to Horizon. Captive Core does all the work in-memory, without a database; for this reason, it has higher memory requirements (which will be covered in a section below) but is *much* more performant.
-
-The Captive Core instance can be started as:
-
-  1. a subprocess of Horizon, streaming ledger data over a filesystem pipe. This is the default:
-
-  ![Horizon with Captive Core](https://raw.githubusercontent.com/stellar/go/master/services/horizon/internal/docs/HorizonWithCaptiveCore.png)
-    
-  2. an experimental remote captive core server, to which Horizon connects through HTTP (see Horizon's `--remote-captive-core-url` flag).
-    For more information on installing the remote Captive Core server, please take a look at [captivecore](https://github.com/stellar/go/tree/master/exp/services/captivecore):
-
-  ![Horizon with Remote Captive Core](https://raw.githubusercontent.com/stellar/go/master/services/horizon/internal/docs/HorizonWithRemoteCaptiveCore.png)
-
-Captive Core completely eliminates all Horizon issues connected Stellar-Core's database, but it requires extra time to initialize the Stellar-Core subprocess.
-
-Captive Stellar-Core can be used in both reingestion (`horizon db reingest range`) and normal Horizon operation (`horizon` or `horizon serve`). In fact, using Captive Core to reingest historical data is considerably faster than without it (i.e. filling in Core's database with `stellar-core catchup` followed by `horizon db reingest range`).
-
-## Configuration
-
-To enable captive mode you will need to initialize some configuration variables:
-
-  * (required) `ENABLE_CAPTIVE_CORE_INGESTION=true` (enabled by default since Horizon 2.0).
-  * (required) If you run Captive Core ...
-
-    - ... as a subprocess, and not reingesting: `CAPTIVE_CORE_CONFIG_APPEND_PATH` defines a path to a file to configuration stub file used by Captive Core. It must, at least, include enough details to define a quorum set. Refer [below](#configure-captive-core) for an example stub connecting to the Stellar testnet SDF servers.
-
-    - ... using the experimental Captive Core server: `REMOTE_CAPTIVE_CORE_URL` to define the URL to access the remote Captive Core server
-    
-  * (optional) `CAPTIVE_CORE_HTTP_PORT` - HTTP port for Captive Core to listen on (0 disables the HTTP server)
-
-
-## Requirements
-
-* An additional 3GB of RAM,
-* Horizon v1.6.0,
-* Stellar-Core v13.2.0.
+Captive Core completely eliminates all Horizon issues connected Stellar-Core's database, but it requires extra time to initialize and manage its Stellar-Core subprocess. Captive Stellar-Core can be used in both reingestion (`horizon db reingest range`) and normal Horizon operation (`horizon serve`). In fact, using Captive Core to reingest historical data is considerably faster than without it.
 
 
 ## How It Works
 
-When using Captive Core, Horizon runs the `stellar-core` binary as a subprocess. Then, both processes communicate over filesystem pipe: Stellar Core sends `xdr.LedgerCloseMeta` structs with information about each ledger and Horizon reads it.
+The blog post linked above gives a high-level overview, while this section dives a little deeper into the technical differences relative to Horizon's relationship with standalone, Watcher Core.
 
-The behaviour is slightly different when reingesting old ledgers and when reading recently closed ledgers.
+When using Captive Core, Horizon runs the `stellar-core` binary as a subprocess. Then, both processes communicate over filesystem pipe: Core sends `xdr.LedgerCloseMeta` structs with information about each ledger and Horizon reads it.
 
-When reingesting, Stellar-Core is started in a special `catchup` mode that simply replays the requested range of ledgers. This mode requires an additional 3GiB of RAM because all ledger entries are stored in memory, making it extremely fast. This mode only depends on the history archives, so a Stellar Core configuration file is not required.
+The behaviour is slightly different when reingesting old ledgers and when reading recently closed ledgers:
 
-When reading recently closed ledgers, Core is started with a normal `run` command. This requires a persistent database, so extra RAM is not needed, but it makes the initial stage of applying buckets slower than when reingesting. In this case a Stellar-Core configuration file **is** required to configure a quorum set so that it can connect to the Stellar network.
+  - **When reingesting**, Stellar Core is started in a special `catchup` mode that simply replays the requested range of ledgers. This mode requires an additional 3GiB of RAM because all ledger entries are stored in memory, making it extremely fast. This mode only depends on the history archives, so a configuration stub (see [below](#configuration)) **is not** required.
+
+  - **When reading recently closed ledgers**, Core is started with a normal `run` command. This requires a persistent database, so extra RAM is not needed, but it makes the initial stage of applying buckets slower than when reingesting. In this case, a configuration stub (again, read on [below](#configuration)) **is** required, in order to configure a quorum set so that it can connect to the Stellar network.
+
+
+## Requirements
+
+Captive Core changes the system requirements slightly: more RAM and less disk space. You can refer to the earlier [Prerequisites](./prerequisites.mdx) page for details.
+
+
+## Configuration
+
+The first major change from 1.x is how you will configure Horizon. You will no longer need your Stellar Core configuration, but will rather need to create a configuration stub describing Captive Core's behavior. Read [this section](./configuring.mdx#configuring-captive-core) to understand what the stub should contain.
+
+**Note**: While this may appears to just be a subset of Stellar Core's configuration, you shouldn't think about it that way and treat it as its own configuration. Eventually, all of Horizon will be configured this way.
+
+You should pass the location of this new configuration stub to the `--captive-core-config-append-path`/`CAPTIVE_CORE_CONFIG_APPEND_PATH` command-line flag / environmental variable.
+
+If you want to continue to have access to the underlying Stellar Core subprocess (like you did previously with a standalone Watcher Core), you should set the `--captive-core-http-port`/`CAPTIVE_CORE_HTTP_PORT` parameter accordingly, or include the `HTTP_PORT` field in your configuration stub.
+
 
 ### Known Issues
 
 As discussed earlier, Captive Core provides much better decoupling for Horizon at the expense of persistence. You should be aware of the following consequences:
 
-* Captive Stellar-Core requires a couple of minutes to complete the apply buckets stage every time Horizon in started.
-* If the Horizon process terminates, Stellar-Core is also terminated.
-* Requires extra RAM.
+  - Captive Core requires a couple of minutes to complete the "apply buckets" stage every time Horizon in started. This behavior should be improved in Horizon 2.5.
+  - If the Horizon process terminates, Stellar Core is also terminated.
+  - Running Horizon now requires extra RAM.
 
-To mitigate this we recommend running multiple ingesting Horizon servers in a single cluster. This allows other ingesting instances to maintain service without interruptions if a Captive Stellar-Core is restarted.
+To mitigate these issues, we recommend running multiple ingesting Horizon servers in a single cluster. This allows other ingesting instances to maintain service without interruptions if a Captive Core instance is restarted.
+
 
 ### Migration
 
