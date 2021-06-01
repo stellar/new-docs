@@ -65,6 +65,9 @@ When Horizon returns information about an account, it uses the following format:
     - auth_revocable
       - boolean
       - If set to `true`, this account can freeze the balance of a holder of an asset issued by this account.
+    - auth_clawback_enabled
+      - boolean
+      - If set to `true`, trustlines created for assets issued by this account have [clawbacks](../../../docs/glossary/clawback.mdx) enabled.
 - balances
   - object
   - The assets this account holds.
@@ -181,7 +184,8 @@ When Horizon returns information about an account, it uses the following format:
   "flags": {
     "auth_required": false,
     "auth_revocable": true,
-    "auth_immutable": false
+    "auth_immutable": false,
+    "auth_clawback_enabled": true
   },
   "balances": [
     {
@@ -191,6 +195,7 @@ When Horizon returns information about an account, it uses the following format:
       "selling_liabilities": "0.0000000",
       "last_modified_ledger": 22651481,
       "is_authorized": true,
+      "is_clawback_enabled": false,
       "asset_type": "credit_alphanum4",
       "asset_code": "EURT",
       "asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
@@ -202,6 +207,7 @@ When Horizon returns information about an account, it uses the following format:
       "selling_liabilities": "0.0000000",
       "last_modified_ledger": 7877447,
       "is_authorized": false,
+      "is_clawback_enabled": false,
       "asset_type": "credit_alphanum4",
       "asset_code": "PHP",
       "asset_issuer": "GBUQWP3BOUZX34TOND2QV7QQ7K7VJTG6VSE7WMLBTMDJLLAW7YKGU6EP"
@@ -213,6 +219,7 @@ When Horizon returns information about an account, it uses the following format:
       "selling_liabilities": "0.0000000",
       "last_modified_ledger": 20213845,
       "is_authorized": true,
+      "is_clawback_enabled": false,
       "asset_type": "credit_alphanum4",
       "asset_code": "NGN",
       "asset_issuer": "GCC4YLCR7DDWFCIPTROQM7EB2QMFD35XRWEQVIQYJQHVW6VE5MJZXIGW"

@@ -1,5 +1,5 @@
 ---
-title: Deposit anchored assets
+title: Deposit Anchored Assets
 order: 20
 ---
 
@@ -206,8 +206,6 @@ export default async function depositAsset(e: Event) {
 </CodeExample>
 
 Only thing here we haven’t seen before is the prompt selection of the currency code and issuer we’d like to deposit. To get this, we send the `this.setPrompt` a final options array argument, in this case the values from `this.toml.CURRENCIES`. This will open the prompt with a select\<\>options input field rather than a text input field.
-
-![][image-1]
 
 That selection will come back as a string in the form of `{code}:{issuer}` so we split that by the `:` so we’ll have a nice tidy array of `[{code}, {issuer}]` to use later.
 
@@ -453,5 +451,3 @@ SEP-0024 allows specifies two methods for further communication between the anch
 If at any point during this flow there’s an error we should catch that, kill the loader, and display the error to the user.
 
 Whew! \*wipes sweat from brow then hands on sleeves Nice work! “Just like that” we’ve deposited an anchored asset into our wallet! We can now make payments with that asset to anyone else who has a trustline enabled for this asset.
-
-[image-1]: https://tyler.link/y419zR+

@@ -19,12 +19,11 @@ Orders are executed on a price-time priority, meaning orders will be executed ba
 
 Each order in Stellar is quoted with an associated price, and is represented as a ratio of the two assets in the order, one being the "quote asset" and the other being the "base asset". This is to ensure there is no loss of precision when representing the price of the order (as opposed to storing the fraction as a floating-point number).
 
-Prices are specified as a `{numerator, denominator}` pair with both components of the fraction represented as 32 bit signed integers. The numerator is considered the base asset, and the denominator is considered the quote asset. When expressing a price of "Asset A in terms of Asset B", the amount of B is denominator (and therefore the quote asset), and A is the numerator (and therefore the base asset). As a good rule of thumb, it's generally correct to be thinking about the base asset that is being bought/sold (in terms of the quote asset).
-(see comments below)
+Prices are specified as a `{numerator, denominator}` pair with both components of the fraction represented as 32 bit signed integers. The numerator is considered the base asset, and the denominator is considered the quote asset. When expressing a price of "Asset A in terms of Asset B", the amount of B is denominator (and therefore the quote asset), and A is the numerator (and therefore the base asset). As a good rule of thumb, it's generally correct to be thinking about the base asset that is being bought/sold (in terms of the quote asset). (see comments below)
 
-When creating a "buy"/"bid" order in Stellar via the [Manage Buy Offer](../start/list-of-operations.mdx#manage-buy-offer) operation, the price is specified as 1 unit of the base currency (the asset being bought), in terms of the quote asset (the asset that is being sold). For example, if you're _buying_ 100 XLM in exchange for 20 USD, you would specify the price as `{20, 100}`, which would be the equivalent of 5 XLM for 1 USD (or $.20 per XLM).
+When creating a "buy"/"bid" order in Stellar via the [Manage Buy Offer](../start/list-of-operations.mdx#manage-buy-offer) operation, the price is specified as 1 unit of the base currency (the asset being bought), in terms of the quote asset (the asset that is being sold). For example, if you're _buying_ 100 XLM in exchange for 20 USD, you would specify the price as `{20, 100}`, which would be the equivalent of 5 XLM for 1 USD (or \$.20 per XLM).
 
-When creating a "sell"/"offer"/"ask" order in Stellar via the [Manage Sell Offer](../start/list-of-operations.mdx#manage-sell-offer) operation, the price is specified as 1 unit of base currency (the asset being sold), in terms of the quote asset (the asset that is being bought). For example, if you're _selling_ 100 XLM in exchange for 40 USD, you would specify the price as `{40, 100}`, which would be the equivalent of 2.5 XLM for 1 USD (or $.40 per XLM) (_nice profit_).
+When creating a "sell"/"offer"/"ask" order in Stellar via the [Manage Sell Offer](../start/list-of-operations.mdx#manage-sell-offer) operation, the price is specified as 1 unit of base currency (the asset being sold), in terms of the quote asset (the asset that is being bought). For example, if you're _selling_ 100 XLM in exchange for 40 USD, you would specify the price as `{40, 100}`, which would be the equivalent of 2.5 XLM for 1 USD (or \$.40 per XLM) (_nice profit_).
 
 #### Fees
 
@@ -34,9 +33,9 @@ For more information, take a look at [our guide on fees in Stellar](./fees.mdx).
 
 ## Passive Order
 
-**Passive orders** allow markets to have zero spread. If you want to exchange USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive orders so the two orders don't fill each other. (will this actually be a zero spread? it should still be a tick wide right? or would it be a "locked market", where the bid and the ask is at the same price?)
+**Passive orders** allow markets to have zero spread. If you want to exchange USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive orders so the two orders don't fill each other.
 
-A passive order is an order that does not execute against a marketable counter order with the same price. It will only fill if the prices are not equal. For example, if the best order to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer _does not_ take that existing offer. If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC. 
+A passive order is an order that does not execute against a marketable counter order with the same price. It will only fill if the prices are not equal. For example, if the best order to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer _does not_ take that existing offer. If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC.
 
 An account can place a passive sell order via the [Create Passive Sell Offer](../start/list-of-operations.mdx#create-passive-sell-offer) operation.
 
@@ -52,6 +51,8 @@ The diagram is split into two stacks of orders. Each stack is the set of orders 
 
 For mnemonic purposes we've arranged the diagram with the sheep "on top" of the wheat here. If it helps you can picture a bunch of sheep standing on a field of wheat or some bushels of wheat, an arrangement less likely to cause chaos than trying to stack bushels of wheat on top of sheep.
 
+![Diagram of orderbook](../web-assets/orderbook.png)
+
 Looking at the diagram, there are a few orientation things to notice and think about:
 
 1. Being willing to sell wheat for sheep is _exactly the same_ as being willing to buy sheep for wheat. There are differences once we get into which direction of price movement you'll accept as "better than your order", but in general it's just a question of which unit you declare the price and quantity for, so for uniformity sake, our order book encodes orders on both sides of a trading pair as _selling_.
@@ -64,9 +65,9 @@ Looking at the diagram, there are a few orientation things to notice and think a
 
 Some assets will have a very thin or nonexistent orderbook between them. That's fine: as discussed in greater detail below, paths of orders can facilitate exchange between two thinly traded assets.
 
-## Cross-asset payments 
+## Cross-asset payments
 
-Suppose you are holding sheep and want to buy something from a store that only accepts wheat. You can create a payment in Stellar that will automatically convert your sheep into wheat. It goes through the sheep/wheat orderbook and converts your sheep at the best available rate. 
+Suppose you are holding sheep and want to buy something from a store that only accepts wheat. You can create a payment in Stellar that will automatically convert your sheep into wheat. It goes through the sheep/wheat orderbook and converts your sheep at the best available rate.
 
 You can also make more complicated paths of asset conversion. Imagine that the sheep/wheat orderbook has a very large spread or is nonexistent. In this case, you might get a better rate if you first trade your sheep for brick and then sell that brick for wheat. So a potential path would be 2 hops: sheep->brick->wheat. This path would take you through the sheep/brick orderbook and then the brick/wheat orderbook.
 

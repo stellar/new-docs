@@ -8,7 +8,9 @@ import { ExampleResponse } from "components/ExampleResponse";
 import { CodeExample } from "components/CodeExample";
 import { AttributeTable } from "components/AttributeTable";
 
-This endpoint actually submits a transaction to the Stellar network. It only takes a single, required parameter: the signed transaction. Refer to the [Transactions](../docs/glossary/transactions.mdx) page for details on how to craft a proper one.
+This endpoint actually submits a transaction to the Stellar network. It only takes a single, required parameter: the signed transaction. Refer to the [Transactions](../../../docs/glossary/transactions.mdx) page for details on how to craft a proper one.
+
+If you submit a transaction that has already been included in a ledger, this endpoint will return the same response as would've been returned for the original transaction submission. This allows for safe resubmission of transactions in error scenarios, as highlighted in the [error-handling guide](../../../docs/tutorials/handling-errors.mdx).
 
 <Endpoint>
 
