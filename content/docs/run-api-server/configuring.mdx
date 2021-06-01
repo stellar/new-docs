@@ -35,7 +35,7 @@ When you run the command above, you'll see that Horizon defines a large number o
 Specifying command line flags every time you invoke Horizon can be cumbersome, so we recommend using environment variables. There are many tools you can use to manage them, such as [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).
 
 ### Package Manager Installation
-If you installed Horizon [via your package manager](./installing.mdx#package-manager), the provided `stellar-horizon-cmd` wrapper will actually import a configuration from `/etc/default/stellar-horizon` and set up the environment accordingly. Hence, if you want to change things up, simply edit this file.
+If you installed Horizon [via your package manager](./installing.mdx#package-manager), the provided `stellar-horizon-cmd` wrapper will import a configuration from `/etc/default/stellar-horizon`, and set up the environment accordingly. Hence, if you want to change things, edit the configuration file in `/etc/default/stellar-horizon`.
 
 <Alert>
 
@@ -50,7 +50,7 @@ Note that the default configuration (located at `/etc/default/stellar-horizon`) 
 
 Before running the Horizon server, you must first prepare the Horizon database specified by the `DATABASE_URL`. This database will be used for all of the information produced by Horizon, most notably historical information about transactions that have occurred on the Stellar network.
 
-To prepare a database for Horizon's use, you must first ensure it is blank. It's easiest to simply create a new database on your PostgreSQL server specifically for Horizon's use (e.g. `createdb horizon`). Note that you may need to [add a role](https://www.postgresql.org/docs/9.6/sql-createrole.html) for yourself through the `postgres` user if you're starting from scratch. Next, install the schema by running `stellar-horizon db init`. This command will log any errors that occur.
+To prepare a database for Horizon's use, you must first ensure it is blank. It's easiest to create a new database on your PostgreSQL server specifically for Horizon's use (e.g. `createdb horizon`). Note that you may need to [add a role](https://www.postgresql.org/docs/9.6/sql-createrole.html) for yourself through the `postgres` user if you're starting from scratch. Next, install the schema by running `stellar-horizon db init`. This command will log any errors that occur.
 
 Remember to update the appropriate command line flags or environment variables to configure Horizon as explained [above](#parameters).
 
