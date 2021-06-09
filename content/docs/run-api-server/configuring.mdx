@@ -56,7 +56,12 @@ Remember to update the appropriate command line flags or environment variables t
 
 ### Postgres Configuration
 It is recommended to set `random_page_cost=1` in Postgres' configuration if you are using SSD storage. With this setting, Query Planner will make a better use of indices, especially for `JOIN` queries. We've noticed a huge speed improvement for some queries with this setting.
+To improve availability of both ingestion and frontend servers it's recommended to set the following values:
+* `tcp_keepalives_idle`: 10 seconds,
+* `tcp_keepalives_interval`: 1 second,
+* `tcp_keepalives_count`: 5.
 
+With the config above, if there are no queries from a given client for 10 seconds, Postgres should start sending TCP keepalive packets. It will retry 5 times every second. If there is no response from the client after that time it will drop the connection.
 
 ## Configuring Captive Core
 
