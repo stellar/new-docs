@@ -42,7 +42,7 @@ The behaviour is slightly different when reingesting old ledgers and when readin
 
   - **When reingesting**, Stellar Core is started in a special `catchup` mode that simply replays the requested range of ledgers. This mode requires an additional 3GiB of RAM because all ledger entries are stored in memory, making it extremely fast. This mode only depends on the history archives, so a configuration stub (see [below](#configuration)) **is not** required.
 
-  - **When reading recently closed ledgers**, Core is started with a normal `run` command. This requires a persistent database, so extra RAM is not needed, but it makes the initial stage of applying buckets slower than when reingesting. In this case, a configuration stub (again, read on [below](#configuration)) **is** required, in order to configure a quorum set so that it can connect to the Stellar network.
+  - **When reading recently closed ledgers**, Core is started with a normal `run` command. This mode also requires an additional 3GiB of RAM for in-memory ledger entries. In this case, a configuration stub (again, read on [below](#configuration)) **is** required, in order to configure a quorum set so that it can connect to the Stellar network.
 
 
 ### Known Limitations

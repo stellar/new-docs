@@ -7,9 +7,14 @@ import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
 
 
+Once Horizon is [installed](./installing.mdx), you are ready to configure it. Note that Horizon fulfills three important, distinct roles: **serving requests** like a regular web-based API, **ingesting ledgers** from the Stellar network to keep its world-view up to date, and **transaction submission** for interacting with the Stellar network. Though we encourage operators to separate these responsibilities across instances for resilience and independent scaling, a single Horizon instance can perform all of these functions at once.
+
+For the remainder of this guide, we will assume that you want a single, standalone Horizon instance that performs ingestion and allows transaction submission.
+
+
 ## Parameters
 
-Horizon can be configured by both command line flags or environment variables. To see the list of command line flags that are available, their default values, and their corresponding environmental variables for your version of Horizon, run:
+Horizon can be configured by both command line flags or environment variables. To see Horizon's list of command line flags that are available, their default values, and their corresponding environmental variables, run:
 
 <CodeExample>
 
@@ -19,27 +24,53 @@ stellar-horizon --help
 
 </CodeExample>
 
-When you run the command above, you'll see that Horizon defines a large number of flags; however, only a handful are required:
+When you run the command above, you'll see that Horizon defines a large number of flags; however, only a handful are required to get started:
 
 | flag | envvar | example |
 | ---- | ------ | ------- |
 | `--db-url` | `DATABASE_URL` | postgres://localhost/horizon_testnet |
+| `--history-archive-urls` | `HISTORY_ARCHIVE_URLS` | `https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002` |
+
+  - The most important parameter, `--db-url`, specifies the Horizon database; its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.6/static/libpq-connect.html#AEN46025).
+  - The other parameter, `--history-archive-urls`, specifies a set of comma-separated locations from which Horizon should download [history archives](../run-core-node/publishing-history-archives.mdx).
+
+#### With Ingestion
+As outlined at the beginning, we presume you are interested in starting an ingesting instance. For this, you need to specify some additional flags:
+
+| flag | envvar | example |
+| ---- | ------ | ------- |
+| `--ingest` | `INGEST` | true |
 | `--captive-core-config-append-path` | `CAPTIVE_CORE_CONFIG_APPEND_PATH` | /etc/default/stellar-captive-core-stub.toml |
 | `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
 
-  - The most important parameter, `--db-url`, specifies the Horizon database; its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.6/static/libpq-connect.html#AEN46025).
+We'll discuss [Ingestion](./ingesting.mdx) more, later.
+
+  - The first parameter, `--ingest`, enables the ingestion subservice.
   - The second parameter, `--captive-core-config-append-path`, points to a Captive Core configuration stub. This stub file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running. 
   - The final parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
 
+#### Without Ingestion
+If you aren't configuring your Horizon instance to perform ingestion, it still needs awareness about what's going on in the Stellar network to be useful. Thus, you need to point Horizon to a running Stellar Core instance:
+
+| flag | envvar | example |
+| ---- | ------ | ------- |
+| `--stellar-core-url` | `STELLAR_CORE_URL` | http://127.0.0.1:12626 |
+
+This can be a [Remote Captive Core](./remote-core.mdx) instance with its underlying Core node exposed or a [standalone](../run-core-node/) Stellar-Core instance.
+
 ### Manual Installation
+
 Specifying command line flags every time you invoke Horizon can be cumbersome, so we recommend using environment variables. There are many tools you can use to manage them, such as [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).
 
+For configuration related to [Captive Core](#configuring-captive-core), you can store parameters in a separate TOML file and pass it to the ``--captive-core-config-path`/`CAPTIVE_CORE_CONFIG_PATH` argument.
+
 ### Package Manager Installation
-If you installed Horizon [via your package manager](./installing.mdx#package-manager), the provided `stellar-horizon-cmd` wrapper will import a configuration from `/etc/default/stellar-horizon`, and set up the environment accordingly. Hence, if you want to change things, edit the configuration file in `/etc/default/stellar-horizon`.
+
+If you installed Horizon [via your package manager](./installing.mdx#package-manager), the provided `stellar-horizon-cmd` wrapper will import a configuration from `/etc/default/stellar-horizon` and set up the environment accordingly. Hence, if you want to change things, edit the configuration file in `/etc/default/stellar-horizon`.
 
 <Alert>
 
-This script invokes Horizon with the `stellar` user, so make sure that permissions for this user are set up accordingly. For example, the `--captive-core-storage-path` (by default the current working directory) should be writable for this user.
+This script invokes Horizon with the `stellar` user, so make sure that permissions for this user are set up accordingly. For example: the `--captive-core-storage-path` (by default the current working directory) should be writable for this user; the user should be able to execute the `horizon` and `stellar-core` binaries; etc.
 
 </Alert>
 
@@ -55,11 +86,13 @@ To prepare a database for Horizon's use, you must first ensure it is blank. It's
 Remember to update the appropriate command line flags or environment variables to configure Horizon as explained [above](#parameters).
 
 ### Postgres Configuration
+
 It is recommended to set `random_page_cost=1` in Postgres' configuration if you are using SSD storage. With this setting, Query Planner will make a better use of indices, especially for `JOIN` queries. We've noticed a huge speed improvement for some queries with this setting.
+
 To improve availability of both ingestion and frontend servers it's recommended to set the following values:
-* `tcp_keepalives_idle`: 10 seconds,
-* `tcp_keepalives_interval`: 1 second,
-* `tcp_keepalives_count`: 5.
+  * `tcp_keepalives_idle`: 10 seconds,
+  * `tcp_keepalives_interval`: 1 second,
+  * `tcp_keepalives_count`: 5.
 
 With the config above, if there are no queries from a given client for 10 seconds, Postgres should start sending TCP keepalive packets. It will retry 5 times every second. If there is no response from the client after that time it will drop the connection.
 
