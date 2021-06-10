@@ -98,9 +98,7 @@ CAPTIVE_CORE_STORAGE_PATH=/var/lib/stellar
 # end Captive Core
 ```
 
-You will need to adjust these accordingly, specifically by pointing `CAPTIVE_CORE_CONFIG_APPEND_PATH` to your configuration stub and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (these can grow quite large, so make sure you have disk space there).
-
-> **TODO:** Sync with ops, because this actually injects `TMP_DIR` here and uses a different path for the default `CONFIG_APPEND_PATH`.
+You will need to adjust these accordingly, specifically by pointing `CAPTIVE_CORE_CONFIG_PATH` to your configuration file and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (these can grow quite large, so make sure you have disk space there).
 
 Finally, the process for upgrading both Stellar Core and Horizon is covered [here](https://github.com/stellar/packages/blob/master/docs/upgrading.md#upgrading).
 

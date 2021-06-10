@@ -40,13 +40,13 @@ As outlined at the beginning, we presume you are interested in starting an inges
 | flag | envvar | example |
 | ---- | ------ | ------- |
 | `--ingest` | `INGEST` | true |
-| `--captive-core-config-append-path` | `CAPTIVE_CORE_CONFIG_APPEND_PATH` | /etc/default/stellar-captive-core-stub.toml |
+| `--captive-core-config-path` | `CAPTIVE_CORE_CONFIG_PATH` | /etc/default/stellar-captive-core.toml |
 | `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
 
 We'll discuss [Ingestion](./ingesting.mdx) more, later.
 
   - The first parameter, `--ingest`, enables the ingestion subservice.
-  - The second parameter, `--captive-core-config-append-path`, points to a Captive Core configuration stub. This stub file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running. 
+  - The second parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running. 
   - The final parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
 
 #### Without Ingestion
@@ -90,11 +90,13 @@ Remember to update the appropriate command line flags or environment variables t
 It is recommended to set `random_page_cost=1` in Postgres' configuration if you are using SSD storage. With this setting, Query Planner will make a better use of indices, especially for `JOIN` queries. We've noticed a huge speed improvement for some queries with this setting.
 
 To improve availability of both ingestion and frontend servers it's recommended to set the following values:
-  * `tcp_keepalives_idle`: 10 seconds,
-  * `tcp_keepalives_interval`: 1 second,
-  * `tcp_keepalives_count`: 5.
+
+  * `tcp_keepalives_idle`: 10 seconds
+  * `tcp_keepalives_interval`: 1 second
+  * `tcp_keepalives_count`: 5
 
 With the config above, if there are no queries from a given client for 10 seconds, Postgres should start sending TCP keepalive packets. It will retry 5 times every second. If there is no response from the client after that time it will drop the connection.
+
 
 ## Configuring Captive Core
 
@@ -131,11 +133,14 @@ HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{
 
 </CodeExample>
 
-_(For the remainder of this guide, we'll assume this stub lives at `/etc/default/stellar-captive-core-stub.toml`.)_
+_(For the remainder of this guide, we'll assume this file lives at `/etc/default/stellar-captive-core.toml`.)_
 
 The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF configures on the pubnet.
 
-Note that while the Captive Core stub looks a lot like a subset of the true Stellar Core configuration file, **this should not be relied upon**. Horizon provides defaults for certain fields, others can be specified from the command line, while others still may be changed or introduced in the future. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
+Some of the underlying Captive Core's functionality should be controlled through this file; it can also be controlled through command-line flags and Horizon provides some defaults, but the TOML file is recommended.
+
+
+Note that while the Captive Core file looks a lot like a subset of the true Stellar Core configuration file, **this should not be relied upon**. However, you can control some of the underlying Core configuration by setting fields here. Note that Horizon provides defaults for certain fields, others can be specified from the command line, while others still may be changed or introduced in the future. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
 
 
 ## Remote Captive Core
