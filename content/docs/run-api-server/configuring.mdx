@@ -137,7 +137,7 @@ The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATOR
 
 If you wanted to adapt this to the **Stellar pubnet**, you'll need to think more carefully about the validators you want to trust in your quorum. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF includes in its pubnet quorum.
 
-Captive Core's functionality is controlled through this file. Note that while the Captive Core configuration looks like a subset of a traditional Stellar Core configuration file, you **should not** use a traditional Stellar Core configuration file to configure Captive Core. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
+Captive Core's functionality is controlled through this file. Note that while the Captive Core configuration looks like a subset of a traditional Stellar Core configuration file, you cannot use a traditional Stellar Core configuration file to configure Captive Core. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
 
 
 ## Remote Captive Core
