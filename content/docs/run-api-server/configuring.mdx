@@ -43,10 +43,8 @@ As outlined at the beginning, we presume you are interested in starting an inges
 | `--captive-core-config-path` | `CAPTIVE_CORE_CONFIG_PATH` | /etc/default/stellar-captive-core.toml |
 | `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
 
-We'll discuss [Ingestion](./ingesting.mdx) more, later.
-
   - The first parameter, `--ingest`, enables the ingestion subservice.
-  - The second parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running. 
+  - The second parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This TOML file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running.
   - The final parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
 
 #### Without Ingestion
@@ -100,7 +98,7 @@ With the config above, if there are no queries from a given client for 10 second
 
 ## Configuring Captive Core
 
-While a full Stellar Core node requires a complex configuration with [lots of possible fields](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg), the Captive Core configuration stub can be kept extremely barebones. The rest of the configuration will be generated automagically at runtime. Here's is a minimal working example, operating under the assumption that you want to connect to the testnet and trust SDF's validators exclusively:
+While a full Stellar Core node requires a complex configuration with [lots of possible fields](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg), the Captive Core configuration file can be kept extremely barebones. The rest of the configuration will be generated automagically at runtime. Here's is a minimal working example, operating under the assumption that you want to connect to the testnet and trust SDF's validators exclusively:
 
 <CodeExample>
 
@@ -135,12 +133,11 @@ HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{
 
 _(For the remainder of this guide, we'll assume this file lives at `/etc/default/stellar-captive-core.toml`.)_
 
-The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF configures on the pubnet.
+The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. 
 
-Some of the underlying Captive Core's functionality should be controlled through this file; it can also be controlled through command-line flags and Horizon provides some defaults, but the TOML file is recommended.
+If you wanted to adapt this to the **Stellar pubnet**, you'll need to think more carefully about the validators you want to trust in your quorum. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF includes in its pubnet quorum.
 
-
-Note that while the Captive Core file looks a lot like a subset of the true Stellar Core configuration file, **this should not be relied upon**. However, you can control some of the underlying Core configuration by setting fields here. Note that Horizon provides defaults for certain fields, others can be specified from the command line, while others still may be changed or introduced in the future. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
+Captive Core's functionality is controlled through this file. Note that while the Captive Core configuration looks like a subset of a traditional Stellar Core configuration file, you **should not** use a traditional Stellar Core configuration file to configure Captive Core. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
 
 
 ## Remote Captive Core
