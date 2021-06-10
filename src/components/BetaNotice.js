@@ -25,7 +25,7 @@ const LinkEl = styled(Link)`
 export const BetaNotice = () => (
   <>
     <BetaNoticeEl>
-      These new docs are in beta. Please submit bugs to{" "}
+      Please submit any typos you come across to{" "}
       <LinkEl href="https://github.com/stellar/new-docs/issues">
         GitHub issues
       </LinkEl>
