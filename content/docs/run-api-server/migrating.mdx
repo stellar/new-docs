@@ -69,7 +69,7 @@ The first major change from 1.x is how you will configure Horizon. You will no l
 <CodeExample>
 
 ```
-2021/06/10 13:09:46 Invalid captive core toml file invalid captive core toml: LOG_FILE_PATH in captive core config file does not match Horizon captive-core-log-path flag
+Invalid captive core toml file: LOG_FILE_PATH in captive core config file does not match Horizon captive-core-log-path flag
 ```
 
 </CodeExample>
@@ -107,13 +107,13 @@ CAPTIVE_CORE_STORAGE_PATH=/var/lib/stellar
 
 </CodeExample>
 
-You will need to adjust these accordingly, specifically by pointing `CAPTIVE_CORE_CONFIG_PATH` to your configuration file and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (keep in mind the [disk space](./prerequisites.mdx) and [permissions](./configuring.mdx#package-manager-installation) requirements).
+You will need to adjust these accordingly, for example by pointing `CAPTIVE_CORE_CONFIG_PATH` to your configuration file and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (but keep in mind the [disk space](./prerequisites.mdx) and [permissions](./configuring.mdx#package-manager-installation) requirements).
 
 Finally, the process for upgrading both Stellar Core and Horizon is covered [here](https://github.com/stellar/packages/blob/master/docs/upgrading.md#upgrading).
 
 <Alert>
 
-Depending on the version you're migrating from, you may need to include an additional step here: manual reingestion. This can still be accomplished with Captive Core; see [below](#reingestion).
+Depending on the version you're migrating from, you may need to include an additional step here: **manual reingestion**. This can still be accomplished with Captive Core; see [below](#reingestion).
 
 </Alert>
 
