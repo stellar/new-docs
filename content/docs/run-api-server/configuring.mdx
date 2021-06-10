@@ -3,46 +3,102 @@ title: Configuring
 order: 30
 ---
 
+import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
+
+
+Once Horizon is [installed](./installing.mdx), you are ready to configure it. Note that Horizon fulfills three important, distinct roles: **serving requests** like a regular web-based API, **ingesting ledgers** from the Stellar network to keep its world-view up to date, and **transaction submission** for interacting with the Stellar network. Though we encourage operators to separate these responsibilities across instances for resilience and independent scaling, a single Horizon instance can perform all of these functions at once.
+
+For the remainder of this guide, we will assume that you want a single, standalone Horizon instance that performs ingestion and allows transaction submission.
 
 
 ## Parameters
 
-Horizon can be configured by both command line flags or environment variables. To see the list of command line flags that are available, their default values, and their corresponding environmental variables for your version of Horizon, run:
+Horizon can be configured by both command line flags and environment variables. To see Horizon's list of available command line flags, their default values, and their corresponding environmental variable names, run:
 
-    horizon --help
+<CodeExample>
 
-When you run the command above, you'll see that Horizon defines a large number of flags; however, only a handful are required:
+```bash
+stellar-horizon --help
+```
+
+</CodeExample>
+
+You'll see that Horizon defines a large number of flags; however, only a handful are required to get started:
 
 | flag | envvar | example |
 | ---- | ------ | ------- |
 | `--db-url` | `DATABASE_URL` | postgres://localhost/horizon_testnet |
-| `--captive-core-config-append-path` | `CAPTIVE_CORE_CONFIG_APPEND_PATH` | /etc/default/stellar-captive-core-stub.toml |
-| `--stellar-core-url` | `STELLAR_CORE_URL` | http://localhost:11626 |
+| `--history-archive-urls` | `HISTORY_ARCHIVE_URLS` | https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002 |
+
+  - The most important parameter, `--db-url`, specifies the Horizon database; its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.6/static/libpq-connect.html#AEN46025).
+  - The other parameter, `--history-archive-urls`, specifies a set of comma-separated locations from which Horizon should download [history archives](../run-core-node/publishing-history-archives.mdx).
+
+#### With Ingestion
+As outlined at the beginning, we presume you are interested in starting an ingesting instance. For this, you need to specify some additional flags:
+
+| flag | envvar | example |
+| ---- | ------ | ------- |
+| `--ingest` | `INGEST` | true |
+| `--captive-core-config-path` | `CAPTIVE_CORE_CONFIG_PATH` | /etc/default/stellar-captive-core.toml |
 | `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
 
-  - The most important parameter, `--db-url`, specifies the Horizon database, and its value should be a valid [PostgreSQL Connection URI](http://www.postgresql.org/docs/9.2/static/libpq-connect.html#AEN38419).
-  - The second parameter, `--captive-core-config-append-path`, points to a Captive Core configuration stub. This stub file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running. 
-  - The final parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Since Horizon will search your `PATH` for `stellar-core` by default, if your environment is configured appropriately, you won't even need to pass this.
+  - The first parameter, `--ingest=true`, enables the ingestion subservice.
+  - The second parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This TOML file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running.
+  - The final parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
 
-Note that Horizon will perform ingestion by default as of [v2.0](https://github.com/stellar/go/releases/tag/horizon-v2.0.0); if you want to have certain nodes dedicated exclusively to fulfilling requests, you should set `--enable-captive-core-ingestion=false`.
+#### Without Ingestion
+If you aren't configuring your Horizon instance to perform ingestion, it still needs awareness about what's going on in the Stellar network to be useful. Thus, you need to point Horizon to a running Stellar Core instance:
 
-Specifying command line flags every time you invoke Horizon can be cumbersome, so we recommend using environment variables. There are many tools you can use to manage them: we recommend either [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv). However, **if you installed via [the package manager](./installing.mdx#package-manager),** the provided `stellar-horizon-cmd` wrapper will actually import a configuration from `/etc/default/stellar-horizon` and set up the environment accordingly.
+| flag | envvar | example |
+| ---- | ------ | ------- |
+| `--stellar-core-url` | `STELLAR_CORE_URL` | http://127.0.0.1:11626 |
+
+This can be a [Remote Captive Core](./remote-core.mdx) instance with its underlying Core node exposed or a [standalone](../run-core-node/) Stellar-Core instance.
+
+### Manual Installation
+
+Specifying command line flags every time you invoke Horizon can be cumbersome, so we recommend using environment variables. There are many tools you can use to manage them, such as [direnv](http://direnv.net/) or [dotenv](https://github.com/bkeepers/dotenv).
+
+For configuration related to [Captive Core](#configuring-captive-core), you should prepare a separate TOML file and pass it to the `--captive-core-config-path`/`CAPTIVE_CORE_CONFIG_PATH` argument.
+
+### Package Manager Installation
+
+If you installed Horizon [via your package manager](./installing.mdx#package-manager), the provided `stellar-horizon-cmd` wrapper will import a configuration from `/etc/default/stellar-horizon` and set up the environment accordingly. Hence, if you want to change things, edit the configuration file in `/etc/default/stellar-horizon`.
+
+<Alert>
+
+This script invokes Horizon with the `stellar` user, so make sure that permissions for this user are set up accordingly. For example: the `--captive-core-storage-path` (by default the current working directory) should be writable for this user; the user should be able to execute the `horizon` and `stellar-core` binaries; etc.
+
+</Alert>
+
+Note that the default configuration (located at `/etc/default/stellar-horizon`) provided by the package manager will **enable ingestion by default** (`INGEST=true`). Refer to the later [Ingesting Transactions](./running.mdx#ingesting-transactions) section to see what setup is right for you. If you want certain nodes dedicated exclusively to fulfilling requests, you should drop this flag accordingly.
 
 
 ## Preparing the Database
 
-Before running the Horizon server, you must first prepare the Horizon database. This database will be used for all of the information produced by Horizon, notably historical information about successful transactions that have occurred on the stellar network.
+Before running the Horizon server, you must first prepare the Horizon database specified by the `DATABASE_URL`. This database will be used for all of the information produced by Horizon, most notably historical information about transactions that have occurred on the Stellar network.
 
-To prepare a database for Horizon's use, you must first ensure the database is blank. It's easiest to simply create a new database on your PostgreSQL server specifically for Horizon's use. Next, you must install the schema by running `horizon db init`. Remember to use the appropriate command line flags or environment variables to configure Horizon as explained [above](#parameters). This command will log any errors that occur.
+To prepare a database for Horizon's use, you must first ensure it is blank. It's easiest to create a new database on your PostgreSQL server specifically for Horizon's use (e.g. `createdb horizon`). Note that you may need to [add a role](https://www.postgresql.org/docs/9.6/sql-createrole.html) for yourself (or the `stellar` user) through the `postgres` user if you're starting from scratch. Next, install the schema by running `stellar-horizon db init`. This command will log any errors that occur.
+
+Remember to update the appropriate DB-related flags or environment variables to configure Horizon as explained [above](#parameters).
 
 ### Postgres Configuration
-It is recommended to set `random_page_cost=1` in Postgres configuration if you are using SSD storage. With this setting, Query Planner will make a better use of indices, expecially for `JOIN` queries. We've noticed a huge speed improvement for some queries with this setting.
+
+It is recommended to set `random_page_cost=1` in Postgres' configuration if you are using SSD storage. With this setting, Query Planner will make a better use of indices, especially for `JOIN` queries. We've noticed a huge speed improvement for some queries with this setting.
+
+To improve availability of both ingestion and frontend servers it's recommended to set the following values:
+
+  * `tcp_keepalives_idle`: 10 seconds
+  * `tcp_keepalives_interval`: 1 second
+  * `tcp_keepalives_count`: 5
+
+With the config above, if there are no queries from a given client for 10 seconds, Postgres should start sending TCP keepalive packets. It will retry 5 times every second. If there is no response from the client after that time it will drop the connection.
 
 
 ## Configuring Captive Core
 
-While a full Stellar Core node requires a complex configuration with [lots of possible fields](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg), the Captive Core configuration stub can be kept extremely barebones. The rest of the configuration will be generated automagically at runtime. Here's is a minimal working example, operating under the assumption that you want to connect to the testnet and trust SDF's validators exclusively:
+While a full Stellar Core node requires a complex configuration with [lots of possible fields](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg), the Captive Core configuration file can be kept extremely barebones. Most of the configuration will be generated automagically at runtime. Here's is a minimal working example, operating under the assumption that you want to connect to the testnet and trust SDF's validators exclusively:
 
 <CodeExample>
 
@@ -75,43 +131,17 @@ HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{
 
 </CodeExample>
 
-_(For the remainder of this guide, we'll assume this stub lives at `/etc/default/stellar-captive-core-stub.toml`.)_
+_(For the remainder of this guide, we'll assume this file lives at `/etc/default/stellar-captive-core.toml`.)_
 
-You can [install](./installing.mdx#package-manager) the `stellar-captive-core` package to simplify configuration here, but the minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`, so if you wanted to configure your instance for the public network, you would simply replace the above with their pubnet equivalents. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF configures on the pubnet.
+The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`.
+
+If you wanted to adapt this and configure your nodes to work on the Stellar **pubnet**, you'll need to think more carefully about the validators you want to trust in your quorum. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF includes in its pubnet quorum.
+
+Captive Core's functionality is controlled through this file. Note that while the Captive Core configuration looks like a subset of a traditional Stellar Core configuration file, you cannot use a traditional Stellar Core configuration file to configure Captive Core. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
 
 
 ## Remote Captive Core
 
-As mentioned [earlier](./installing.mdx#remote-captive-core), we provide a library that wraps a Captive Core instance in an HTTP API that Horizon can consume remotely.
+As mentioned [earlier](./installing.mdx#installing-remote-captive-core), we provide a library that wraps a Captive Core instance in an HTTP API that Horizon can consume remotely. This is an advanced (and still experimental) architecture, so refer to the [Remote Captive Core](./remote-core.mdx) page (up next) for more on setting that up.
 
-### Configuring Core
-We'll need to configure the Captive Core environment. The required parameters include the [above](#parameters), the [configuration stub](#configuring-captive-core), as well as a few others:
-
-| flag | envvar | example |
-| ---- | ------ | ------- |
-| `--network-passphrase` | `NETWORK_PASSPHRASE` | `Test SDF Network ; September 2015` |
-| `--history-archive-urls` | `HISTORY_ARCHIVE_URLS` | `https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002` |
-
-For example, if you wanted to rely on SDF for history archives and connect to the test network, you might prepare your environment as follows:
-
-<CodeExample>
-
-```bash
-export NETWORK_PASSPHRASE='Test SDF Network ; September 2015'
-export HISTORY_ARCHIVE_URLS='https://history.stellar.org/prd/core-testnet/core_testnet_001'
-export DATABASE_URL='postgres://postgres:secret@db.local:5432/horizon?sslmode=disable'
-export CAPTIVE_CORE_CONFIG_APPEND_PATH=/etc/default/stellar-captive-core-stub.toml
-```
-
-</CodeExample>
-
-(We suppose, of course, that the above PostgreSQL URI is a [correctly-configured](#preparing-the-database) database.)
-
-### Configuring Horizon
-On the *local* Horizon instance (i.e. the one that will connect to the above-configured remote Captive Core), rather than passing the `--captive-core-config-append-path`, `--stellar-core-url`, and `--stellar-core-binary-path` parameters described [above](#parameters), we only need a single parameter:
-
-| flag | envvar | example |
-| ---- | ------ | ------- |
-| `--remote-captive-core-url` | `REMOTE_CAPTIVE_CORE_URL` | http://10.0.0.42:8000 |
-
-This URL should point to a running Captive Core API. Note that nothing prohibits this from being a `localhost` URL, if you want Captive Core running in a separate process from Horizon or are running a containerized setup, for example.
+Otherwise, jump ahead to [Running Horizon](./running.mdx)!
