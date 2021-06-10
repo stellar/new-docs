@@ -15,7 +15,7 @@ If you aren't coming from an existing deployment of Horizon, feel free to skip t
 
 ## Introduction
 
-Starting with version v1.6.0, Horizon allows using Stellar Core in captive mode for ingestion. This mode is enabled by default since Horizon 2.0. Even though you can enable captive mode on 1.6+, this migration guide is catered towards upgrading to 2.x due to the stability and configuration improvements that happened in the later versions.
+Starting with version v1.6.0, Horizon allows using Stellar Core in captive mode for ingestion. This mode has been enabled by default since Horizon 2.0. Even though you can enable captive mode on 1.6+, this migration guide is catered towards upgrading to 2.x due to the stability and configuration improvements introduced in the later versions.
 
 <Alert>
 
@@ -29,7 +29,7 @@ Please give the [blog post](https://www.stellar.org/developers-blog/a-new-sun-on
   - no Core database, all done in-memory
   - *much* faster ingestion
 
-Captive Core completely eliminates all Horizon issues connected Stellar-Core's database, but it requires extra time to initialize and manage its Stellar-Core subprocess. Captive Stellar-Core can be used in both reingestion (`horizon db reingest range`) and normal Horizon operation (`horizon serve`). In fact, using Captive Core to reingest historical data is considerably faster than without it.
+Captive Core completely eliminates all Horizon issues caused by connecting to Stellar-Core's database, but it requires extra time to initialize and manage its Stellar-Core subprocess. Captive Stellar-Core can be used in both reingestion (`horizon db reingest range`) and normal Horizon operation (`horizon serve`). In fact, using Captive Core to reingest historical data is considerably faster than without it.
 
 
 ### How It Works
