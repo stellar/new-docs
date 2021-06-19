@@ -1,0 +1,173 @@
+---
+title: Ingestion
+order: 45
+---
+
+Horizon provides access to both current and historical state on the Stellar network through a process called **ingestion**.
+
+Horizon provides most of its utility through ingested data, and your Horizon server can be configured to listen for and ingest transaction results from the Stellar network. Ingestion enables API access to both current (e.g. someone's balance) and historical state (e.g. someone's transaction history).
+
+
+## Ingestion Types
+
+There are two primary ingestion use-cases for Horizon operations:
+
+  - ingesting **live** data to stay up to date with the latest, real-time changes to the Stellar network, and
+  - ingesting **historical** data to open a window into the past and how the Stellar network has changed over time
+
+### Ingesting Live Data
+
+Though this option is disabled by default, in this guide we've [assumed](./configuring.mdx) you turned it on. If you haven't, use the `--ingest=true` or `INGEST=true` flags. 
+
+For a serious setup, **we highly recommend having more than one live ingesting instance**, as this makes it easier to avoid downtime during upgrades and adds resilience to your infrastructure, ensuring you always have the latest network data.
+
+### Ingesting Historical Data
+
+Providing API access to historical data is facilitated by a Horizon subcommand:
+
+<CodeExample>
+
+```
+stellar-horizon db reingest range <start> <end>
+```
+
+</CodeExample>
+
+_(The command name is a bit of a misnomer: you can use `reingest` both to ingest new ledger data and reingest old data.)_
+
+You can run this process in the background while your Horizon server is up. It will continuously decrement the `history.elder_ledger` in your `/metrics` endpoint until the `<end>` ledger is reached and the backfill is complete. If Horizon receives a request for a ledger it hasn't ingested, it returns a 503 error and clarify that it's `Still Ingesting`.
+
+#### Historical Boundaries
+
+(TODO: Think of a better section name; pls suggest something.)
+
+You should think carefully about the amount of ingested data you'd like to keep around. Though the storage requirements for the entire Stellar network are substantial, **most organizations and operators only need a small fraction of the history** to fit their use case. For example,
+
+  * If you just started developing a new application or service, you can probably get away with just doing live ingestion, since nothing you do requires historical data.
+
+  * If you're moving an existing service away from reliance on SDF's Horizon, you likely only need history from the point at which you started using the Stellar network.
+
+  * If you provide temporal guarantees to your users--a 6-month guarantee of transaction history like some online banks do, or history only for the last thousand ledgers (see [below](#managing-storage)), for example--then you similarly don't have heavy ingestion requirements.
+
+Even a massively-popular, well-established service such as Coinbase probably doesn't need full history to service its users. It will, however, likely need it to be a [Full Validator](../run-core-node/index.mdx#full-validator) with published history archives.
+
+#### Reingestion
+
+Regardless of whether you are running live ingestion or building up historical data, you may occasionally need to _re_ingest ledgers anew (for example on certain upgrades of Horizon). For this, you use the same command as above.
+
+#### Parallel Ingestion
+
+Note that historical (re)ingestion happens independently for any given ledger range, so you can reingest in parallel across multiple Horizon processes:
+
+<CodeExample>
+
+```
+horizon1> stellar-horizon db reingest range 1 10000
+horizon2> stellar-horizon db reingest range 10001 20000
+horizon3> stellar-horizon db reingest range 20001 30000
+# ... etc.
+```
+
+</CodeExample>
+
+#### Managing Storage
+Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you should configure Horizon to only retain a certain number of ledgers in the database. 
+
+This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, Horizon provides a command to force a collection:
+
+<CodeExample>
+
+```bash
+stellar-horizon db reap
+```
+
+</CodeExample>
+
+If you configure this parameter, we also recommend [configuring](./configuring.mdx#configuring-captive-core) the `CATCHUP_RECENT` value for your Captive Core instance. 
+
+### Common Issues
+Ingestion is a complicated process, so there are a number of things to look out for.
+
+#### Some endpoints are not available during state ingestion
+Endpoints that display state information are not available during initial state ingestion and will return a `503 Service Unavailable`/`Still Ingesting` error. An example is the `/paths` endpoint (built using offers). Such endpoints will become available after state ingestion is done (usually within a couple of minutes).
+
+#### State ingestion is taking a lot of time
+State ingestion shouldn't take more than a couple of minutes on an AWS `c5.xlarge` instance or equivalent.
+
+It's possible that the progress logs (see [below](#reading-the-logs)) will not show anything new for a longer period of time or print a lot of progress entries every few seconds. This happens because of the way history archives are designed. 
+
+The ingestion is still working but it's processing entries of type `DEADENTRY`. If there is a lot of them in the bucket, there are no _active_ entries to process. We plan to improve the progress logs to display actual percentage progress so it's easier to estimate an ETA.
+
+If you see that ingestion is not proceeding for a very long period of time:
+
+  1. Check the RAM usage on the machine. It's possible that system ran out of RAM and is using swap memory that is extremely slow.
+  2. If above is not the case, file a [new issue](https://github.com/stellar/go/issues/new/choose) in the [Horizon repository](https://github.com/stellar/go/tree/master/services/horizon).
+
+#### CPU usage goes high every few minutes
+**This is by design**. Horizon runs a state verifier routine that compares state in local storage to history archives every 64 ledgers to ensure data changes are applied correctly. If data corruption is detected, Horizon will block access to endpoints serving invalid data.
+
+We recommend keeping this security feature turned on; however, if it's causing problems (due to CPU usage) this can be disabled via the `--ingest-disable-state-verification`/`INGEST_DISABLE_STATE_VERIFICATION` parameter.
+
+
+## Reading Logs
+
+In order to check the progress and status of ingestion you should regularly check your logs; all logs related to ingestion are tagged with `service=ingest`.
+
+It starts with informing you about state ingestion:
+
+<CodeExample>
+
+```
+INFO[...] Starting ingestion system from empty state...  pid=5965 service=ingest temp_set="*io.MemoryTempSet"
+INFO[...] Reading from History Archive Snapshot          pid=5965 service=ingest ledger=25565887
+```
+
+</CodeExample>
+
+During state ingestion, Horizon will log the number of processed entries every 100,000 entries (there are currently around 10M entries in the public network):
+
+<CodeExample>
+
+```
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=100000 pid=5965 service=ingest
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=200000 pid=5965 service=ingest
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=300000 pid=5965 service=ingest
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=400000 pid=5965 service=ingest
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=500000 pid=5965 service=ingest
+```
+
+</CodeExample>
+
+When state ingestion is finished, it will proceed to ledger ingestion starting from the next ledger after the checkpoint ledger (25565887+1 in this example) to update the state using transaction metadata:
+
+<CodeExample>
+
+```
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=5400000 pid=5965 service=ingest
+INFO[...] Processing entries from History Archive Snapshot  ledger=25565887 numEntries=5500000 pid=5965 service=ingest
+INFO[...] Processed ledger                              ledger=25565887 pid=5965 service=ingest type=state_pipeline
+INFO[...] Finished processing History Archive Snapshot  duration=2145.337575904 ledger=25565887 numEntries=5529931 pid=5965 service=ingest shutdown=false
+INFO[...] Reading new ledger                            ledger=25565888 pid=5965 service=ingest
+INFO[...] Processing ledger                             ledger=25565888 pid=5965 service=ingest type=ledger_pipeline updating_database=true
+INFO[...] Processed ledger                              ledger=25565888 pid=5965 service=ingest type=ledger_pipeline
+INFO[...] Finished processing ledger                    duration=0.086024492 ledger=25565888 pid=5965 service=ingest shutdown=false transactions=14
+INFO[...] Reading new ledger                            ledger=25565889 pid=5965 service=ingest
+INFO[...] Processing ledger                             ledger=25565889 pid=5965 service=ingest type=ledger_pipeline updating_database=true
+INFO[...] Processed ledger                              ledger=25565889 pid=5965 service=ingest type=ledger_pipeline
+INFO[...] Finished processing ledger                    duration=0.06619956 ledger=25565889 pid=5965 service=ingest shutdown=false transactions=29
+INFO[...] Reading new ledger                            ledger=25565890 pid=5965 service=ingest
+INFO[...] Processing ledger                             ledger=25565890 pid=5965 service=ingest type=ledger_pipeline updating_database=true
+INFO[...] Processed ledger                              ledger=25565890 pid=5965 service=ingest type=ledger_pipeline
+INFO[...] Finished processing ledger                    duration=0.071039012 ledger=25565890 pid=5965 service=ingest shutdown=false transactions=20
+```
+
+</CodeExample>
+
+
+## Managing Stale Historical Data
+
+Horizon ingests ledger data from a managed, [possibly-remote](./remote-core.mdx), pared-down Captive Stellar Core instance. In the event that Captive Core crashes, lags, or if Horizon stops ingesting data for any other reason, the view provided by Horizon will start to lag behind reality. For simpler applications, this may be fine, but in many cases this lag is unacceptable and the application should not continue operating until the lag is resolved.
+
+To help applications that cannot tolerate lag, Horizon provides a configurable "staleness" threshold. If enough lag accumulates to surpass this threshold (expressed in number of ledgers), Horizon will only respond with an error: [`stale_history`](https://github.com/stellar/go/blob/master/services/horizon/internal/docs/reference/errors/stale-history.md). To configure this option, use the `--history-stale-threshold`/`HISTORY_STALE_THRESHOLD` parameter.
+
+**Note:** Non-historical requests (such as submitting transactions or checking account balances) will not error out if the staleness threshold is surpassed.
