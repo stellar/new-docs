@@ -7,9 +7,15 @@ import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
 
 
-Once Horizon is [installed](./installing.mdx), you are ready to configure it. Note that Horizon fulfills three important, distinct roles: **serving requests** like a regular web-based API, **ingesting ledgers** from the Stellar network to keep its world-view up to date, and **transaction submission** for interacting with the Stellar network. Though we encourage operators to separate these responsibilities across instances for resilience and independent scaling, a single Horizon instance can perform all of these functions at once.
+Once Horizon is [installed](./installing.mdx), you are ready to configure it. Note that Horizon fulfills three important, distinct roles: 
 
-For the remainder of this guide, we will assume that you want a single, standalone Horizon instance that performs ingestion and allows transaction submission.
+  - **serving requests** like a regular web-based API, 
+  - **ingesting ledgers** from the Stellar network to keep its world-view up to date, and 
+  - **transaction submission** for interacting with the Stellar network. 
+
+Though we encourage operators to separate these responsibilities across instances for resilience and independent scaling, a single Horizon instance can perform all of these functions at once.
+
+For the remainder of this guide, we will assume that you want a single, standalone Horizon instance that performs ingestion and allows transaction submission. We'll cover ingestion in detail [later](./ingestion.mdx) if you want to read ahead and decide which approach is right for you.
 
 
 ## Parameters
@@ -72,7 +78,7 @@ This script invokes Horizon with the `stellar` user, so make sure that permissio
 
 </Alert>
 
-Note that the default configuration (located at `/etc/default/stellar-horizon`) provided by the package manager will **enable ingestion by default** (`INGEST=true`). Refer to the later [Ingesting Transactions](./running.mdx#ingesting-transactions) section to see what setup is right for you. If you want certain nodes dedicated exclusively to fulfilling requests, you should drop this flag accordingly.
+Note that the default configuration (located at `/etc/default/stellar-horizon`) provided by the package manager will **enable ingestion by default** (`INGEST=true`). Again, refer to the later [Ingestion](./ingestion.mdx) page to see what setup is right for you. If you want certain nodes dedicated exclusively to fulfilling requests, you should drop this flag accordingly.
 
 
 ## Preparing the Database
