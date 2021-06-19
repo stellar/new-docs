@@ -13,11 +13,11 @@ Horizon provides most of its utility through ingested data, and your Horizon ser
 There are two primary ingestion use-cases for Horizon operations:
 
   - ingesting **live** data to stay up to date with the latest, real-time changes to the Stellar network, and
-  - ingesting **historical** data to open a window into the past and how the Stellar network has changed over time
+  - ingesting **historical** data to peek how the Stellar ledger has changed over time
 
 ### Ingesting Live Data
 
-Though this option is disabled by default, in this guide we've [assumed](./configuring.mdx) you turned it on. If you haven't, use the `--ingest=true` or `INGEST=true` flags. 
+Though this option is disabled by default, in this guide we've [assumed](./configuring.mdx) you turned it on. If you haven't, pass the `--ingest` flag or set `INGEST=true` in your environment.
 
 For a serious setup, **we highly recommend having more than one live ingesting instance**, as this makes it easier to avoid downtime during upgrades and adds resilience to your infrastructure, ensuring you always have the latest network data.
 
@@ -35,10 +35,9 @@ stellar-horizon db reingest range <start> <end>
 
 _(The command name is a bit of a misnomer: you can use `reingest` both to ingest new ledger data and reingest old data.)_
 
-You can run this process in the background while your Horizon server is up. It will continuously decrement the `history.elder_ledger` in your `/metrics` endpoint until the `<end>` ledger is reached and the backfill is complete. If Horizon receives a request for a ledger it hasn't ingested, it returns a 503 error and clarify that it's `Still Ingesting`.
+You can run this process in the background while your Horizon server is up. It will continuously decrement the `history.elder_ledger` in your `/metrics` endpoint until the `<end>` ledger is reached and the backfill is complete. If Horizon receives a request for a ledger it hasn't ingested, it returns a 503 error and clarify that it's `Still Ingesting` (see [below](#some-endpoints-are-not-available-during-state-ingestion)).
 
-#### Historical Boundaries
-
+#### Deciding on how much history to ingest
 (TODO: Think of a better section name; pls suggest something.)
 
 You should think carefully about the amount of ingested data you'd like to keep around. Though the storage requirements for the entire Stellar network are substantial, **most organizations and operators only need a small fraction of the history** to fit their use case. For example,
@@ -55,8 +54,7 @@ Even a massively-popular, well-established service such as Coinbase probably doe
 
 Regardless of whether you are running live ingestion or building up historical data, you may occasionally need to _re_ingest ledgers anew (for example on certain upgrades of Horizon). For this, you use the same command as above.
 
-#### Parallel Ingestion
-
+#### Parallel ingestion
 Note that historical (re)ingestion happens independently for any given ledger range, so you can reingest in parallel across multiple Horizon processes:
 
 <CodeExample>
@@ -70,7 +68,7 @@ horizon3> stellar-horizon db reingest range 20001 30000
 
 </CodeExample>
 
-#### Managing Storage
+#### Managing storage
 Over time, the recorded network history will grow unbounded, increasing storage used by the database. Horizon needs sufficient disk space to expand the data ingested from Stellar Core. Unless you need to maintain a [history archive](../run-core-node/publishing-history-archives.mdx), you should configure Horizon to only retain a certain number of ledgers in the database. 
 
 This is done using the `--history-retention-count` flag or the `HISTORY_RETENTION_COUNT` environment variable. Set the value to the number of recent ledgers you wish to keep around, and every hour the Horizon subsystem will reap expired data. Alternatively, Horizon provides a command to force a collection:

@@ -11,4 +11,5 @@ As far as system requirements go, there are a few main things to keep in mind:
 
 - In the above case, you should also take care to allocate enough space (on the order of ~20 GBs) in the directory from which you run Horizon in order for Captive Core to cache ledger information while it runs. You can customize the location of this storage directory via the `--captive-core-storage-path` as of [v2.1](https://github.com/stellar/go/releases/tag/horizon-v2.1.0).
 
-- Other disk space requirements depend on how much of the network's history you'd like to serve from your Horizon instance; this could be anywhere from a few GBs to tens of TBs for the full ingested pubnet ledger history.
+- Other disk space requirements depend on how much of the network's history you'd like to serve from your Horizon instance. This could be anywhere from a few GBs to tens of TBs for the full ingested pubnet ledger history; read about [ingestion](./ingestion.mdx#deciding-on-how-much-history-to-ingest) to decide what's right for your use case.
+
