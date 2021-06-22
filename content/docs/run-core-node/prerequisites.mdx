@@ -25,7 +25,7 @@ Stellar Core interacts with the peer-to-peer network to keep a distributed ledge
 Stellar Core also needs to connect to certain internal systems, though exactly how varies based on your setup.
 
 - **Outbound**:
-  - Stellar Core requires access to a PostgreSQL database. If that databse resides on a different machine on your network, you'll need to allow that connection. You specify the database when you configure Stellar Core.
+  - Stellar Core requires access to a PostgreSQL database. If that database resides on a different machine on your network, you'll need to allow that connection. You specify the database when you configure Stellar Core.
   - You can block all other connections.
 - **Inbound**: Stellar Core exposes an _unauthenticated_ HTTP endpoint on its `HTTP_PORT`. You can specify a port when you [configure Stellar Core](./configuring.mdx), but most people use the default, which is **11626**.
   - The `HTTP_PORT` is used by Horizon to submit transactions, so may have to be exposed to the rest of your internal IPs
