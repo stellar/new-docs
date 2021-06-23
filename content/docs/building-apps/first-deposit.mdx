@@ -33,12 +33,12 @@ With the flow described above, the wallet and the anchor have to facilitate list
 
 The flow with Claimable Balances looks like this:
 
-1. The wallet registers a new user, and generates a keypair 
-2. The wallet initiates a deposit on behalf of a user
-3. The anchor provides deposit instructions to the wallet 
-4. The user transfers money from a bank account to the anchor’s account
+1. The wallet registers a new user, and generates a keypair.
+2. The wallet initiates a deposit on behalf of a user.
+3. The anchor provides deposit instructions to the wallet. 
+4. The user transfers money from a bank account to the anchor’s account.
 5. The anchor creates and funds the user's Stellar account plus the amount required for trustlines and transaction fees.  Again, we suggest 2 XLM to start. 
-6. The anchor creates a Claimable Balance 
+6. The anchor creates a Claimable Balance.
 7. The wallet detects the Claimable Balance for the account, claims the funds, and posts it in the wallet. 
 
 ![anchor creates account claimable balance flow](../../web/assets/first-deposit-claimable-balance-flow.png)
@@ -50,10 +50,10 @@ For this option, the wallet creates and funds the Stellar account upon every new
 The flow looks like this: 
 
 1. Upon a new user signup, the wallet issues a keypair, then creates and funds the user's Stellar account with 2XLM. 
-2. Then the wallet creates a trustline, and initiates the first deposit 
+2. Then the wallet creates a trustline, and initiates the first deposit.
 3. Once the deposit request is sent to the anchor, the anchor provides instructions for the deposit. 
-4. The customer transfer funds from a personal bank account to the anchor’s account
-5. The anchor receives the funds, then sends them to the user’s Stellar account 
+4. The customer transfer funds from a personal bank account to the anchor’s account.
+5. The anchor receives the funds, then sends them to the user’s Stellar account. 
 6. The wallet detects that funds were sent and notifies the user. 
 
 ![wallet creates account flow](../../web/assets/first-deposit-wallet-flow.png)
