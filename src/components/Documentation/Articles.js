@@ -22,6 +22,9 @@ text-decoration: none;
 }
 `;
 
+const setActiveColor = (isActive) =>
+  isActive ? `color: ${PALETTE.purpleBlue}` : "";
+
 const El = styled(ListItem)``;
 const ArticleLink = styled(({ isActive, ...props }) => (
   <BasicLink {...props} />
@@ -31,6 +34,8 @@ const ArticleLink = styled(({ isActive, ...props }) => (
   padding: 0.25rem 0;
   font-weight: ${(props) =>
     props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+
+  ${(props) => setActiveColor(props.isActive)};
 `;
 const ModifiedChevronIcon = styled(ChevronIcon)`
   position: absolute;
@@ -78,7 +83,7 @@ const ArticleList = styled(List)`
 
   ${ArticleLink} {
     &:hover {
-      color: ${PALETTE.lightGrey};
+      color: ${PALETTE.black};
     }
   }
 `;
@@ -91,6 +96,8 @@ const CustomList = styled(ListItem)`
     padding-left: ${(props) => (props.depth > 1 ? `${props.depth - 1}rem` : 0)};
     font-weight: ${(props) =>
       props.isActive ? FONT_WEIGHT.bold : FONT_WEIGHT.normal};
+
+    ${(props) => setActiveColor(props.isActive)};
   }
 `;
 const IndexArticleLink = styled(ArticleLink)``;
