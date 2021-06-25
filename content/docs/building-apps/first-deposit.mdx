@@ -20,12 +20,11 @@ For this option, the wallet needs to allow users to initiate their first deposit
 3. The anchor provides deposit instructions to the customer.
 4. The user transfers money from a bank account to the anchor’s bank account.
 5. Once the anchor receives the transfer, the anchor creates and funds the Stellar account for the customer. 
+6. The wallet detects that the account has been created and a trustline must be established.
+7. The wallet prompts the user to add the asset/create the trustline.
+8. Finally, the anchor sends the deposit funds to the user’s Stellar account.
 
-*Note*: An anchor should always maintain a healthy amount of XLM in their distribution account to support new account creations. If doing so becomes unsustainable, it’s recommended that the anchor collaborates with wallets to determine a strategy based on the number of account creation requests. The recommended amount is 2XLM per user account creation (1XLM to meet the minimum balance requirement, and 1XLM for establishing trustlines and covering transaction fees).
-
-7. The wallet detects that the account has been created and a trustline must be established.
-8. The wallet prompts the user to add the asset/create the trustline.
-9. Finally, the anchor sends the deposit funds to the user’s Stellar account.
+**Note**: An anchor should always maintain a healthy amount of XLM in its distribution account to support new account creations. If doing so becomes unsustainable, it’s recommended that the anchor collaborates with wallets to determine a strategy based on the number of account creation requests. The recommended amount is 2XLM per user account creation (1XLM to meet the minimum balance requirement, and 1XLM for establishing trustlines and covering transaction fees).
 
 ![anchor creates account flow](../../web/assets/first-deposit-anchor-flow.png)
 
