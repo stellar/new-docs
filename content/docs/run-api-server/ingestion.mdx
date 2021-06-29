@@ -38,8 +38,6 @@ _(The command name is a bit of a misnomer: you can use `reingest` both to ingest
 You can run this process in the background while your Horizon server is up. It will continuously decrement the `history.elder_ledger` in your `/metrics` endpoint until the `<end>` ledger is reached and the backfill is complete. If Horizon receives a request for a ledger it hasn't ingested, it returns a 503 error and clarify that it's `Still Ingesting` (see [below](#some-endpoints-are-not-available-during-state-ingestion)).
 
 #### Deciding on how much history to ingest
-(TODO: Think of a better section name; pls suggest something.)
-
 You should think carefully about the amount of ingested data you'd like to keep around. Though the storage requirements for the entire Stellar network are substantial, **most organizations and operators only need a small fraction of the history** to fit their use case. For example,
 
   * If you just started developing a new application or service, you can probably get away with just doing live ingestion, since nothing you do requires historical data.
@@ -48,7 +46,7 @@ You should think carefully about the amount of ingested data you'd like to keep 
 
   * If you provide temporal guarantees to your users--a 6-month guarantee of transaction history like some online banks do, or history only for the last thousand ledgers (see [below](#managing-storage)), for example--then you similarly don't have heavy ingestion requirements.
 
-Even a massively-popular, well-established service such as Coinbase probably doesn't need full history to service its users. It will, however, likely need it to be a [Full Validator](../run-core-node/index.mdx#full-validator) with published history archives.
+Even a massively-popular, well-established custodial service probably doesn't need full history to service its users. It will, however, need full history to be a [Full Validator](../run-core-node/index.mdx#full-validator) with published history archives.
 
 #### Reingestion
 Regardless of whether you are running live ingestion or building up historical data, you may occasionally need to _re_ingest ledgers anew (for example on certain upgrades of Horizon). For this, you use the same command as above.
@@ -119,7 +117,7 @@ Before we begin, we make some environment assumptions:
 
   2. [Horizon](./installing.mdx) version 1.6.0 or newer (ideally, 2.x) installed on the machine from (1).
 
-  3. [Core](https://github.com/stellar/stellar-core) version 17 or newer  installed on the machine from (1), given the ledger is on Protocol 17.
+  3. [Core](https://github.com/stellar/stellar-core) version 17 or newer  installed on the machine from (1), given the network is on Protocol 17.
 
   4. A Horizon database where to reingest the history. Preferably, the database should be at least an RDS `r4.8xlarge` instance or better (to take full advantage of its IOPS write capacity) and should be empty to minimize storage (Postgres accumulates data during usage, which is only deleted when `VACUUM`ed). When using an RDS instance with General Purpose SSD storage, the reingestion throughput of the DB (namely Write IOPS) is determined by the storage size (3 IOPS per GB). With 5TB you get 15K IOPS, which can be saturated with 24 Horizon workers.
 
