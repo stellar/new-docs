@@ -4,6 +4,7 @@ order: 10
 ---
 
 import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
 
 _Before we get started with working with Stellar in code, consider going through the following examples using the [Stellar Laboratory](https://www.stellar.org/laboratory/). The lab allows you create accounts, fund accounts on the Stellar test network, build transactions, run any operation, and inspect responses from Horizon via the Endpoint Explorer._
 
@@ -76,6 +77,7 @@ print(f"Public Key: {pair.public_key}")
 ```
 
 </CodeExample>
+
 
 ## Create Account
 
@@ -242,3 +244,9 @@ for balance in account['balances']:
 </CodeExample>
 
 Now that you’ve got an account, you can [start sending and receiving payments](send-and-receive-payments.mdx), or, if you're ready to hunker down, you can skip ahead and [build a wallet](../building-apps/index.mdx) or [issue a Stellar-network asset](../issuing-assets/index.mdx).
+
+<Alert>
+
+In the above code samples, proper error checking is omitted for brevity. However, you should *always* validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>

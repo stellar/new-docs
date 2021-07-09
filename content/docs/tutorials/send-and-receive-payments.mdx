@@ -4,6 +4,7 @@ order: 20
 ---
 
 import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
 
 Most of the time, you’ll be sending money to someone else who has their own account. For this tutorial, however, you'll need a second account to transact with. So before proceeding, follow the steps outlined in [Create an Account](./create-account.mdx) to make _two_ accounts: one for sending and one for receiving.
 
@@ -14,6 +15,13 @@ Actions that do things on Stellar — like sending payments or making buy or sel
 Transactions are atomic, meaning that if any operation in a transaction fails, they all fail. Let’s say you have 100 lumens and you make two payment operations of 60 lumens each. If you make two transactions (each with one operation), the first will succeed and the second will fail because you don’t have enough lumens. You’ll be left with 40 lumens. However, if you group the two payments into a single transaction, they will both fail and you’ll be left with the full 100 lumens still in your account.
 
 Every transaction also incurs a small fee. Like the minimum balance on accounts, this fee deters spam and prevents people from overloading the system. This [base fee](../glossary/fees.mdx) is very small — 100 stroops per operation where a stroop equals 1 \* 10 ^-7 XLM — and it's charged for each operation in a transaction. A transaction with two operations, for instance, would cost 200 stroops.
+
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should *always* validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>
+
 
 ## Send a Payment
 
