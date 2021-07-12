@@ -132,7 +132,7 @@ processes in parallel:
 
 This is due to first 17 million ledgers being almost empty whilst the rest are much more packed. Having a single Horizon instance with enough workers to saturate the IO capacity of the machine for the first 17 million would kill the machine when reingesting the rest (during which there is a higher CPU and memory consumption per worker).
 
-64 workers for (1) and 20 workers for (2) saturates instance with 64GB or RAM and 15K IOPS. Again, as the DB storage grows, a larger number of workers and faster storage should be considered.
+64 workers for (1) and 20 workers for (2) saturates instance with 64GB of RAM and 15K IOPS. Again, as the DB storage grows, a larger number of workers and faster storage should be considered.
 
 In order to run the reingestion, first set the following environment variables in the [configuration](./configuring.mdx) (updating values to match your database environment, of course):
 
