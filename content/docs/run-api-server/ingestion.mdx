@@ -119,7 +119,7 @@ Before we begin, we make some environment assumptions:
 
   3. [Core](https://github.com/stellar/stellar-core) version 17 or newer  installed on the machine from (1), given the network is on Protocol 17.
 
-  4. A Horizon database where to reingest the history. Preferably, the database should have at least 32 CPUs, 256 GB of RAM and at least 15K IOPS (forexample AWS RDS `r5.8xlarge`) and should be empty to minimize storage (Postgres accumulates data during usage, which is only deleted when `VACUUM`ed).
+  4. A Horizon database where to reingest the history. Preferably, the database should have at least 32 CPUs, 256 GB of RAM and at least 15K IOPS (for example AWS RDS `r5.8xlarge`) and should be empty to minimize storage (Postgres accumulates data during usage, which is only deleted when `VACUUM`ed).
 
 As the DB storage grows, the IO capacity will grow along with it. The number of workers (and the size of the instance created in (1), should be increased accordingly if we want to take advantage of it. To make sure we are minimizing reingestion time, we should watch write IOPS. It should ideally always be close to the theoretical limit of the DB.
 
