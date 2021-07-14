@@ -29,6 +29,7 @@ import {
   NestedRow,
 } from "components/ApiReference/SharedStyles";
 import { BetaNotice } from "components/BetaNotice";
+import { Search } from "components/Search";
 import { Footer } from "components/Footer";
 import { LayoutBase } from "components/layout/LayoutBase";
 import {
@@ -160,6 +161,7 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
             <Column xs={9} xl={18}>
               <NestedRow>
                 <CustomColumn xs={9} xlColumn="2 / span 18">
+                  <Search />
                   <BetaNotice />
                 </CustomColumn>
               </NestedRow>
