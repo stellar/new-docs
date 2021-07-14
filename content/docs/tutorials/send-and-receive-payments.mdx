@@ -106,6 +106,8 @@ Transaction transaction = new Transaction.Builder(sourceAccount, Network.TESTNET
         .addMemo(Memo.text("Test Transaction"))
         // Wait a maximum of three minutes for the transaction
         .setTimeout(180)
+        // Set the amount of lumens you're willing to pay per operation to submit your transaction
+        .setBaseFee(Transaction.MIN_BASE_FEE)
         .build();
 // Sign the transaction to prove you are actually the person sending it.
 transaction.sign(source);
