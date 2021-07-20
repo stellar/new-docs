@@ -3,6 +3,7 @@ title: Claimable Balance
 order:
 ---
 
+import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
 
 Claimable Balances can be used to "split up" a payment into two parts, which allows the sending to only depend on the sending account, and the receipt to only depend on the receiving account. An account can initiate the "send" by creating a ClaimableBalanceEntry with [Create Claimable Balance](../start/list-of-operations.mdx#create-claimable-balance), and then that entry can be claimed by the claimants specified on the ClaimableBalanceEntry at a later time with [Claim Claimable Balance](../start/list-of-operations.mdx#claim-claimable-balance).
@@ -51,6 +52,13 @@ This operation will load the ClaimableBalanceEntry that corresponds to the Balan
 Once a ClaimableBalanceEntry has been claimed, it will be deleted.
 
 ## Example
+
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should *always* validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>
+
 The below code demonstrates via both the JavaScript and Go [SDKs](../software-and-sdks/index.mdx) how an account ("Account A") can create a `ClaimableBalanceEntry` with two Claimants: Account A (itself) and "Account B" (another recipient).
 
 Each of these accounts can only claim the balance under certain, individual conditions. Namely, Account B has a full minute to claim the balance, after which Account A can "reclaim" the balance back for itself.
@@ -120,11 +128,6 @@ import (
 	"github.com/stellar/go/txnbuild"
 )
 
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func main() {
 	client := sdk.DefaultTestNetClient

@@ -4,6 +4,7 @@ order: 50
 ---
 
 import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
 
 When you issue an asset on Stellar, anyone can hold it by default. In general, that’s a good thing: easy access means better reach and better liquidity, and most of the time, issuers with KYC requirements can handle those when an asset moves onto or off of the network. Most fiat-backed token issuers, for instance, use the transfer server protocol specified in SEP-24 to decide whether to honor deposits and withdrawals rather than setting account-level flags. You can read about how to do that in the [Enable Deposit and Withdrawal](../anchoring-assets/enabling-deposit-and-withdrawal/index.mdx) section.
 
@@ -53,6 +54,12 @@ Here's a payment from A to B sandwiched between [`set_trust_line_flags`](../star
 The authorization sandwich allows the issuer to inspect the specifc payment, and to grant authorization for it and it alone.  Since operations bundled in a transaction are simultaneous, A and B are only authorized for the specific, pre-approved payment operation.  Complete authorization does not extend beyond the specific transaction.
 
 ## Sample code
+
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should *always* validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>
 
 The following example sets authorization to be both required and revocable:
 
