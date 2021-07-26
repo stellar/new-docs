@@ -145,6 +145,7 @@ export HISTORY_ARCHIVE_URLS=https://s3-eu-west-1.amazonaws.com/history.stellar.o
 export NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
 export STELLAR_CORE_BINARY_PATH=$(which stellar-core)
 export ENABLE_CAPTIVE_CORE_INGESTION=true
+export CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar"
 # Number of ledgers per job sent to the workers.
 # The larger the job, the better performance from Captive Core's perspective,
 # but, you want to choose a job size which maximizes the time all workers are
