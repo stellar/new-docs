@@ -62,6 +62,7 @@ transaction = (
     	destination=customerAddress, 
     	amount=amountToSend,
       asset_code="XLM",
+      source=baseAccount.public_key
     )
     .set_timeout(180) # Wait a maximum of three minutes for the transaction
     .build()
