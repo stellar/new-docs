@@ -183,6 +183,50 @@ func main() {
 	fmt.Println("Claimable balance created!")
 }
 ```
+	
+```python
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network, ClaimPredicate, Claimant, Asset
+from datetime import datetime, timedelta
+
+def main():
+	server = Server("https://horizon-testnet.stellar.org")
+	A = Keypair.from_secret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ")
+	B = "GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP"
+
+	try:
+		account = server.load_account(A)
+	except Exception as e:
+		print(f"Failed to load {A.public_key}: {e}")
+
+	base_fee = server.fetch_base_fee()
+	soon = datetime.now() + timedelta(seconds=60)
+	bCanClaim = ClaimPredicate.predicate_before_absolute_time(60)
+	aCanReclaim = ClaimPredicate.predicate_not(ClaimPredicate.predicate_before_absolute_time(1609113600))
+
+	transaction = (
+	    TransactionBuilder(
+	        source_account=account,
+	        network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+	        base_fee=base_fee,
+	    ).append_create_claimable_balance_op(
+	        asset=Asset.native(),
+	        amount="420",
+	        claimants=[
+	        	Claimant(destination=B, predicate=bCanClaim),
+	        	Claimant(destination=A.public_key, predicate=aCanReclaim)
+	        ],
+	    )
+	    .set_timeout(180)
+	    .build()
+	)
+
+	transaction.sign(A)
+	try:
+		response = server.submit_transaction(transaction)
+	except Exception as e:
+		print(f"Tx submission failed: {e}")
+```
+
 
 </CodeExample>
 
