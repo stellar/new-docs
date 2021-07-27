@@ -336,6 +336,29 @@ check(err)
 txResp, err = client.SubmitTransaction(tx)
 check(err)
 ```
+	
+```python
+	print(f"{A.public_key} claiming: {balance_id}")
+	
+	base_fee = server.fetch_base_fee()
+	
+	transaction = TransactionBuilder(
+    	    source_account=account,
+    	    network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+    	    base_fee=base_fee,
+	).append_claim_claimable_balance_op(
+	    balance_id=balance_id,
+	    source=quest_account_pub_key
+	).build()
+
+
+	transaction.sign(A)
+
+	try:
+	    response = server.submit_transaction(transaction)
+	except Exception as e:
+	    print(f"Tx submission failed: {e}")
+```
 
 </CodeExample>
 
