@@ -326,8 +326,8 @@ try:
 except (BadRequestError, BadResponseError) as err:
     print(f"Claimable balance retrieval failed: {err}")
 
-balance_id = balances["_embedded"]["records"][0]["id"]
-print(f"Balance ID: {balance_id}")
+balanceId = balances["_embedded"]["records"][0]["id"]
+print(f"Balance ID: {balanceId}")
 ```
 
 </CodeExample>
