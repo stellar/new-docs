@@ -59,10 +59,10 @@ transaction = (
       base_fee=base_fee,
     )
     .append_payment_op(
-      destination=customerAddress, 
-      amount=amountToSend,
+      source=baseAccount.public_key,
+      destination=customerAddress,
       asset_code="XLM",
-      source=baseAccount.public_key
+      amount=amountToSend,
     )
     .set_timeout(180) # Wait a maximum of three minutes for the transaction
     .build()
