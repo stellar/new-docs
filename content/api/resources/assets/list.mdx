@@ -68,6 +68,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+	print(server.assets().for_code("CNY").call())
+except Exception as e:
+	print(e)
+```
+  
 </CodeExample>
 
 
