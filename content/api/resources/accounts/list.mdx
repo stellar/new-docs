@@ -71,6 +71,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.accounts().for_signer("GBPOFUJUHOFTZHMZ63H5GE6NX5KVKQRD6N3I2E5AL3T2UG7HSLPLXN2K").call())
+except Exception as err:
+    print(err)
+```
+
 </CodeExample>
 
 
