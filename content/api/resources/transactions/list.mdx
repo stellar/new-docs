@@ -261,5 +261,6 @@ def callback(tx):
   
 for tx in server.transactions().cursor("now").stream():
   callback(tx)
+```
   
 </CodeExample>
