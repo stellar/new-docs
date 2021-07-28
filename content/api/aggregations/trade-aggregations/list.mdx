@@ -118,7 +118,7 @@ Page<TradeAggregationResponse> page = server
     .execute()
 
 for (TradeAggregationResponse aggregation : page.getRecords()) {
-  Logger.log(aggregation);
+  System.out.println(aggregation);
 }
 
 page = page.getNextPage();
