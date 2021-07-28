@@ -214,6 +214,14 @@ var es = server
   .cursor("now")
   .stream({ onmessage: callback });
 ```
+	
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+for tx in server.assets().for_code("CNY").cursor("now").stream():
+	callback(tx)
+```
 
 </CodeExample>
 
