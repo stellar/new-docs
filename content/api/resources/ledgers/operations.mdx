@@ -65,6 +65,16 @@ server
     console.error(err);
   });
 ```
+  
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.operations().for_ledger("27147222").call())
+except Exception as err:
+    print(err)
+```
 
 </CodeExample>
 
