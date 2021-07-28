@@ -99,6 +99,31 @@ server
   });
 ```
 
+```java
+import org.stellar.sdk.*;
+
+Server server = new Server("https://horizon-testnet.stellar.org");
+Asset base = new AssetTypeNative();
+Asset counter = Asset.createNonNativeAsset(
+  "EURT",
+  "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
+);
+long startTime = 1582156800000;
+long endTime = 1582178400000;
+long resolution = 3600000;
+long offset = 0;
+
+Page<TradeAggregationResponse> page = server
+  .tradeAggregations(base, counter, startTime, endTime, resolution, offset)
+    .execute()
+
+for (TradeAggregationResponse aggregation : page.getRecords()) {
+  Logger.log(aggregation);
+}
+
+page = page.getNextPage();
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">
