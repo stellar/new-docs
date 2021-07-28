@@ -68,6 +68,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.operations().for_transaction("6b983a4e0dc3c04f4bd6b9037c55f70a09c434dfd01492be1077cf7ea68c2e4a").call())
+except Exception as err:
+    print(err)
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">
