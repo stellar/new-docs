@@ -185,11 +185,22 @@ func main() {
 ```
 	
 ```python
-from stellar_sdk import Keypair, Network, Server
-from stellar_sdk import TransactionBuilder, Transaction, Asset, Operation
-from stellar_sdk import Claimant, ClaimPredicate, CreateClaimableBalance, ClaimClaimableBalance
-from stellar_sdk.exceptions import NotFoundError, BadResponseError, BadRequestError
 import time
+from stellar_sdk.xdr import TransactionResult, OperationType
+from stellar_sdk.exceptions import NotFoundError, BadResponseError, BadRequestError
+from stellar_sdk import (
+    Keypair, 
+    Network, 
+    Server,
+    TransactionBuilder, 
+    Transaction, 
+    Asset, 
+    Operation,
+    Claimant, 
+    ClaimPredicate, 
+    CreateClaimableBalance, 
+    ClaimClaimableBalance
+)
 
 server = Server("https://horizon-testnet.stellar.org")
 
