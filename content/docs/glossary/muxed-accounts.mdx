@@ -7,13 +7,13 @@ import { Alert } from "components/Alert";
 
 <Alert>
 
-  **Warning**: This is an experimental feature in the Stellar ecosystem.
-
+  **Warning**: *This feature is experimental.*
   Multiplexed accounts are not widely supported yet. Many wallets may not display a muxed account address and instead display the account ID address, ignoring the 64-bit ID. Adoption efforts are actively in progress.
+
 </Alert>
 
 
-A **multiplexed** (or **muxed**) account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address alongside a 64-bit integer ID in order to support differentiating multiple "virtual" accounts that share an underlying "real" account.
+A **multiplexed** (or **muxed**) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address alongside a 64-bit integer ID in order to support differentiating multiple "virtual" accounts that share an underlying "real" account.
 
 They were introduced into the protocol in [CAP-21](https://stellar.org/protocol/cap-21) and their string representation is described in [SEP-23](https://stellar.org/protocol/sep-21). Muxed accounts have their own address format that starts with an `M` prefix. For example, from the account address `GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ`, we can create two new muxed accounts with different IDs:
 
@@ -33,10 +33,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
 <Alert>
 
-  **Terminology Tip** :lightbulb:
-
-  The term *multiplexing* (sometimes contracted to *muxing*) comes from computer networking and telecommunications, where multiple signals are combined into one signal over a shared medium.
-
+  **Terminology Tip**: The term *multiplexing* (often contracted to *muxing*) comes from computer networking and telecommunications, where multiple signals are combined into one signal over a shared medium.
   We are doing the same thing with muxed accounts: combining multiple "virtual" accounts into a single shared account in the Stellar ledger.
 
 </Alert>
@@ -52,10 +49,17 @@ However, the [Horizon API](../../api/introduction/) will make some effort to int
 
 Not all operations can be used with muxed accounts. For example, you cannot pass muxed accounts to [`CreateAccount`](../start/list-of-operations.mdx#create-account), because only their shared, underlying `G...` account exists in the ledger. However, you can use them with:
 
-  - the `SourceAccount` of *any* operation or [transaction](./transactions.mdx),
-  - the `destination` of all three types of payments ([`Payment`](../start/list-of-operations.mdx#payment), [`PathPaymentStrictSend`](../start/list-of-operations.mdx#path-payment-strict-send), and [`PathPaymentStrictReceive`](../start/list-of-operations.mdx#path-payment-strict-receive)), 
-  - the `destination` of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge),
-  - the `feeSource` of a [fee-bump transaction](./fee-bumps.mdx)
+  - the source account of *any* operation or [transaction](./transactions.mdx),
+  - the destination of all three types of payments:
+    * [`Payment`](../start/list-of-operations.mdx#payment),
+    * [`PathPaymentStrictSend`](../start/list-of-operations.mdx#path-payment-strict-send), and
+    * [`PathPaymentStrictReceive`](../start/list-of-operations.mdx#path-payment-strict-receive)
+  - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge),
+  - the fee source of a [fee-bump transaction](./fee-bumps.mdx)
+
+
+## Horizon Support
+TODO.
 
 
 ## Frequently Asked Questions
