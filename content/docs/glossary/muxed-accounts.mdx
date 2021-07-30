@@ -22,7 +22,7 @@ They were introduced into the protocol in [CAP-21](https://stellar.org/protocol/
 
 Both of these addresses, when used with one of the [supported operations][supported-ops], will act on behalf of their underlying `GA7Q...` address.
 
-With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where the memo was often used to differentiate between customers backed by a single custodial account. Now, the embedded ID can be used for this distinction.
+With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where the memo was often used to differentiate between customers backed by a single custodial account. Now, the embedded ID can be used for this distinction, and guides like [this one](../building-apps/setup-custodial-account.mdx) can be made superfluous.
 
 There are many other benefits to embedding this abstraction into the protocol:
 
@@ -59,18 +59,22 @@ Not all operations can be used with muxed accounts. For example, you cannot pass
 
 
 ## Frequently Asked Questions
+TODO.
 
 ### How do I support it in my wallet?
 ### Should I support Muxed Accounts in my wallet?
+### etc.
+
+
+## Examples
+
+In this section, we'll demonstrate how to create muxed accounts and how they interact with some of the supported operations.
 
 
 TODO.
 
 
-## Examples
-
-In [another documentation section](../building-apps/setup-custodial-account.mdx), we recommended some strategies on setting up a "custodial service" -- a service (like a centralized exchange) where one account manages balances for many users behind the scenes. These were based on [SEP-29](https://stellar.org/protocol/sep-29) and using transactions' [`Memo` field](./transactions.mdx#memo) to encode customer IDs.
-
+As is the case for most protocol-level features, you can find more usage examples and inspiration in the relevant test suite for your favorite SDK. For example, [here](https://github.com/stellar/js-stellar-base/blob/master/test/unit/muxed_account_test.js) are some of the JavaScript test cases.
 
 
 [supported-ops]: #supported-operations
