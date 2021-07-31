@@ -4,6 +4,7 @@ order:
 ---
 
 import { Alert } from "components/Alert";
+import { CodeExample } from "components/CodeExample";
 
 
 A **muxed** (or *multiplexed*) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address with a 64-bit integer ID and can be used to distinguish multiple "virtual" accounts that share an underlying "real" account.
@@ -43,7 +44,7 @@ It's worth noting that this feature is intended to be a high-level abstraction, 
 
 ## Supported Operations
 
-Not all operations can be used with muxed accounts. For example, you cannot pass muxed accounts to [`CreateAccount`](../start/list-of-operations.mdx#create-account), because only their shared, underlying `G...` account exists in the ledger. However, you can use them with:
+Not all operations can be used with muxed accounts. For example, you cannot set the destination of a [`CreateAccount`](../start/list-of-operations.mdx#create-account) operation to be a muxed account, because only their shared, underlying `G...` account exists in the ledger. However, you can use them with:
 
   - the source account of *any* operation or [transaction](./transactions.mdx),
   - the destination of all three types of payments:
@@ -53,12 +54,12 @@ Not all operations can be used with muxed accounts. For example, you cannot pass
   - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge), and
   - the fee source of a [fee-bump transaction](./fee-bumps.mdx).
 
-We'll demonstrate some of these later in [Examples](#examples).
+We'll demonstrate some of these later in the [Examples](#examples).
 
 
 ## Horizon Support
 
-Even though at the end of the day, only the underlying `G...` account _truly_ exists on the Stellar network, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
+Even though at the end of the day, only the underlying `G...` account _truly_ exists in the Stellar ledger, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
 
 **TODO.**
 
@@ -73,12 +74,127 @@ Even though at the end of the day, only the underlying `G...` account _truly_ ex
 
 ## Examples
 
-In this section, we'll demonstrate how to create muxed accounts and how they interact with some of the supported operations.
+In this section, we'll demonstrate how to create muxed accounts and how they interact with some of the supported operations. To drive home the fact that custodial account workarounds based on transaction memos are superfluous now, we'll use that as a skeleton for our example structure.
 
 
-**TODO.**
+### Preamble
+First, let's create two accounts and then a handful of virtual accounts representing "custodial customers" that the parent account manages.
+
+<CodeExample title="Preamble">
+
+```js
+const sdk = require("stellar-sdk");
+
+const passphrase = "Test SDF Network ; September 2015";
+const url = "https://horizon-testnet.stellar.org";
+let server = new sdk.Server(url);
+
+const custodian = sdk.Keypair.fromSecret("SAQLZCQA6AYUXK6JSKVPJ2MZ5K5IIABJOEQIG4RVBHX4PG2KMRKWXCHJ");
+const outsider  = sdk.Keypair.fromSecret("SAAY2H7SANIS3JLFBFPLJRTYNLUYH4UTROIKRVFI4FEYV4LDW5Y7HDZ4");
+
+async function preamble() {
+  custodianAcc = await server.loadAccount(custodian.publicKey());
+  outsiderAcc  = await server.loadAccount(outsider.publicKey());
+
+  customers = ["1", "22", "333", "4444"].map(
+    (id) => custodianAcc.createSubaccount(id)
+  );
+
+  console.log("Custodian:\n       ", custodian.publicKey());
+  console.log("Customers:")
+  customers.forEach((customer) => {
+    console.log(" " + customer.id().padStart(4, ' ') + ":",
+                customer.accountId());
+  });
+  console.log();
+}
+```
+
+</CodeExample>
+
+When we run this function, we'll see the similarity in muxed account addresses among the customers, highlighting the fact that they share a public key:
+
+<CodeExample>
+
+```
+Custodian:
+       GCIHAQVWZH2AB5BB5NP63FBSIREG77LQZZNUVKD2LN2IOCLOT6N72MJN
+Customers:
+    1: MCIHAQVWZH2AB5BB5NP63FBSIREG77LQZZNUVKD2LN2IOCLOT6N72AAAAAAAAAAAAEDB4
+   22: MCIHAQVWZH2AB5BB5NP63FBSIREG77LQZZNUVKD2LN2IOCLOT6N72AAAAAAAAAAAC3IHY
+  333: MCIHAQVWZH2AB5BB5NP63FBSIREG77LQZZNUVKD2LN2IOCLOT6N72AAAAAAAAAABJV72I
+ 4444: MCIHAQVWZH2AB5BB5NP63FBSIREG77LQZZNUVKD2LN2IOCLOT6N72AAAAAAAAAARLQOKK
+```
+
+</CodeExample>
+
+<Alert>
+
+  In the following examples, we'll rely on the existence of some helper functions to keep things brief. You can refer to the examples on the [Clawback page](./clawback.mdx#preamble:-issuing-a-clawback-able-asset) for definitions of these helpers.
+
+</Alert>
 
 
+### External Payments
+TODO.
+
+
+### Internal Payments
+As we've mentioned, muxed account actions aren't represented in the Stellar ledger explicitly. When two muxed accounts sharing an underlying Stellar account communicate, it's as if the underlying account is talking to itself. A payment between two such accounts, then, is essentially a no-op.
+
+<CodeExample>
+
+```js
+function showBalance(account) {
+  console.log(`${acc.accountId().substring(0, 5)}: ${acc.balances[0]}`);
+}
+
+function doInternalPayment(source, dest) {
+  return server
+    .loadAccount(custodian.publicKey())
+    .then((accountBeforePayment) => {
+      showBalance(accountBeforePayment);
+
+      console.log(`Sending 10 XLM from Customer ${source.id()} to Customer ${dest.id()}.`)
+
+      let payment = sdk.Operation.payment({
+        source: source.accountId(),
+        destination: dest.accountId(),
+        asset: sdk.Asset.native(),
+        amount: "10",
+        withMuxing: true,
+      });
+
+      let tx = buildTx(custodianAcc, custodian, [payment]);
+      return server.submitTransaction(tx);
+    })
+    .then(() => {
+      return server.loadAccount(custodian.publicKey()).then(showBalance);
+    });
+}
+```
+
+</CodeExample>
+
+Notice the `withMuxing: true` line: because muxed account support is still experimental, you need to explicitly opt-in to creating operations with muxed properties when you pass them in. If you do not pass this flag, the operations will use the underlying Stellar accounts for those properties, instead. You'll also need to pass it to your `TransactionBuilder` options.
+
+The output should be something like the following:
+
+<CodeExample>
+
+```
+GCIHA: 9579.9999800 XLM
+Sending 10 XLM from Customer 1 to Customer 22.
+GCIHA: 9579.9999700 XLM
+```
+
+</CodeExample>
+
+Notice that the account's balance is essentially unchanged. It was, however, charged a fee for essentially doing a no-op. You may want to detect these types of transactions in your application to avoid paying the transaction fee.
+
+
+
+### More Examples
 As is the case for most protocol-level features, you can find more usage examples and inspiration in the relevant test suite for your favorite SDK. For example, [here](https://github.com/stellar/js-stellar-base/blob/master/test/unit/muxed_account_test.js) are some of the JavaScript test cases.
 
 
