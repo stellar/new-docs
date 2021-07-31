@@ -5,15 +5,15 @@ order:
 
 import { Alert } from "components/Alert";
 
+
+A **muxed** (or *multiplexed*) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address with a 64-bit integer ID and can be used to distinguish multiple "virtual" accounts that share an underlying "real" account.
+
 <Alert>
 
   **Warning**: *This feature is experimental.*
-  Multiplexed accounts are not widely supported yet. Many wallets may not display a muxed account address and instead display the account ID address, ignoring the 64-bit ID. Adoption efforts are actively in progress.
+  Muxed accounts are not widely supported yet. Many wallets may not display a muxed account address and instead display the account ID address, ignoring the 64-bit ID. Adoption efforts are actively in progress.
 
 </Alert>
-
-
-A **muxed** (or *multiplexed*) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address with a 64-bit integer ID and can be used to distinguish multiple "virtual" accounts that share an underlying "real" account.
 
 Muxed accounts were defined in [CAP-27](https://stellar.org/protocol/cap-27), introduced in Protocol 13, and their string representation is described in [SEP-23](https://stellar.org/protocol/sep-21). They have their own address format that starts with an `M` prefix. For example, from the account address `GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ`, we can create new muxed accounts with two different IDs:
 
@@ -28,7 +28,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
   - **"Share-ability"**: Rather than worrying about error-prone things like copy-pasting memo IDs, you can just share your `M...` address.
   - **SDK support**: The various [SDKs](../software-and-sdks) support this abstraction natively, letting you create, manage, and work with muxed accounts easily.
-  - **Extensibility**: 64 bits available in the ID for distinction between accounts should allow any abstraction.
+  - **Efficiency**: By combining related virtual accounts under a single account's umbrella, you can avoid holding reserves and paying fees for all of them to exist in the ledger individually.
 
 <Alert>
 
