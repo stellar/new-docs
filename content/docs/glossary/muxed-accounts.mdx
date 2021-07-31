@@ -1,5 +1,5 @@
 ---
-title: Multiplexed Accounts
+title: Muxed Accounts
 order:
 ---
 
@@ -13,36 +13,32 @@ import { Alert } from "components/Alert";
 </Alert>
 
 
-A **multiplexed** (or **muxed**) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address with a 64-bit integer ID and can be used to distinguish multiple "virtual" accounts that share an underlying "real" account.
+A **muxed** (or *multiplexed*) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address with a 64-bit integer ID and can be used to distinguish multiple "virtual" accounts that share an underlying "real" account.
 
-They were defined in [CAP-27](https://stellar.org/protocol/cap-27) and introduced into Stellar protocol in protocol version 13. Their string representation is described in [SEP-23](https://stellar.org/protocol/sep-21). Muxed accounts have their own address format that starts with an `M` prefix. For example, from the account address `GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ`, we can create two muxed accounts with different IDs:
+Muxed accounts were defined in [CAP-27](https://stellar.org/protocol/cap-27), introduced in Protocol 13, and their string representation is described in [SEP-23](https://stellar.org/protocol/sep-21). They have their own address format that starts with an `M` prefix. For example, from the account address `GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ`, we can create new muxed accounts with two different IDs:
 
   - `MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ` has the ID `0`, while 
   - `MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAABUTGI4` has the ID `420`.
 
 Both of these addresses, when used with one of the [supported operations][supported-ops], will act on the underlying `GA7Q...` address.
 
-With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where the memo was often used to distinguish between customers backed by a single custodial account. Now, the embedded ID can be used for this distinction, and guides like [this one](../building-apps/setup-custodial-account.mdx) can be made superfluous.
+With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where transaction memos were often used to distinguish between users backed by a single custodial account. Now, the embedded ID can be used for this distinction, and guides like [this one](../building-apps/setup-custodial-account.mdx) can be made superfluous.
 
 There are many other benefits to embedding this abstraction into the protocol:
 
-  - **"Share-ability"**: Rather than worrying about error-prone things like transaction memo IDs, you can just share the `M...` address.
+  - **"Share-ability"**: Rather than worrying about error-prone things like copy-pasting memo IDs, you can just share your `M...` address.
   - **SDK support**: The various [SDKs](../software-and-sdks) support this abstraction natively, letting you create, manage, and work with muxed accounts easily.
-  - **extensibility**: Using 64 bits for the integer ID embedded into each muxed account ensures that most abstractions can be encoded; it can be used to represent almost anything.
-
+  - **Extensibility**: 64 bits available in the ID for distinction between accounts should allow any abstraction.
 
 <Alert>
 
-  **Terminology Tip**: The term *multiplexing* (often contracted to *muxing*) comes from computer networking and telecommunications, where multiple signals are combined into one signal over a shared medium.
-  We are doing the same thing with muxed accounts: combining multiple "virtual" accounts into a single shared account in the Stellar ledger.
+  **Terminology Tip**: The term *muxing* comes from computer networking and telecommunications, where multiple signals are combined into one signal over a shared medium. We are doing the same thing here with muxed accounts: combining multiple "virtual" accounts into a single shared account in the Stellar ledger.
 
 </Alert>
 
-
 It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. As far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did not used a muxed account. For example, if you make a payment from two muxed accounts that share an underlying Stellar account (but have different IDs), this is *exactly the same* as that Stellar account sending two payments as far as the ledger is concerned.
 
-At the end of the day, only the underlying `G...` account _truly_ exists on the ledger. 
-However, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
+It's worth noting that this feature is intended to be a high-level abstraction, embedded into the protocol for convenience and standardization. As far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* use a muxed account. For example, if you make a payment from two "sibling" muxed accounts (i.e. muxed accounts sharing an underlying `G...` account but with different IDs), this is *exactly the same* as that Stellar account sending two payments, as far as the ledger is concerned.
 
 
 ## Supported Operations
@@ -54,16 +50,21 @@ Not all operations can be used with muxed accounts. For example, you cannot pass
     * [`Payment`](../start/list-of-operations.mdx#payment),
     * [`PathPaymentStrictSend`](../start/list-of-operations.mdx#path-payment-strict-send), and
     * [`PathPaymentStrictReceive`](../start/list-of-operations.mdx#path-payment-strict-receive)
-  - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge),
-  - the fee source of a [fee-bump transaction](./fee-bumps.mdx)
+  - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge), and
+  - the fee source of a [fee-bump transaction](./fee-bumps.mdx).
+
+We'll demonstrate some of these later in [Examples](#examples).
 
 
 ## Horizon Support
-TODO.
+
+Even though at the end of the day, only the underlying `G...` account _truly_ exists on the Stellar network, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
+
+**TODO.**
 
 
 ## Frequently Asked Questions
-TODO.
+**TODO.**
 
 ### How do I support it in my wallet?
 ### Should I support Muxed Accounts in my wallet?
@@ -75,7 +76,7 @@ TODO.
 In this section, we'll demonstrate how to create muxed accounts and how they interact with some of the supported operations.
 
 
-TODO.
+**TODO.**
 
 
 As is the case for most protocol-level features, you can find more usage examples and inspiration in the relevant test suite for your favorite SDK. For example, [here](https://github.com/stellar/js-stellar-base/blob/master/test/unit/muxed_account_test.js) are some of the JavaScript test cases.
