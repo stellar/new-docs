@@ -15,7 +15,7 @@ import { Alert } from "components/Alert";
 
 A **multiplexed** (or **muxed**) **account** is an account that exists "on top of" a traditional Stellar account address. It combines the familiar `GABC...` address alongside a 64-bit integer ID in order to support differentiating multiple "virtual" accounts that share an underlying "real" account.
 
-They were introduced into the protocol in [CAP-21](https://stellar.org/protocol/cap-21) and their string representation is described in [SEP-23](https://stellar.org/protocol/sep-21). Muxed accounts have their own address format that starts with an `M` prefix. For example, from the account address `GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ`, we can create two new muxed accounts with different IDs:
+They were defined in [CAP-27](https://stellar.org/protocol/cap-27) and introduced into Stellar protocol in protocol version 13. Their string representation is described in [SEP-23](https://stellar.org/protocol/sep-21). Muxed accounts have their own address format that starts with an `M` prefix. For example, from the account address `GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ`, we can create two muxed accounts with different IDs:
 
   - `MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ` has the ID `0`, while 
   - `MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAABUTGI4` has the ID `420`.
