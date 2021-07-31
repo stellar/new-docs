@@ -20,7 +20,7 @@ They were introduced into the protocol in [CAP-21](https://stellar.org/protocol/
   - `MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ` has the ID `0`, while 
   - `MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAABUTGI4` has the ID `420`.
 
-Both of these addresses, when used with one of the [supported operations][supported-ops], will act on behalf of their underlying `GA7Q...` address.
+Both of these addresses, when used with one of the [supported operations][supported-ops], will act on the underlying `GA7Q...` address.
 
 With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where the memo was often used to distinguish between customers backed by a single custodial account. Now, the embedded ID can be used for this distinction, and guides like [this one](../building-apps/setup-custodial-account.mdx) can be made superfluous.
 
