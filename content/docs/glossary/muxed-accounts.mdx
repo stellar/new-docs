@@ -81,11 +81,25 @@ Even though at the end of the day, only the underlying `G...` account _truly_ ex
 
 ## Examples
 
-In this section, we'll demonstrate how to create muxed accounts and how they interact with some of the supported operations. To drive home the fact that custodial account workarounds based on transaction memos are superfluous now, we'll use that as a skeleton for our example structure.
+In this section, we'll demonstrate how to create muxed accounts and how seamlessly they interface with their supported operations. To drive home the fact that custodial account workarounds based on transaction memos are superfluous now, we'll use that as a skeleton for our example structure.
+
+After preparing some supporting code, we'll demonstrate three scenarios:
+
+  - [normal](#), "full" Stellar account payments (i.e. G to G),
+  - [mixed](#) payments (i.e. M to G), and
+  - [fully muxed](#) payments (i.e. M to M)
+
+but use a shared function for all of them that does the real work, highlighting the ease of implementing muxed account support.
+
+<Alert>
+
+**Warning**: In the following code samples, proper error checking is omitted for brevity. However, you should always validate your results, as there are many ways that requests can fail. You can refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>
 
 
 ### Preamble
-First, let's create two accounts and then a handful of virtual accounts representing "custodial customers" that the parent account manages.
+First, let's create two accounts and then a handful of virtual accounts representing "custodial customers" that the parent account manages:
 
 <CodeExample title="Preamble">
 
@@ -118,6 +132,8 @@ async function preamble() {
 ```
 
 </CodeExample>
+
+We assume that these accounts exist on the testnet; you can replace them with your own keys and use the [friendbot](../tutorials/create-account.mdx#create-account) if you'd like.
 
 When we run this function, we'll see the similarity in muxed account addresses among the customers, highlighting the fact that they share a public key:
 
