@@ -42,6 +42,13 @@ It's worth noting that this feature is intended to be a high-level abstraction, 
 It's worth noting that this feature is intended to be a high-level abstraction, embedded into the protocol for convenience and standardization. As far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* use a muxed account. For example, if you make a payment from two "sibling" muxed accounts (i.e. muxed accounts sharing an underlying `G...` account but with different IDs), this is *exactly the same* as that Stellar account sending two payments, as far as the ledger is concerned.
 
 
+## Supporting Opt-In
+
+Because muxed account support is still experimental, you need to **explicitly opt-in** to creating operations with muxed properties. If you do not pass these opt-in flags in the necessary places, SDKs will throw errors. This is done in an effort to ensure that muxed accounts are not "accidentally" working in your application and thus may be misleading to your users.
+
+Each SDK implements this a little differently, but generally-speaking you need to explicitly call out muxing support when creating operations and/or transactions that use muxed accounts.
+
+
 ## Supported Operations
 
 Not all operations can be used with muxed accounts. For example, you cannot set the destination of a [`CreateAccount`](../start/list-of-operations.mdx#create-account) operation to be a muxed account, because only their shared, underlying `G...` account exists in the ledger. However, you can use them with:
