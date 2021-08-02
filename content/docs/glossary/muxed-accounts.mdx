@@ -23,7 +23,7 @@ Muxed accounts were defined in [CAP-27](https://stellar.org/protocol/cap-27), in
 
 Both of these addresses, when used with one of the [supported operations][supported-ops], will act on the underlying `GA7Q...` address.
 
-With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where transaction memos were often used to distinguish between users backed by a single custodial account. Now, the embedded ID can be used for this distinction, and guides like [this one](../building-apps/setup-custodial-account.mdx) can be made superfluous.
+With muxed accounts, we can *natively* support the ecosystem-level abstraction of account memo requirements (see [SEP-29](https://stellar.org/protocol/sep-29)), where transaction memos were often used to distinguish between users backed by a single custodial account. Now, the embedded ID can be used for this distinction, and guides like [this one](../building-apps/setup-custodial-account.mdx) can be made superfluous. In other words, virtual accounts are now a first-class citizen on the network.
 
 There are many other benefits to embedding this abstraction into the protocol:
 
@@ -37,7 +37,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
 </Alert>
 
-It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. As far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did not used a muxed account. For example, if you make a payment from two muxed accounts that share an underlying Stellar account (but have different IDs), this is *exactly the same* as that Stellar account sending two payments as far as the ledger is concerned.
+It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did not used a muxed account. For example, if you make a payment from two muxed accounts that share an underlying Stellar account (but have different IDs), this is *exactly the same* as that Stellar account sending two payments as far as the ledger is concerned.
 
 It's worth noting that this feature is intended to be a high-level abstraction, embedded into the protocol for convenience and standardization. As far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* use a muxed account. For example, if you make a payment from two "sibling" muxed accounts (i.e. muxed accounts sharing an underlying `G...` account but with different IDs), this is *exactly the same* as that Stellar account sending two payments, as far as the ledger is concerned.
 
