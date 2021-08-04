@@ -51,6 +51,21 @@ server
   });
 ```
 
+```java
+import org.stellar.sdk.*;
+static Server server = new Server("https://horizon-testnet.stellar.org");
+
+try {
+  LedgerResponse ledgerResponse = server
+    .ledgers()
+    .ledger(HttpUrl.parse("https://horizon-testnet.stellar.org/ledgers/69858"));
+  
+  System.out.println(ledgerResponse.toString())
+} catch (IOException e){
+  e.printStackTrace();
+}
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">
