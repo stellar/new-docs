@@ -216,7 +216,7 @@ def buildTx(source, signer, ops):
 # Prints the balances of a list of accounts.
 def showBalance(accounts):
     for acc in accounts:
-        print(acc.account_id[0:5] + ": " + getBalance(acc))
+        print(acc.account_id()[0:5] + ": " + getBalance(acc))
 ```
 
 </CodeExample>
@@ -300,7 +300,15 @@ def doClawback(byAccount, byKey, fromAccount, amount):
 
 # Retrieves the balance of ASSET in `account`.
 def getBalance(account):
-    [(balance.asset_code, balance.asset_issuer) for balance in account.balances]
+    balances = server \
+        .accounts() \
+        .account_id(account.account_id()) \
+        .call()["balances"]
+ 
+    for i in range(len(balances)):
+        if balances[i].get("asset_code") == ASSET.code and balances[i].get("asset_issuer") == ASSET.issuer:
+            return balances[i]["balance"]
+    return "0"
 ```
 
 </CodeExample>
