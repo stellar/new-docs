@@ -153,6 +153,10 @@ export PARALLEL_JOB_SIZE=100000
 # Retries per job
 export RETRIES=10
 export RETRY_BACKOFF_SECONDS=20
+
+# Enable following config for stellar-horizon to download buckets locally at specific location.
+# If not enabled, stellar-horizon would download data in the current working directory.
+# export CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar"
 ```
 
 </CodeExample>
