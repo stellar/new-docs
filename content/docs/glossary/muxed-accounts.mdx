@@ -118,7 +118,7 @@ async function preamble() {
   ]);
 
   customers = ["1", "22", "333", "4444"].map(
-    (id) => custodianAcc.createSubaccount(id)
+    (id) => new MuxedAccount(custodianAcc, id)
   );
 
   console.log("Custodian:\n       ", custodian.publicKey());
