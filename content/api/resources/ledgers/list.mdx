@@ -69,6 +69,28 @@ server
   });
 ```
 
+```java 
+import org.stellar.sdk.*;
+static Server server = new Server("https://horizon-testnet.stellar.org");
+
+try {
+  Page<LedgerResponse> page1Response = server
+    .ledgers()
+    .execute();
+  
+  // page 1
+  System.out.println(page1Response.getRecords());
+
+  Page<LedgerResponse> page2Response = page1Response.getNextPage();
+  if(page2Response != null) {
+    // page 2
+    System.out.println(page2Response.getRecords());
+  }
+  
+} catch (IOException | TooManyRequestsException e){
+  System.out.println(e.getMessage());
+}
+```
 </CodeExample>
 
 
