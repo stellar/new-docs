@@ -60,7 +60,7 @@ try {
     .ledgers()
     .ledger(HttpUrl.parse("https://horizon-testnet.stellar.org/ledgers/69858"));
   
-  System.out.println(ledgerResponse.toString())
+  System.out.println(ledgerResponse)
 } catch (IOException e){
   e.printStackTrace();
 }
