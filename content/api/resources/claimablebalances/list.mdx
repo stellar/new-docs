@@ -70,7 +70,23 @@ server
     console.error(err);
   });
 ```
+  
+```java
+import org.stellar.sdk.*;
+import org.stellar.sdk.responses.*;
 
+static Server server = new Server("https://horizon-testnet.stellar.org");
+  
+try {
+  Page<ClaimableBalanceResponse> page = server
+    .claimableBalances()
+    .forAsset(Asset.create("native"))
+    .execute();
+  System.out.println(page.toString());
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
 </CodeExample>
 
 
