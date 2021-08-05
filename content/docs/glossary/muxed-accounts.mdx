@@ -37,9 +37,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
 </Alert>
 
-It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did not used a muxed account. For example, if you make a payment from two muxed accounts that share an underlying Stellar account (but have different IDs), this is *exactly the same* as that Stellar account sending two payments as far as the ledger is concerned.
-
-It's worth noting that this feature is intended to be a high-level abstraction, embedded into the protocol for convenience and standardization. As far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* use a muxed account. For example, if you make a payment from two "sibling" muxed accounts (i.e. muxed accounts sharing an underlying `G...` account but with different IDs), this is *exactly the same* as that Stellar account sending two payments, as far as the ledger is concerned.
+It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* used a muxed account. For example, if you make a payment from two muxed accounts that share an underlying Stellar account (i.e. muxed accounts sharing an underlying `G...` account but with different IDs), this is *exactly the same* as that Stellar account sending two payments, as far as the ledger is concerned.
 
 
 ## Supporting Opt-In
