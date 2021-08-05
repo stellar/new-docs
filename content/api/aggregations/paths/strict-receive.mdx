@@ -79,6 +79,31 @@ server
   });
 ```
 
+```java 
+import org.stellar.sdk.*;
+
+Server server = new Server("https://horizon-testnet.stellar.org");
+Asset assets[] = new Asset[] {
+  Asset.createNonNativeAsset("CNY", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"),
+  Asset.createNonNativeAsset("BB1", "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN"),
+}
+
+try {
+  Page<PathResponse> page = server
+    .strictReceivePaths()
+    .sourceAssets(assets)
+    .destinationAmount("5")
+    .execute();
+
+  for (PathResponse response : page.getRecords()) {
+    System.out.println(response);
+  }
+
+  page = page.getNextPage();
+} catch (Exception e) {
+  System.out.println(e.getMessage())
+}
+```
 </CodeExample>
 
 <ExampleResponse title="Example Response">
