@@ -53,7 +53,7 @@ Each SDK implements this a little differently, but generally-speaking you need t
 
 Not all operations can be used with muxed accounts. For example, you cannot set the destination of a [`CreateAccount`](../start/list-of-operations.mdx#create-account) operation to be a muxed account, because only their shared, underlying `G...` account exists in the ledger. However, you can use them with:
 
-  - the source account of *any* operation or [transaction](./transactions.mdx),
+  - the source account of *any* [operation](../start/list-of-operations.mdx) or [transaction](./transactions.mdx),
   - the destination of all three types of payments:
     * [`Payment`](../start/list-of-operations.mdx#payment),
     * [`PathPaymentStrictSend`](../start/list-of-operations.mdx#path-payment-strict-send), and
@@ -61,7 +61,7 @@ Not all operations can be used with muxed accounts. For example, you cannot set 
   - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge), and
   - the fee source of a [fee-bump transaction](./fee-bumps.mdx).
 
-We'll demonstrate some of these later in the [Examples](#examples).
+We'll demonstrate some of these in the [Examples](#examples).
 
 
 ## Examples
@@ -142,7 +142,7 @@ With the accounts out of the way, let's look at how we can manage the difference
 
 
 ### Muxed Operations Model
-The introduction of muxed addresses as a higher-level abstraction---and their experimental, opt-in nature---means there are mildly diverging branches of code depending on whether the source is a muxed account or not. We still need to, for example, load accounts by their underlying address, because the muxed versions don't actually live on the Stellar ledger:
+The introduction of muxed addresses as a higher-level abstraction--and their experimental, opt-in nature--means there are mildly diverging branches of code depending on whether the source is a muxed account or not. We still need to, for example, load accounts by their underlying address, because the muxed versions don't actually live on the Stellar ledger:
 
 <CodeExample>
 
@@ -280,7 +280,9 @@ GCIHA: 9579.9999700 XLM
 
 </CodeExample>
 
-Notice that the account's balance is essentially unchanged. It was, however, charged a fee for essentially doing a no-op. You may want to detect these types of transactions in your application to avoid paying the transaction fee. If we were to make a payment between two muxed accounts that had *different* underlying Stellar accounts, this would be equivalent to a payment between those two respective `G...` accounts.
+Notice that the account's balance is essentially unchanged, yet it was charged a fee since this transaction is still recorded in the ledger despite doing next to nothing. You may want to detect these types of transactions in your application to avoid paying the transaction fee.
+
+If we were to make a payment between two muxed accounts that had *different* underlying Stellar accounts, this would be equivalent to a payment between those two respective `G...` accounts.
 
 
 ### More Examples
