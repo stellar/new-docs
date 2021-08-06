@@ -42,9 +42,9 @@ It's worth noting that this feature is intended to be a high-level abstraction, 
 
 ## Supporting Opt-In
 
-Because muxed account support is still experimental, you need to **explicitly opt-in** to creating operations with muxed properties. If you do not pass these opt-in flags in the necessary places, SDKs will throw errors. This is done in an effort to ensure that muxed accounts are not "accidentally" working in your application and thus may be misleading to your users.
+Because muxed account support is still experimental, you need to **explicitly opt-in** to creating operations with muxed properties. Eventually, muxed support will be the default, but for now, if you do not pass these opt-in flags in the necessary places, SDKs will throw errors. This is done in an effort to ensure that muxed accounts are not "accidentally" working in your application and thus may be misleading to your users.
 
-Each SDK implements this a little differently, but generally-speaking you need to explicitly call out muxing support when creating operations and/or transactions that use muxed accounts.
+Each SDK implements this a little differently, but generally-speaking you need to explicitly call out muxing support when creating each operation and/or transaction that uses muxed accounts. 
 
 
 ## Supported Operations
