@@ -53,6 +53,28 @@ server
     console.error(err);
   });
 ```
+  
+```go
+package main
+
+import (
+  "fmt"
+  "log"
+
+  "github.com/stellar/go/clients/horizonclient"
+)
+
+func main() {
+  client := horizonclient.DefaultPublicNetClient
+
+  resp, err := client.OperationDetail("121692259040116737")
+  if err != nil {
+    log.Fatal(err)
+    return
+  }
+  fmt.Println(resp)
+}
+```
 
 </CodeExample>
 
