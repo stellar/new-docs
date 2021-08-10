@@ -79,6 +79,24 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server, Asset
+server = Server("https://horizon.stellar.org")
+
+response = server.strict_receive_paths(
+    source=[
+        Asset("CNY", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX")
+    ],
+    destination_asset=Asset(
+        "BB1",
+        "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN"
+    ),
+    destination_amount="5"
+).call()
+
+print(response)
+```
+
 </CodeExample>
 
 <ExampleResponse title="Example Response">
