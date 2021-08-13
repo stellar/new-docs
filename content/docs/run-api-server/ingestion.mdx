@@ -113,15 +113,15 @@ The following instructions assume the reingestion is done on AWS. However, they 
 ### Prerequisites
 Before we begin, we make some environment assumptions:
 
-  1. An `m5.8xlarge` (32 cores, 64GB of RAM) EC2 instance with at least 200 GB  of disk capacity from which to run Horizon. This is needed to fit 24 Horizon parallel workers (each with their own Captive Core instance). Each Core instance can take up to 3GB of RAM and a full CPU core (more on why 24 workers below). If the number of workers is increased, you may need a larger machine.
+  1. An instance with 32 CPU cores, 64 GB of RAM and at least 200 GB of disk capacity from which to run Horizon (for example AWS `m5.8xlarge`). This is needed to fit 20 Horizon parallel workers (each with their own Captive Core instance). Each Core instance can take up to 3GB of RAM and a full CPU core (more on why 20 workers below). If the number of workers is increased, you may need a larger machine.
 
   2. [Horizon](./installing.mdx) version 1.6.0 or newer (ideally, 2.x) installed on the machine from (1).
 
   3. [Core](https://github.com/stellar/stellar-core) version 17 or newer  installed on the machine from (1), given the network is on Protocol 17.
 
-  4. A Horizon database where to reingest the history. Preferably, the database should be at least an RDS `r4.8xlarge` instance or better (to take full advantage of its IOPS write capacity) and should be empty to minimize storage (Postgres accumulates data during usage, which is only deleted when `VACUUM`ed). When using an RDS instance with General Purpose SSD storage, the reingestion throughput of the DB (namely Write IOPS) is determined by the storage size (3 IOPS per GB). With 5TB you get 15K IOPS, which can be saturated with 24 Horizon workers.
+  4. A Horizon database where to reingest the history. Preferably, the database should have at least 32 CPUs, 256 GB of RAM and at least 15K IOPS (for example AWS RDS `r5.8xlarge`) and should be empty to minimize storage (Postgres accumulates data during usage, which is only deleted when `VACUUM`ed).
 
-As the DB storage grows, the IO capacity will grow along with it. The number of workers (and the size of the instance created in (1), should be increased accordingly if we want to take advantage of it. To make sure we are minimizing reingestion time, we should look at the RDS _Write IOPS_ CloudWatch graph. The graph should ideally always be close to the theoretical limit of the DB (3000 IOPS per TB of storage).
+As the DB storage grows, the IO capacity will grow along with it. The number of workers (and the size of the instance created in (1), should be increased accordingly if we want to take advantage of it. To make sure we are minimizing reingestion time, we should watch write IOPS. It should ideally always be close to the theoretical limit of the DB.
 
 ### Parallel Reingestion
 Once the prerequisites are satisfied, we can spawn two Horizon reingestion
@@ -132,7 +132,7 @@ processes in parallel:
 
 This is due to first 17 million ledgers being almost empty whilst the rest are much more packed. Having a single Horizon instance with enough workers to saturate the IO capacity of the machine for the first 17 million would kill the machine when reingesting the rest (during which there is a higher CPU and memory consumption per worker).
 
-64 workers for (1) and 24 workers for (2) saturates the IO capacity of an RDS instance with 5TB of General Purpose SSD storage. Again, as the DB storage grows, a larger number of workers should be considered.
+64 workers for (1) and 20 workers for (2) saturates instance with 64GB of RAM and 15K IOPS. Again, as the DB storage grows, a larger number of workers and faster storage should be considered.
 
 In order to run the reingestion, first set the following environment variables in the [configuration](./configuring.mdx) (updating values to match your database environment, of course):
 
@@ -153,6 +153,10 @@ export PARALLEL_JOB_SIZE=100000
 # Retries per job
 export RETRIES=10
 export RETRY_BACKOFF_SECONDS=20
+
+# Enable following config for stellar-horizon to download buckets locally at specific location.
+# If not enabled, stellar-horizon would download data in the current working directory.
+# export CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar"
 ```
 
 </CodeExample>
@@ -162,17 +166,19 @@ export RETRY_BACKOFF_SECONDS=20
 If Horizon was previously running, first ensure it is stopped. Then, run the following commands in parallel:
 
 1. `stellar-horizon db reingest range --parallel-workers=64 1 16999999`
-2. `stellar-horizon db reingest range --parallel-workers=24 17000000 <latest_ledger>`
+2. `stellar-horizon db reingest range --parallel-workers=20 17000000 <latest_ledger>`
 
 (Where you can find `<latest_ledger>` under [SDF Horizon's](https://horizon.stellar.org/) `core_latest_ledger` field.)
 
-When saturating an RDS instance with 15K IOPS capacity:
+When saturating a database instance with 15K IOPS capacity:
 
 (1) should take a few hours to complete.
 
-(2) should take about 1.5 days to complete.
+(2) should take about 3 days to complete.
 
 Although there is a retry mechanism, reingestion may fail half-way. Horizon will print the recommended range to use in order to restart it.
+
+When reingestion is complete it's worth running `ANALYZE VERBOSE [table]` on all tables to recalculate the stats. This should improve the query speed.
 
 ### Monitoring reingestion process
 This script should help monitor the reingestion process by printing the ledger subranges being reingested:

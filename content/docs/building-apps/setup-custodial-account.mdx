@@ -93,6 +93,12 @@ function createPayment(to, asset, amount) {
 
 ## Integration points for listing XLM
 
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should *always* validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>
+
 ### Setting the memo required flag on your account
 
 Before we get into the main integration points for adding XLM support to your product or service, make sure to configure your pooled account to require memos. This step is necessary to prevent users from forgetting to attach a memo, which can increase customer support requests and lead to a less desirable user experience for new customers. [This article](https://www.stellar.org/developers-blog/fixing-memo-less-payments) explains how to set that up.
