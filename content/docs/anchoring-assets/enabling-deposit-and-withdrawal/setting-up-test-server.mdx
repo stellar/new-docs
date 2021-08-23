@@ -217,7 +217,6 @@ sequenceDiagram
     note left of Wallet: Show withdraw info
     Wallet->>Stellar: Withdraw Transaction
     note left of Anchor: Withdraw confirmed
-    Anchor->>Stellar: POST /transaction [Horizon]
     Stellar->>Anchor: Transaction result [Horizon]
     Stellar->>Wallet: Transaction result
 ```
