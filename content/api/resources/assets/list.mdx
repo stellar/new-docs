@@ -220,7 +220,7 @@ from stellar_sdk import Server
 server = Server("https://horizon.stellar.org")
 
 def callback(resp):
-  print(resp)
+    print(resp)
 	
 for tx in server.assets().for_code("CNY").cursor("now").stream():
 	callback(tx)
