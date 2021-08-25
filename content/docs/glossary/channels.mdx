@@ -46,5 +46,30 @@ var transaction = new StellarSdk.TransactionBuilder(
 transaction.sign(baseAccountKey); // base account must sign to approve the payment
 transaction.sign(channelKeys[channelIndex]); // channel must sign to approve it being the source of the transaction
 ```
+  
+```python
+# channelAccounts[] is an array of accountIDs, one for each channel
+# channelKeys[] is an array of secret keys, one for each channel
+# channelIndex is the channel you want to send this transaction over
+
+transaction = (
+    TransactionBuilder(
+      source_account=channelAccounts[channelIndex],
+      network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+      base_fee=base_fee,
+    )
+    .append_payment_op(
+      source=baseAccount.public_key,
+      destination=customerAddress,
+      asset_code="XLM",
+      amount=amountToSend,
+    )
+    .set_timeout(180) # Wait a maximum of three minutes for the transaction
+    .build()
+)
+
+transaction.sign(baseAccountKey) # base account must sign to approve the payment
+transaction.sign(channelKeys[channelIndex]) # channel must sign to approve it being the source of the transaction
+```
 
 </CodeExample>
