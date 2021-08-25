@@ -37,7 +37,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
 </Alert>
 
-It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* used a muxed account. For example, if you make a payment from two muxed accounts that share an underlying Stellar account (i.e. muxed accounts sharing an underlying `G...` account but with different IDs), this is *exactly the same* as that Stellar account sending two payments, as far as the ledger is concerned.
+It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* used a muxed account. For example, if you make two payments from two muxed accounts that share an underlying Stellar account (i.e. muxed accounts with the same underlying `G...` account but two different IDs), this is *exactly the same* as that single Stellar account sending two payments, as far as the ledger is concerned.
 
 Even though only the underlying `G...` account _truly_ exists in the Stellar ledger, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
 
@@ -162,24 +162,7 @@ function showBalance(acc) {
 
 </CodeExample>
 
-For payments---our focus for this set of examples---the divergence only matters because we want to show the balances for the custodian account.
-
-We also need to selectively enable the opt-in flag if we're passing in properties with that require muxing:
-
-<CodeExample>
-
-```js
-/// Returns `true` if *any* passed parameter seems like a muxed account.
-function isAnyAccountMuxed() {
-  return Array.from(arguments)
-    .map((a) => a.accountId().startsWith('M'))
-    .reduce((t, v) => t || v, false);
-}
-```
-
-</CodeExample>
-
-_(Obviously, a string starting with "M" is not a hard-and-fast indicator of a muxed account; however, we rely on the `Account` objects themselves for prior validation.)_
+For payments--our focus for this set of examples--the divergence only matters because we want to show the balances for the custodian account.
 
 
 ### Payments
@@ -198,12 +181,12 @@ function doPayment(source, dest) {
         destination: dest.accountId(),
         asset: sdk.Asset.native(),
         amount: "10",
-        withMuxing: isAnyAccountMuxed(source, dest),
+        withMuxing: true,
       });
 
       let tx = new TransactionBuilder(accountBeforePayment, {
           networkPassphrase: StellarSdk.Networks.TESTNET,
-          withMuxing: isAnyAccountMuxed(source, dest),
+          withMuxing: true,
           fee: 100,
         })
         .addOperation(payment)
@@ -220,7 +203,7 @@ function doPayment(source, dest) {
 
 </CodeExample>
 
-We can use this block to make a payment between normal Stellar accounts with ease: `doPayment("GCIHA...", "GDS5N...")`. The main divergence from the [standard payments code](./tutorials/send-and-receive-payments.mdx#send-a-payment)---aside from the stubs to show XLM balances before and after---is the inclusion of code to detect a muxing situation.
+We can use this block to make a payment between normal Stellar accounts with ease: `doPayment("GCIHA...", "GDS5N...")`. The main divergence from the [standard payments code](./tutorials/send-and-receive-payments.mdx#send-a-payment)--aside from the stubs to show XLM balances before and after--is the inclusion of the opt-in `withMuxing` flag.
 
 #### Muxed to Unmuxed
 The codeblock above covers all payment operations, abstracting away any need for differentiating between muxed (`M...`) and unmuxed (`G...`) addresses. From a high level, then, it's still trivial to make payments between one of our "customers" and someone outside of the "custodian"'s organization:
