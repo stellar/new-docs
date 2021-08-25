@@ -45,9 +45,7 @@ from stellar_sdk.exceptions import BadResponseError, BadRequestError
 server = Server("https://horizon-testnet.stellar.org")
 
 try:
-    server \
-    .fee_stats() \
-    .call()
+    server.fee_stats().call()
 except (BadRequestError, BadResponseError) as err:
     print(f"Error Retrieving Fee Stats: {err}")
 ```
