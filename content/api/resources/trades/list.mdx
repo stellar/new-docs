@@ -259,7 +259,10 @@ server = Server("https://horizon.stellar.org")
 def callback(resp):
   print(resp)
   
-for tx in server.trades().for_asset_pair(Asset("USD", "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"), Asset.native()).cursor("now").stream():
+for tx in server.trades().for_asset_pair(
+    Asset("USD", "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"),
+    Asset.native()
+).cursor("now").stream():
   callback(tx)
 ```
 
