@@ -71,6 +71,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+	print(server.claimable_balances().for_asset(Asset.native()).call())
+except Exception as err:
+	print(err)
+```
+  
 </CodeExample>
 
 
