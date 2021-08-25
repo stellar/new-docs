@@ -50,6 +50,16 @@ server
     console.error(err);
   });
 ```
+  
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.ledgers().ledger("69858").call())
+except Exception as err:
+    print(err)
+```
 
 </CodeExample>
 
