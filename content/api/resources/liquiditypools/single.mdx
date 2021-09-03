@@ -1,0 +1,87 @@
+---
+title: Retrieve a Liquidity Pool
+order: 20
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { AttributeTable } from "components/AttributeTable";
+
+The single liquidity pool endpoint provides information on a liquidity pool.
+
+<Endpoint>
+
+
+|     |                                     |
+| --- | ----------------------------------- |
+| GET | /liquidity_pools/:liquidity_pool_id |
+
+</Endpoint>
+
+
+<AttributeTable>
+
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- liquidity_pool_id
+  - required
+  - A unique identifier for this liquidity pool.
+
+</AttributeTable>
+
+
+<CodeExample title="Example Request">
+
+
+```curl
+curl "https://horizon.stellar.org/liquidity_pools/000000000102030000000000000000000000000000000000000000000000000000000000"
+```
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+server
+  .liquidityPools()
+  .liquidityPoolId(
+    "000000000102030000000000000000000000000000000000000000000000000000000000",
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
+```
+
+</CodeExample>
+
+
+<ExampleResponse title="Example Response">
+
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/liquidity_pools/000000000102030000000000000000000000000000000000000000000000000000000000"
+    },
+    "operations": {
+      "href": "https://horizon.stellar.org/liquidity_pools/000000000102030000000000000000000000000000000000000000000000000000000000/operations{?cursor,limit,order}",
+      "templated": true
+    },
+    "transactions": {
+      "href": "https://horizon.stellar.org/liquidity_pools/000000000102030000000000000000000000000000000000000000000000000000000000/transactions{?cursor,limit,order}",
+      "templated": true
+    }
+  },
+  ...
+}
+```
+
+</ExampleResponse>
+

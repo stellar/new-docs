@@ -1,0 +1,222 @@
+---
+title: Retrieve related Operations
+order: 50
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { AttributeTable } from "components/AttributeTable";
+
+This endpoint represents successful operations referencing a given liquidity pool and can be used in streaming mode.
+
+Streaming mode allows you to listen for new operations referencing this liquidity pool as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known operation unless a `cursor` is set, in which case it will start from that `cursor`. By setting the `cursor` value to `now`, you can stream operations created since your request time.
+
+<Endpoint>
+
+
+|  |  |
+| --- | --- |
+| GET | /liquidity_pools/:liquidity_pool_id/operations?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
+
+</Endpoint>
+
+
+<AttributeTable>
+
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- liquidity_pool_id
+  - required
+  - This liquidity pool's id encoded in a hex string representation.
+- cursor
+  - optional
+  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+- order
+  - optional
+  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+- limit
+  - optional
+  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+- include_failed
+  - optional
+  - Set to `true` to include failed operations in results. If this argument isn't set, it defaults to `false`.
+- join
+  - optional
+  - Set to `transactions` to include the transactions which created each of the operations in the response.
+
+</AttributeTable>
+
+
+<CodeExample title="Example Request">
+
+
+```curl
+curl "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?limit=3"
+```
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+server
+  .operations()
+  .forClaimableBalance(
+    "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
+```
+
+</CodeExample>
+
+
+<ExampleResponse title="Example Response">
+
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?cursor=\u0026limit=3\u0026order=asc"
+    },
+    "next": {
+      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?cursor=120192452165550081\u0026limit=3\u0026order=asc"
+    },
+    "prev": {
+      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?cursor=120192344791343105\u0026limit=3\u0026order=desc"
+    }
+  },
+  "_embedded": {
+    "records": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/operations/120192344791343105"
+          },
+          "transaction": {
+            "href": "https://horizon.stellar.org/transactions/ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894"
+          },
+          "effects": {
+            "href": "https://horizon.stellar.org/operations/120192344791343105/effects"
+          },
+          "succeeds": {
+            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=120192344791343105"
+          },
+          "precedes": {
+            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=120192344791343105"
+          }
+        },
+        "id": "120192344791343105",
+        "paging_token": "120192344791343105",
+        "transaction_successful": true,
+        "source_account": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
+        "type": "create_account",
+        "type_i": 0,
+        "created_at": "2020-01-29T19:43:59Z",
+        "transaction_hash": "ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894",
+        "starting_balance": "2.0000000",
+        "funder": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
+        "account": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/operations/120192370561220609"
+          },
+          "transaction": {
+            "href": "https://horizon.stellar.org/transactions/c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589"
+          },
+          "effects": {
+            "href": "https://horizon.stellar.org/operations/120192370561220609/effects"
+          },
+          "succeeds": {
+            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=120192370561220609"
+          },
+          "precedes": {
+            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=120192370561220609"
+          }
+        },
+        "id": "120192370561220609",
+        "paging_token": "120192370561220609",
+        "transaction_successful": true,
+        "source_account": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
+        "type": "payment",
+        "type_i": 1,
+        "created_at": "2020-01-29T19:44:36Z",
+        "transaction_hash": "c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589",
+        "asset_type": "native",
+        "from": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
+        "to": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+        "amount": "200.0000000"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/operations/120192452165550081"
+          },
+          "transaction": {
+            "href": "https://horizon.stellar.org/transactions/0e6bc30f2b2f50ca0ecedef5a527309c74964e7daa6018976cd2c686c5df4be3"
+          },
+          "effects": {
+            "href": "https://horizon.stellar.org/operations/120192452165550081/effects"
+          },
+          "succeeds": {
+            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=120192452165550081"
+          },
+          "precedes": {
+            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=120192452165550081"
+          }
+        },
+        "id": "120192452165550081",
+        "paging_token": "120192452165550081",
+        "transaction_successful": true,
+        "source_account": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+        "type": "change_trust",
+        "type_i": 6,
+        "created_at": "2020-01-29T19:46:20Z",
+        "transaction_hash": "0e6bc30f2b2f50ca0ecedef5a527309c74964e7daa6018976cd2c686c5df4be3",
+        "asset_type": "credit_alphanum4",
+        "asset_code": "USD",
+        "asset_issuer": "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
+        "limit": "922337203685.4775807",
+        "trustee": "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
+        "trustor": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9"
+      }
+    ]
+  }
+}
+```
+
+</ExampleResponse>
+
+
+<CodeExample title="JavaScript Streaming Example">
+
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+var callback = function (resp) {
+  console.log(resp);
+};
+
+var es = server
+  .operations()
+  .forClaimableBalance(
+    "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+  )
+  .cursor("now")
+  .stream({ onmessage: callback });
+```
+
+</CodeExample>
+
