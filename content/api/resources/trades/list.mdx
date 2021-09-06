@@ -16,13 +16,16 @@ When filtering for a specific orderbook, you must use use all six of these argum
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /trades?offer_id={:offer_id}&base_asset_type={native,credit_alphanum4,credit_alphanum12}&base_asset_issuer={:account_id}&base_asset_code{:asset_code}&counter_asset_type={native,credit_alphanum4,credit_alphanum12}&counter_asset_issuer={:account_id}&counter_asset_code{:asset_code}&cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -48,6 +51,9 @@ When filtering for a specific orderbook, you must use use all six of these argum
 - counter_asset_code
   - optional
   - The code for the counter asset.
+- trade_type
+  - optional
+  - Can be set to `liquidity_pools` to filter only trades executed across a liquidity pool.
 - cursor
   - optional
   - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
@@ -60,7 +66,9 @@ When filtering for a specific orderbook, you must use use all six of these argum
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/trades?base_asset_type=credit_alphanum4&base_asset_issuer=GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX&base_asset_code=USD&counter_asset_type=native&limit=3"
@@ -90,7 +98,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -138,8 +148,8 @@ server
         "counter_asset_type": "native",
         "base_is_seller": true,
         "price": {
-          "n": 106905209,
-          "d": 25000000
+          "n": "106905209",
+          "d": "25000000"
         }
       },
       {
@@ -173,8 +183,8 @@ server
         "counter_asset_type": "native",
         "base_is_seller": true,
         "price": {
-          "n": 430809521,
-          "d": 100000000
+          "n": "430809521",
+          "d": "100000000"
         }
       },
       {
@@ -208,8 +218,8 @@ server
         "counter_asset_type": "native",
         "base_is_seller": true,
         "price": {
-          "n": 430809521,
-          "d": 100000000
+          "n": "430809521",
+          "d": "100000000"
         }
       }
     ]
@@ -219,7 +229,9 @@ server
 
 </ExampleResponse>
 
+
 <CodeExample title="JavaScript Streaming Example">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -243,3 +255,4 @@ var es = server
 ```
 
 </CodeExample>
+

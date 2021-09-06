@@ -75,17 +75,17 @@ When Horizon returns information about an account, it uses the following format:
       - string
       - The number of units of an asset held by this account.
     - buying_liabilities
-      - string
+      - string (optional)
       - The sum of all buy offers owned by this account for this asset.
     - selling_liabilities
-      - string
+      - string (optional)
       - The sum of all sell offers owned by this account for this asset.
     - limit
       - number (optional)
       - The maximum amount of this asset that this account is willing to accept. Specified when opening a trustline.
     - asset_type
       - string
-      - Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+      - Either `native`, `credit_alphanum4`, `credit_alphanum12`, or `liquidity_pool_shares`.
     - asset_code
       - string (optional)
       - The code for this asset.

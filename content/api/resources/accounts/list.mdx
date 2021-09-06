@@ -35,6 +35,9 @@ This endpoint lists accounts by one of three filters: `signer`, `asset`, or `spo
 - signer
   - string (optional)
   - Account ID of the signer. Every account in the response will have the given account ID as a signer.
+- liquidity_pool
+  - string (optional)
+  - With this parameter, the results will include only accounts which have trustlines to the specified liquidity pool.
 - cursor
   - string (optional)
   - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
