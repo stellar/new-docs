@@ -215,6 +215,36 @@ There are eight groups of effect types. Each effect type has its own set of attr
 </AttributeTable>
 
 
+### Liquidity Pool Effects
+
+<AttributeTable>
+
+
+- TYPE
+  - skip
+  - OPERATION(S)
+- Liquidity Pool Created
+  - skip
+  - change_trust
+- Liquidity Pool Removed
+  - skip
+  - change_trust
+- Liquidity Pool Revoked
+  - skip
+  - change_trust, allow_trust
+- Liquidity Pool Deposited
+  - skip
+  - liquidity_pool_deposit
+- Liquidity Pool Withdraw
+  - skip
+  - liquidity_pool_withdraw
+- Liquidity Pool Trade
+  - skip
+  - path_payment
+
+</AttributeTable>
+
+
 ### Miscellaneous Effects
 
 <AttributeTable>
