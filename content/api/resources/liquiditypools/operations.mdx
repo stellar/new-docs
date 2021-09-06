@@ -54,7 +54,7 @@ Streaming mode allows you to listen for new operations referencing this liquidit
 
 
 ```curl
-curl "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?limit=3"
+curl "https://horizon.stellar.org/liquidity_pools/67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9/operations?limit=3"
 ```
 
 ```js
@@ -63,8 +63,8 @@ var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
   .operations()
-  .forClaimableBalance(
-    "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+  .forLiquidityPool(
+    "67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9",
   )
   .call()
   .then(function (resp) {
@@ -85,110 +85,62 @@ server
 {
   "_links": {
     "self": {
-      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?cursor=\u0026limit=3\u0026order=asc"
+      "href": "https://horizon.stellar.org/liquidity_pools/67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9/operations?cursor=\u0026limit=3\u0026order=asc"
     },
     "next": {
-      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?cursor=120192452165550081\u0026limit=3\u0026order=asc"
+      "href": "https://horizon.stellar.org/liquidity_pools/67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9/operations?cursor=120192452165550081\u0026limit=3\u0026order=asc"
     },
     "prev": {
-      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/operations?cursor=120192344791343105\u0026limit=3\u0026order=desc"
+      "href": "https://horizon.stellar.org/liquidity_pools/67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9/operations?cursor=120192344791343105\u0026limit=3\u0026order=desc"
     }
   },
   "_embedded": {
     "records": [
       {
-        "_links": {
-          "self": {
-            "href": "https://horizon.stellar.org/operations/120192344791343105"
-          },
-          "transaction": {
-            "href": "https://horizon.stellar.org/transactions/ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894"
-          },
-          "effects": {
-            "href": "https://horizon.stellar.org/operations/120192344791343105/effects"
-          },
-          "succeeds": {
-            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=120192344791343105"
-          },
-          "precedes": {
-            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=120192344791343105"
-          }
-        },
-        "id": "120192344791343105",
-        "paging_token": "120192344791343105",
+        "id": "3697472920621057",
+        "paging_token": "3697472920621057",
         "transaction_successful": true,
-        "source_account": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
-        "type": "create_account",
-        "type_i": 0,
-        "created_at": "2020-01-29T19:43:59Z",
-        "transaction_hash": "ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894",
-        "starting_balance": "2.0000000",
-        "funder": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
-        "account": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9"
+        "source_account": "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L",
+        "type": "liquidity_pool_withdraw",
+        "type_i": 23,
+        "created_at": "2021-11-18T03:47:47Z",
+        "transaction_hash": "43ed5ce19190822ec080b67c3ccbab36a56bc34102b1a21d3ee690ed3bc23378",
+        "liquidity_pool_id": "67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9",
+        "reserves_min": [
+          {
+            "asset": "EURT:GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+            "min": "1000.0000005"
+          },
+          {
+            "asset": "PHP:GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+            "min": "3000.0000005"
+          }
+        ],
+        "shares": "200",
+        "reserves_received": [
+          {
+            "asset": "EURT:GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+            "amount": "993.0000005"
+          },
+          {
+            "asset": "PHP:GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+            "amount": "2478.0000005"
+          }
+        ]
       },
       {
-        "_links": {
-          "self": {
-            "href": "https://horizon.stellar.org/operations/120192370561220609"
-          },
-          "transaction": {
-            "href": "https://horizon.stellar.org/transactions/c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589"
-          },
-          "effects": {
-            "href": "https://horizon.stellar.org/operations/120192370561220609/effects"
-          },
-          "succeeds": {
-            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=120192370561220609"
-          },
-          "precedes": {
-            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=120192370561220609"
-          }
-        },
-        "id": "120192370561220609",
-        "paging_token": "120192370561220609",
+        "id": "157639717969326081",
+        "paging_token": "157639717969326081",
         "transaction_successful": true,
-        "source_account": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
-        "type": "payment",
-        "type_i": 1,
-        "created_at": "2020-01-29T19:44:36Z",
-        "transaction_hash": "c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589",
-        "asset_type": "native",
-        "from": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
-        "to": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
-        "amount": "200.0000000"
-      },
-      {
-        "_links": {
-          "self": {
-            "href": "https://horizon.stellar.org/operations/120192452165550081"
-          },
-          "transaction": {
-            "href": "https://horizon.stellar.org/transactions/0e6bc30f2b2f50ca0ecedef5a527309c74964e7daa6018976cd2c686c5df4be3"
-          },
-          "effects": {
-            "href": "https://horizon.stellar.org/operations/120192452165550081/effects"
-          },
-          "succeeds": {
-            "href": "https://horizon.stellar.org/effects?order=desc\u0026cursor=120192452165550081"
-          },
-          "precedes": {
-            "href": "https://horizon.stellar.org/effects?order=asc\u0026cursor=120192452165550081"
-          }
-        },
-        "id": "120192452165550081",
-        "paging_token": "120192452165550081",
-        "transaction_successful": true,
-        "source_account": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+        "source_account": "GBBWI7TEVQBPEUXKYNGI3GBAH7EHFEREONKK3UK56ZSLJIDIYHQJCVSG",
         "type": "change_trust",
         "type_i": 6,
-        "created_at": "2020-01-29T19:46:20Z",
-        "transaction_hash": "0e6bc30f2b2f50ca0ecedef5a527309c74964e7daa6018976cd2c686c5df4be3",
-        "asset_type": "credit_alphanum4",
-        "asset_code": "USD",
-        "asset_issuer": "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
-        "limit": "922337203685.4775807",
-        "trustee": "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX",
-        "trustor": "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9"
+        "created_at": "2021-08-04T20:01:24Z",
+        "transaction_hash": "941f2fa2101d1265696a3c7d35e7688cd210324114e96b64a386ab55f65e488f",
+        "asset_type": "liquidity_pool_shares",
+        "liquidity_pool_id": "67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9",
+        "limit": "1000",
+        "trustor": "GBBWI7TEVQBPEUXKYNGI3GBAH7EHFEREONKK3UK56ZSLJIDIYHQJCVSG"
       }
     ]
   }
@@ -211,8 +163,8 @@ var callback = function (resp) {
 
 var es = server
   .operations()
-  .forClaimableBalance(
-    "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+  .forLiquidityPool(
+    "67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9",
   )
   .cursor("now")
   .stream({ onmessage: callback });

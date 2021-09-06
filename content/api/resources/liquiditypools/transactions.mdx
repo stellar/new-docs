@@ -51,7 +51,7 @@ Streaming mode allows you to listen for new transactions referencing this liquid
 
 
 ```curl
-curl "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/transactions?limit=2"
+curl "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?limit=2"
 ```
 
 ```js
@@ -60,8 +60,8 @@ var server = new StellarSdk.Server("https://horizon.stellar.org");
 
 server
   .transactions()
-  .forClaimableBalance(
-    "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+  .forLiquidityPool(
+    "3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4",
   )
   .call()
   .then(function (resp) {
@@ -82,113 +82,66 @@ server
 {
   "_links": {
     "self": {
-      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/transactions?cursor=\u0026limit=2\u0026order=asc"
+      "href": "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?cursor=\u0026limit=2\u0026order=asc"
     },
     "next": {
-      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/transactions?cursor=120192370561220608\u0026limit=2\u0026order=asc"
+      "href": "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?cursor=120192370561220608\u0026limit=2\u0026order=asc"
     },
     "prev": {
-      "href": "https://horizon.stellar.org/liquidity_pools/00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9/transactions?cursor=120192344791343104\u0026limit=2\u0026order=desc"
+      "href": "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?cursor=120192344791343104\u0026limit=2\u0026order=desc"
     }
   },
   "_embedded": {
     "records": [
       {
-        "memo": "hello universe",
         "_links": {
           "self": {
-            "href": "https://horizon.stellar.org/transactions/ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894"
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908"
           },
           "account": {
-            "href": "https://horizon.stellar.org/liquidity_pools/GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU"
+            "href": "https://horizon.stellar.org/accounts/GAHQN6YNYD6ZT7TLAVE4R36MSZWQJZ22XB3WD4RLSHURMXHW4VHJIDF7"
           },
           "ledger": {
-            "href": "https://horizon.stellar.org/ledgers/27984461"
+            "href": "https://horizon.stellar.org/ledgers/895788"
           },
           "operations": {
-            "href": "https://horizon.stellar.org/transactions/ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894/operations{?cursor,limit,order}",
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908/operations",
             "templated": true
           },
           "effects": {
-            "href": "https://horizon.stellar.org/transactions/ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894/effects{?cursor,limit,order}",
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908/effects",
             "templated": true
           },
           "precedes": {
-            "href": "https://horizon.stellar.org/transactions?order=asc\u0026cursor=120192344791343104"
+            "href": "https://horizon.stellar.org/transactions?order=asc&cursor=3847380164161536"
           },
           "succeeds": {
-            "href": "https://horizon.stellar.org/transactions?order=desc\u0026cursor=120192344791343104"
+            "href": "https://horizon.stellar.org/transactions?order=desc&cursor=3847380164161536"
+          },
+          "transaction": {
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908"
           }
         },
-        "id": "ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894",
-        "paging_token": "120192344791343104",
+        "id": "2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908",
+        "paging_token": "3847380164161536",
         "successful": true,
-        "hash": "ef0fe04ac3c7de7228ca2598886059868ad05c224a041e8b2d9ee2a8a9dd6894",
-        "ledger": 27984461,
-        "created_at": "2020-01-29T19:43:59Z",
-        "source_account": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
-        "source_account_sequence": "94658837230911490",
-        "fee_charged": 100,
-        "max_fee": 100,
+        "hash": "2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908",
+        "ledger": 895788,
+        "created_at": "2021-08-09T20:53:11Z",
+        "source_account": "GAHQN6YNYD6ZT7TLAVE4R36MSZWQJZ22XB3WD4RLSHURMXHW4VHJIDF7",
+        "source_account_sequence": "3847371574214658",
+        "fee_account": "GAHQN6YNYD6ZT7TLAVE4R36MSZWQJZ22XB3WD4RLSHURMXHW4VHJIDF7",
+        "fee_charged": "10000",
+        "max_fee": "10001",
         "operation_count": 1,
-        "envelope_xdr": "AAAAAGpZ5X06Hz48sKzzVFo//X67YFenBLxaxzuJcPuXebqxAAAAZAFQS7YAAAACAAAAAQAAAAAAAAAAAAAAAF4x4NYAAAABAAAADmhlbGxvIHVuaXZlcnNlAAAAAAABAAAAAAAAAAAAAAAAMOWtdEZJweWBDrIVGDQOVodinrlXbfzBfquR7AFtxW4AAAAAATEtAAAAAAAAAAABl3m6sQAAAEDwdDlpQv5IfweTkLjytpWIa+bpQv7BAHRFpMCHscM3g+WBKjXPVEnSP1BghLuy3uhvgv4LnCkI+gFEDZxwV/YF",
-        "result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=",
-        "result_meta_xdr": "AAAAAQAAAAIAAAADAasCTQAAAAAAAAAAalnlfTofPjywrPNUWj/9frtgV6cEvFrHO4lw+5d5urEAAAACzQs6uAFQS7YAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAasCTQAAAAAAAAAAalnlfTofPjywrPNUWj/9frtgV6cEvFrHO4lw+5d5urEAAAACzQs6uAFQS7YAAAACAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAAAAwAAAAMBqwJNAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALNCzq4AVBLtgAAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEBqwJNAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALL2g24AVBLtgAAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABqwJNAAAAAAAAAAAw5a10RknB5YEOshUYNA5Wh2KeuVdt/MF+q5HsAW3FbgAAAAABMS0AAasCTQAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
-        "fee_meta_xdr": "AAAAAgAAAAMBnbxLAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALNCzscAVBLtgAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEBqwJNAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALNCzq4AVBLtgAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
-        "memo_type": "text",
-        "signatures": [
-          "8HQ5aUL+SH8Hk5C48raViGvm6UL+wQB0RaTAh7HDN4PlgSo1z1RJ0j9QYIS7st7ob4L+C5wpCPoBRA2ccFf2BQ=="
-        ],
-        "valid_after": "1970-01-01T00:00:00Z",
-        "valid_before": "2020-01-29T19:45:26Z"
-      },
-      {
-        "_links": {
-          "self": {
-            "href": "https://horizon.stellar.org/transactions/c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589"
-          },
-          "account": {
-            "href": "https://horizon.stellar.org/liquidity_pools/GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU"
-          },
-          "ledger": {
-            "href": "https://horizon.stellar.org/ledgers/27984467"
-          },
-          "operations": {
-            "href": "https://horizon.stellar.org/transactions/c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589/operations{?cursor,limit,order}",
-            "templated": true
-          },
-          "effects": {
-            "href": "https://horizon.stellar.org/transactions/c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589/effects{?cursor,limit,order}",
-            "templated": true
-          },
-          "precedes": {
-            "href": "https://horizon.stellar.org/transactions?order=asc\u0026cursor=120192370561220608"
-          },
-          "succeeds": {
-            "href": "https://horizon.stellar.org/transactions?order=desc\u0026cursor=120192370561220608"
-          }
-        },
-        "id": "c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589",
-        "paging_token": "120192370561220608",
-        "successful": true,
-        "hash": "c1cb850f413e4038c4120bd9badc07bb8ef85a46649a4d5c9c16e578a2d30589",
-        "ledger": 27984467,
-        "created_at": "2020-01-29T19:44:36Z",
-        "source_account": "GBVFTZL5HIPT4PFQVTZVIWR77V7LWYCXU4CLYWWHHOEXB64XPG5LDMTU",
-        "source_account_sequence": "94658837230911491",
-        "fee_charged": 100,
-        "max_fee": 100,
-        "operation_count": 1,
-        "envelope_xdr": "AAAAAGpZ5X06Hz48sKzzVFo//X67YFenBLxaxzuJcPuXebqxAAAAZAFQS7YAAAADAAAAAQAAAAAAAAAAAAAAAF4x4PoAAAAAAAAAAQAAAAAAAAABAAAAADDlrXRGScHlgQ6yFRg0DlaHYp65V238wX6rkewBbcVuAAAAAAAAAAB3NZQAAAAAAAAAAAGXebqxAAAAQMzdIubro9XQUTkhf0YbDBNM5tqC/zS7fGb0BLFq+QxXT7VAS7dDMno9A2f1df4nnyeHqVl+CuKcpwwwS04JSgE=",
-        "result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
-        "result_meta_xdr": "AAAAAQAAAAIAAAADAasCUwAAAAAAAAAAalnlfTofPjywrPNUWj/9frtgV6cEvFrHO4lw+5d5urEAAAACy9oNVAFQS7YAAAACAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAasCUwAAAAAAAAAAalnlfTofPjywrPNUWj/9frtgV6cEvFrHO4lw+5d5urEAAAACy9oNVAFQS7YAAAADAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAAABAAAAAMBqwJNAAAAAAAAAAAw5a10RknB5YEOshUYNA5Wh2KeuVdt/MF+q5HsAW3FbgAAAAABMS0AAasCTQAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEBqwJTAAAAAAAAAAAw5a10RknB5YEOshUYNA5Wh2KeuVdt/MF+q5HsAW3FbgAAAAB4ZsEAAasCTQAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAMBqwJTAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALL2g1UAVBLtgAAAAMAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEBqwJTAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAAJUpHlUAVBLtgAAAAMAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
-        "fee_meta_xdr": "AAAAAgAAAAMBqwJNAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALL2g24AVBLtgAAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEBqwJTAAAAAAAAAABqWeV9Oh8+PLCs81RaP/1+u2BXpwS8Wsc7iXD7l3m6sQAAAALL2g1UAVBLtgAAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
+        "envelope_xdr": "AAAAAgAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAJxEADasqAAAAAgAAAAAAAAAAAAAAAQAAAAEAAAAADwb7DcD9mf5rBUnI78yWbQTnWrh3YfIrkekWXPblTpQAAAAGAAAAAVNFQwAAAAAAm6XFaVsf8OSuS9C9gMplyTjagE9jAnnqwxSDJ6fin6IAsaK8LsUAAAAAAAAAAAAB9uVOlAAAAECXmRsoXmRiJjUrtbkDZYRnzac5s1CVV4g2RlIgBIuQty21npz3A1VhUcSmAx+GmsyGxVFvIrcdstTawJlmy9kF",
+        "result_xdr": "AAAAAAAAJxAAAAAAAAAAAQAAAAAAAAAGAAAAAAAAAAA=",
+        "result_meta_xdr": "AAAAAgAAAAIAAAADAA2rLAAAAAAAAAAADwb7DcD9mf5rBUnI78yWbQTnWrh3YfIrkekWXPblTpQAAAAAGtJNDAANqyoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAA2rLAAAAAAAAAAADwb7DcD9mf5rBUnI78yWbQTnWrh3YfIrkekWXPblTpQAAAAAGtJNDAANqyoAAAACAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAAAAwAAAAMADassAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0k0MAA2rKgAAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEADassAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0k0MAA2rKgAAAAIAAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAADassAAAAAQAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAFTRUMAAAAAAJulxWlbH/DkrkvQvYDKZck42oBPYwJ56sMUgyen4p+iAAAAAAAAAAAAsaK8LsUAAAAAAAEAAAAAAAAAAAAAAAA=",
+        "fee_meta_xdr": "AAAAAgAAAAMADasrAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0nQcAA2rKgAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEADassAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0k0MAA2rKgAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
         "memo_type": "none",
         "signatures": [
-          "zN0i5uuj1dBROSF/RhsME0zm2oL/NLt8ZvQEsWr5DFdPtUBLt0Myej0DZ/V1/iefJ4epWX4K4pynDDBLTglKAQ=="
-        ],
-        "valid_after": "1970-01-01T00:00:00Z",
-        "valid_before": "2020-01-29T19:46:02Z"
+          "l5kbKF5kYiY1K7W5A2WEZ82nObNQlVeINkZSIASLkLcttZ6c9wNVYVHEpgMfhprMhsVRbyK3HbLU2sCZZsvZBQ=="
+        ]
       }
     ]
   }
@@ -211,8 +164,8 @@ var callback = function (resp) {
 
 var es = server
   .transactions()
-  .forClaimableBalance(
-    "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9",
+  .forLiquidityPool(
+    "3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4",
   )
   .cursor("now")
   .stream({ onmessage: callback });
