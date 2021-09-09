@@ -14,13 +14,16 @@ Streaming mode allows you to listen for new payments for this account as they ar
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /accounts/:account_id/payments?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -36,7 +39,7 @@ Streaming mode allows you to listen for new payments for this account as they ar
   - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 - include_failed
   - optional
   - Set to true to include failed operations in results. Options include `true` and `false`.
@@ -46,7 +49,9 @@ Streaming mode allows you to listen for new payments for this account as they ar
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/accounts/GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE/payments?order=desc"
@@ -70,7 +75,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -189,7 +196,9 @@ server
 
 </ExampleResponse>
 
+
 <CodeExample title="JavaScript Streaming Example">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -207,3 +216,4 @@ var es = server
 ```
 
 </CodeExample>
+
