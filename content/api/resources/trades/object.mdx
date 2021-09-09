@@ -23,9 +23,6 @@ When Horizon returns information about a trade, it uses the following format:
 - ledger_close_time
   - string
   - An ISO 8601 formatted string of when the ledger with this trade was closed.
-- offer_id
-  - string
-  - The sell offer ID. **DECPRECATED**
 - base_account
   - string (optional)
   - The account ID of the base party for this trade.
@@ -34,7 +31,7 @@ When Horizon returns information about a trade, it uses the following format:
   - The base offer ID. If this offer was immediately and fully consumed, this will be a synethic ID.
 - base_liquidity_pool_id
   - string (optional)
-  - The base liquidity pool ID. If this offer was executed against a liquidity pool.
+  - The base liquidity pool ID. If this trade was executed against a liquidity pool.
 - base_amount
   - string
   - The amount of the base asset that was moved from `base_account` to `counter_account`.
@@ -55,7 +52,7 @@ When Horizon returns information about a trade, it uses the following format:
   - The counter offer ID. If this offer was immediately and fully consumed, this will be a synethic ID.
 - counter_liquidity_pool_id
   - string (optional)
-  - The counter liquidity pool ID. If this offer was executed against a liquidity pool.
+  - The counter liquidity pool ID. If this trade was executed against a liquidity pool.
 - counter_amount
   - string
   - The amount of the counter asset that was moved from `counter_account` to `base_account`.
