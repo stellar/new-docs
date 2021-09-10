@@ -87,6 +87,16 @@ server
     console.error(err);
   });
 ```
+  
+```python
+from stellar_sdk import Server, Asset
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.trades().for_asset_pair(Asset("USD", "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"), Asset.native()).call())
+except Exception as err:
+    print(err)
+```
 
 </CodeExample>
 
@@ -240,6 +250,20 @@ var es = server
   )
   .cursor("now")
   .stream({ onmessage: tradesHandler });
+```
+
+```python
+from stellar_sdk import Server, Asset
+server = Server("https://horizon.stellar.org")
+  
+def callback(resp):
+  print(resp)
+  
+for tx in server.trades().for_asset_pair(
+    Asset("USD", "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX"),
+    Asset.native()
+).cursor("now").stream():
+  callback(tx)
 ```
 
 </CodeExample>
