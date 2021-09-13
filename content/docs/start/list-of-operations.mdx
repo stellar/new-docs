@@ -10,7 +10,7 @@ This is the canonical list of Stellar operations, which lists every Stellar oper
 
 For a description of how operations work in Stellar, see [Operations](../glossary/operations.mdx).
 
-For the protocol specification, see [stellar-transactions.x](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-transaction.x).
+For the protocol specification, see [stellar-transaction.x](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-transaction.x).
 
 - [Create Account](#create-account)
 - [Payment](#payment)
@@ -189,11 +189,11 @@ Possible errors:
 
 Creates, updates, or deletes an offer to buy one asset for another, otherwise known as a "bid" order on a traditional orderbook.
 
-If you want to create a new offer set Offer ID to `0`.
+If you want to create a new offer, set Offer ID to `0`.
 
-If you want to update an existing offer set Offer ID to existing offer ID.
+If you want to update an existing offer, set Offer ID to existing offer ID.
 
-If you want to delete an existing offer set Offer ID to existing offer ID and set Amount to `0`.
+If you want to delete an existing offer, set Offer ID to existing offer ID and set Amount to `0`.
 
 Threshold: Medium
 
@@ -226,13 +226,13 @@ Possible errors:
 
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.manageSellOffer) | [Java](https://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ManageSellOfferOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#ManageSellOffer)
 
-Creates, updates, or deletes an offer to sell one asset for another, otherwise known as a "ask" order or "offer" on a traditional orderbook.
+Creates, updates, or deletes an offer to sell one asset for another, otherwise known as an "ask" order or "offer" on a traditional orderbook.
 
-If you want to create a new offer set Offer ID to `0`.
+If you want to create a new offer, set Offer ID to `0`.
 
-If you want to update an existing offer set Offer ID to existing offer ID.
+If you want to update an existing offer, set Offer ID to existing offer ID.
 
-If you want to delete an existing offer set Offer ID to existing offer ID and set Amount to `0`.
+If you want to delete an existing offer, set Offer ID to existing offer ID and set Amount to `0`.
 
 Threshold: Medium
 
@@ -524,7 +524,7 @@ Result: `ClaimClaimableBalanceResult`
 
 | Parameters | Type | Description |
 | --- | --- | --- |
-| BalanceID | claimableBalanceID | BalanceID on the ClaimableBalanceEntry that the source account is claiming. The balanceID can be retrieved from a succesful `CreateClaimableBalanceResult`. See [ClaimableBalanceID](../glossary/miscellaneous-core-objects.mdx#ClaimableBalanceID) for more information. |
+| BalanceID | claimableBalanceID | BalanceID on the ClaimableBalanceEntry that the source account is claiming. The balanceID can be retrieved from a successful `CreateClaimableBalanceResult`. See [ClaimableBalanceID](../glossary/miscellaneous-core-objects.mdx#ClaimableBalanceID) for more information. |
 
 Possible errors:
 
@@ -598,13 +598,13 @@ Possible errors:
 | --- | --- | --- |
 | REVOKE_SPONSORSHIP_DOES_NOT_EXIST | -1 | The ledgerEntry for LedgerKey doesn't exist, the account ID on signer doesn't exist, or the Signer Key doesn't exist on account ID's account. |
 | REVOKE_SPONSORSHIP_NOT_SPONSOR | -2 | If the ledgerEntry/signer is sponsored, then the source account must be the sponsor. If the ledgerEntry/signer is not sponsored, the source account must be the owner. This error will be thrown otherwise. |
-| REVOKE_SPONSORSHIP_LOW_RESERVE | -3 | The sponsored account does not have enough XLM to satisfy the minimum balance increase caused by revoking sponsorship on a ledgerEntry/signer it owns, or the sponsor of the source account doesn't have enough XLM to satisfy the minimum balance increase caused by sponsoring a transfered ledgerEntry/signer. |
+| REVOKE_SPONSORSHIP_LOW_RESERVE | -3 | The sponsored account does not have enough XLM to satisfy the minimum balance increase caused by revoking sponsorship on a ledgerEntry/signer it owns, or the sponsor of the source account doesn't have enough XLM to satisfy the minimum balance increase caused by sponsoring a transferred ledgerEntry/signer. |
 | REVOKE_SPONSORSHIP_ONLY_TRANSFERABLE | -4 | Sponsorship cannot be removed from this ledgerEntry. This error will happen if the user tries to remove the sponsorship from a ClaimableBalanceEntry. |
 
 ## Set Trustline Flags
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.setTrustLineFlags) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/SetTrustlineFlagsOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#SetTrustLineFlags)
 
-Allows an issuing account to configure various authorization and trustline flags for all trustlines to an asset. This supercedes the deprecated [`AllowTrust`](#allow-trust), but the documentation there still applies.
+Allows an issuing account to configure various authorization and trustline flags for all trustlines to an asset. This supersedes the deprecated [`AllowTrust`](#allow-trust), but the documentation there still applies.
 
 Threshold: Low
 
@@ -614,7 +614,7 @@ Result: `SetTrustLineFlagsResult`
 | --- | --- | --- |
 | Trustor | account ID | The account that established this trustline. |
 | Asset | asset | The asset trustline whose flags are being modified. |
-| SetFlags | integer | One or more flags (combined via bitwise-OR) indicating which flags to **set**. Possible flags are: `1` if the trustor is authorized to transact with the asset xor `2` if the trustor is authorized to maintain offers but not to perform other transactions. |
+| SetFlags | integer | One or more flags (combined via bitwise-OR) indicating which flags to **set**. Possible flags are: `1` if the trustor is authorized to transact with the asset or `2` if the trustor is authorized to maintain offers but not to perform other transactions. |
 | ClearFlags | integer | One or more flags (combined via bitwise `OR`) indicating which flags to **clear**. Possibilities include those for `SetFlags`as well as `4`, which prevents the issuer from clawing back its asset (both from accounts and claimable balances). |
 
 Note that passing `0` to either `SetFlags` or `ClearFlags` will be a no-op (nothing will be set or cleared).
