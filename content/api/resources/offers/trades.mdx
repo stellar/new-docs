@@ -1,0 +1,153 @@
+---
+title: Retrieve an Offer's Trades
+order: 40
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { AttributeTable } from "components/AttributeTable";
+
+This endpoint represents all trades for a given offer and can be used in streaming mode.
+
+Streaming mode allows you to listen for trades for this offer as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known trade unless a `cursor` is set, in which case it will start from that `cursor`. By setting the `cursor` value to `now`, you can stream trades created since your request time.
+
+<Endpoint>
+
+
+|  |  |
+| --- | --- |
+| GET | /offers/:offer_id/trades?cursor={paging_token}&order={asc,desc}&limit={1-200} |
+
+</Endpoint>
+
+
+<AttributeTable>
+
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- offer_id
+  - required
+  - A unique identifier for this offer.
+- cursor
+  - optional
+  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+- order
+  - optional
+  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+- limit
+  - optional
+  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+
+</AttributeTable>
+
+
+<CodeExample title="Example Request">
+
+
+```curl
+curl "https://horizon.stellar.org/offers/104078276/trades?limit=3"
+```
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+server
+  .trades()
+  .forOffer("104078276")
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
+```
+
+</CodeExample>
+
+
+<ExampleResponse title="Example Response">
+
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/offers/104078276/trades?cursor=\u0026limit=3\u0026order=asc"
+    },
+    "next": {
+      "href": "https://horizon.stellar.org/offers/104078276/trades?cursor=107449584845914113-0\u0026limit=3\u0026order=asc"
+    },
+    "prev": {
+      "href": "https://horizon.stellar.org/offers/104078276/trades?cursor=107449468881756161-0\u0026limit=3\u0026order=desc"
+    }
+  },
+  "_embedded": {
+    "records": [
+      {
+        "_links": {
+          "self": {
+            "href": ""
+          },
+          "base": {
+            "href": "https://horizon.stellar.org/accounts/GCO7OW5P2PP7WDN6YUDXUUOPAR4ZHJSDDCZTIAQRTRZHKQWV45WUPBWX"
+          },
+          "counter": {
+            "href": "https://horizon.stellar.org/accounts/GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K"
+          },
+          "operation": {
+            "href": "https://horizon.stellar.org/operations/107449468881756161"
+          }
+        },
+        "id": "107449468881756161-0",
+        "paging_token": "107449468881756161-0",
+        "ledger_close_time": "2019-07-26T09:17:02Z",
+        "offer_id": "104078276",
+        "base_offer_id": "104078276",
+        "base_account": "GCO7OW5P2PP7WDN6YUDXUUOPAR4ZHJSDDCZTIAQRTRZHKQWV45WUPBWX",
+        "base_amount": "4433.2000000",
+        "base_asset_type": "native",
+        "counter_offer_id": "4719135487309144065",
+        "counter_account": "GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K",
+        "counter_amount": "443.3200000",
+        "counter_asset_type": "credit_alphanum4",
+        "counter_asset_code": "BB1",
+        "counter_asset_issuer": "GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN",
+        "base_is_seller": true,
+        "price": {
+          "n": 1,
+          "d": 10
+        }
+      }
+    ]
+  }
+}
+```
+
+</ExampleResponse>
+
+
+<CodeExample title="JavaScript Streaming Example">
+
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+var callback = function (resp) {
+  console.log(resp);
+};
+
+var es = server
+  .trades()
+  .forOffer("104078276")
+  .cursor("now")
+  .stream({ onmessage: callback });
+```
+
+</CodeExample>
+
