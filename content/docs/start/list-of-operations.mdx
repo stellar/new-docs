@@ -31,8 +31,10 @@ For the protocol specification, see [stellar-transaction.x](https://github.com/s
 - [End Sponsoring Future Reserves](#end-sponsoring-future-reserves)
 - [Revoke Sponsorship](#revoke-sponsorship)
 - [Clawback](#clawback)
-- [ClawbackClaimableBalance](#clawback-claimable-balance)
-- [SetTrustLineFlags](#set-trustline-flags)
+- [Clawback Claimable Balance](#clawback-claimable-balance)
+- [Set Trustline Flags](#set-trustline-flags)
+- [Liquidity Pool Deposit](#liquidity-pool-deposit)
+- [Liquidity Pool Withdraw](#liquidity-pool-withdraw)
 
 ## Create Account
 
@@ -378,9 +380,11 @@ Possible errors:
 
 <Alert>
 
+
 This operation is deprecated as of Protocol 17. Prefer [SetTrustLineFlags](#set-trustline-flags) instead.
 
 </Alert>
+
 
 Updates the `authorized` flag of an existing trustline.
 
@@ -546,9 +550,9 @@ Threshold: Medium
 
 Result: `BeginSponsoringFutureReservesResult`
 
-| Parameters  | Type       | Description                                     |
-| ----------- | ---------- | ----------------------------------------------- |
-| SponsoredID | account ID | Account that will have its reserves sponsored.  |
+| Parameters  | Type       | Description                                    |
+| ----------- | ---------- | ---------------------------------------------- |
+| SponsoredID | account ID | Account that will have its reserves sponsored. |
 
 Possible errors:
 
@@ -602,6 +606,7 @@ Possible errors:
 | REVOKE_SPONSORSHIP_ONLY_TRANSFERABLE | -4 | Sponsorship cannot be removed from this ledgerEntry. This error will happen if the user tries to remove the sponsorship from a ClaimableBalanceEntry. |
 
 ## Set Trustline Flags
+
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.setTrustLineFlags) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/SetTrustlineFlagsOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/txnbuild#SetTrustLineFlags)
 
 Allows an issuing account to configure various authorization and trustline flags for all trustlines to an asset. This supersedes the deprecated [`AllowTrust`](#allow-trust), but the documentation there still applies.
@@ -640,11 +645,11 @@ Result: `ClawbackResult`
 
 Parameters:
 
-| Parameters  | Type       | Description                                 |
-| ----------- | ---------- | ------------------------------------------- |
-| From        | account ID | Account address that receives the clawback. |
-| Asset       | asset      | Asset held by the destination account.      |
-| Amount      | integer    | Amount of the aforementioned asset to burn. |
+| Parameters | Type       | Description                                 |
+| ---------- | ---------- | ------------------------------------------- |
+| From       | account ID | Account address that receives the clawback. |
+| Asset      | asset      | Asset held by the destination account.      |
+| Amount     | integer    | Amount of the aforementioned asset to burn. |
 
 Possible errors:
 
@@ -656,6 +661,7 @@ Possible errors:
 | CLAWBACK_UNDERFUNDED | -4 | The `From` account does not have a sufficient available balance of the asset (after accounting for selling liabilities). |
 
 ## Clawback Claimable Balance
+
 Claws back an unclaimed ClaimableBalanceEntry, burning the pending amount of the asset.
 
 Threshold: Medium
@@ -675,3 +681,56 @@ Possible errors:
 | CLAWBACK_CLAIMABLE_BALANCE_DOES_NOT_EXIST | -1 | There is no existing ClaimableBalanceEntry that matches the input BalanceID. |
 | CLAWBACK_CLAIMABLE_BALANCE_NOT_ISSUER | -2 | The source account is not the issuer of the asset in the claimable balance. |
 | CLAWBACK_CLAIMABLE_BALANCE_NOT_CLAWBACK_ENABLED | -3 | The `CLAIMABLE_BALANCE_CLAWBACK_ENABLED_FLAG` is not set for this trustline. |
+
+## Liquidity Pool Deposit
+
+Deposits assets into a liquidity pool.
+
+Threshold: Medium
+
+Result: `LiquidityPoolDepositResult`
+
+| Parameters | Type | Description |
+| --- | --- | --- |
+| Liquidity Pool ID | liquidityPoolID | The PoolID for the Liquidity Pool to deposit into |
+| Max Amount A | integer | Maximum amount of first asset to deposit |
+| Max Amount B | integer | Maximum amount of second asset to deposit |
+| Min Price | {numerator, denominator} | Minimum depositA/depositB |
+| Max Price | {numerator, denominator} | Maximum depositA/depositB |
+
+Possible errors:
+
+| Error | Code | Description |
+| --- | --- | --- |
+| LIQUIDITY_POOL_DEPOSIT_MALFORMED | -1 | Bad input. |
+| LIQUIDITY_POOL_DEPOSIT_NO_TRUST | -2 | No trust line for one of the assets. |
+| LIQUIDITY_POOL_DEPOSIT_NOT_AUTHORIZED | -3 | Not authorized for one of the assets. |
+| LIQUIDITY_POOL_DEPOSIT_UNDERFUNDED | -4 | Insufficient balance for one of the assets. |
+| LIQUIDITY_POOL_DEPOSIT_LINE_FULL | -5 | The liquidity pool share trust line doesn't have a sufficient limit. |
+| LIQUIDITY_POOL_DEPOSIT_BAD_PRICE | -6 | The deposit price is outside the bounds. |
+| LIQUIDITY_POOL_DEPOSIT_POOL_FULL | -7 | The liquidity pool reserves are full. |
+
+## Liquidity Pool Withdraw
+
+Withdraw assets from a liquidity pool.
+
+Threshold: Medium
+
+Result: `LiquidityPoolWithdrawResult`
+
+| Parameters | Type | Description |
+| --- | --- | --- |
+| Liquidity Pool ID | liquidityPoolID | The PoolID for the Liquidity Pool to withdraw from |
+| Amount | integer | Amount of pool shares to withdraw |
+| Min Amount A | integer | Minimum amount of the first asset to withdraw |
+| Min Amount B | integer | Minimum amount of the second asset to withdraw |
+
+Possible errors:
+
+| Error | Code | Description |
+| --- | --- | --- |
+| LIQUIDITY_POOL_WITHDRAW_MALFORMED | -1 | Bad input. |
+| LIQUIDITY_POOL_WITHDRAW_NO_TRUST | -2 | No trust line for one of the assets. |
+| LIQUIDITY_POOL_WITHDRAW_UNDERFUNDED | -3 | Insufficient balance for the pool shares. |
+| LIQUIDITY_POOL_WITHDRAW_LINE_FULL | -4 | The withdrawal would exceed the trust line limit for one of the assets. |
+| LIQUIDITY_POOL_WITHDRAW_UNDER_MINIMUM | -5 | Unable to withdraw enough to satisfy the minimum. |

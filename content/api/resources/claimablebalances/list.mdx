@@ -43,7 +43,7 @@ This endpoint lists all available claimable balances.
   - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
 - limit
   - integer (optional)
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 
 </AttributeTable>
 
@@ -80,7 +80,7 @@ try:
 except Exception as err:
 	print(err)
 ```
-  
+
 </CodeExample>
 
 

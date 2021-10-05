@@ -19,13 +19,16 @@ Operation types that can be returned by this endpoint include:
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /ledgers/:ledger_sequence/payments?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -41,7 +44,7 @@ Operation types that can be returned by this endpoint include:
   - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 - include_failed
   - optional
   - Set to true to include failed payments in results. Options include `true` and `false`.
@@ -51,7 +54,9 @@ Operation types that can be returned by this endpoint include:
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/ledgers/27521176/payments?limit=1"
@@ -75,7 +80,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -131,3 +138,4 @@ server
 ```
 
 </ExampleResponse>
+

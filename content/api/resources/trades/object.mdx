@@ -10,6 +10,7 @@ When Horizon returns information about a trade, it uses the following format:
 
 <AttributeTable>
 
+
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
@@ -22,15 +23,15 @@ When Horizon returns information about a trade, it uses the following format:
 - ledger_close_time
   - string
   - An ISO 8601 formatted string of when the ledger with this trade was closed.
-- offer_id
-  - string
-  - The sell offer ID. **DECPRECATED**
 - base_account
-  - string
+  - string (optional)
   - The account ID of the base party for this trade.
 - base_offer_id
-  - string
+  - string (optional)
   - The base offer ID. If this offer was immediately and fully consumed, this will be a synethic ID.
+- base_liquidity_pool_id
+  - string (optional)
+  - The base liquidity pool ID. If this trade was executed against a liquidity pool.
 - base_amount
   - string
   - The amount of the base asset that was moved from `base_account` to `counter_account`.
@@ -43,9 +44,15 @@ When Horizon returns information about a trade, it uses the following format:
 - base_asset_issuer
   - string
   - The Stellar address of the base asset’s issuer.
+- counter_account
+  - string (optional)
+  - The account ID of the base party for this trade.
 - counter_offer_id
-  - string
+  - string (optional)
   - The counter offer ID. If this offer was immediately and fully consumed, this will be a synethic ID.
+- counter_liquidity_pool_id
+  - string (optional)
+  - The counter liquidity pool ID. If this trade was executed against a liquidity pool.
 - counter_amount
   - string
   - The amount of the counter asset that was moved from `counter_account` to `base_account`.
@@ -60,12 +67,12 @@ When Horizon returns information about a trade, it uses the following format:
   - The Stellar address of the counter asset’s issuer.
 - price
   - object
-  - An object of a number numerator and number denominator that represents the original offer price. To derive the price, divide `n` by `d`.
+  - An object of a number numerator and number denominator that represents the original offer price. To derive the price, divide `n` by `d`. `n` and `d` are represented as strings because they might be 64-bit integers.
     - n
-      - number
+      - string
       - The numerator.
     - d
-      - number
+      - string
       - The denominator.
 - base_is_seller
   - boolean
@@ -73,7 +80,9 @@ When Horizon returns information about a trade, it uses the following format:
 
 </AttributeTable>
 
+
 <ExampleResponse>
+
 
 ```json
 {
@@ -107,10 +116,11 @@ When Horizon returns information about a trade, it uses the following format:
   "counter_asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
   "base_is_seller": false,
   "price": {
-    "n": 10000000,
-    "d": 87166567
+    "n": "10000000",
+    "d": "87166567"
   }
 }
 ```
 
 </ExampleResponse>
+
