@@ -45,6 +45,9 @@ To build this project, you must have the following dependencies installed:
     version in the future.
 - `yarn`
 
+Some of the dependencies are considered "legacy", so run
+`npm install --legacy-peer-deps` to bypass errors.
+
 ## Local Development
 
 `yarn start` to start local development.
