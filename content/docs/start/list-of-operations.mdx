@@ -108,6 +108,8 @@ A few things to note:
   - this is especially important when `(Destination, Destination Asset) == (Source, Send Asset)` as this provides a functionality equivalent to getting a no interest loan for the duration of the operation.
 - `Destination min` is a protective measure: it allows you to specify a lower bound for an acceptable conversion. If offers in the order books are not favorable enough for the operation to deliver that amount, the operation will fail.
 
+As of protocol 18, the network automatically considers both the orderbook and any liquidity pools when trying to find paths to exchange one asset for another. For example, if a user wants their recipient to get 1000 Zs from your As, they may consume an order to get Ws for their As, then exchange against the W-Z liquidity pool for the second hop of the payment.
+
 Threshold: Medium
 
 Result: `PathPaymentStrictSendResult`
@@ -153,6 +155,8 @@ A few things to note:
 - balances are settled at the very end of the operation
   - this is especially important when `(Destination, Destination Asset) == (Source, Send Asset)` as this provides a functionality equivalent to getting a no interest loan for the duration of the operation.
 - `Send max` is a protective measure: it allows you to specify an upper bound for an acceptable conversion. If offers in the order books are not favorable enough for the operation to succeed for less than `Send max`, the operation will fail.
+
+As of protocol 18, the network automatically considers both the orderbook and any liquidity pools when trying to find paths to exchange one asset for another. For example, if a user wants their recipient to get 1000 Zs from your As, they may consume an order to get Ws for their As, then exchange against the W-Z liquidity pool for the second hop of the payment.
 
 Threshold: Medium
 
@@ -686,6 +690,10 @@ Possible errors:
 
 Deposits assets into a liquidity pool.
 
+Depositing increases the reserves of a liquidity pool in exchange for pool shares. Parameters to this operation depend on the ordering of assets in the liquidity pool (see the liquidity pool glossary entry for information about how to determine the ordering of assets). “A” refers to the first asset in the liquidity pool, and “B” refers to the second asset in the liquidity pool.
+
+If the pool is empty, then this operation deposits maxAmountA of A and maxAmountB of B into the pool. If the pool is not empty, then this operation deposits at most maxAmountA of A and maxAmountB of B into the pool. The actual amounts deposited are determined using the current reserves of the pool.
+
 Threshold: Medium
 
 Result: `LiquidityPoolDepositResult`
@@ -713,6 +721,8 @@ Possible errors:
 ## Liquidity Pool Withdraw
 
 Withdraw assets from a liquidity pool.
+
+Withdrawing reduces the number of pool shares in exchange for reserves from a liquidity pool. Parameters to this operation depend on the ordering of assets in the liquidity pool (see the liquidity pool glossary entry for information about how to determine the ordering of assets). “A” refers to the first asset in the liquidity pool, and “B” refers to the second asset in the liquidity pool.
 
 Threshold: Medium
 
