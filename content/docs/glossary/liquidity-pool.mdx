@@ -1,0 +1,72 @@
+---
+title: Liquidity Pool
+order:
+---
+
+import { Alert } from "components/Alert";
+import { CodeExample } from "components/CodeExample";
+
+As of Protocol 18 and [CAP-38](https://stellar.org/protocol/cap-38), the Stellar network supports _liquidity pools_, which enables _automated market making_ on the network. If you’re already familiar with AMMs, feel free to skip ahead to the relevant [operations](#operations) or dive straight into the [examples](#examples).
+
+## AMM Primer
+
+In order to be able to buy an asset, someone needs to be willing to sell it. The easier it is to quickly and cost-effectively trade large amounts of an asset, the more liquid it is. Colloquially, this is what it means to be able to easily liquidate your assets into cash when you need it.
+
+In a traditional exchange like the NYSE, there are lots of individuals (e.g. retail investors) and companies (e.g. hedge funds) making trades on any given asset. A _market maker_ for a particular asset is anyone regularly offering to buy and sell it at quoted prices; market makers create liquidity because their offers make it easier to quickly trade large amounts of an asset. The market maker is available to trade even when no one else wants to. Typically, market makers are large investment firms that have the capital to buy or sell arbitrary assets in large quantities, but anyone can be a market maker.
+
+Market makers generally don’t provide liquidity out of the goodness of their hearts. Like other businesses, they are seeking to generate a profit. They achieve this by offering to buy and sell at different prices—the difference between these prices is known as the _spread_. If a market maker successfully buys low and sells high, then they will generate a profit. But nothing is guaranteed, and they may generate a loss if the market moves against them while they hold a position. Making the spread wider makes it less likely that the market maker will lose money, but also discourages people from trading.
+
+An _automated market maker_ provides liquidity but, unlike a conventional market maker, the quoted prices are determined solely by a mathematical equation. An automated market maker holds two different assets in a _liquidity pool_, and the quantities of those assets—typically called _reserves_—are inputs to the mathematical equation. Liquidity pools democratize market making by letting any eligible participant deposit assets into the liquidity pool. In return for their deposit they will receive _pool shares_ representing their ownership of the assets in the liquidity pool. If there are 150 total pool shares and they own 30, then they are entitled to withdraw 20% of the assets at any time.
+
+If an automated market maker holds more reserves, then the price moves less in response to a trade. The price always moves against a trade, so traders get better prices when the automated market maker holds more reserves. In the interest of providing competitive prices, automated market makers attract reserves by incentivizing liquidity providers. The automated market maker attempts to capture the spread for the liquidity providers by offering to buy and sell at different prices. In this context, the spread is typically referred to as a fee. The fees cause the reserves to grow. But like traditional market making, nothing is guaranteed—the automated market maker may lose money if the market moves. If the automated market maker does make money, then the reserves will grow and participants will find that they may withdraw more than they deposited.
+
+## AMM Pricing
+
+An automated market maker is willing to make some trades and unwilling to make others. For example, if 1 EUR = 1.17 USD then the automated market maker might be willing to sell 1 EUR for 1.18 USD and unwilling to sell 1 EUR for 1.16 USD. How does an automated market maker know what trades are acceptable and what trades aren’t acceptable? How does it even know what the exchange rate is?
+
+To determine what trades are acceptable, the automated market maker enforces an _invariant_. There are many possible invariants with different advantages and disadvantages, but automated market makers built on Stellar enforce the _constant product invariant_ and are therefore known as _constant product market makers_. This is analogous to the invariant enforced by [Uniswap](https://uniswap.org/). The constant product invariant states that an automated market maker must never allow the product of the reserves to decrease. For example, suppose the current reserves in the liquidity pool are 1000 EUR and 1170 USD which implies a product of 1,170,000. Selling 1 EUR for 1.18 USD would be acceptable because that would leave reserves of 999 EUR and 1171.18 USD, which implies a product of 1,170,008.82. But selling 1 EUR for 1.16 USD would not be acceptable because that would leave reserves of 999 EUR and 1171.16 USD, which implies a product of 1,169,988.84.
+
+In the above example, it seems that the automated market maker somehow knows that the exchange rate is 1 EUR = 1.17 USD. In reality, the automated market maker infers this from the reserves in the liquidity pool. Ignoring fees, the exchange rate is the ratio of the reserves. If the ratio of the reserves deviates from the true exchange rate, then an _arbitrageur_ will recognize that they can trade with the automated market maker at a favorable price. Arbitrage trades move the ratio of the reserves towards the market exchange rate.
+
+An automated market maker charges a fee on every trade, and that fee is a fixed percent of the amount bought by the automated market maker. For example, if an automated market maker sells 100 EUR for 118 USD then the fee is charged on the USD. The fee is 30 [bps](https://en.wikipedia.org/wiki/Basis_point), which is equal to 0.30%. So if you actually wanted to make this trade, you would need to pay about 118.355 USD for 100 EUR. The automated market maker actually factors the fees into the constant product invariant, so in reality the product of the reserves grows after every trade.
+
+## Liquidity Pool Participation
+
+Participation in a liquidity pool is represented by pool shares. Pool shares are very similar to other Stellar assets, but there is one important difference: pool shares are not transferable. The only way to increase the number of pool shares held is to deposit into a liquidity pool, and the only way to decrease the number of pool shares held is to withdraw from a liquidity pool. Two specific examples of this are that pool shares cannot be sent in payments and cannot be sold using offers.
+
+A pool share has two representations. The full representation is used with change trust, and the hashed representation is used in all other cases. When constructing the asset representation of a pool share, the assets must be in lexicographical order. For example, A-B is in the correct order but B-A is not. This results in a canonical representation of a pool share.
+
+### Trustlines
+
+Like other Stellar assets, an account needs a [trustline](https://developers.stellar.org/docs/issuing-assets/anatomy-of-an-asset/#trustlines) for every pool share it wants to own. It is not possible to deposit into a liquidity pool without a trustline for the corresponding pool share. Pool share trustlines differ from trustlines for other assets in a few important ways:
+
+1. A pool share trustline cannot be created unless the account already has trustlines that are [authorized or authorized to maintain liabilities](https://developers.stellar.org/docs/issuing-assets/control-asset-access/#authorization-required) for the assets in the liquidity pool. See [below](#authorization) for more information about how authorization impacts pool share trustlines.
+2. A pool share trustline requires 2 [base reserves](https://developers.stellar.org/docs/glossary/minimum-balance/) instead of 1. For example, an account (2 base reserves) with a trustline for asset A (1 base reserve), a trustline for asset B (1 base reserve), and a trustline for the A-B pool share (2 base reserves) would have a reserve requirement of 6 base reserves.
+
+### Fees
+
+Analogous to the spread in a traditional market, an automated market maker charges a fee on all trades. The participants in the liquidity pool receive a share of the fee proportional to their share of the assets in the liquidity pool. The fee rate is fixed at 30 bps, which is equal to 0.30%. These fees are completely separate from [network fees](https://developers.stellar.org/docs/glossary/fees/).
+
+### Authorization
+
+Pool share trustlines cannot be authorized or deauthorized independently. Instead, the authorization of a pool share trustline is derived from the trustlines for the assets in the liquidity pool. This design is necessary because a liquidity pool may contain assets from two different issuers, and both issuers should have a say in whether the pool share trustline is authorized.
+
+There are a few possibilities with regard to authorization. The behavior of the A-B pool share trustline is determined according to the following table:
+
+| Scenario | Behavior |
+| --- | --- |
+| Trustlines for A and B are fully authorized | No restrictions on deposit and withdraw |
+| Trustline for A is fully authorized but trustline for B is authorized to maintain liabilities<br/><br/>OR<br/><br/>Trustline for B is fully authorized but trustline for A is authorized to maintain liabilities<br/><br/>OR<br/><br/>Trustlines for A and B are authorized to maintain liabilities | Trustlines for A and B are authorized to maintain liabilities |
+| Trustline for A is not authorized or doesn’t exist<br/><br/>OR<br/><br/>Trustline for B is not authorized or doesn’t exist | Pool share trustline does not exist |
+
+If the issuer of A or B revokes authorization, then the account will automatically withdraw from every liquidity pool containing that asset and those pool share trustlines will be deleted. We say that these pool shares have been _redeemed_. For example, if the account participates in the A-B, A-C, and B-C liquidity pools and the issuer of A revokes authorization then the account will redeem from A-B and A-C but not B-C. For each redeemed pool share trustline, a Claimable Balance will be created for each asset contained in the pool if there is a balance being withdrawn and the redeemer is not the issuer of that asset. The claimant of the Claimable Balance will be the owner of the deleted pool share trustline, and the sponsor of the Claimable Balance will be the sponsor of the deleted pool share trustline. The BalanceID of each Claimable Balance is the SHA-256 hash of the [revokeID](https://github.com/stellar/stellar-core/blob/5bec96c4c9d7080802e80a2e93ddc0bd6bd8a98d/src/xdr/Stellar-transaction.x#L539-L547).
+
+## Operations
+
+There are two operations that facilitate participation in a liquidity pool: [LiquidityPoolDeposit](https://developers.stellar.org/docs/start/list-of-operations/#liquidity-pool-deposit) and [LiquidityPoolWithdraw](https://developers.stellar.org/docs/start/list-of-operations/#liquidity-pool-withdraw). Use LiquidityPoolDeposit whenever a user wants to start providing liquidity to the market. Use LiquidityPoolWithdraw whenever a user wants to stop providing liquidity to the market. It’s really that easy.
+
+However, users don’t need to participate in the pool to take advantage of what it’s offering: an easy way to exchange two assets. For that, just use [PathPaymentStrictReceive](https://developers.stellar.org/docs/start/list-of-operations/#path-payment-strict-receive) or [PathPaymentStrictSend](https://developers.stellar.org/docs/start/list-of-operations/#path-payment-strict-send). If your application is already using path payments, then you don’t need to change anything for users to take advantage of the prices available in liquidity pools.
+
+## Examples
+
+Coming soon!
