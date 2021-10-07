@@ -73,7 +73,7 @@ However, users don’t need to participate in the pool to take advantage of what
 
 ## Examples
 
-First, we'll cover basic liquidity pool participation. <!-- Then, we'll see their seamless integration into path payments. Finally, we'll cover some advanced scenarios with trustline authorization. -->
+For now, we'll cover basic liquidity pool participation and querying. <!-- Then, we'll see their seamless integration into path payments. Finally, we'll cover some advanced scenarios with trustline authorization. -->
 
 <Alert>
 
@@ -130,7 +130,7 @@ const [ A, B ] = orderAssets(...[
   new sdk.Asset("B", kp1.publicKey()),
 ]);
 
-/// Establishes trustlines and pays out to `recipientKp` for all `assets`.
+/// Establishes trustlines and funds `recipientKp` for all `assets`.
 function distributeAssets(issuerKp, recipientKp, ...assets) {
   return server
     .loadAccount(issuerKp.publicKey())
@@ -162,7 +162,7 @@ function preamble() {
 
 </CodeExample>
 
-Here, we use `distributeAssets()` to establish trustlines and set up initial balances of two custom assets (`A` and `B`, issued by `kp1`) for two accounts (`kp2` and `kp3`).
+Here, we use `distributeAssets()` to establish trustlines and set up initial balances of two custom assets (`A` and `B`, issued by `kp1`) for two accounts (`kp2` and `kp3`). For someone to participate in the pool, they must establish trustlines to each of the asset issuers *and* to the pool share asset (explained below).
 
 Note the `orderAssets()` helper here. Operations related to liquidity pools refer to the asset pair arbitrarily as `A` and `B`; however, they must be "ordered" such that `A < B`. This ordering is defined by the protocol, but its details should not be relevant (if you're curious, it's essentially lexographically ordered by asset type, code, then issuer). We can use the comparison methods built into the SDKs (like `Asset.compare`) to ensure we pass them in the right order and avoid errors.
 
@@ -204,17 +204,17 @@ const poolId = sdk.getLiquidityPoolId(
   poolShareAsset.getLiquidityPoolParameters()
 ).toString("hex");
 
-function addLiquidity(account, keypair, keypair, poolId, reserveA, reserveB) {
+function addLiquidity(source, signer, poolId, maxReserveA, maxReserveB) {
   const exactPrice = reserveA / reserveB;
   const minPrice = exactPrice - (exactPrice * 0.10);
   const maxPrice = exactPrice + (exactPrice * 0.10);
 
   return server.submitTransaction(
-    buildTx(account, keypair,
+    buildTx(source, signer,
       sdk.Operation.liquidityPoolDeposit({
         liquidityPoolId: poolId,
-        maxAmountA: reserveA,
-        maxAmountB: reserveB,
+        maxAmountA: maxReserveA,
+        maxAmountB: maxReserveB,
         minPrice: minPrice.toFixed(7),
         maxPrice: maxPrice.toFixed(7),
       })
@@ -236,13 +236,13 @@ If you own shares of a particular pool, you can withdraw reserves from it. The o
 <CodeExample>
 
 ```js
-function removeLiquidity(source, sourceKp, poolId, reserveA, reserveB) {
+function removeLiquidity(source, signer, poolId, minReserveA, minReserveB) {
   return server.submitTransaction(
-    buildTx(source, sourceKp,
+    buildTx(source, signer,
       sdk.Operation.liquidityPoolDeposit({
         liquidityPoolId: poolId,
-        minAmountA: reserveA,
-        minAmountB: reserveB,
+        minAmountA: minReserveA,
+        minAmountB: minReserveB,
       })
     )
   )
@@ -273,7 +273,7 @@ function main() {
           .then(_ => getSpotPrice());
       }))
     )
-    .then(_ => withdrawLiquidiity(accounts[1], kps[1], "500", "2000"))
+    .then(_ => withdrawLiquidity(accounts[1], kps[1], "500", "2000"))
     .then(_ => getSpotPrice());
 }
 
