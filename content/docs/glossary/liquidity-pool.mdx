@@ -3,7 +3,6 @@ title: Liquidity Pools
 order:
 ---
 
-import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
 
 As of Protocol 18 and [CAP-38](https://stellar.org/protocol/cap-38), the Stellar network supports _liquidity pools_, which enables _automated market making_ on the network. If you’re already familiar with AMMs, feel free to skip ahead to the relevant [operations](#operations) or dive straight into the [examples](#examples).
@@ -165,11 +164,7 @@ function preamble() {
 
 Here, we use `distributeAssets()` to establish trustlines and set up initial balances of two custom assets (`A` and `B`, issued by `kp1`) for two accounts (`kp2` and `kp3`).
 
-<Alert>
-
-Note the `orderAssets()` helper here. Operations related to liquidity pools refer to the asset pair arbitrarily as `A` and `B`. However, they must be "ordered" such that `A < B`. This ordering is defined by the protocol, but its details should not be relevant (if you're curious, it's essentially lexographically ordered by asset type, code, then issuer). We can use the comparison methods built into the SDKs (like `Asset.compare`) to ensure we pass them in the right order and avoid errors.
-
-</Alert>
+Note the `orderAssets()` helper here. Operations related to liquidity pools refer to the asset pair arbitrarily as `A` and `B`; however, they must be "ordered" such that `A < B`. This ordering is defined by the protocol, but its details should not be relevant (if you're curious, it's essentially lexographically ordered by asset type, code, then issuer). We can use the comparison methods built into the SDKs (like `Asset.compare`) to ensure we pass them in the right order and avoid errors.
 
 
 ### Participation: Creation
@@ -204,7 +199,8 @@ To work with a liquidity pool, you need to know its ID beforehand. It's a determ
 <CodeExample>
 
 ```js
-const poolId = sdk.getLiquidityPoolId("constant_product",
+const poolId = sdk.getLiquidityPoolId(
+  "constant_product",
   poolShareAsset.getLiquidityPoolParameters()
 ).toString("hex");
 
