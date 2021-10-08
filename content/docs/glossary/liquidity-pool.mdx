@@ -1,12 +1,12 @@
 ---
-title: Liquidity Pool
+title: Liquidity Pools
 order:
 ---
 
-import { Alert } from "components/Alert";
 import { CodeExample } from "components/CodeExample";
 
 As of Protocol 18 and [CAP-38](https://stellar.org/protocol/cap-38), the Stellar network supports _liquidity pools_, which enables _automated market making_ on the network. If you’re already familiar with AMMs, feel free to skip ahead to the relevant [operations](#operations) or dive straight into the [examples](#examples).
+
 
 ## AMM Primer
 
@@ -20,6 +20,7 @@ An _automated market maker_ provides liquidity but, unlike a conventional market
 
 If an automated market maker holds more reserves, then the price moves less in response to a trade. The price always moves against a trade, so traders get better prices when the automated market maker holds more reserves. In the interest of providing competitive prices, automated market makers attract reserves by incentivizing liquidity providers. The automated market maker attempts to capture the spread for the liquidity providers by offering to buy and sell at different prices. In this context, the spread is typically referred to as a fee. The fees cause the reserves to grow. But like traditional market making, nothing is guaranteed—the automated market maker may lose money if the market moves. If the automated market maker does make money, then the reserves will grow and participants will find that they may withdraw more than they deposited.
 
+
 ## AMM Pricing
 
 An automated market maker is willing to make some trades and unwilling to make others. For example, if 1 EUR = 1.17 USD then the automated market maker might be willing to sell 1 EUR for 1.18 USD and unwilling to sell 1 EUR for 1.16 USD. How does an automated market maker know what trades are acceptable and what trades aren’t acceptable? How does it even know what the exchange rate is?
@@ -29,6 +30,7 @@ To determine what trades are acceptable, the automated market maker enforces an 
 In the above example, it seems that the automated market maker somehow knows that the exchange rate is 1 EUR = 1.17 USD. In reality, the automated market maker infers this from the reserves in the liquidity pool. Ignoring fees, the exchange rate is the ratio of the reserves. If the ratio of the reserves deviates from the true exchange rate, then an _arbitrageur_ will recognize that they can trade with the automated market maker at a favorable price. Arbitrage trades move the ratio of the reserves towards the market exchange rate.
 
 An automated market maker charges a fee on every trade, and that fee is a fixed percent of the amount bought by the automated market maker. For example, if an automated market maker sells 100 EUR for 118 USD then the fee is charged on the USD. The fee is 30 [bps](https://en.wikipedia.org/wiki/Basis_point), which is equal to 0.30%. So if you actually wanted to make this trade, you would need to pay about 118.355 USD for 100 EUR. The automated market maker actually factors the fees into the constant product invariant, so in reality the product of the reserves grows after every trade.
+
 
 ## Liquidity Pool Participation
 
@@ -61,12 +63,256 @@ There are a few possibilities with regard to authorization. The behavior of the 
 
 If the issuer of A or B revokes authorization, then the account will automatically withdraw from every liquidity pool containing that asset and those pool share trustlines will be deleted. We say that these pool shares have been _redeemed_. For example, if the account participates in the A-B, A-C, and B-C liquidity pools and the issuer of A revokes authorization then the account will redeem from A-B and A-C but not B-C. For each redeemed pool share trustline, a Claimable Balance will be created for each asset contained in the pool if there is a balance being withdrawn and the redeemer is not the issuer of that asset. The claimant of the Claimable Balance will be the owner of the deleted pool share trustline, and the sponsor of the Claimable Balance will be the sponsor of the deleted pool share trustline. The BalanceID of each Claimable Balance is the SHA-256 hash of the [revokeID](https://github.com/stellar/stellar-core/blob/5bec96c4c9d7080802e80a2e93ddc0bd6bd8a98d/src/xdr/Stellar-transaction.x#L539-L547).
 
+
 ## Operations
 
-There are two operations that facilitate participation in a liquidity pool: [LiquidityPoolDeposit](https://developers.stellar.org/docs/start/list-of-operations/#liquidity-pool-deposit) and [LiquidityPoolWithdraw](https://developers.stellar.org/docs/start/list-of-operations/#liquidity-pool-withdraw). Use LiquidityPoolDeposit whenever a user wants to start providing liquidity to the market. Use LiquidityPoolWithdraw whenever a user wants to stop providing liquidity to the market. It’s really that easy.
+There are two operations that facilitate participation in a liquidity pool: [LiquidityPoolDeposit](https://developers.stellar.org/docs/start/list-of-operations/#liquidity-pool-deposit) and [LiquidityPoolWithdraw](https://developers.stellar.org/docs/start/list-of-operations/#liquidity-pool-withdraw). Use `LiquidityPoolDeposit` whenever a user wants to start providing liquidity to the market. Use `LiquidityPoolWithdraw` whenever a user wants to stop providing liquidity to the market. It’s really that easy.
 
 However, users don’t need to participate in the pool to take advantage of what it’s offering: an easy way to exchange two assets. For that, just use [PathPaymentStrictReceive](https://developers.stellar.org/docs/start/list-of-operations/#path-payment-strict-receive) or [PathPaymentStrictSend](https://developers.stellar.org/docs/start/list-of-operations/#path-payment-strict-send). If your application is already using path payments, then you don’t need to change anything for users to take advantage of the prices available in liquidity pools.
 
+
 ## Examples
 
-Coming soon!
+For now, we'll cover basic liquidity pool participation and querying. <!-- Then, we'll see their seamless integration into path payments. Finally, we'll cover some advanced scenarios with trustline authorization. -->
+
+<Alert>
+
+In the following code samples, proper error checking is omitted for brevity. However, you should always validate your results, as there are many ways that requests can fail. You can refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+</Alert>
+
+### Preamble
+
+For all of the following examples, we'll be working with three funded testnet accounts. If you'd like to follow along, generate some keypairs and fund them via the [friendbot](https://friendbot.stellar.org/?addr=YOUR_PUBLIC_KEY_HERE). If you use the secrets included in this guide, you may encounter problems with asset issuance or other account balance problems.
+
+The following code sets up the accounts and defines some helper functions. These should be familiar if you've played around with other examples, like [Clawbacks](./clawback.mdx#examples).
+
+<CodeExample>
+
+```js
+const sdk = require("stellar-sdk");
+
+let server = new sdk.Server("https://horizon-testnet.stellar.org");
+
+/// Helps simplify creating & signing a transaction.
+function buildTx(source, signer, ...ops) {
+  let tx = new sdk.TransactionBuilder(source, {
+    fee: sdk.BASE_FEE,
+    networkPassphrase: sdk.Networks.TESTNET,
+    withMuxing: true,
+  });
+  ops.forEach(op => tx.addOperation(op));
+  tx = tx.setTimeout(30).build();
+  tx.sign(signer);
+  return tx;
+}
+
+/// Returns the given asset pair in "protocol order."
+function orderAssets(A, B) {
+  return (sdk.Asset.compare(A, B) <= 0) ? [A, B] : [B, A];
+}
+
+/// Returns all of the accounts we'll be using.
+function getAccounts() {
+  return Promise.all(kps.map(kp => server.loadAccount(kp.publicKey())));
+}
+
+const kps = [
+  "SBGCD73TK2PTW2DQNWUYZSTCTHHVJPL4GZF3GVZMCDL6GYETYNAYOADN",
+  "SAAQFHI2FMSIC6OFPWZ3PDIIX3OF64RS3EB52VLYYZBX6GYB54TW3Q4U",
+  "SCJWYFTBDMDPAABHVJZE3DRMBRTEH4AIC5YUM54QGW57NUBM2XX6433P",
+].map(s => sdk.Keypair.fromSecret(s));
+
+// kp1 issues the assets
+const kp1 = kps[0];
+const [ A, B ] = orderAssets(...[
+  new sdk.Asset("A", kp1.publicKey()),
+  new sdk.Asset("B", kp1.publicKey()),
+]);
+
+/// Establishes trustlines and funds `recipientKp` for all `assets`.
+function distributeAssets(issuerKp, recipientKp, ...assets) {
+  return server
+    .loadAccount(issuerKp.publicKey())
+    .then(issuer => {
+      const ops = assets.map(asset => [
+        sdk.Operation.changeTrust({
+          source: recipientKp.publicKey(),
+          limit: "100000",
+          asset: asset,
+        }),
+        sdk.Operation.payment({
+          source: issuerKp.publicKey(),
+          destination: recipientKp.publicKey(),
+          amount: "100000",
+          asset: asset,
+        }),
+      ]).flat();
+
+      let tx = buildTx(issuer, issuerKp, ...ops);
+      tx.sign(recipientKp);
+      return server.submitTransaction(tx);
+    });
+}
+
+function preamble() {
+  return Promise.all([1, 2].map(i => distributeAssets(kp1, kps[i], A, B)));
+}
+```
+
+</CodeExample>
+
+Here, we use `distributeAssets()` to establish trustlines and set up initial balances of two custom assets (`A` and `B`, issued by `kp1`) for two accounts (`kp2` and `kp3`). For someone to participate in the pool, they must establish trustlines to each of the asset issuers *and* to the pool share asset (explained below).
+
+Note the `orderAssets()` helper here. Operations related to liquidity pools refer to the asset pair arbitrarily as `A` and `B`; however, they must be "ordered" such that `A < B`. This ordering is defined by the protocol, but its details should not be relevant (if you're curious, it's essentially lexographically ordered by asset type, code, then issuer). We can use the comparison methods built into the SDKs (like `Asset.compare`) to ensure we pass them in the right order and avoid errors.
+
+
+### Participation: Creation
+
+First, lets create a liquidity pool for the asset pair defined in the preamble. This involves establishing a trustline to the pool itself:
+
+<CodeExample>
+
+```js
+const poolShareAsset = new sdk.LiquidityPoolAsset(A, B, sdk.LiquidityPoolFeeV18);
+
+function establishPoolTrustline(account, keypair, poolAsset) {
+  return server.submitTransaction(
+    buildTx(account, keypair,
+      sdk.Operation.changeTrust({
+        asset: poolAsset,
+        limit: "100000"
+      })
+    )
+  );
+}
+```
+
+</CodeExample>
+
+This lets the participants hold pool shares (refer to the discussion about [pool shares earlier](#liquidity-pool-participation) for details), which means now they can perform deposits and withdrawals.
+
+### Participation: Deposits
+
+To work with a liquidity pool, you need to know its ID beforehand. It's a deterministic value, and only a single liquidity pool can exist for a particular asset pair, so you can calculate it locally from the pool parameters.
+
+<CodeExample>
+
+```js
+const poolId = sdk.getLiquidityPoolId(
+  "constant_product",
+  poolShareAsset.getLiquidityPoolParameters()
+).toString("hex");
+
+function addLiquidity(source, signer, poolId, maxReserveA, maxReserveB) {
+  const exactPrice = reserveA / reserveB;
+  const minPrice = exactPrice - (exactPrice * 0.10);
+  const maxPrice = exactPrice + (exactPrice * 0.10);
+
+  return server.submitTransaction(
+    buildTx(source, signer,
+      sdk.Operation.liquidityPoolDeposit({
+        liquidityPoolId: poolId,
+        maxAmountA: maxReserveA,
+        maxAmountB: maxReserveB,
+        minPrice: minPrice.toFixed(7),
+        maxPrice: maxPrice.toFixed(7),
+      })
+    )
+  );
+}
+```
+
+</CodeExample>
+
+When depositing assets into a liquidity, you need to define your acceptable price bounds. In the above function, we allow for a +/-10% margin of error from the "spot price". This margin is **by no means a recommendation** and is chosen just for demonstration.
+
+Notice that we also specify the maximum amount of each reserve we're willing to deposit. This, alongside the minimum and maximum prices, helps define boundaries for the deposit, since there can always be a change in the exchange rate between submitting the operation and it getting accepted by the network.
+
+### Participation: Withdrawals
+
+If you own shares of a particular pool, you can withdraw reserves from it. The operation structure mirrors the deposit closely:
+
+<CodeExample>
+
+```js
+function removeLiquidity(source, signer, poolId, minReserveA, minReserveB) {
+  return server.submitTransaction(
+    buildTx(source, signer,
+      sdk.Operation.liquidityPoolDeposit({
+        liquidityPoolId: poolId,
+        minAmountA: minReserveA,
+        minAmountB: minReserveB,
+      })
+    )
+  )
+}
+```
+
+</CodeExample>
+
+Notice here that we specify the minimum amount. Much like with a strict-receive path payment, we're specifying that we're not willing to receive less than this amount of each asset from the pool. This effectively defines a minimum withdrawal price.
+
+### Putting it all together
+
+Finally, we can combine these pieces together to simulate some participation in a liquidity pool. We'll have everyone deposit increasing amounts into the pool, then one participant withdraws their shares. Between each step, we'll retrieve the spot price.
+
+<CodeExample>
+
+```js
+function main() {
+  return getAccounts()
+    .then(accounts =>
+      Promise.all(kps.map((kp, i) => {
+        const acc = accounts[i];
+        const depositA = ((i+1)*1000).toString();
+        const depositB = ((i+1)*3000).toString();  // maintain a 1:3 ratio
+
+        return establishPoolTrustline(acc, kp, poolShareAsset)
+          .then(_ => addLiquidity(acc, kp, poolId, depositA, depositB))
+          .then(_ => getSpotPrice());
+      }))
+    )
+    .then(_ => withdrawLiquidity(accounts[1], kps[1], "500", "2000"))
+    .then(_ => getSpotPrice());
+}
+
+function getSpotPrice() {
+  return server.liquidityPools()
+    .liquidityPoolId(poolId)
+    .call()
+    .then(pool => {
+      const [a, b] = pool.reserves.map(r => r.amount);
+      const spotPrice = (new BigNumber(a)).div(b);
+      console.log(`Price: ${a}/${b} = ${spotPrice.toFormat(2)}`);
+    });
+}
+
+preamble().then(main);
+```
+
+</CodeExample>
+
+### Watching Liquidity Pool Activity
+
+You can access the transactions, operations, and effects related to a liquidity pool if you want to track its activity. Let's see how we can track the latest deposits in a pool (suppose `poolId` is defined as before):
+
+<CodeExample>
+
+```js
+server.operations()
+  .forLiquidityPool(poolId)
+  .call()
+  .then(ops => {
+    ops.records
+      .filter(op => op.type == "liquidity_pool_deposit")
+      .forEach(op => {
+        console.log("Reserves deposited:");
+        op.reserves_deposited.forEach(
+          r => console.log(`    ${r.amount} of ${r.asset}`));
+        console.log("  for pool shares: ", op.shares_received);
+      });
+  });
+```
+
+</CodeExample>
