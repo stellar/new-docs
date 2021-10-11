@@ -105,7 +105,7 @@ async function preamble() {
   ]);
 
   customers = ["1", "22", "333", "4444"].map(
-    (id) => new MuxedAccount(custodianAcc, id)
+    (id) => new sdk.MuxedAccount(custodianAcc, id)
   );
 
   console.log("Custodian:\n       ", custodian.publicKey());
@@ -184,7 +184,7 @@ function doPayment(source, dest) {
         withMuxing: true,
       });
 
-      let tx = new TransactionBuilder(accountBeforePayment, {
+      let tx = new sdk.TransactionBuilder(accountBeforePayment, {
           networkPassphrase: StellarSdk.Networks.TESTNET,
           withMuxing: true,
           fee: 100,
