@@ -239,7 +239,7 @@ If you own shares of a particular pool, you can withdraw reserves from it. The o
 function removeLiquidity(source, signer, poolId, minReserveA, minReserveB) {
   return server.submitTransaction(
     buildTx(source, signer,
-      sdk.Operation.liquidityPoolDeposit({
+      sdk.Operation.liquidityPoolWithdraw({
         liquidityPoolId: poolId,
         minAmountA: minReserveA,
         minAmountB: minReserveB,
