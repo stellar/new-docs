@@ -29,6 +29,16 @@ While a SQLite database works with Stellar Core, we generally recommend using a 
 
 You specify your node's database in the aptly named `DATABASE` field of your config file, which you can can read more about in the [complete example config](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg#L23). It defaults to an in-memory database, but you can specify a path as per the example.
 
+If using Postgresql, We recommend you configure your local database to be accessed over a Unix domain socket as well as updating the below Postgresql configuration parameters:
+
+```
+# !!! DB connection should be over a Unix domain socket !!!
+# shared_buffers = 25% of available system ram
+# effective_cache_size = 50% of available system ram
+# max_wal_size = 5GB
+# max_connections = 150
+```
+
 ## Buckets
 
 Stellar-core also stores a duplicate copy of the ledger in the form of flat XDR files called "buckets." These files are placed in a directory specified in the config file as `BUCKET_DIR_PATH`, which defaults to `buckets`. The bucket files are used for hashing and transmission of ledger differences to history archives.
