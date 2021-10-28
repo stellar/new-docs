@@ -14,13 +14,16 @@ Streaming mode allows you to listen for new transactions for this account as the
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /accounts/:account_id/transactions?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -36,14 +39,16 @@ Streaming mode allows you to listen for new transactions for this account as the
   - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 - include_failed
   - optional
   - Set to true to include failed transactions in results. Options include `true` and `false`.
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/accounts/GAYOLLLUIZE4DZMBB2ZBKGBUBZLIOYU6XFLW37GBP2VZD3ABNXCW4BVA/transactions?limit=2"
@@ -67,7 +72,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -188,7 +195,9 @@ server
 
 </ExampleResponse>
 
+
 <CodeExample title="JavaScript Streaming Example">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -206,3 +215,4 @@ var es = server
 ```
 
 </CodeExample>
+

@@ -1,0 +1,175 @@
+---
+title: Retrieve related Transactions
+order: 40
+---
+
+import { Endpoint } from "components/Endpoint";
+import { ExampleResponse } from "components/ExampleResponse";
+import { CodeExample } from "components/CodeExample";
+import { AttributeTable } from "components/AttributeTable";
+
+This endpoint represents successful transactions referencing a given liquidity pool and can be used in streaming mode.
+
+Streaming mode allows you to listen for new transactions referencing this liquidity pool as they are added to the Stellar ledger. If called in streaming mode, Horizon will start at the earliest known transaction unless a `cursor` is set, in which case it will start from that `cursor`. By setting the `cursor` value to `now`, you can stream transactions created since your request time.
+
+<Endpoint>
+
+
+|  |  |
+| --- | --- |
+| GET | /liquidity_pools/:liquidity_pool_id/transactions?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false} |
+
+</Endpoint>
+
+
+<AttributeTable>
+
+
+- ARGUMENT
+  - REQUIRED
+  - DESCRIPTION
+- liquidity_pool_id
+  - required
+  - This liquidity pool's id encoded in a hex string representation.
+- cursor
+  - optional
+  - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
+- order
+  - optional
+  - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
+- limit
+  - optional
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+- include_failed
+  - optional
+  - Set to `true` to include failed transactions in results. If this argument isn't set, it defaults to `false`.
+
+</AttributeTable>
+
+
+<CodeExample title="Example Request">
+
+
+```curl
+curl "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?limit=2"
+```
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+server
+  .transactions()
+  .forLiquidityPool(
+    "3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4",
+  )
+  .call()
+  .then(function (resp) {
+    console.log(resp);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
+```
+
+</CodeExample>
+
+
+<ExampleResponse title="Example Response">
+
+
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?cursor=\u0026limit=2\u0026order=asc"
+    },
+    "next": {
+      "href": "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?cursor=120192370561220608\u0026limit=2\u0026order=asc"
+    },
+    "prev": {
+      "href": "https://horizon.stellar.org/liquidity_pools/3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4/transactions?cursor=120192344791343104\u0026limit=2\u0026order=desc"
+    }
+  },
+  "_embedded": {
+    "records": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908"
+          },
+          "account": {
+            "href": "https://horizon.stellar.org/accounts/GAHQN6YNYD6ZT7TLAVE4R36MSZWQJZ22XB3WD4RLSHURMXHW4VHJIDF7"
+          },
+          "ledger": {
+            "href": "https://horizon.stellar.org/ledgers/895788"
+          },
+          "operations": {
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908/operations",
+            "templated": true
+          },
+          "effects": {
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908/effects",
+            "templated": true
+          },
+          "precedes": {
+            "href": "https://horizon.stellar.org/transactions?order=asc&cursor=3847380164161536"
+          },
+          "succeeds": {
+            "href": "https://horizon.stellar.org/transactions?order=desc&cursor=3847380164161536"
+          },
+          "transaction": {
+            "href": "https://horizon.stellar.org/transactions/2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908"
+          }
+        },
+        "id": "2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908",
+        "paging_token": "3847380164161536",
+        "successful": true,
+        "hash": "2ff47e1bafe68639276b2a8df0a73597ee0c062fbcc72d121af314fe7851c908",
+        "ledger": 895788,
+        "created_at": "2021-08-09T20:53:11Z",
+        "source_account": "GAHQN6YNYD6ZT7TLAVE4R36MSZWQJZ22XB3WD4RLSHURMXHW4VHJIDF7",
+        "source_account_sequence": "3847371574214658",
+        "fee_account": "GAHQN6YNYD6ZT7TLAVE4R36MSZWQJZ22XB3WD4RLSHURMXHW4VHJIDF7",
+        "fee_charged": "10000",
+        "max_fee": "10001",
+        "operation_count": 1,
+        "envelope_xdr": "AAAAAgAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAJxEADasqAAAAAgAAAAAAAAAAAAAAAQAAAAEAAAAADwb7DcD9mf5rBUnI78yWbQTnWrh3YfIrkekWXPblTpQAAAAGAAAAAVNFQwAAAAAAm6XFaVsf8OSuS9C9gMplyTjagE9jAnnqwxSDJ6fin6IAsaK8LsUAAAAAAAAAAAAB9uVOlAAAAECXmRsoXmRiJjUrtbkDZYRnzac5s1CVV4g2RlIgBIuQty21npz3A1VhUcSmAx+GmsyGxVFvIrcdstTawJlmy9kF",
+        "result_xdr": "AAAAAAAAJxAAAAAAAAAAAQAAAAAAAAAGAAAAAAAAAAA=",
+        "result_meta_xdr": "AAAAAgAAAAIAAAADAA2rLAAAAAAAAAAADwb7DcD9mf5rBUnI78yWbQTnWrh3YfIrkekWXPblTpQAAAAAGtJNDAANqyoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAA2rLAAAAAAAAAAADwb7DcD9mf5rBUnI78yWbQTnWrh3YfIrkekWXPblTpQAAAAAGtJNDAANqyoAAAACAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAAAAwAAAAMADassAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0k0MAA2rKgAAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEADassAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0k0MAA2rKgAAAAIAAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAADassAAAAAQAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAFTRUMAAAAAAJulxWlbH/DkrkvQvYDKZck42oBPYwJ56sMUgyen4p+iAAAAAAAAAAAAsaK8LsUAAAAAAAEAAAAAAAAAAAAAAAA=",
+        "fee_meta_xdr": "AAAAAgAAAAMADasrAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0nQcAA2rKgAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEADassAAAAAAAAAAAPBvsNwP2Z/msFScjvzJZtBOdauHdh8iuR6RZc9uVOlAAAAAAa0k0MAA2rKgAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
+        "memo_type": "none",
+        "signatures": [
+          "l5kbKF5kYiY1K7W5A2WEZ82nObNQlVeINkZSIASLkLcttZ6c9wNVYVHEpgMfhprMhsVRbyK3HbLU2sCZZsvZBQ=="
+        ]
+      }
+    ]
+  }
+}
+```
+
+</ExampleResponse>
+
+
+<CodeExample title="JavaScript Streaming Example">
+
+
+```js
+var StellarSdk = require("stellar-sdk");
+var server = new StellarSdk.Server("https://horizon.stellar.org");
+
+var callback = function (resp) {
+  console.log(resp);
+};
+
+var es = server
+  .transactions()
+  .forLiquidityPool(
+    "3b476aff8a406a6ec3b61d5c038009cef85f2ddfaf616822dc4fec92845149b4",
+  )
+  .cursor("now")
+  .stream({ onmessage: callback });
+```
+
+</CodeExample>
+

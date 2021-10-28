@@ -10,13 +10,16 @@ import { CodeExample } from "components/CodeExample";
 
 <Endpoint>
 
+
 |     |                                                                  |
 | --- | ---------------------------------------------------------------- |
 | GET | /{endpoint}?cursor={paging_token}&order={asc,desc}&limit={1-200} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED?
@@ -29,11 +32,13 @@ import { CodeExample } from "components/CodeExample";
   - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/ledgers/26478723/operations?cursor=113725249324879872&limit=5&order=asc"
@@ -60,7 +65,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -268,3 +275,4 @@ server
 ```
 
 </ExampleResponse>
+

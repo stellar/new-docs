@@ -14,13 +14,16 @@ When filtering for a specific order book, you must use use all six of these argu
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /order_book?selling_asset_type={native,credit_alphanum4,credit_alphanum12}&selling_asset_issuer={:account_id}&selling_asset_code{:asset_code}&buying_asset_type={native,credit_alphanum4,credit_alphanum12}&buying_asset_issuer={:account_id}&buying_asset_code{:asset_code}&limit={1-200} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -45,11 +48,13 @@ When filtering for a specific order book, you must use use all six of these argu
   - The code for the asset being bought (counter asset). Required if the `buying_asset_type` is not `native`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200—an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 20 for order books.
+  - The maximum number of records returned. The limit can range from 1 to 200—an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 20 for order books.
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/order_book?selling_asset_type=native&buying_asset_type=credit_alphanum4&buying_asset_code=BB1&buying_asset_issuer=GD5J6HLF5666X4AZLTFTXLY46J5SW7EXRKBLEYPJP33S33MXZGV6CWFN&limit=4"
@@ -78,7 +83,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -163,7 +170,9 @@ server
 
 </ExampleResponse>
 
+
 <CodeExample title="JavaScript Streaming Example">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -186,3 +195,4 @@ var es = server
 ```
 
 </CodeExample>
+

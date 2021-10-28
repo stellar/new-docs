@@ -12,13 +12,16 @@ This endpoint returns successful operations for a specific transaction.
 
 <Endpoint>
 
+
 |  |  |
 | --- | --- |
 | GET | /transactions/:transaction_hash/operations?cursor={paging_token}&order={asc,desc}&limit={1-200}&include_failed{true,false}&join={transactions} |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -34,7 +37,7 @@ This endpoint returns successful operations for a specific transaction.
   - A designation of the order in which records should appear. Options include `asc`(ascending) or `desc` (descending). If this argument isn’t set, it defaults to `asc`.
 - limit
   - optional
-  - The total number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
+  - The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.
 - include_failed
   - optional
   - Set to true to include failed operations in results. Options include `true` and `false`.
@@ -44,7 +47,9 @@ This endpoint returns successful operations for a specific transaction.
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/transactions/6b983a4e0dc3c04f4bd6b9037c55f70a09c434dfd01492be1077cf7ea68c2e4a/operations"
@@ -70,7 +75,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -245,3 +252,4 @@ server
 ```
 
 </ExampleResponse>
+

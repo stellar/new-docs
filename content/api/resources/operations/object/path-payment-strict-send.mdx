@@ -12,18 +12,19 @@ See the [`Path Payment Strict Send` errors](../../../errors/result-codes/operati
 
 <AttributeTable>
 
+
 - ATTRIBUTE
   - DATA TYPE
   - DESCRIPTION
 - asset_type
   - string
-  - The type of asset being sent. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type of asset being received. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
 - asset_code
   - string
-  - The code for the asset being sent. Appears if the `asset_type` is not `native`.
+  - The code for the asset being received. Appears if the `asset_type` is not `native`.
 - asset_issuer
   - string
-  - The Stellar address of the issuer of the asset being sent. Appears if the `asset_type` is not `native`.
+  - The Stellar address of the issuer of the asset being received. Appears if the `asset_type` is not `native`.
 - from
   - string
   - The payment sender’s public key.
@@ -32,7 +33,7 @@ See the [`Path Payment Strict Send` errors](../../../errors/result-codes/operati
   - The payment recipient’s public key.
 - amount
   - string
-  - Amount received designated in the source asset.
+  - Amount received designated in the destination asset.
 - path
   - array of objects
   - The intermediary assets that this path hops through.
@@ -63,7 +64,9 @@ See the [`Path Payment Strict Send` errors](../../../errors/result-codes/operati
 
 </AttributeTable>
 
+
 <ExampleResponse>
+
 
 ```json
 {
@@ -117,3 +120,4 @@ See the [`Path Payment Strict Send` errors](../../../errors/result-codes/operati
 ```
 
 </ExampleResponse>
+

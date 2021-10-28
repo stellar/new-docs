@@ -1,6 +1,6 @@
 ---
 title: Retrieve an Offer
-order: 20
+order: 30
 ---
 
 import { Endpoint } from "components/Endpoint";
@@ -12,13 +12,16 @@ The single offer endpoint provides information on a specific offer.
 
 <Endpoint>
 
+
 |     |                   |
 | --- | ----------------- |
 | GET | /offers/:offer_id |
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -29,7 +32,9 @@ The single offer endpoint provides information on a specific offer.
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/offers/165563085"
@@ -51,9 +56,21 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.offers().offer("165563085").call())
+except Exception as err:
+    print(err)
+```
+
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -88,3 +105,4 @@ server
 ```
 
 </ExampleResponse>
+
