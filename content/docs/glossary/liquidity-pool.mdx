@@ -225,7 +225,7 @@ function addLiquidity(source, signer, poolId, maxReserveA, maxReserveB) {
 
 </CodeExample>
 
-When depositing assets into a liquidity, you need to define your acceptable price bounds. In the above function, we allow for a +/-10% margin of error from the "spot price". This margin is **by no means a recommendation** and is chosen just for demonstration.
+When depositing assets into a liquidity pool, you need to define your acceptable price bounds. In the above function, we allow for a +/-10% margin of error from the "spot price". This margin is **by no means a recommendation** and is chosen just for demonstration.
 
 Notice that we also specify the maximum amount of each reserve we're willing to deposit. This, alongside the minimum and maximum prices, helps define boundaries for the deposit, since there can always be a change in the exchange rate between submitting the operation and it getting accepted by the network.
 
