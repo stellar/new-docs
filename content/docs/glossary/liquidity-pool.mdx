@@ -34,9 +34,9 @@ An automated market maker charges a fee on every trade, and that fee is a fixed 
 
 ## Liquidity Pool Participation
 
-Participation in a liquidity pool is represented by pool shares. Pool shares are very similar to other Stellar assets, but there is one important difference: pool shares are not transferable. The only way to increase the number of pool shares held is to deposit into a liquidity pool, and the only way to decrease the number of pool shares held is to withdraw from a liquidity pool. Two specific examples of this are that pool shares cannot be sent in payments and cannot be sold using offers.
+Participation in a liquidity pool is represented by pool shares. Pool shares are very similar to other Stellar assets, but there is one important difference: pool shares are not transferable. The only way to increase the number of pool shares held is to deposit into a liquidity pool (via [`LiquidityPoolDepositOp`](../start/list-of-operations.mdx#liquidity-pool-deposit), and the only way to decrease the number of pool shares held is to withdraw from a liquidity pool [`LiquidityPoolWithdrawOp`](../start/list-of-operations.mdx#liquidity-pool-withdraw). Two specific examples of this are that pool shares cannot be sent in payments and cannot be sold using offers.
 
-A pool share has two representations. The full representation is used with change trust, and the hashed representation is used in all other cases. When constructing the asset representation of a pool share, the assets must be in lexicographical order. For example, A-B is in the correct order but B-A is not. This results in a canonical representation of a pool share.
+A pool share has two representations. The full representation is used with [`ChangeTrustOp`](../start/list-of-operations.mdx#change-trust), and the hashed representation is used in all other cases. When constructing the asset representation of a pool share, the assets must be in lexicographical order. For example, A-B is in the correct order but B-A is not. This results in a canonical representation of a pool share.
 
 ### Trustlines
 
