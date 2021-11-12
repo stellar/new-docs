@@ -1,10 +1,13 @@
 ---
-description: A new description
+description: A new description from git
+author: george
 ---
 
 # A new title (used to be "index")
 
 Some body text edits.
+
+A new edit from the `git` side.
 
 {% hint style="info" %}
 A hint, to see how this Markdownifies...
@@ -13,6 +16,10 @@ A hint, to see how this Markdownifies...
 This is the authoritative guide to all things Stellar. Here, you will find helpful tutorials, guides for deploying infrastructure, a glossary of common terms, and more! The documentation is designed to be modular, organized around different learning paths that expand as network use cases evolve.
 
 In addition to the docs here, you'll also see a link at the bottom of the left nav to the API Reference. You should check those out, too: that's a resource most developers consult as they build on Stellar.
+
+{% hint style="warning" %}
+Trying out alternate hint style, `git`-side.
+{% endhint %}
 
 As you read through these docs, you may find bugs, errors, typos, or omissions. When you do, please file PRs or issues in [this repo](https://github.com/stellar/new-docs/issues/new). Like the Stellar codebase, the docs are open source, so we welcome and appreciate your contributions!
 
