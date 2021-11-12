@@ -32,7 +32,12 @@ Before an account can hold an asset another account issues, it has to establish 
 
 A trustline is an explicit opt-in to hold a particular token, so it specifies both asset code and issuer. Each trustline increases an account’s minimum lumen balance by one [base reserve](../glossary/minimum-balance.mdx) — currently 0.5 XLM — and tracks the balance of the asset the account holds. Trustlines can also limit the amount of an asset an account can hold, though more often than not, account holders don’t set that limit: they simply turn the trustline on, which by default allows the maximum.
 
+### Liabilities
 A trustline also tracks liabilities. Buying liabilities equal the total amount of the asset offered to buy aggregated over all offers owned by an account, and selling liabilities equal the total amount of the asset offered to sell aggregated over all offers owned by an account. A trustline must always have balance sufficiently large to satisfy its selling liabilities, and a balance sufficiently below its limit to accommodate its buying liabilities.
+
+### Pool Shares
+With the introduction of native support for liquidity pools in [Protocol 18](https://stellar.org/developers-blog/liquidity-liquidity-liquidity), assets can also be *pool shares*, representing ownership of the pool's reserves. Users need to establish trustlines to three different assets to participate in a liquidity pool: both of the reserve assets (unless one of them is native) and the pool share asset itself. The pool share asset is defined by the liquidity pool identifier, which in turn is defined by the two assets its reserves are composed of. You should refer to the [glossary entry](../glossary/liquidity-pool.mdx#liquidity-pool-participation) for details on liquidity pool participation.
+
 
 ## Representation
 
