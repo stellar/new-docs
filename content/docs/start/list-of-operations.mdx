@@ -359,13 +359,15 @@ Creates, updates, or deletes a trustline. For more on trustlines, please refer t
 
 To delete an existing trustline, set Line to the asset of the trustline, and Limit to `0`.
 
+The `Line` parameter is an instance of a `ChangeTrustAsset`. If you are modifying a trustline to a regular asset (i.e. one in a `Code:Issuer` format), this is equivalent to the `Asset` type. If you are modifying a trustline to a *pool share*, however, this is composed of the liquidity pool reserve assets and the pool fee. You can refer to the liquidity pool [glossary entry](../glossary/liquidity-pool.mdx#liquidity-pool-participation) and the examples therein for details. 
+
 Threshold: Medium
 
 Result: `ChangeTrustResult`
 
 | Parameters | Type | Description |
 | --- | --- | --- |
-| Line | asset | The asset of the trustline. For example, if a user extends a trustline of up to 200 USD to an anchor, the `line` is USD:anchor. |
+| Line | ChangeTrustAsset | The asset of the trustline. For example, if a user extends a trustline of up to 200 USD to an anchor, the `line` is USD:anchor. |
 | Limit | integer | The limit of the trustline. In the previous example, the `limit` would be 200. |
 
 Possible errors:
@@ -615,6 +617,8 @@ Possible errors:
 
 Allows an issuing account to configure various authorization and trustline flags for all trustlines to an asset. This supersedes the deprecated [`AllowTrust`](#allow-trust), but the documentation there still applies.
 
+The `Asset` parameter is of the `TrustLineAsset` type. If you are modifying a trustline to a regular asset (i.e. one in a `Code:Issuer` format), this is equivalent to the `Asset` type. If you are modifying a trustline to a *pool share*, however, this is composed of the liquidity pool's unique ID. You can refer to the liquidity pool [glossary entry](../glossary/liquidity-pool.mdx#liquidity-pool-participation) and the examples therein for details.
+
 Threshold: Low
 
 Result: `SetTrustLineFlagsResult`
@@ -622,7 +626,7 @@ Result: `SetTrustLineFlagsResult`
 | Parameters | Type | Description |
 | --- | --- | --- |
 | Trustor | account ID | The account that established this trustline. |
-| Asset | asset | The asset trustline whose flags are being modified. |
+| Asset | TrustLineAsset | The asset trustline whose flags are being modified. |
 | SetFlags | integer | One or more flags (combined via bitwise-OR) indicating which flags to **set**. Possible flags are: `1` if the trustor is authorized to transact with the asset or `2` if the trustor is authorized to maintain offers but not to perform other transactions. |
 | ClearFlags | integer | One or more flags (combined via bitwise `OR`) indicating which flags to **clear**. Possibilities include those for `SetFlags`as well as `4`, which prevents the issuer from clawing back its asset (both from accounts and claimable balances). |
 
@@ -690,9 +694,11 @@ Possible errors:
 
 Deposits assets into a liquidity pool.
 
-Depositing increases the reserves of a liquidity pool in exchange for pool shares. Parameters to this operation depend on the ordering of assets in the liquidity pool (see the liquidity pool glossary entry for information about how to determine the ordering of assets). “A” refers to the first asset in the liquidity pool, and “B” refers to the second asset in the liquidity pool.
+Depositing increases the reserves of a liquidity pool in exchange for pool shares. 
 
-If the pool is empty, then this operation deposits maxAmountA of A and maxAmountB of B into the pool. If the pool is not empty, then this operation deposits at most maxAmountA of A and maxAmountB of B into the pool. The actual amounts deposited are determined using the current reserves of the pool.
+Parameters to this operation depend on the ordering of assets in the liquidity pool: “A” refers to the first asset in the liquidity pool, and “B” refers to the second asset in the liquidity pool. Refer to the liquidity pool [glossary entry](../glossary/liquidity-pool.mdx#liquidity-pool-participation) for information about how to determine the fixed ordering of assets. SDKs often have helpers (like [`Asset.compare`](https://stellar.github.io/js-stellar-base/Asset.html#.compare)) to determine the right order.
+
+If the pool is empty, then this operation deposits `maxAmountA` of A and `maxAmountB` of B into the pool. If the pool is not empty, then this operation deposits **at most** `maxAmountA` of A and `maxAmountB` of B into the pool. The actual amounts deposited are determined using the current reserves of the pool. You can use these parameters to control a percentage of slippage; refer to the [example](../glossary/liquidity-pool.mdx#participation:-deposits) for details.
 
 Threshold: Medium
 
@@ -722,7 +728,11 @@ Possible errors:
 
 Withdraw assets from a liquidity pool.
 
-Withdrawing reduces the number of pool shares in exchange for reserves from a liquidity pool. Parameters to this operation depend on the ordering of assets in the liquidity pool (see the liquidity pool glossary entry for information about how to determine the ordering of assets). “A” refers to the first asset in the liquidity pool, and “B” refers to the second asset in the liquidity pool.
+Withdrawing reduces the number of pool shares in exchange for reserves from a liquidity pool.
+
+Refer to the discussion on asset ordering in [Liquidity Pool Deposit](#liquidity-pool-deposit), above, for details on the “A” and “B” parameters.
+
+The `minAmountA` and `minAmountB` parameters can be used to control a percentage of slippage from the "spot price" on the pool; refer to the [example](../glossary/liquidity-pool.mdx#participation:-deposits) for details.
 
 Threshold: Medium
 
