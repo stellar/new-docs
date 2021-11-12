@@ -1,0 +1,364 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "2.10.0",
+    "title": "",
+    "description": ""
+  },
+  "paths": {
+    "/accounts/{account_id}/": {
+      "get": {
+        "summary": "The single account endpoint provides information on a specific account.",
+        "description": "The balances section in the response will also list all the trustlines this account has established. Note this will only return trustlines that have the necessary authorization to work. If an account A trusts another account B that has the authorization required flag set, the trustline won’t show up until account B allows account A to hold its assets.",
+        "operationId": "getAccountById",
+        "parameters": [{
+          "name": "account_id",
+          "schema": {"$ref": "#/components/schemas/address"},
+          "description": "This account’s public key encoded in a base32 string representation.",
+          "in": "path",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Returns details (like balances, sponsorships, etc.) about an account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {"$ref": "#/components/schemas/AccountLinks"},
+                    {"$ref": "#/components/schemas/Account"}
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/": {
+      "get": {
+        "summary": "This endpoint lists accounts by exactly one filter: signer, asset, sponsor, or liquidity_pool.",
+        "description": "",
+        "operationId": "getAccounts",
+        "parameters": [{
+            "name": "sponsor",
+            "schema": {"type": "string"},
+            "description": "Account ID of the sponsor. Every account in the response will either be sponsored by the given account ID or have a subentry (trustline, offer, or data entry) which is sponsored by the given account ID.",
+            "in": "query"
+          }, {
+            "name": "asset",
+            "schema": {"type": "string"},
+            "description": "An issued asset represented as `Code:IssuerAccountID`. Every account in the response will have a trustline for the given asset.",
+            "in": "query"
+          }, {
+            "name": "signer",
+            "schema": {"type": "string"},
+            "description": "Account ID of the signer. Every account in the response will have the given account ID as a signer.",
+            "in": "query"
+          }, {
+            "name": "liquidity_pool",
+            "schema": {"type": "string"},
+            "description": "With this parameter, the results will include only accounts which have trustlines to the specified liquidity pool.",
+            "in": "query"
+          }, {
+            "name": "cursor",
+            "schema": {"type": "string"},
+            "description": "A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.",
+            "in": "query"
+          }, {
+            "name": "order",
+            "schema": {"type": "string", "enum": ["asc", "desc"]},
+            "description": "A designation of the order in which records should appear. Options include asc(ascending) or desc (descending). If this argument isn’t set, it defaults to asc.",
+            "in": "query"
+          }, {
+            "name": "limit",
+            "schema": {"type": "integer"},
+            "description": "The maximum number of records returned. The limit can range from 1 to 200 - an upper limit that is hardcoded in Horizon for performance reasons. If this argument isn’t designated, it defaults to 10.",
+            "in": "query"
+        }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_links": {
+                      "$ref": "#/components/schemas/AccountLinks"
+                    },
+                    "_embedded": {
+                      "$ref": "#/components/schemas/AccountList"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/address"
+          },
+          "account_id": {
+            "$ref": "#/components/schemas/address"
+          },
+          "sequence": {
+            "$ref": "#/components/schemas/sequence"
+          },
+          "subentry_count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inflation_destination": {
+            "$ref": "#/components/schemas/address"
+          },
+          "home_domain": {
+            "type": "string"
+          },
+          "last_modified_ledger": {
+            "type": "integer"
+          },
+          "last_modified_time": {
+            "type": "string"
+          },
+          "thresholds": {
+            "$ref": "#/components/schemas/threshold"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/AccountFlags"
+          },
+          "balances": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                { "$ref": "#/components/schemas/BalanceLineLiquidityPool" },
+                { "$ref": "#/components/schemas/BalanceLineAsset" },
+                { "$ref": "#/components/schemas/BalanceLineNative" }
+              ],
+              "discriminator": {
+                "propertyName": "asset_type"
+              }
+            }
+          },
+          "signers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/signer"
+            }
+          },
+          "data": {
+            "type": "object"
+          },
+          "num_sponsoring": {
+            "type": "integer"
+          },
+          "num_sponsored": {
+            "type": "integer"
+          },
+          "sponsor": {
+            "$ref": "#/components/schemas/address"
+          },
+          "paging_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "sequence",
+          "subentry_count",
+          "last_modified_ledger",
+          "last_modified_time",
+          "thresholds",
+          "flags",
+          "balances",
+          "signers",
+          "data",
+          "num_sponsoring",
+          "num_sponsored",
+          "paging_token"
+        ]
+      },
+      "AccountList": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/Account"}
+          }
+        },
+        "required": ["records"]
+      },
+      "AccountFlags": {
+        "type": "object",
+        "properties": {
+          "auth_required": {"type": "boolean"},
+          "auth_revocable": {"type": "boolean"},
+          "auth_immutable": {"type": "boolean"},
+          "auth_clawback_enabled": {"type": "boolean"}
+        }
+      },
+      "BalanceLineNative": {
+        "type": "object",
+        "properties": {
+          "balance": { "type": "string" },
+          "asset_type": { "type": "string", "enum": ["native"] },
+          "buying_liabilities": { "$ref": "#/components/schemas/currency" },
+          "selling_liabilities": { "$ref": "#/components/schemas/currency" }
+        },
+        "required": [
+          "balance",
+          "asset_type",
+          "buying_liabilities",
+          "selling_liabilities"
+        ]
+      },
+      "BalanceLineAsset": {
+        "type": "object",
+        "properties": {
+          "balance": { "$ref": "#/components/schemas/currency" },
+          "limit": { "$ref": "#/components/schemas/currency" },
+          "asset_type": {
+            "type": "string",
+            "enum": [
+              "credit_alphanum4",
+              "credit_alphanum12"
+            ]
+          },
+          "asset_code": { "type": "string" },
+          "asset_issuer": { "$ref": "#/components/schemas/address" },
+          "buying_liabilities": { "$ref": "#/components/schemas/currency" },
+          "selling_liabilities": { "$ref": "#/components/schemas/currency" },
+          "last_modified_ledger": { "type": "number" },
+          "is_authorized": { "type": "boolean" },
+          "is_authorized_to_maintain_liabilities": { "type": "boolean" },
+          "is_clawback_enabled": { "type": "boolean" },
+          "sponsor": { "$ref": "#/components/schemas/address" }
+        },
+        "required": [
+          "balance",
+          "limit",
+          "asset_type",
+          "asset_code",
+          "asset_issuer",
+          "buying_liabilities",
+          "selling_liabilities",
+          "last_modified_ledger",
+          "is_authorized",
+          "is_authorized_to_maintain_liabilities",
+          "is_clawback_enabled"
+        ]
+      },
+      "BalanceLineLiquidityPool": {
+        "type": "object",
+        "properties": {
+          "liquidity_pool_id": {"type": "string" },
+          "asset_type": {"type": "string", "enum": ["liquidity_pool_shares"]},
+          "balance": { "$ref": "#/components/schemas/currency" },
+          "limit": { "$ref": "#/components/schemas/currency" },
+          "last_modified_ledger": {"type": "number" },
+          "sponsor": { "$ref": "#/components/schemas/address" }
+        },
+        "required": [
+          "liquidity_pool_id",
+          "asset_type",
+          "balance",
+          "limit",
+          "last_modified_ledger"
+        ]
+      },
+      "AccountLinks": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "type": "object",
+            "properties": {
+              "self": { "$ref": "#/components/schemas/link" },
+              "transactions": { "$ref": "#/components/schemas/link" },
+              "operations": { "$ref": "#/components/schemas/link" },
+              "payments": { "$ref": "#/components/schemas/link" },
+              "effects": { "$ref": "#/components/schemas/link" },
+              "offers": { "$ref": "#/components/schemas/link" },
+              "trades": { "$ref": "#/components/schemas/link" },
+              "data": { "$ref": "#/components/schemas/link" }
+            },
+            "required": [
+              "self",
+              "transactions",
+              "operations",
+              "payments",
+              "effects",
+              "offers",
+              "trades",
+              "data"
+            ]
+          }
+        }
+      },
+      "address": {
+        "type": "string",
+        "pattern": "G[A-Z0-9]{55}"
+      },
+      "hex": {
+        "type": "string",
+        "pattern": "[a-fA-F0-9]{64}"
+      },
+      "sequence": {
+        "type": "string",
+        "pattern": "[0-9]+"
+      },
+      "threshold": {
+        "type": "object",
+        "properties": {
+          "low_threshold": { "type": "integer" },
+          "med_threshold": { "type": "integer" },
+          "high_threshold": { "type": "integer" }
+        }
+      },
+      "signer": {
+        "type": "object",
+        "properties": {
+          "key": {"$ref": "#/components/schemas/address"},
+          "weight": {"type": "integer"},
+          "type": {
+            "type": "string",
+            "enum": [
+              "ed25519_public_key",
+              "sha256_hash",
+              "preauth_tx"
+            ]
+          },
+          "sponsor": {"$ref": "#/components/schemas/address"}
+        },
+        "required": [
+          "key",
+          "weight",
+          "type"
+        ]
+      },
+      "currency": {
+        "type": "string",
+        "pattern": "[0-9]+\\.[0-9]{7}"
+      },
+      "link": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "format": "link"
+          },
+          "templated": {"type": "boolean"}
+        },
+        "required": ["href"]
+      }
+    }
+  }
+}
