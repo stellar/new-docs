@@ -61,7 +61,7 @@ transaction = (
     .append_payment_op(
       source=baseAccount.public_key,
       destination=customerAddress,
-      asset_code="XLM",
+      asset=Asset.native(),
       amount=amountToSend,
     )
     .set_timeout(180) # Wait a maximum of three minutes for the transaction

@@ -274,11 +274,7 @@ func main() {
 ```
 
 ```python
-from stellar_sdk.asset import Asset
-from stellar_sdk.keypair import Keypair
-from stellar_sdk.network import Network
-from stellar_sdk.server import Server
-from stellar_sdk.transaction_builder import TransactionBuilder
+from stellar_sdk import Asset, Keypair, Network, Server, TransactionBuilder
 
 # Configure Stellar SDK to talk to the horizon instance hosted by Stellar.org
 # To use the live network, set the hostname to 'https://horizon.stellar.org'
@@ -313,9 +309,7 @@ trust_transaction = (
     )
     #  The `changeTrust` operation creates (or alters) a trustline
     #  The `limit` parameter below is optional
-    .append_change_trust_op(
-        asset_code=astro_dollar.code, asset_issuer=astro_dollar.issuer, limit="1000"
-    )
+    .append_change_trust_op(asset=astro_dollar, limit="1000")
     .set_timeout(100)
     .build()
 )
@@ -334,9 +328,8 @@ payment_transaction = (
     )
     .append_payment_op(
         destination=distributor_public,
+        asset=Asset.native(),
         amount="10",
-        asset_code=astro_dollar.code,
-        asset_issuer=astro_dollar.issuer,
     )
     .build()
 )

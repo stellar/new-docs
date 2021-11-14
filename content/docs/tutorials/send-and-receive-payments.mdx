@@ -205,12 +205,8 @@ func main () {
 ```
 
 ```python
-from stellar_sdk.keypair import Keypair
-from stellar_sdk.network import Network
-from stellar_sdk.server import Server
-from stellar_sdk.transaction_builder import TransactionBuilder
+from stellar_sdk import Asset, Keypair, Network, Server, TransactionBuilder
 from stellar_sdk.exceptions import NotFoundError, BadResponseError, BadRequestError
-from stellar_sdk import Asset
 
 server = Server("https://horizon-testnet.stellar.org")
 source_key = Keypair.from_secret("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4")
@@ -240,7 +236,7 @@ transaction = (
     )
         # Because Stellar allows transaction in many currencies, you must specify the asset type.
         # Here we are sending Lumens.
-        .append_payment_op(destination=destination_id, amount="10", asset=Asset("XLM"))
+        .append_payment_op(destination=destination_id, asset=Asset.native(), amount="10")
         # A memo allows you to add your own metadata to a transaction. It's
         # optional and does not affect how Stellar treats the transaction.
         .add_text_memo("Test Transaction")
@@ -388,7 +384,7 @@ Operations: []txnbuild.Operation{
 ```
 
 ```python
-.append_payment_op(destination=destination_id, amount="10", asset_code="XLM")
+.append_payment_op(destination=destination_id, asset=Asset.native(), amount="10")
 ```
 
 </CodeExample>
@@ -625,7 +621,7 @@ func main() {
 ```
 
 ```python
-from stellar_sdk.server import Server
+from stellar_sdk import Server
 
 def load_last_paging_token():
     # Get the last paging token from a local database or file
