@@ -67,7 +67,7 @@ func main() {
 # stellar-sdk >= 2.0.0 required
 # create a completely new and unique pair of keys
 # see more about KeyPair objects: https://stellar-sdk.readthedocs.io/en/latest/api.html#keypair
-from stellar_sdk.keypair import Keypair
+from stellar_sdk import Keypair
 
 pair = Keypair.random()
 print(f"Secret: {pair.secret}")
@@ -232,7 +232,7 @@ func main() {
 ```
 
 ```python
-from stellar_sdk.server import Server
+from stellar_sdk import Server
 
 server = Server("https://horizon-testnet.stellar.org")
 public_key = "GD4NB2FLQAN5JO7PKPGZJMNBDYQXVSNVC7DEIZMOL5WSNSBLEBUTEF5Q"

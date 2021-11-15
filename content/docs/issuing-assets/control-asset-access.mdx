@@ -128,8 +128,7 @@ server.submitTransaction(setAuthorization);
 ```
 
 ```python
-from stellar_sdk import Keypair, Network, Server, TransactionBuilder
-from stellar_sdk.operation.set_options import Flag as AuthFlag
+from stellar_sdk import Keypair, Network, Server, TransactionBuilder, AuthorizationFlag
 from stellar_sdk.exceptions import BaseHorizonError
 
 # Configure Stellar SDK to talk to the horizon instance hosted by Stellar.org
@@ -155,7 +154,7 @@ transaction = (
         base_fee=100,
     )
     .append_set_options_op(
-        set_flags=AuthFlag.AUTHORIZATION_REVOCABLE | AuthFlag.AUTHORIZATION_REQUIRED
+        set_flags=AuthorizationFlag.AUTHORIZATION_REVOCABLE | AuthorizationFlag.AUTHORIZATION_REQUIRED
     )
     .build()
 )
