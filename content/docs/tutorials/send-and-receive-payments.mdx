@@ -554,7 +554,7 @@ paymentsRequest.stream(new EventListener<OperationResponse>() {
     // The payments stream includes both sent and received payments. We only
     // want to process received payments here.
     if (payment instanceof PaymentOperationResponse) {
-      if (((PaymentOperationResponse) payment).getTo().equals(account)) {
+      if (!((PaymentOperationResponse) payment).getTo().equals(account)) {
         return;
       }
 
