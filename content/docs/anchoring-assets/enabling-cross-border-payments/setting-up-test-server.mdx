@@ -5,6 +5,24 @@ order: 30
 
 # Build a SEP-31 Anchor on Testnet
 
+{% swagger method="get" path="" baseUrl="" summary="" %}
+{% swagger-description %}
+My API
+{% endswagger-description %}
+
+{% swagger-parameter in="query" name="Foo" %}
+
+{% endswagger-parameter %}
+
+{% swagger-response status="201: Created" description="" %}
+```javascript
+{
+    // Response
+}
+```
+{% endswagger-response %}
+{% endswagger %}
+
 import { CodeExample } from "components/CodeExample"; import { Alert } from "components/Alert";
 
 Before setting up a server that connects to live banking rails and real money, you should build out a test rig connected to the [Stellar test network](../../glossary/testnet.mdx). The testnet works just like the main Stellar network, but it uses test data and allows you to fund test accounts for free using a tool called [Friendbot](../../glossary/testnet.mdx#friendbot).
@@ -198,8 +216,7 @@ sequenceDiagram
     SA Client->>SU: transfer successful!
 ```
 
-\
-
+\\
 
 Note: It is perfectly acceptable for **RA**s to only require KYC information on the **RU**. To do this, simply omit the `sender_sep12_type` key from the `GET /info` response. This signals to the **SA** to make one `GET` and `PUT` for receiver fields and registration, respectively.
 
@@ -217,8 +234,7 @@ The following diagram outlines the process for a successful transaction initiati
 
 Note: If the **SU** and **RU** are already registered, only the per-transaction information defined in the `GET /info` `forms.transaction` object needs to be collected. If SEP-12 registration has not happened or an update is required, it is recommended to collect both KYC and per-transaction field values from the **SU** at the same time.
 
-\
-
+\\
 
 Due to the separate documentation sections outlining the KYC and transaction API calls, we'll ask the **SU** for information a second time for per-transaction attributes.
 
@@ -275,8 +291,7 @@ sequenceDiagram
     SA Client->>SU: transaction success!
 ```
 
-\
-
+\\
 
 #### Transactions Endpoint
 
