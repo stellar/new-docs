@@ -17,22 +17,25 @@ See the [`Change Trust` errors](../../../errors/result-codes/operation-specific/
   - DESCRIPTION
 - asset_type
   - string
-  - The type of asset being trusted. Either `native`, `credit_alphanum4`, or `credit_alphanum12`.
+  - The type of asset being trusted, one of `native`, `credit_alphanum4`, `credit_alphanum12`, or `liquidity_pool_shares`.
 - asset_code
   - string
-  - The Stellar address of the asset being trusted.
+  - The Stellar address of the asset being trusted. (Only present for credit assets.)
 - asset_issuer
   - string
-  - The code for the asset being trusted.
+  - The code for the asset being trusted. (Only present for credit assets.)
 - limit
   - string
   - Limits the amount of an asset that the source account can hold.
 - trustee
   - string
-  - The issuing account.
+  - The issuing account. (Only present for credit assets.)
 - trustor
   - string
   - The source account.
+- liquidity_pool_id
+  - string
+  - The liquidity pool whose trustline is being modified. (Only present for `asset_type == liquidity_pool_shares`.)
 
 </AttributeTable>
 
