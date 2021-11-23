@@ -37,10 +37,20 @@ The current transaction sequence number of the account. This number starts equal
 
 Number of entries the account owns. This number is used to calculate the account's minimum balance: each subentry increases an account’s reserve by 0.5XLM. Subentries include:
 
-* Trustlines
-* Offers
-* Signers
-* Data entries
+- Trustlines
+- Offers
+- Signers
+- Data entries
+
+Since protocol version 11, an account cannot increase the number of subentries above 1000.
+
+### Number of sponsored subentries
+
+Number of subentries the account owns that are sponsored by another account. Sponsored subentries do not incur any reserve requirement on the account that owns them. For more info, see [sponsored reserves](./sponsored-reserves.mdx).
+
+### Number of entries sponsored by this account
+
+Number of entries this account is sponsoring. Entries sponsored by this account incur a reserve requirement. For more info, see [sponsored reserves](./sponsored-reserves.mdx).
 
 ### Thresholds
 
@@ -56,10 +66,10 @@ To add a home domain to an account, use the [Set Options](../start/list-of-opera
 
 Asset issuers set flags at the account level (via [Set Options](../start/list-of-operations.mdx#set-options)) if they want to control access to the assets they issue. There are four flags:
 
-- **Authorization required (0x1)**: Requires the issuing account to grant an account permission to hold an asset.  With this flag set, an issuer can either grant full authorization to transact with its asset *or* it can grant limited authorization allowing the holder to maintain orders on the order books, but not to otherwise transact with the asset.  
+- **Authorization required (0x1)**: Requires the issuing account to grant an account permission to hold an asset. With this flag set, an issuer can either grant full authorization to transact with its asset _or_ it can grant limited authorization allowing the holder to maintain orders on the order books, but not to otherwise transact with the asset.
 - **Authorization revocable (0x2)**: Allows the issuing account to reduce the authorization level of an account from full to partial, from full to none, or from partial to none.
 - **Authorization immutable (0x4)**: Prevents the issuer from setting either of the above flags or deleting the issuing account.
-- **Clawback enabled (0x8)**: Enables [clawbacks](./clawbacks.mdx) for all assets issued by this account. Note that this only applies along trustlines established *after* this flag has been set. If you'd like to selectively enable clawback on certain trustlines, you can use [SetTrustLineFlags](../start/list-of-operations.mdx#set-trust-line-flags) to clear their clawback flag.
+- **Clawback enabled (0x8)**: Enables [clawbacks](./clawbacks.mdx) for all assets issued by this account. Note that this only applies along trustlines established _after_ this flag has been set. If you'd like to selectively enable clawback on certain trustlines, you can use [SetTrustLineFlags](../start/list-of-operations.mdx#set-trust-line-flags) to clear their clawback flag.
 
 ### Balances
 
