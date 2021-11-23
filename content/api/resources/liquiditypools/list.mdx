@@ -15,7 +15,7 @@ This endpoint lists all available liquidity pools.
 
 |  |  |
 | --- | --- |
-| GET | /liquidity_pools?reserves={:reserves}&cursor={paging_token}&order={asc,desc}&limit={1-200} |
+| GET | /liquidity_pools?reserves={:reserves}&account={:account_id}&cursor={paging_token}&order={asc,desc}&limit={1-200} |
 
 </Endpoint>
 
@@ -28,7 +28,10 @@ This endpoint lists all available liquidity pools.
   - DESCRIPTION
 - reserves
   - string (optional)
-  - Comma-separated list of assets, represented as "Code:IssuerAccountID". Only include liquidity pools which have reserves matching all listed assets.
+  - Comma-separated list of assets in canonical form (`Code:IssuerAccountID`), to only include liquidity pools which have reserves matching _all_ listed assets.
+- account
+  - string (optional)
+  - A Stellar account ID, to only include liquidity pools in which this account is participating in (i.e. holds pool shares to).
 - cursor
   - string (optional)
   - A number that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record.
@@ -56,12 +59,8 @@ var server = new StellarSdk.Server("https://horizon.stellar.org");
 server
   .liquidityPools()
   .call()
-  .then(function (resp) {
-    console.log(resp);
-  })
-  .catch(function (err) {
-    console.error(err);
-  });
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
 ```
 
 ```python
