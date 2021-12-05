@@ -95,6 +95,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server, Asset
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.offers().for_selling(Asset("USD", "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX")).call())
+except Exception as err:
+    print(err)
+``` 
+  
 </CodeExample>
 
 
@@ -240,5 +250,16 @@ var es = server
   .stream({ onmessage: callback });
 ```
 
+```python
+from stellar_sdk import Server, Asset
+server = Server("https://horizon.stellar.org")
+  
+def callback(resp):
+  print(resp)
+  
+for tx in server.offers().for_selling(Asset("USD", "GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX").cursor("now").stream():
+  callback(tx)
+```
+  
 </CodeExample>
 
