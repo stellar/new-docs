@@ -66,6 +66,16 @@ server
     console.error(err);
   });
 ```
+ 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.trades().for_account("GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K").call())
+except Exception as err:
+    print(err)
+```
 
 </CodeExample>
 
@@ -219,5 +229,16 @@ var es = server
   .stream({ onmessage: callback });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+  
+def callback(resp):
+  print(resp)
+  
+for tx in server.trades().for_account("GD3CJYUTZAY6JQF4CEI6Z7VW5O6VNGKZTBYUECTOJPEDTB7I2HZSPI2K").cursor("now").stream():
+  callback(tx)
+```
+  
 </CodeExample>
 
