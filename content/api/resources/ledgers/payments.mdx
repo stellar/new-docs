@@ -78,6 +78,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.payments().for_ledger("27521176").call())
+except Exception as err:
+    print(err)
+```
+  
 </CodeExample>
 
 
