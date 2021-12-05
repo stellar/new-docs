@@ -64,6 +64,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.transactions().call())
+except Exception as err:
+    print(err)
+```
+  
 </CodeExample>
 
 
@@ -251,5 +261,16 @@ var es = server
   .stream({ onmessage: tradesHandler });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+  
+def callback(tx):
+  print(tx)
+  
+for tx in server.transactions().cursor("now").stream():
+  callback(tx)
+```
+  
 </CodeExample>
 
