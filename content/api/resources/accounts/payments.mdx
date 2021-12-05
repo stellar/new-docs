@@ -73,6 +73,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.payments().for_account("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE").call())
+except Exception as err:
+    print(err)
+```
+  
 </CodeExample>
 
 
@@ -213,6 +223,17 @@ var es = server
   .forAccount("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE")
   .cursor("now")
   .stream({ onmessage: callback });
+```
+
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+  
+def callback(resp):
+  print(resp)
+  
+for tx in server.payments().for_account("GCNL55IJTH2HX26HLNIGYD2JIQLTBAQL3SVPNZA6PXK7NAVHU423WOTE").cursor("now").stream():
+  callback(tx)
 ```
 
 </CodeExample>
