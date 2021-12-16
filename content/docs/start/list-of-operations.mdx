@@ -379,9 +379,9 @@ Possible errors:
 | CHANGE_TRUST_INVALID_LIMIT | -3 | The `limit` is not sufficient to hold the current balance of the trustline and still satisfy its buying liabilities. This error occurs when attempting to remove a trustline with a non-zero asset balance. |
 | CHANGE_TRUST_LOW_RESERVE | -4 | This account does not have enough XLM to satisfy the minimum XLM reserve increase caused by adding a subentry and still satisfy its XLM selling liabilities. For every new trustline added to an account, the minimum reserve of XLM that account must hold increases. |
 | CHANGE_TRUST_SELF_NOT_ALLOWED | -5 | The source account attempted to create a trustline for itself, which is not allowed. |
-| CHANGE_TRUST_TRUST_LINE_MISSING | -6 | The asset trustline is missing for the liquidity pool |
-| CHANGE_TRUST_CANNOT_DELETE | -7 | The asset trustline is still referenced by a liquidity pool |
-| CHANGE_TRUST_NOT_AUTH_MAINTAIN_LIABILITIES | -8 | The asset trustline is deauthorized |
+| CHANGE_TRUST_TRUST_LINE_MISSING | -6 | The asset trustline is missing for the liquidity pool. |
+| CHANGE_TRUST_CANNOT_DELETE | -7 | The asset trustline is still referenced by a liquidity pool. |
+| CHANGE_TRUST_NOT_AUTH_MAINTAIN_LIABILITIES | -8 | The asset trustline is deauthorized. |
 
 ## Allow Trust
 
