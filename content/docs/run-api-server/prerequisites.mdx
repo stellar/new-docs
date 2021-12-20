@@ -3,13 +3,35 @@ title: Prerequisites
 order: 10
 ---
 
-Horizon only has one dependency: a PostgreSQL server that it uses to store data that has been processed and ingested from Stellar Core. Horizon requires PostgreSQL version >= 9.5.
+Horizon should be run as a standalone service by default for version 2.0+. Aside from serving API requests, it [ingests](./running.mdx#ingesting-transactions) data from the Stellar network via Captive Core, a non-validating version of Core optimized for ingestion and packaged as part of Horizon. Data is persisted to a PostgreSQL database (version >=9.5), which is a key prerequisite included as part of the deployment package. 
 
-As far as system requirements go, there are a few main things to keep in mind:
+Ingestion can happen in 2 modes:
 
-- If you plan on [ingesting](./running.mdx#ingesting-transactions) live transaction data from the Stellar network, your machines should have enough extra RAM to hold Captive Core's in-memory database (~3GB).
+1. Keeping in sync with the live Stellar ledger
+2. [Ingesting](./ingestion.mdx) historical data to catch up your Horizon instance for a given retention period (e.g., 30, 90 days). Captive Core enables configurable parallel workers to catch up faster.
 
-- In the above case, you should also take care to allocate enough space (on the order of ~20 GBs) in the directory from which you run Horizon in order for Captive Core to cache ledger information while it runs. You can customize the location of this storage directory via the `--captive-core-storage-path` as of [v2.1](https://github.com/stellar/go/releases/tag/horizon-v2.1.0).
+System requirements will vary depending on the retention period and desired catch-up speed. Hardware specs can be temporarily scaled up to handle initial historical ingestion before downspec’ing to a more economical profile for normal day-to-day operations to stay in sync with the ledger. Key considerations are disk space, I/O, RAM and CPU. Minimally, these aspects should be provisioned when performing historical catchup operations:
 
-- Other disk space requirements depend on how much of the network's history you'd like to serve from your Horizon instance. This could be anywhere from a few GBs to tens of TBs for the full ingested pubnet ledger history; read about [ingestion](./ingestion.mdx#deciding-on-how-much-history-to-ingest) to decide what's right for your use case.
+- Disk storage type should be SSD (NVMe, Direct Attached Storage)
+- I/O: >15 iops
 
+The following is a reference for hardware specifications for ingestion. Each component can be scaled independently and for redundancy, in the manner of traditional n-tier systems which is covered in the scaling section. Ingestion can be sped up via configuring more Captive Core parallel workers which require more computing and RAM resources. As of late 2021, DB storage to support historical retention is growing at a rate of 0.8 TB / month. It is highly recommended to configure retention only what history is needed to support your functionality. 
+
+
+### Re-ingestion for historical catch-up:
+
+| Retention Period -> | 30 days | 90 days | Full History |
+| ---- | ------ | ------- | ---------|
+| Captive Core Parallel Workers<br>(estimated ingestion time) | 6 workers<br> (1 day) | 10 workers<br> (1 day) | 20+ workers<br> (2 days)|
+| Horizon + Captive Core resources | CPU: 10 (6) <br>RAM: 64 GB (32) |CPU: 16 (8) <br>RAM: 128 GB (64) | CPU: 16 (10) <br>RAM: 512 GB (256) |
+| Database:<br> Ideal (minimum)| CPU: 16 (8) <br>RAM: 64 GB (32)<br>Storage: 2 TB<br>IOPS: 20K (15K )| CPU: 16 (12)<br>RAM: 128 GB (64 )<br>Storage: 4 TB <br>IOPS: 20K (15K )| CPU: 64 (32)<br>RAM: 512 GB (256 )<br>Storage: 10 TB<br>IOPS: 20k (15k )|
+| AWS reference: | Captive Core: m5.2xlarge <br>DB: r5.2xlarge| Captive Core: m5.4xlarge<br>DB: r5.4xlarge | Captive Core:<br>c5.2xlarge (x2)<br><br>DB:<br>r5.16xlarge (ro)<br>r5.8xlarge (rw)|
+
+
+
+### Ingesting live ledger data (staying in sync for day-to-day operations):
+| | Private Instance  | Enterprise Public Instance <br>(HA, redundant, high vol, full history)|
+| ---- | ------ | ------- | 
+|Compute|API Service + Captive Core<br>CPU: 4<br>RAM: 32 GB|API Service (n instances):<br><br>CPU: 4<br>RAM: 8 GB<br><br>Captive Core:<br>CPU: 8<br>RAM: 256 GB<br>| 
+| Database (PostGres)|CPU: 4<br>RAM: 32 GB<br>IOPS: 10k (7k)| CPU: 32 - 64<br>RAM: 256 - 512 GB<br>Storage: 10 TB<br>IOPS: 20k (15k )<br>2 HA instances: 1RO, 1RW|
+|AWS reference | API Service + Captive Core: <br>m5.2xlarge <br><br>DB:<br>r5.2xlarge (ro)<br>r5.xlarge (rw)| API Service:<br>c5.xlarge (n)<br><br>Captive Core:<br>c5.2xlarge (x2)<br><br>DB:<br>r5.16xlarge (ro)<br>r5.8xlarge (rw)|
