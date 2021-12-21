@@ -16,15 +16,21 @@ As always, scaling encompasses a spectrum. A few common scaling architectures fo
 
 As a starting point, for development purposes or low load environments with limited history retention (e.g. a few ledger entries), a single VM would suffice.
 
+![](../web-assets/horizon-scaling-1.png)
+
 
 ## Low to Medium Load 
 
 For low to medium load environments with up to 30-90 days of data history retention and modest API request traffic, this configuration isolates the database instance from the API service and ingestion process. 
 
+![](../web-assets/horizon-scaling-2.png)
+
+
 ### Extension: Isolating Captive Core
 
 Additionally, Captive Core can be further isolated into its own VM, especially for isolating high throughput historical catch-up with parallel workers, leaving it unaffected by API request servicing load. 
 
+![](../web-assets/horizon-scaling-3.png)
 
 ## Enterprise *n*-Tier
 
@@ -34,6 +40,10 @@ Database instances can be scaled when the I/O limit is reached by using read-onl
 
 Additionally, a second Captive Core instance shares ingestion load and serves as a backup in case of an instance failure.
 
+![](../web-assets/horizon-scaling-4.png)
+
 ### Extension: Redundant Hot Backup
 
 The entire architecture can be replicated to a second cluster. The backup cluster can be upgraded independently or fail-overed to with no downtime. Additionally, capacity can be doubled in an emergency if needed. 
+
+![](../web-assets/horizon-scaling-5.png)
