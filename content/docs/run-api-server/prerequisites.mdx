@@ -7,15 +7,15 @@ Horizon only has one true dependency: a PostgreSQL server that it uses to store 
 
 As far as system requirements go, there are a few main things to keep in mind. Starting from version 2.0, Horizon must be run as a standalone service. A full Horizon build consists of three functions:
 
-  1. ingesting data from the decentralized Stellar network,
-  2. serving API requests, and
-  3. submitting transactions to the network
+  1. **ingesting data** *from* the decentralized Stellar network,
+  3. **submitting transactions** *to* the network, and
+  2. serving API requests
 
-Functions (1) and (3) happen through Captive Core, a pared down, non-validating version of Stellar Core packaged directly into Horizon.
+The first two happen through *Captive Core*, a pared down, non-validating version of Stellar Core packaged directly into Horizon.
 
 With these three functions in mind, you can also run Horizon in two different ways: **real-time ingestion** and **historical catch-up**:
 
-  - _Real-time ingestion_ is an “online” process: it involves keeping in sync with the live Stellar network state and digesting ledger data into a holistic view of the network. If you just want function (2) from above, you still need to do this.
+  - _Real-time ingestion_ is an “online” process: it involves keeping in sync with the live Stellar network state and digesting ledger data into a holistic view of the network. If you just want function (3) from above, you still need to do this.
 
   - _Historical catch-up_ is an “offline” process: it lets you look into the past and catch up your Horizon instance to a given retention period (e.g. 30 days of history). Because it’s typically done offline and a one-time process, you can dedicate more compute power and configure parallel workers to catch up faster.
 
