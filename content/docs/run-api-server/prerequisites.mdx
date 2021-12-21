@@ -26,13 +26,12 @@ In this scenario, the hardware specifications are more demanding than what is ne
 However, the requirements will vary depending on your chosen retention period and desired catch-up speed. Note that **most operators will not need full history**, and as the network continues to grow, tracking full history will become increasingly prohibitive. As of late 2021, DB storage to support historical retention is growing at a rate of 0.8 TB / month. It is highly recommended to configure retention of only the history needed to support your functionality.
 
 #### Requirements
-Minimally, your disk storage type must be an SSD (e.g. NVMe, Direct Attached Storage) and your I/O must handle >15k iops (I/O operations per second). The following table breaks down hardware specifications for ingestion at different retention levels and performance tiers.
+Minimally, your disk storage type **must** be an SSD (e.g. NVMe, Direct Attached Storage) and your I/O **must** handle >15k iops (I/O operations per second). The following table breaks down hardware specifications for ingestion at different retention levels and performance tiers.
 
-Note that each component can be scaled independently and for redundancy, in the manner of traditional *n*-tier systems which is covered on the [Scaling](./scaling.mdx) page. Ingestion can be sped up via configuring more Captive Core parallel workers (requiring more compute and RAM).
+Note that each component can be scaled independently and for redundancy, in the manner of traditional *n*-tier systems which is covered later in [Scaling](./scaling.mdx). Ingestion can be sped up via configuring more Captive Core parallel workers (requiring more compute and RAM).
 
-
-|   |   | Retention Period |
-|:--|:--|:-----------------|
+| Component |   | Retention Period |
+|:----------|:--|:-----------------|
 | | **30 days** | **90 days** | **Full History** |
 | **Parallel worker count**<br/>(est. ingestion time) | 6 workers (1 day) | 10 workers (1 day) | 20+ workers (2 days) |
 | **Horizon** | **CPU**: 10 cores (min: 6) <br/>**RAM**: 64 GB (min: 32)<br/> | **CPU**: 16 (min: 8)<br/> **RAM**: 128 GB (64)<br/> | **CPU**: 16 (10)<br/> **RAM**: 512 GB (256) |
