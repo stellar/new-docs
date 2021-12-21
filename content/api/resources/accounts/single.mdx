@@ -10,7 +10,7 @@ import { AttributeTable } from "components/AttributeTable";
 
 The single account endpoint provides information on a specific account.
 
-The balances section in the response will also list all the trustlines this account has established. Note this will only return trustlines that have the necessary authorization to work. If an account `A` trusts another account `B` that has the authorization required flag set, the trustline won’t show up until account `B` allows account `A` to hold its assets.
+The balances section in the response will also list all the trustlines this account has established, including trustlines that haven't been authorized yet.
 
 <Endpoint>
 
