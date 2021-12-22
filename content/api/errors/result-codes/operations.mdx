@@ -10,6 +10,7 @@ These are Result Codes that communicate success (200) or failure (400) at the op
 
 <AttributeTable>
 
+
 - RESULT CODE
   - STELLAR PROTOCOL CODE
   - DESCRIPTION
@@ -27,14 +28,16 @@ These are Result Codes that communicate success (200) or failure (400) at the op
   - The operation is not supported at this time.
 - op_too_many_subentries
   - opTOO_MANY_SUBENTRIES
-  - max number of subentries already reached
+  - Max number of subentries (1000) already reached
 - op_exceeded_work_limit
   - opEXCEEDED_WORK_LIMIT
-  - operation did too much work
+  - Operation did too much work
 
 </AttributeTable>
 
+
 <ExampleResponse title="Example Response for an 'op_no_source_account' Result Code">
+
 
 ```json
 {
@@ -54,3 +57,4 @@ These are Result Codes that communicate success (200) or failure (400) at the op
 ```
 
 </ExampleResponse>
+

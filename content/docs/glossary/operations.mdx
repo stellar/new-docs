@@ -42,3 +42,5 @@ For more details on this process, see the [lifecycle of a transaction](./transac
 ## Result
 
 For each operation, there is a matching result type. In the case of success, this result allows users to gather information about the effects of the operation. In the case of failure, it allows users to learn more about the error.
+
+There are some generic errors associated with operations. For example, any operation that creates a subentry, such as `ChangeTrust` and `ManageData`, can fail with `opTOO_MANY_SUBENTRIES`. See [operations](../../api/errors/result-codes/operations/) in the API reference for more information.
