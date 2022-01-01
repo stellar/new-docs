@@ -44,10 +44,6 @@ To build this project, you must have the following dependencies installed:
     possible that one of these will ship a change that mandates a more modern
     version in the future.
 - `yarn`
-- If your local build environment is arm64, such as on newer Apple M1 Macs, then
-  use brew to pre-install libvips which is a native `sharp` dependency and needs
-  to be the arm64 version, it wasn't getting resolved to correct arch/platform
-  version through yarn install alone: `brew install vips`
 
 Some of the dependencies are considered "legacy", so run
 `npm install --legacy-peer-deps` to bypass errors.
