@@ -37,7 +37,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
 </Alert>
 
-It's worth noting that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* used a muxed account. For example, if you make two payments from two muxed accounts that share an underlying Stellar account (i.e. muxed accounts with the same underlying `G...` account but two different IDs), this is *exactly the same* as that single Stellar account sending two payments, as far as the ledger is concerned.
+It's crucial to understand that this feature is intended to be a high-level abstraction, merely embedded into the protocol for convenience and standardization. There's no validation on IDs: **as far as the Stellar Network is concerned, all of the [supported operations][supported-ops] operate exactly as if you did *not* used a muxed account**. For example, if you make two payments from two muxed accounts that share an underlying Stellar account (i.e. muxed accounts with the same underlying `G...` account but two different IDs), this is *exactly the same* as that single Stellar account sending two payments, as far as the ledger is concerned.
 
 Even though only the underlying `G...` account _truly_ exists in the Stellar ledger, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
 
@@ -59,6 +59,7 @@ Not all operations can be used with muxed accounts. For example, you cannot set 
     * [`PathPaymentStrictSend`](../start/list-of-operations.mdx#path-payment-strict-send), and
     * [`PathPaymentStrictReceive`](../start/list-of-operations.mdx#path-payment-strict-receive)
   - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge), and
+  - the "target" of a [`Clawback`](../start/list-of-operations.mdx#clawback) operation (i.e. the `from` field) 
   - the fee source of a [fee-bump transaction](./fee-bumps.mdx).
 
 We'll demonstrate some of these in the [Examples](#examples).
@@ -271,5 +272,80 @@ If we were to make a payment between two muxed accounts that had *different* und
 ### More Examples
 As is the case for most protocol-level features, you can find more usage examples and inspiration in the relevant test suite for your favorite SDK. For example, [here](https://github.com/stellar/js-stellar-base/blob/master/test/unit/muxed_account_test.js) are some of the JavaScript test cases.
 
+
+## Frequently-Asked Questions
+
+The different stages of the rollout plan necessitate careful consideration of edge cases. For example, what happens if you send money to a muxed address (`M...`), but the recipient's platform only supports regular addresses (`G...`)? The list below aims to identify and alleviate some of these.
+
+In all cases, the action specified by the operation (be it a payment, clawback, etc.) will act as though the muxed address is the underlying account ID. Muxed accounts are not part of the network, so if your transaction succeeds, the operation will succeed. In the case of payments, then, **assets will always transfer**, regardless of sender/receiver support for muxed accounts.
+
+### Sending to the wrong account
+
+There are a number of ways to send data incorrectly, so these are grouped into a subcategory.
+
+Below, the "recipient" is defined as be the platform the destination account uses to interact with the Stellar network.
+
+#### Your operations use muxed accounts, but the recipients do not support muxed accounts.
+In general, you should not send muxed payments to people on platforms that do not support them. The platform will throw an exception trying to parse the relevant operation. For example, the JavaScript SDK will throw a helpful message:
+
+> destination is invalid; did you forget to enable muxing?
+
+Note, however, that the **operation will succeed** on the network. In the case of payments, for example, the destination's _parent address_ will still receive the funds.
+
+#### You want to send to a muxed account, but your platform does not support them.
+In this case, do not use a muxed address. The platform will likely fail to create the operation. You should fall back to the legacy method of using a transaction memo, instead.
+
+### Your platform receives a transaction with muxed destination account(s) _and_ a memo ID.
+
+In an ideal world, this situation would never happen. You can determine whether or not the underlying IDs are equal; if they aren't, this is a malformed transaction and we recommend not submitting this transaction.
+
+### Using a muxed address with an incompatible operation
+Only certain operations enable muxed accounts, as described [above][supported-ops]. Passing a muxed account to an incompatible parameter with an up-to-date SDK _should_ result in a compilation or runtime error at the time of use.
+
+For example, when using the JavaScript SDK incorrectly:
+
+<CodeExample>
+
+```js
+  const mAddress = "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAABUTGI4";
+  transactionBuilder.addOperation(
+    Operation.setTrustLineFlags({
+      trustor: mAddress, // wrong!
+      asset: Asset.native(),
+      flags: { clawbackEnabled: false }
+    })
+  );
+```
+
+</CodeExample>
+
+the runtime result would be:
+
+> Error: invalid version byte. expected 48, got 96
+
+This error message indicates that the `trustor` failed to parse as an account ID (`G...`). In other words, your code will fail and the invalid operation will never reach the network.
+
+### Using a muxed address without enabling the feature flag
+
+This scenario is very similar to the above, where you pass a muxed address where you shouldn't. The error message will just be different:
+
+```js
+  const mAddress = "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAABUTGI4";
+  transactionBuilder.addOperation(
+    Operation.payment({
+      destination: mAddress, // wrong!
+      asset: Asset.native(),
+      amount: "1"
+    })
+  );
+```
+
+</CodeExample>
+
+the runtime result would be:
+
+> destination is invalid; did you forget to enable muxing?
+
+To resolve it, enable the feature flag. The flag is toggled on a _per-operation_ and _per-transaction_ basis, so you will need to set it wherever it's appropriate.
 
 [supported-ops]: #supported-operations
