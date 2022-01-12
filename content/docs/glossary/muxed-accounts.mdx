@@ -177,8 +177,7 @@ function doPayment(source, dest) {
         source: source.accountId(),
         destination: dest.accountId(),
         asset: sdk.Asset.native(),
-        amount: "10",
-        withMuxing: true,
+        amount: "10"
       });
 
       let tx = new sdk.TransactionBuilder(accountBeforePayment, {
