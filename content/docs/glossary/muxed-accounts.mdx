@@ -216,7 +216,7 @@ preamble
 
 </CodeExample>
 
-Notice that we still sign the transaction with the `custodian` keys, because **muxed accounts have no concept of a secret key**. Ultimately, everything still goes through the "parent" account, and so we should see the account's balance decrease by 10 XLM accordingly:
+Notice that we still sign the transaction with the `custodian` keys, because **muxed accounts have no concept of a secret key**. Ultimately, everything still goes through the "parent" account, and so we should see the parent account's balance decrease by 10 XLM accordingly:
 
 <CodeExample>
 
@@ -305,7 +305,7 @@ If you get errors when using muxed addresses on [supported operations][supported
 
 > destination is invalid; did you enable muxing?
 
-We recommend upgrading to the latest version of any and all Stellar SDKs you use. However, if that's not possible for some reason, you can will need to enable the feature flag before interacting with muxed accounts. Consult your SDK's documentation for details.
+We recommend upgrading to the latest version of any and all Stellar SDKs you use. However, if that's not possible for some reason, you will need to enable the feature flag before interacting with muxed accounts. Consult your SDK's documentation for details.
 
 ### What happens if I pass a muxed address to an incompatible operation?
 Only certain operations allow muxed accounts, as described [above][supported-ops]. Passing a muxed address to an incompatible parameter with an up-to-date SDK _should_ result in a compilation or runtime error at the time of use.
