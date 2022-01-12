@@ -297,6 +297,16 @@ In this case, do not use a muxed address. The platform will likely fail to creat
 
 In an ideal world, this situation would never happen. You can determine whether or not the underlying IDs are equal; if they aren't, this is a malformed transaction and we recommend not submitting it to the network.
 
+### What happens if I get errors when using muxed accounts?
+
+In up-to-date versions of Stellar SDKs, muxed accounts are natively supported by default. If you are using an older version of an SDK, however, they may still be hidden behind a feature flag. 
+
+If you get errors when using muxed addresses on [supported operations][supported-ops] like:
+
+> destination is invalid; did you enable muxing?
+
+We recommend upgrading to the latest version of any and all Stellar SDKs you use. However, if that's not possible for some reason, you can will need to enable the feature flag before interacting with muxed accounts. Consult your SDK's documentation for details.
+
 ### What happens if I pass a muxed address to an incompatible operation?
 Only certain operations allow muxed accounts, as described [above][supported-ops]. Passing a muxed address to an incompatible parameter with an up-to-date SDK _should_ result in a compilation or runtime error at the time of use.
 
