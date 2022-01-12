@@ -1,3 +1,4 @@
+
 ---
 title: Muxed Accounts
 order:
@@ -11,8 +12,8 @@ A **muxed** (or *multiplexed*) **account** is an account that exists "virtually"
 
 <Alert>
 
-  **Warning**: *This feature is experimental.*
-  Muxed accounts are not widely supported yet. Many wallets may not display a muxed account address and instead display the account ID address, ignoring the 64-bit ID. Adoption efforts are actively in progress.
+  **Warning**: *This feature is in active rollout.*
+  Muxed accounts are gaining adoption but may not be fully supported. Some wallets may not display a muxed account address and instead display the account ID address, ignoring the 64-bit ID. Continued adoption efforts are actively in progress.
 
 </Alert>
 
@@ -29,7 +30,7 @@ There are many other benefits to embedding this abstraction into the protocol:
 
   - **"Share-ability"**: Rather than worrying about error-prone things like copy-pasting memo IDs, you can just share your `M...` address.
   - **SDK support**: The various [SDKs](../software-and-sdks) support this abstraction natively, letting you create, manage, and work with muxed accounts easily.
-  - **Efficiency**: By combining related virtual accounts under a single account's umbrella, you can avoid holding reserves and paying fees for all of them to exist in the ledger individually.
+  - **Efficiency**: By combining related virtual accounts under a single account's umbrella, you can avoid holding reserves and paying fees for all of them to exist in the ledger individually. You can also combine multiple payments to multiple destinations within a single transaction, since you do not need the per-transaction memo field anymore.
 
 <Alert>
 
@@ -41,33 +42,28 @@ It's crucial to understand that this feature is intended to be a high-level abst
 
 Even though only the underlying `G...` account _truly_ exists in the Stellar ledger, the [Horizon API](../../api/introduction/) will make some effort to interpret and track the muxed accounts responsible for certain actions.
 
-
-## Supporting Opt-In
-
-Because muxed account support is still experimental, you need to **explicitly opt-in** to creating operations with muxed properties. Eventually, muxed support will be the default, but for now, if you do not pass these opt-in flags in the necessary places, SDKs will throw errors. This is done in an effort to ensure that muxed accounts are not "accidentally" working in your application and thus may be misleading to your users.
-
-Each SDK implements this a little differently, but generally-speaking you need to explicitly call out muxing support when creating each operation and/or transaction that uses muxed accounts. 
+Muxed account support is embedded into the SDKs. This means that you may see muxed addresses appear when parsing any of the fields that support them, so you should be ready to handle them. Refer to your SDK's documentation for details; for example, [v7.0.0](https://github.com/stellar/js-stellar-base/releases/tag/v7.0.0) of the JavaScript SDK library `stellar-base` describes all of the fields and functions that relate to muxed accounts.
 
 
 ## Supported Operations
 
 Not all operations can be used with muxed accounts. For example, you cannot set the destination of a [`CreateAccount`](../start/list-of-operations.mdx#create-account) operation to be a muxed account, because only their shared, underlying `G...` account exists in the ledger. However, you can use them with:
 
-  - the source account of *any* [operation](../start/list-of-operations.mdx) or [transaction](./transactions.mdx),
+  - the source account of *any* [operation](../start/list-of-operations.mdx) or [transaction](./transactions.mdx);
+  - the fee source of a [fee-bump transaction](./fee-bumps.mdx);
   - the destination of all three types of payments:
     * [`Payment`](../start/list-of-operations.mdx#payment),
     * [`PathPaymentStrictSend`](../start/list-of-operations.mdx#path-payment-strict-send), and
-    * [`PathPaymentStrictReceive`](../start/list-of-operations.mdx#path-payment-strict-receive)
-  - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge), and
-  - the "target" of a [`Clawback`](../start/list-of-operations.mdx#clawback) operation (i.e. the `from` field) 
-  - the fee source of a [fee-bump transaction](./fee-bumps.mdx).
+    * [`PathPaymentStrictReceive`](../start/list-of-operations.mdx#path-payment-strict-receive);
+  - the destination of an [`AccountMerge`](../start/list-of-operations.mdx#account-merge); and
+  - the target of a [`Clawback`](../start/list-of-operations.mdx#clawback) operation (i.e. the `from` field).
 
 We'll demonstrate some of these in the [Examples](#examples).
 
 
 ## Examples
 
-In this section, we'll demonstrate how to create muxed accounts and how seamlessly they interface with their supported operations. To drive home the fact that custodial account workarounds based on transaction memos are superfluous now, we'll use that as a skeleton for our example structure.
+In this section, we'll demonstrate how to create muxed accounts and how seamlessly they interface with their supported operations. To drive home the fact that custodial account workarounds based on transaction memos (as in [this tutorial](../building-apps/setup-custodial-account/index.mdx)) are superfluous now, we'll use that as a skeleton for our example structure.
 
 After preparing some supporting code, we'll demonstrate three scenarios:
 
@@ -121,7 +117,7 @@ async function preamble() {
 
 </CodeExample>
 
-We assume that these accounts exist on the testnet; you can replace them with your own keys and use the [friendbot](../tutorials/create-account.mdx#create-account) if you'd like.
+We assume that these accounts exist on the testnet; you can replace them with your own keys and use [friendbot](../tutorials/create-account.mdx#create-account) if you'd like.
 
 When we run this function, we'll see the similarity in muxed account addresses among the customers, highlighting the fact that they share a public key:
 
@@ -149,7 +145,7 @@ The introduction of muxed addresses as a higher-level abstraction--and their exp
 
 ```js
 function loadAccount(account) {
-  if (account.accountId().startsWith("M")) {
+  if (StellarSdk.StrKey.isValidMed25519Address(account.accountId())) {
     return loadAccount(account.baseAccount());
   } else {
     return server.loadAccount(account.accountId());
@@ -187,8 +183,7 @@ function doPayment(source, dest) {
 
       let tx = new sdk.TransactionBuilder(accountBeforePayment, {
           networkPassphrase: StellarSdk.Networks.TESTNET,
-          withMuxing: true,
-          fee: 100,
+          fee: StellarSdk.BASE_FEE,
         })
         .addOperation(payment)
         .setTimeout(30)
@@ -222,7 +217,7 @@ preamble
 
 </CodeExample>
 
-Notice that we still sign the transaction with the `custodian` keys, because muxed accounts have no concept of secret keys. Ultimately, everything still goes through the "parent" account, and so we should see the account's balance decrease by 10 XLM accordingly:
+Notice that we still sign the transaction with the `custodian` keys, because **muxed accounts have no concept of a secret key**. Ultimately, everything still goes through the "parent" account, and so we should see the account's balance decrease by 10 XLM accordingly:
 
 <CodeExample>
 
@@ -264,7 +259,7 @@ GCIHA: 9579.9999700 XLM
 
 </CodeExample>
 
-Notice that the account's balance is essentially unchanged, yet it was charged a fee since this transaction is still recorded in the ledger despite doing next to nothing. You may want to detect these types of transactions in your application to avoid paying the transaction fee.
+Notice that the account's balance is essentially unchanged, yet it was charged a fee since this transaction is still recorded in the ledger (despite doing next to nothing). You may want to detect these types of transactions in your application to avoid paying unnecessary transaction fees.
 
 If we were to make a payment between two muxed accounts that had *different* underlying Stellar accounts, this would be equivalent to a payment between those two respective `G...` accounts.
 
@@ -279,28 +274,32 @@ The different stages of the rollout plan necessitate careful consideration of ed
 
 In all cases, the action specified by the operation (be it a payment, clawback, etc.) will act as though the muxed address is the underlying account ID. Muxed accounts are not part of the network, so if your transaction succeeds, the operation will succeed. In the case of payments, then, **assets will always transfer**, regardless of sender/receiver support for muxed accounts.
 
-### Sending to the wrong account
+### What happens if I send to the wrong address?
 
-There are a number of ways to send data incorrectly, so these are grouped into a subcategory.
+There are a number of ways to send data incorrectly, so these are grouped into a subcategory. Below, the "recipient" is defined as be the _platform_ that the destination account uses to interact with the Stellar network.
 
-Below, the "recipient" is defined as be the platform the destination account uses to interact with the Stellar network.
+#### What happens if I pay a muxed address, but the recipient doesn't support them?
+In general, you should not send payments to muxed addresses on platforms that do not support them. These platforms will not be able to provide muxed destination addresses in the first place.
 
-#### Your operations use muxed accounts, but the recipients do not support muxed accounts.
-In general, you should not send muxed payments to people on platforms that do not support them. The platform will throw an exception trying to parse the relevant operation. For example, the JavaScript SDK will throw a helpful message:
+Even still, if this does occur, parsing a transaction with a muxed parameter without handling them will lead to one of two things occurring:
+
+- If your SDK is out-of-date, parsing will error out. You should upgrade your SDK. For example, the JavaScript SDK will throw a helpful message:
 
 > destination is invalid; did you forget to enable muxing?
 
+- If your SDK is up-to-date, you will see the muxed (`M...`) address parsed out. What happens next depends on your application.
+
 Note, however, that the **operation will succeed** on the network. In the case of payments, for example, the destination's _parent address_ will still receive the funds.
 
-#### You want to send to a muxed account, but your platform does not support them.
-In this case, do not use a muxed address. The platform will likely fail to create the operation. You should fall back to the legacy method of using a transaction memo, instead.
+#### What happens if I want to pay a muxed account, but my platform does not support them?
+In this case, do not use a muxed address. The platform will likely fail to create the operation. You probably want to use the legacy method of including a transaction memo, instead.
 
-### Your platform receives a transaction with muxed destination account(s) _and_ a memo ID.
+### What do I do if I receive a transaction with muxed addresses _and_ a memo ID?
 
-In an ideal world, this situation would never happen. You can determine whether or not the underlying IDs are equal; if they aren't, this is a malformed transaction and we recommend not submitting this transaction.
+In an ideal world, this situation would never happen. You can determine whether or not the underlying IDs are equal; if they aren't, this is a malformed transaction and we recommend not submitting it to the network.
 
-### Using a muxed address with an incompatible operation
-Only certain operations enable muxed accounts, as described [above][supported-ops]. Passing a muxed account to an incompatible parameter with an up-to-date SDK _should_ result in a compilation or runtime error at the time of use.
+### What happens if I pass a muxed address to an incompatible operation?
+Only certain operations allow muxed accounts, as described [above][supported-ops]. Passing a muxed address to an incompatible parameter with an up-to-date SDK _should_ result in a compilation or runtime error at the time of use.
 
 For example, when using the JavaScript SDK incorrectly:
 
@@ -311,7 +310,7 @@ For example, when using the JavaScript SDK incorrectly:
   transactionBuilder.addOperation(
     Operation.setTrustLineFlags({
       trustor: mAddress, // wrong!
-      asset: Asset.native(),
+      asset: someAsset,
       flags: { clawbackEnabled: false }
     })
   );
@@ -323,31 +322,18 @@ the runtime result would be:
 
 > Error: invalid version byte. expected 48, got 96
 
-This error message indicates that the `trustor` failed to parse as an account ID (`G...`). In other words, your code will fail and the invalid operation will never reach the network.
+This error message indicates that the `trustor` failed to parse as a Stellar account ID (`G...`). In other words, your code will fail and the invalid operation will never reach the network.
 
-### Using a muxed address without enabling the feature flag
+### How do I validate Stellar addresses?
+You should use the validation methods provided by your SDK or carefully adhere to [SEP-23](https://stellar.org/protocol/sep-23). For example, the JavaScript SDK provides the following methods for validating Stellar addresses:
 
-This scenario is very similar to the above, where you pass a muxed address where you shouldn't. The error message will just be different:
-
-<CodeExample>
-
-```js
-  const mAddress = "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAABUTGI4";
-  transactionBuilder.addOperation(
-    Operation.payment({
-      destination: mAddress, // wrong!
-      asset: Asset.native(),
-      amount: "1"
-    })
-  );
+```typescript
+namespace StrKey {
+  function isValidEd25519PublicKey(publicKey: string): boolean;
+  function isValidMed25519PublicKey(publicKey: string): boolean;
+}
 ```
 
-</CodeExample>
-
-the runtime result would be:
-
-> destination is invalid; did you forget to enable muxing?
-
-To resolve it, enable the feature flag. The flag is toggled on a _per-operation_ and _per-transaction_ basis, so you will need to set it wherever it's appropriate.
+There are also abstractions for constructing and managing both muxed and regular accounts; consult your SDK documentation for details.
 
 [supported-ops]: #supported-operations
