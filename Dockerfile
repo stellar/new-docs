@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y gpg curl wget git ca-certificates apt-t
     apt-get update && apt-get install -y nodejs yarn
 
 # Puppeteer workaround
+
 # https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-puppeteer-in-docker
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor >/etc/apt/trusted.gpg.d/google.gpg && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
