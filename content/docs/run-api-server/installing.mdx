@@ -8,7 +8,7 @@ import { CodeExample } from "components/CodeExample";
 To install Horizon, you have a few choices. You can...
   - install prebuilt binaries [from our repositories](#package-manager) via your package manager if running a Debian-based system,
   - download a [prebuilt release](https://github.com/stellar/go/releases/latest) of Horizon for your target architecture and operation system, or
-  - [build Horizon yourself](#building) from scratch.
+  - [build Horizon and Stellar Core yourself](#building) from scratch.
 
 **The first method is recommended**: Not only do you ensure OS compatibility and dependency management, you'll also install some convenient wrappers that make running Horizon and Stellar Core in their respective environments much simpler.
 
@@ -22,7 +22,7 @@ SDF publishes new releases to its custom Ubuntu repositories. Follow [this guide
 
 ```bash
 sudo apt update
-sudo apt install stellar-horizon stellar-captive-core
+sudo apt install stellar-horizon stellar-core
 ```
 
 </CodeExample>
@@ -60,6 +60,8 @@ export PATH=$(go env GOPATH)/bin:$PATH
 ```
 
 </CodeExample>
+
+You will also need to compile Stellar Core from its source code if you need ingestion or transaction submission. You should refer to [their installation guide](https://github.com/stellar/stellar-core/blob/master/INSTALL.md) for details.
 
 Next, jump ahead to [Testing Your Installation](#completing-and-testing-your-installation).
 
