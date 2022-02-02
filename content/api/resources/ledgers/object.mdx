@@ -37,6 +37,9 @@ When Horizon returns information about a ledger, it uses the following format:
 - operation_count
   - number
   - The number of operations applied in this ledger.
+- tx_set_operation_count 
+  - number
+  - The number of total operations in the transaction set (including failed transactions).  
 - closed_at
   - string
   - An [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string of when this ledger was closed.
@@ -97,6 +100,7 @@ When Horizon returns information about a ledger, it uses the following format:
   "successful_transaction_count": 27,
   "failed_transaction_count": 1,
   "operation_count": 133,
+  "tx_set_operation_count": 134, 
   "closed_at": "2019-11-18T19:27:21Z",
   "total_coins": "105443902087.3472865",
   "fee_pool": "1807038.9789761",
