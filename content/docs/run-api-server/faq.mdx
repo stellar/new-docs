@@ -1,0 +1,49 @@
+---
+title: Common Pain Points FAQs
+order: 80
+---
+
+The following is a list of common problems that users may encounter when deploying or running Horizon.
+
+
+## Frequent Errors
+
+#### Invalid storage path: “failed to create storage directory (/captive-core-xxxxxxxx): mkdir /captive-core-xxxxxxxx: permission denied”
+
+This is caused by a misconfigured `CAPTIVE_CORE_STORAGE_PATH` parameter. You must ensure that the directory (which is the directory you ran Horizon from, by default) has the correct permissions for Horizon to write to it.
+
+#### Empty transaction results: “loading transaction records: executing transaction records query: sql: no rows in result set”
+This is just a warning. It, and other warnings like it, occur if the query that your Horizon instance just processed resulted in an empty page.
+
+#### 503s on transaction submission. Related errors: "could not load stellar-core info", "http request errored: context deadline exceeded", and "error ticking app"
+A 503 on the POST /transactions endpoint means that Stellar Core is not synced to Horizon. This can occur under heavy network load, but should not happen normally. Check network load, metrics, and your machine specs. 
+
+During this 503 situation, transactions never make it past Horizon. That is, the Stellar network will never see them, and you can safely resubmit them.
+
+#### Ingestion delays: "waiting for ingestion system catchup", "offer compaction is not consistent with liquidity pool compaction", etc.
+These messages are normal while you are ingesting. They should cease once ingestion has caught up with the current state of the network, so you can ignore them until you are fully synced.
+
+#### Captive Core isn’t running
+Enable the `INGEST` parameter when running Horizon (on by default since v2.10), and ensure the `ENABLE_CAPTIVE_CORE_INGESTION` is set (on by default since v2.0).
+
+
+## Deployment FAQs
+
+#### How do I configure Horizon + Captive Core for the pubnet?
+On [this page](https://developers.stellar.org/docs/run-api-server/configuring/#configuring-captive-core), we show how Captive Core is configured for the testnet, and there is a link to the pubnet validators that SDF uses. You should not use these blindly, and should instead think about who you want to trust.
+
+#### Building on Ubuntu 16.04
+Neither Horizon nor Stellar Core support 16.04. Please upgrade to at least 18.04 (Bionic Beaver).
+
+You **may** be able to successfully build it with the following packages:
+
+    clang-8 libc++abi-8-dev libc++-8-dev git build-essential pkg-config autoconf automake libtool bison flex libpq-dev parallel libunwind-dev
+
+And the following flags:
+
+    export CC=clang-8; export CXX=clang++-8; export CFLAGS='-O2 -g'; export CXXFLAGS='-O2 -g -stdlib=libc++'; ./autogen.sh && ./configure && make -j $(nproc)
+
+However, we neither condone nor support this.
+
+#### Can I check the number of connected peers and information using horizon?
+Horizon runs Stellar Core as a subprocess, and you can still query this subprocess. There are a lot of metrics exposed on the `/metrics` endpoint of the Stellar Core instance. By default, this will be at http://localhost:11626, but this may be different if you change your configuration, e.g. `CAPTIVE_CORE_HTTP_PORT`.
