@@ -48,10 +48,13 @@ As outlined at the beginning, we presume you are interested in starting an inges
 | `--ingest` | `INGEST` | true |
 | `--captive-core-config-path` | `CAPTIVE_CORE_CONFIG_PATH` | /etc/default/stellar-captive-core.toml |
 | `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
+| `--captive-core-use-db` | `CAPTIVE_CORE_USE_DB` | true |
 
   - The first parameter, `--ingest=true`, enables the ingestion subservice.
   - The second parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This TOML file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running.
-  - The final parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
+  - The third parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
+  - The fourth parameter, `--captive-core-use-db=true`, enable this captive core based ingestion to use a local file DB rather than in-memory(RAM) for ledger states. Essentially moves what would have been stored in RAM to the local file DB instead. Recent profiling on the two approaches shows an approximate space usage of about 8GB for ledger states as of 02/2022 timeframe, but will continue to increase as network ledger grows over time. The location of local file DB is determined by the `DATABASE` parameter in the `--captive-core-config-path` file. If no value is set, by default it will be `sqlite3://stellar.db` which resolves to runtime directory location derived from `--captive-core-storage-path` or current runtime working directory.
+
 
 #### Without Ingestion
 If you aren't configuring your Horizon instance to perform ingestion, it still needs awareness about what's going on in the Stellar network to be useful. Thus, you need to point Horizon to a running Stellar Core instance:
