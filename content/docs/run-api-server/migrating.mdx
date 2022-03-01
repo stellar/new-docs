@@ -82,17 +82,7 @@ If you want to continue to have access to the underlying Stellar Core subprocess
 
 ### Installation
 
-Once you have a configuration file ready, you can install the Captive Core package to prepare the Horizon configuration: 
-
-<CodeExample>
-
-```bash
-sudo apt install stellar-captive-core
-```
-
-</CodeExample>
-
-Note the block in the new `/etc/default/stellar-horizon` file:
+Once you have a configuration file ready, you should also modify your Horizon configuration to include Captive Core parameters. Within `/etc/default/stellar-horizon`, you should add:
 
 <CodeExample>
 
@@ -107,9 +97,7 @@ CAPTIVE_CORE_STORAGE_PATH=/var/lib/stellar
 
 </CodeExample>
 
-(Your old configuration will have a `.old` suffix appended to it, so be sure to bring the parameters back over to the new default.)
-
-You will need to adjust these accordingly, for example by pointing `CAPTIVE_CORE_CONFIG_PATH` to your configuration file and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (but keep in mind the [disk space](./prerequisites.mdx) and [permissions](./configuring.mdx#package-manager-installation) requirements).
+You may need to adjust these accordingly, for example by pointing `CAPTIVE_CORE_CONFIG_PATH` to your configuration file and possibly `CAPTIVE_CORE_STORAGE_PATH` to where you'd like Captive Core to store its bucket files (but keep in mind the [disk space](./prerequisites.mdx) and [permissions](./configuring.mdx#package-manager-installation) requirements).
 
 Finally, the process for upgrading both Stellar Core and Horizon is covered [here](https://github.com/stellar/packages/blob/master/docs/upgrading.md#upgrading).
 
@@ -133,7 +121,7 @@ sudo systemctl restart stellar-horizon
 
 </CodeExample>
 
-The logs should show Captive Core running successfully as a subprocess, and eventually Horizon will be running as usual except with Captive Core rapidly generating transaction metadata in-memory!
+After a few moments, the logs should show Captive Core running successfully as a subprocess, and eventually Horizon will be running as usual except with Captive Core rapidly generating transaction metadata in-memory!
 
 ### A Multi-Machine Setup
 

@@ -45,22 +45,22 @@ As outlined at the beginning, we presume you are interested in starting an inges
 
 | flag | envvar | example |
 | ---- | ------ | ------- |
-| `--ingest` | `INGEST` | true |
 | `--captive-core-config-path` | `CAPTIVE_CORE_CONFIG_PATH` | /etc/default/stellar-captive-core.toml |
 | `--stellar-core-binary-path` | `STELLAR_CORE_BINARY_PATH` | /usr/bin/stellar-core |
 | `--captive-core-use-db` | `CAPTIVE_CORE_USE_DB` | true |
 
-  - The first parameter, `--ingest=true`, enables the ingestion subservice.
-  - The second parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This TOML file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running.
-  - The third parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you won't even need to pass this.
-  - The fourth parameter, `--captive-core-use-db=true`, enables Captive Core ingestion to store ledger states as local SQLite database rather than in memory (RAM). As of this writing, ledger states require approximately 8GB, but this will continue to increase as the ledger grows over time. The database location is determined by the `DATABASE` parameter within the `--captive-core-config-path` file. By default, it is set to  `sqlite3://stellar.db`, which resolves to runtime directory location derived from `--captive-core-storage-path`.
+Note that **ingestion is enabled by default**.
 
+  - The first parameter, `--captive-core-config-path`, points to a Captive Core configuration file. This TOML file only requires a few fields (explained [below](#configuring-captive-core)) to get up and running.
+  - The second parameter, `--stellar-core-binary-path`, is a filesystem path to a Stellar Core binary. Horizon will actually search your PATH for `stellar-core` by default, so if your environment is configured appropriately, you don't need to pass this.
+  - The third parameter, `--captive-core-use-db`, by default this value is false, which means Captive Core ingestion will run with ledger states stored in RAM. When set to true, enables Captive Core ingestion to store ledger states in local SQLite database rather than in memory (RAM). As of this writing, ledger states require approximately 8GB, but this will continue to increase as the ledger grows over time. The database location is determined by the `DATABASE` parameter within the `--captive-core-config-path` file. By default, it is set to  `sqlite3://stellar.db`, which resolves to runtime directory location derived from `--captive-core-storage-path`.
 
 #### Without Ingestion
 If you aren't configuring your Horizon instance to perform ingestion, it still needs awareness about what's going on in the Stellar network to be useful. Thus, you need to point Horizon to a running Stellar Core instance:
 
 | flag | envvar | example |
 | ---- | ------ | ------- |
+| `--ingest` | `INGEST` | false |
 | `--stellar-core-url` | `STELLAR_CORE_URL` | http://127.0.0.1:11626 |
 
 This can be a [Remote Captive Core](./remote-core.mdx) instance with its underlying Core node exposed or a [standalone](../run-core-node/) Stellar-Core instance.
@@ -81,7 +81,7 @@ This script invokes Horizon with the `stellar` user, so make sure that permissio
 
 </Alert>
 
-Note that the default configuration (located at `/etc/default/stellar-horizon`) provided by the package manager will **enable ingestion by default** (`INGEST=true`). Again, refer to the later [Ingestion](./ingestion.mdx) page to see what setup is right for you. If you want certain nodes dedicated exclusively to fulfilling requests, you should drop this flag accordingly.
+Note that the default configuration (located at `/etc/default/stellar-horizon`) provided by the package manager **enables ingestion by default**. Again, refer to the later [Ingestion](./ingestion.mdx) page to see what setup is right for you. If you want certain nodes dedicated exclusively to fulfilling requests, you should set this flag to `false` accordingly.
 
 
 ## Preparing the Database
@@ -144,7 +144,7 @@ _(For the remainder of this guide, we'll assume this file lives at `/etc/default
 
 The minimum required fields are the `[[HOME_DOMAINS]]` and a set of `[[VALIDATORS]]`.
 
-If you wanted to adapt this and configure your nodes to work on the Stellar **pubnet**, you'll need to think more carefully about the validators you want to trust in your quorum. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF includes in its pubnet quorum.
+If you wanted to adapt this and configure your nodes to work on the Stellar **pubnet**, you'll need to think more carefully about the validators you want to trust in your quorum. As inspiration, [here](https://github.com/stellar/go/blob/master/services/horizon/docker/stellar-core-pubnet.cfg#L15-L202) is the set of domains and validators that SDF includes in its pubnet quorum. You should also familiarize yourself with how to configure a proper quorum set; the [Core documentation](../run-core-node/configuring.mdx#choosing-your-quorum-set) has more on this.
 
 Captive Core's functionality is controlled through this file. Note that while the Captive Core configuration looks like a subset of a traditional Stellar Core configuration file, you cannot use a traditional Stellar Core configuration file to configure Captive Core. The TOML format is preserved for operator ease of [migrating](./migrating.mdx) from Horizon 1.x, but this is a fundamentally different architecture and should be treated as such.
 
