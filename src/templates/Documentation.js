@@ -130,7 +130,7 @@ const PageOutlineItem = ({ id, isActive, title }) => {
 };
 
 const Documentation = ({ data, pageContext, location }) => {
-  const { articleBody, allFile } = data;
+  const { articleBody, allFile, mdx } = data;
   const { relativeDirectory, name, rootDir } = pageContext;
 
   const docsContents =
@@ -155,9 +155,12 @@ const Documentation = ({ data, pageContext, location }) => {
     url,
   } = findArticle(pagePath, docsContents)[name];
 
-  const description = React.useMemo(() => getDescriptionFromAst(mdxAst), [
-    mdxAst,
-  ]);
+  const { frontmatter } = mdx;
+
+  const description = React.useMemo(
+    () => frontmatter.description || getDescriptionFromAst(mdxAst),
+    [mdxAst, frontmatter.description],
+  );
 
   const pageOutline = headings.map(({ value }) => ({
     href: `#${slugify(value)}`,
@@ -311,6 +314,13 @@ export const pageQuery = graphql`
             }
           }
         }
+      }
+    }
+    mdx: mdx(id: { eq: $mdxId }) {
+      frontmatter {
+        description
+        order
+        title
       }
     }
   }
