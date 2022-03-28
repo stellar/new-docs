@@ -46,6 +46,11 @@ export const LayoutBase = ({
           type: "text/css",
           href: "/docsearch-stellar.css",
         },
+        {
+          rel: "stylesheet",
+          type: "text/css",
+          href: "/autocomplete-stellar.css",
+        },
       ]}
       meta={[
         {
