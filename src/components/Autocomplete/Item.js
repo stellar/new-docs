@@ -1,18 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export function Item({ hit, components }) {
+export function HitItem({ item, components }) {
   return (
-    <a href={hit.url} className="aa-ItemLink">
+    <a href={item.url} className="aa-ItemLink">
       <div className="aa-ItemWrapper">
         <div className="aa-ItemContent">
           <div className="aa-ItemContentBody">
             <div className="aa-ItemContentTitle">
-              <components.Highlight hit={hit} attribute="title" />
+              <components.Highlight hit={item} attribute="title" />
             </div>
             <div className="aa-ItemContentDescription">
-              {hit.urlSegments.level1}{" "}
-              {hit.urlSegments?.level2 && `> ${hit.urlSegments?.level2}`}
+              {item.urlSegments.level1}{" "}
+              {item.urlSegments?.level2 && `> ${item.urlSegments?.level2}`}
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@ export function Item({ hit, components }) {
   );
 }
 
-Item.propTypes = {
-  hit: PropTypes.node.isRequired,
-  components: PropTypes.node.isRequired,
+HitItem.propTypes = {
+  item: PropTypes.object.isRequired,
+  components: PropTypes.object.isRequired,
 };

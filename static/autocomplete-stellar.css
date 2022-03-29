@@ -8,10 +8,10 @@
 
 .aa-Panel button {
   background-color: rgba(62, 27, 219, 0.04);
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-right: 16px;
-  padding-left: 16px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
   color: rgb(62, 27, 219);
   cursor: pointer;
   border-radius: 5px;
@@ -30,9 +30,9 @@
 }
 
 .aa-Source[data-autocomplete-source-id="suggestions"] {
-  padding: 4px;
+  padding: 0.25rem;
   border-top: 1px solid rgb(242, 242, 242);
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .aa-Source[data-autocomplete-source-id="suggestions"] li[aria-selected="true"] {
@@ -70,31 +70,31 @@
 }
 
 .aa-PreviewSectionContent {
-  padding-top: 16px;
-  padding-bottom: 16px;
-  padding-left: 56px;
-  padding-right: 56px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 3.5rem;
+  padding-right: 3.5rem;
 }
 
 .aa-PreviewBreadcrumb {
   display: flex;
   justify-content: center;
-  padding-top: 16px;
-  padding-bottom: 16px;
-  font-size: 12px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 0.75rem;
   color: rgb(102, 102, 102);
   text-align: center;
 }
 
 .aa-Outline {
-  margin-top: 24px;
+  margin-top: 1.5rem;
 }
 
 .aa-OutlineLink {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .aa-OutlineLink a {
@@ -107,14 +107,14 @@
 }
 
 .aa-OutlineTitle {
-  font-size: 10px;
+  font-size: 0.6rem;
   text-transform: uppercase;
   color: rgb(51, 51, 51);
 }
 
 .aa-OutlineList {
   list-style-position: inside;
-  font-size: 12px;
+  font-size: 0.75rem;
   margin: 0;
   padding: 0;
 }
@@ -131,19 +131,19 @@
 }
 
 .aa-SourceHeaderTitle {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: rgb(102, 102, 102);
   font-weight: 400;
 }
 
 .aa-TitlePreview {
   text-align: center;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   margin: auto;
   justify-content: center;
   display: flex;
-  line-height: 34px;
+  line-height: 2rem;
 }
 
 .aa-TitlePreview a {
@@ -157,11 +157,11 @@
 }
 
 .aa-ContentPreview {
-  line-height: 24px;
-  margin-top: 16px;
-  margin-bottom: 16px;
+  line-height: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   overflow: auto;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .aa-Panel mark {
@@ -175,7 +175,7 @@
   width: 100%;
   border-radius: 4px;
   align-items: center;
-  font-size: 12px;
+  font-size: 0.75rem;
   height: 30px;
   background-color: rgba(214, 214, 231, 0.5);
 }
@@ -224,7 +224,7 @@
 
 .aa-NoResults {
   text-align: center;
-  padding: 32px;
+  padding: 2rem;
 }
 
 .aa-LoadingIndicator[hidden] {

@@ -6,6 +6,6 @@ export function ContentPreview({ preview, components }) {
 }
 
 ContentPreview.propTypes = {
-  preview: PropTypes.node.isRequired,
-  components: PropTypes.node.isRequired,
+  preview: PropTypes.object.isRequired,
+  components: PropTypes.object.isRequired,
 };

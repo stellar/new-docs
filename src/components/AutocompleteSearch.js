@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { getAlgoliaResults } from "@algolia/autocomplete-js";
 import algoliasearch from "algoliasearch/lite";
 import styled from "styled-components";
@@ -14,7 +13,9 @@ import {
 import { MEDIA_QUERIES } from "constants/styles";
 
 import { Autocomplete } from "./Autocomplete/Autocomplete";
-import { Item } from "./Autocomplete/Item";
+import { HitItem } from "./Autocomplete/Item";
+import { SuggestionHeader } from "./Autocomplete/SuggestionHeader";
+import { SuggestionItem } from "./Autocomplete/SuggestionItem";
 
 const searchClient = algoliasearch(AUTOCOMPLETE_APP_ID, AUTOCOMPLETE_API_KEY);
 
@@ -61,9 +62,7 @@ export const AutocompleteSearch = () => (
             setContext({ preview: item });
           },
           templates: {
-            item({ item, components }) {
-              return <Item hit={item} components={components} />;
-            },
+            item: HitItem,
           },
         },
         {
@@ -88,32 +87,8 @@ export const AutocompleteSearch = () => (
             refresh();
           },
           templates: {
-            header({ items, Fragment }) {
-              if (items.length === 0) {
-                return null;
-              }
-              return (
-                <Fragment>
-                  <div>
-                    <span className="aa-SourceHeaderTitle">
-                      Not finding what you‘re looking for? Try one of these
-                      queries instead:
-                    </span>
-                  </div>
-                </Fragment>
-              );
-            },
-            item({ item, components }) {
-              return (
-                <button className="aa-QuerySuggestion">
-                  <components.ReverseHighlight
-                    hit={item}
-                    attribute="query"
-                    cl
-                  />
-                </button>
-              );
-            },
+            header: SuggestionHeader,
+            item: SuggestionItem,
           },
         },
       ]}
