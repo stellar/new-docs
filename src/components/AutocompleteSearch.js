@@ -13,7 +13,7 @@ import {
 import { MEDIA_QUERIES } from "constants/styles";
 
 import { Autocomplete } from "./Autocomplete/Autocomplete";
-import { HitItem } from "./Autocomplete/Item";
+import { HitItem } from "./Autocomplete/HitItem";
 import { SuggestionHeader } from "./Autocomplete/SuggestionHeader";
 import { SuggestionItem } from "./Autocomplete/SuggestionItem";
 
