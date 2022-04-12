@@ -111,7 +111,7 @@ In some (albeit rare) cases, it can be convenient to (re)ingest the full Stellar
 The following instructions assume the reingestion is done on AWS. However, they should be applicable to any other environment with equivalent capacity. In the same way, the instructions can be adapted to reingest only specific parts of the history.
 
 ### Prerequisites
-Before we begin, we make some assumptions around the environment required. Please refer to the [Prerequisites](./prerequisites.mdx) section for the current HW requirements to run Horizon reingestion (for either historical catch up) or real-time ingestion (for staying in synch with the ledger). A few things to keep in mind:
+Before we begin, we make some assumptions around the environment required. Please refer to the [Prerequisites](./prerequisites.mdx) section for the current HW requirements to run Horizon reingestion for either historical catch up or real-time ingestion (for staying in sync with the ledger). A few things to keep in mind:
  
   1. For reingestion, the more parallel workers are provisioned to speed up the process, the larger the machine size is required in terms of RAM, CPU, IOPS and disk size. The size of the RAM per worker also increases over time (14GB RAM / worker as of mid 2022) due to the growth of the ledger. HW spec can be downsized once Re-ingestion is completed. 
 
