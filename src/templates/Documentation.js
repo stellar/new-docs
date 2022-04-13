@@ -50,7 +50,8 @@ const RightNavEl = styled.div`
   font-size: 0.875rem;
   line-height: 1rem;
   padding-top: 4.25rem;
-  overflow-y: hidden;
+  overflow-y: scroll;
+  height: 100vh;
   position: sticky;
   top: 0;
   margin: 0;
