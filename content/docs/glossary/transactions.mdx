@@ -46,7 +46,9 @@ The memo contains optional extra information. It is the responsibility of the cl
 
 There are a number of ways to control when a transaction should be considered valid. These conditions are checked first, prior to the validity of the operations or other parts of the transaction, so they're often referred to as "preconditions". They can all be combined, provided the combination is logically sound.
 
-For some of these, it's important to understand a related concept: the last time an account consumed a sequence number. Both the ledger number and timestamp of the last time this occurred is tracked by the network, and these values enable some of the preconditions below.
+For some of these, it's important to understand a related concept: the last time an account touched its sequence number. This occurs both when an account is the source account for a transaction and/or when it is the recipient of a [Bump Sequence](../start/list-of-operations.mdx#bump-sequence) operation. It's worth noting that even if the [Bump Sequence](../start/list-of-operations.mdx#bump-sequence) operation has no effect, i.e. does not change the sequence number, it still counts as a "touch". 
+
+Both the ledger number and timestamp of the last touch is tracked by the network, and these values enable some of the preconditions below (specifically, the minimum sequence [age](minimum-sequence-age) or [ledger gap](minimum-sequence-ledger-gap)).
 
 #### Time Bounds
 The optional UNIX timestamp (in seconds), determined by ledger time, of a lower and upper bound of when this transaction will be valid. If a transaction is submitted too early or too late, it will fail to make it into the transaction set. `maxTime` equal `0` means that it's not set. _We highly advise for all transactions to use time bounds, and many SDKs enforce their usage._ If a transaction doesn't make it into the transaction set, it is kept around in memory in order to be added to the next transaction set on a best-effort basis. Because of this behavior, we highly advise that all transactions are created with time bounds in order to invalidate transactions after a certain amount of time, especially if you plan to resubmit your transaction at a later time.
@@ -60,14 +62,14 @@ If this precondition is set, the transaction will only be valid when its source 
 Note that after a transaction is executed, the account will always raise its sequence number to the transaction's sequence number.
 
 #### Minimum Sequence Age
-With this precondition, the transaction is only valid after an account's last sequence number change exceeds a particular duration (expressed in seconds).
+With this precondition, the transaction is only valid after a particular duration (expressed in seconds) elapses since the last time the account's sequence number was touched.
 
-With a minimum [time bound](#time-bounds), the transaction becomes valid after a particular amount of time passes unconditionally. With this precondition, the passage of time applies only to the transaction's source account: you can allow validity after an *account* has waited long enough since its last sequence number change.
+With a minimum [time bound](#time-bounds), the transaction becomes valid after a particular amount of time passes unconditionally. With this precondition, the passage of time applies only to the transaction's source account: you can allow validity after an *account* has waited long enough since its sequence number was touched.
 
 #### Minimum Sequence Ledger Gap
-With this precondition, the transaction is only valid after the current network ledger number meets (or exceeds) a particular gap relative to the ledger corresponding to the source account's last sequence number change.
+With this precondition, the transaction is only valid after the current network ledger number meets (or exceeds) a particular gap relative to the ledger corresponding to when the source account's sequence number was touched.
 
-This is similar to the [minimum sequence age](#minimum-sequence-age), except it's expressed as a quanity of ledgers rather than a duration of time.
+This is similar to the [minimum sequence age](#minimum-sequence-age), except it's expressed as a number of ledgers rather than a duration of time.
 
 #### Extra Signers
 You can require that the transaction have up to two additional signatures beyond the ones required for transaction's authorization in general. There must additional, one-off signatures corresponding to every extra signer in this list, even if the signature is not otherwise required by the sourceAccount or operations.
@@ -99,9 +101,9 @@ To determine if a transaction is valid, many checks take place over the course o
 - **Preconditions** — refer to the [Validity Conditions](#validity-conditions) described above for thorough explanations of each of these. For each of these that are set, the transaction will be considered invalid unless the transaction is submitted:
   * **Time Bounds** — within the set time bounds of the transaction
   * **Ledger Bounds** — within the set ledger bounds of the transaction
-  * **Minimum Sequence Number** — by a source account whose sequence number is larger than this value
-  * **Minimum Sequence Age** — by a source account who last changed its sequence number at least "x" long ago
-  * **Minimum Sequence Ledger Gap** — by a source account whose sequence number was last changed in a ledger at least "x" ledgers from the current ledger
+  * **Minimum Sequence Number** — by a source account whose sequence number is greater than or equal to this value
+  * **Minimum Sequence Age** — refer [above](#minimum-sequence-age) for a thorough explanation
+  * **Minimum Sequence Ledger Gap** — refer [above](#minimum-sequence-ledger-gap) for a thorough explanation
   * **Extra Signers** — with signatures that fulfill each of the extra signers
 
 
