@@ -83,7 +83,7 @@ Adding a signed payload as a signer means that transactions with a signature on 
 
 More verbosely, you add a signer of `(public key, payload)`, where the public key is the Stellar address of the expected signer and the payload is any arbitrary data of up to 64 bytes. A valid signature, then, is a signature on that payload by the private key corresponding to the public key. This is also described in [CAP-40](https://stellar.org/protocol/cap-40) which introduced this new signer.
 
-Like with [hash signers](#hashx), once the signature is revealed to the world, anyone would be able to use the signature as a valid signer.
+Like with [hash signers](#hashx), once the signed payload signature is revealed to the world, anyone can use the signature to authorize transactions that are contingent on that signed payload signer.
 
 ## Envelopes
 
