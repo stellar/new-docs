@@ -57,7 +57,7 @@ These are like [Time Bounds](#time-bounds), except they apply to ledger numbers.
 #### Minimum Sequence Number
 If this precondition is set, the transaction will only be valid when its source account's sequence number (call it `S`) is large enough. Specifically, it's valid when `S` satisfies `minSeqNum <= S < tx.seqNum`. If this precondition is omitted, the default behavior applies: the transaction's sequence number must be exactly one greater than the account's sequence number.
 
-Note that after a transaction is executed, the account will always raise its sequence number to the transaction's sequence number.
+Note that after a transaction is executed, the account will always set its sequence number to the transaction's sequence number.
 
 #### Minimum Sequence Age
 With this precondition, the transaction is only valid after an account's last sequence number change exceeds a particular duration (expressed in seconds).
