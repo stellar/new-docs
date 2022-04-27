@@ -79,7 +79,7 @@ First, create a random 256 bit value, which we call `x`. The SHA256 hash of that
 
 ### Signed Payloads
 
-Adding a signed payload as a signer means that transactions with a signature on that payload by that signer are valid.
+Adding a signed payload as a signer means that transactions are only valid if they are accompanied by a signature of the signer's payload. The signature must be produced using the private key corresponding to the public key specified in the signer.
 
 More verbosely, you add a signer of `(public key, payload)`, where the public key is the Stellar address of the expected signer and the payload is any arbitrary data of up to 64 bytes. A valid signature, then, is a signature on that payload by the private key corresponding to the public key. This is also described in [CAP-40](https://stellar.org/protocol/cap-40) which introduced this new signer.
 
