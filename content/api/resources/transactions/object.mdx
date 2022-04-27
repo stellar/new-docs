@@ -69,16 +69,16 @@ When Horizon returns information about a transaction, it uses the following form
   - An array of signatures used to sign this transaction.
 - valid_after
   - RFC3339 date-time string
-  - The date after which a transaction is valid. This will be deprecated in Horizon v3 in lieu of `preconditions.time_bounds.min_time`.
+  - The date after which a transaction is valid. This field is deprecated in lieu of `preconditions.time_bounds.min_time` and will be removed in Horizon v3.
 - valid_before
   - RFC3339 date-time string
-  - The date before which a transaction is valid. This will be deprecated in Horizon v3 in lieu of `preconditions.time_bounds.max_time`.
+  - The date before which a transaction is valid. This field is deprecated in lieu of `preconditions.time_bounds.max_time` and will be removed in Horizon v3.
 - preconditions
   - object
-  - A set of transaction preconditions determining its validity.
+  - A set of transaction preconditions affecting its validity.
     - time_bounds
       - object
-      - The time range for which this transaction is valid, with bounds as 64-bit UNIX timestamps
+      - The time range for which this transaction is valid, with bounds as unsigned 64-bit UNIX timestamps
         - min_time
           - string
           - the lower bound
@@ -87,7 +87,7 @@ When Horizon returns information about a transaction, it uses the following form
           - the upper bound
     - ledger_bounds
       - object
-      - The ledger range for which this transaction is valid.
+      - The ledger range for which this transaction is valid, as unsigned 32-bit integers.
         - min_ledger
           - number
           - the lower bound
@@ -96,16 +96,16 @@ When Horizon returns information about a transaction, it uses the following form
           - the upper bound
     - min_account_sequence
       - string
-      - The lowest source account sequence number for which the transaction is valid.
+      - Containing a positive, signed 64-bit integer representing the lowest source account sequence number for which the transaction is valid.
     - min_account_sequence_age
       - number
-      - The minimum duration of time (in seconds) that must have passed since the source account's sequence number changed for the transaction to be valid.
+      - The minimum duration of time (in seconds as an unsigned 64-bit integer) that must have passed since the source account's sequence number changed for the transaction to be valid.
     - min_account_sequence_ledger_gap
       - number
-      - The minimum number of ledgers that must have closed since the source account's sequence number changed for the transaction to be valid.
+      - An unsigned 32-bit integer representing the minimum number of ledgers that must have closed since the source account's sequence number changed for the transaction to be valid.
     - extra_signers
       - array of strings
-      - The list of additional signers that must have corresponding signatures for this transaction to be valid.
+      - The list of up to two additional signers that must have corresponding signatures for this transaction to be valid.
 
 </AttributeTable>
 
