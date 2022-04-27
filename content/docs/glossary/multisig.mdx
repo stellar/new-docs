@@ -55,9 +55,9 @@ If the weight of the master key is updated to 0, it cannot be used to sign trans
 
 Each additional signer beyond the master key increases the account's [minimum balance](./minimum-balance.mdx).
 
-## One-time Extra Signers
+## One-Time Extra Signers
 
-You can require that a transaction have a particular signer that isn't associated with any of the accounts used in the transaction by including it in the transaction validity precondition.
+You can require that a transaction have a particular signer that isn't associated with any of the accounts used in the transaction by including it in the [transaction validity precondition](./transactions.mdx#extra-signers).
 
 ## Alternate Signature Types
 
@@ -79,7 +79,7 @@ First, create a random 256 bit value, which we call `x`. The SHA256 hash of that
 
 ### Signed Payloads
 
-Adding a signed payload signer means that a valid signature on that payload by that signer
+Adding a signed payload as a signer means that transactions with a signature on that payload by that signer are valid.
 
 More verbosely, you add a signer of `(public key, payload)`, where the public key is the Stellar address of the expected signer and the payload is any arbitrary data of up to 64 bytes. A valid signature, then, is a signature on that payload by the private key corresponding to the public key. This is also described in [CAP-40](https://stellar.org/protocol/cap-40) which introduced this new signer.
 

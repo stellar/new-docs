@@ -70,7 +70,7 @@ With this precondition, the transaction is only valid after the current network 
 This is similar to the [minimum sequence age](#minimum-sequence-age), except it's expressed as a quanity of ledgers rather than a duration of time.
 
 #### Extra Signers
-You can require that the transaction have additional signatures beyond the ones required for transaction's authorization in general. There must additional, one-off signatures corresponding to every extra signer in this list, even if the signature is not otherwise required by the sourceAccount or operations.
+You can require that the transaction have up to two additional signatures beyond the ones required for transaction's authorization in general. There must additional, one-off signatures corresponding to every extra signer in this list, even if the signature is not otherwise required by the sourceAccount or operations.
 
 The additional signers can be of any type besides a pre-authorized transaction signer, since to pre-authorize a transaction, you need to know its hash, but the hash must include the extra signers. This Catch-22 relationship means including this type of extra signer will return a [`MALFORMED` error](#result-codes).
 
