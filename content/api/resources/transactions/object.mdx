@@ -77,28 +77,29 @@ When Horizon returns information about a transaction, it uses the following form
   - object
   - A set of transaction preconditions determining its validity.
     - time_bounds
+      - object
       - The time range for which this transaction is valid.
-      - min_time
-        - string, encoding a 64-bit UNIX timestamp
-        - the lower bound
-      - max_time
-        - string, encoding a 64-bit UNIX timestamp
-        - the upper bound
+        - min_time
+          - string, encoding a 64-bit UNIX timestamp
+          - the lower bound
+        - max_time
+          - string, encoding a 64-bit UNIX timestamp
+          - the upper bound
     - ledger_bounds
+      - object
       - The ledger range for which this transaction is valid.
-      - min_ledger
-        - number
-        - the lower bound
-      - max_ledger
-        - number
-        - the upper bound
+        - min_ledger
+          - number
+          - the lower bound
+        - max_ledger
+          - number
+          - the upper bound
     - min_account_sequence
       - string, encoding a 64-bit sequence number
       - The lowest source account sequence number for which the transaction is valid.
     - min_account_sequence_age
       - number, representing a duration in seconds
       - The minimum duration of time that must have passed since the source account's sequence number changed for the transaction to be valid.
-      - The minimum amount of time from the last time an account's sequence number changed that must have passed for the transaction to be valid.
     - min_account_sequence_ledger_gap
       - number
       - The minimum number of ledgers that must have closed since the source account's sequence number changed for the transaction to be valid.
