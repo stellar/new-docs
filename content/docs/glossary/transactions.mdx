@@ -46,7 +46,7 @@ The memo contains optional extra information. It is the responsibility of the cl
 
 There are a number of ways to control when a transaction should be considered valid. These conditions are checked first, prior to the validity of the operations or other parts of the transaction, so they're often referred to as "preconditions". They can all be combined, provided the combination is logically sound.
 
-Some of the validity preconditions, namely the minimum sequence [age](minimum-sequence-age) or [ledger gap](minimum-sequence-ledger-gap) preconditions, are based on the account's [sequence number age](../accounts.mdx#sequence-time-and-ledger).
+Some of the validity preconditions, namely the minimum sequence [age](#minimum-sequence-age) or [ledger gap](#minimum-sequence-ledger-gap) preconditions, are based on the account's [sequence number age](../accounts.mdx#sequence-time-and-ledger).
 
 #### Time Bounds
 The optional UNIX timestamp (in seconds), determined by ledger time, of a lower and upper bound of when this transaction will be valid. If a transaction is submitted too early or too late, it will fail to make it into the transaction set. `maxTime` equal `0` means that it's not set. _We highly advise for all transactions to use time bounds, and many SDKs enforce their usage._ If a transaction doesn't make it into the transaction set, it is kept around in memory in order to be added to the next transaction set on a best-effort basis. Because of this behavior, we highly advise that all transactions are created with time bounds in order to invalidate transactions after a certain amount of time, especially if you plan to resubmit your transaction at a later time.
