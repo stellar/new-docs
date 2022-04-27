@@ -69,10 +69,40 @@ When Horizon returns information about a transaction, it uses the following form
   - An array of signatures used to sign this transaction.
 - valid_after
   - RFC3339 date-time string
-  - The date after which a transaction is valid.
+  - The date after which a transaction is valid. This will be deprecated in Horizon v3 in lieu of `preconditions.time_bounds.min_time`.
 - valid_before
   - RFC3339 date-time string
-  - The date before which a transaction is valid.
+  - The date before which a transaction is valid. This will be deprecated in Horizon v3 in lieu of `preconditions.time_bounds.max_time`.
+- preconditions
+  - object
+  - A set of transaction preconditions determining its validity.
+    - time_bounds
+      - min_time
+        - string, encoding a 64-bit UNIX timestamp
+        - The timestamp after which a transaction is valid.
+      - max_time
+        - string, encoding a 64-bit UNIX timestamp
+        - The timestamp before which a transaction is valid.
+    - ledger_bounds
+      - min_ledger
+        - number
+        - The lowest ledger number for which this transaction is valid.
+      - max_ledger
+        - number
+        - The highest ledger number for which this transaction is valid.
+    - min_account_sequence
+      - string, encoding a 64-bit sequence number
+      - The lowest source account sequence number for which the transaction is valid.
+    - min_account_sequence_age
+      - number, representing a duration in seconds
+      - The minimum duration of time that must have passed since the source account's sequence number changed for the transaction to be valid.
+      - The minimum amount of time from the last time an account's sequence number changed that must have passed for the transaction to be valid.
+    - min_account_sequence_ledger_gap
+      - number
+      - The minimum number of ledgers that must have closed since the source account's sequence number changed for the transaction to be valid.
+    - extra_signers
+      - array of strings
+      - The list of additional signers that must have corresponding signatures for this transaction to be valid.
 
 </AttributeTable>
 

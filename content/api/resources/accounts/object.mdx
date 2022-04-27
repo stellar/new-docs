@@ -23,6 +23,12 @@ When Horizon returns information about an account, it uses the following format:
 - sequence
   - number
   - This account's current sequence number. For use when submitting this account's next transaction.
+- sequence_ledger
+  - number
+  - The ledger number corresponding to the last time the account's sequence number changed.
+- sequence_time
+  - string, encoding a 64-bit UNIX timestamp
+  - The timestamp corresponding to the last time the account's sequence number changed.
 - subentry_count
   - number
   - The number of subentries on this account.
