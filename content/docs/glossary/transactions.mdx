@@ -61,8 +61,7 @@ Note that after a transaction is executed, the account will always set its seque
 
 #### Minimum Sequence Age
 With this precondition, the transaction is only valid after an account's last sequence number change exceeds a particular duration (expressed in seconds).
-
-With a minimum [time bound](#time-bounds), the transaction becomes valid after a particular amount of time passes unconditionally. With this precondition, the passage of time applies only to the transaction's source account: you can allow validity after an *account* has waited long enough since its last sequence number change.
+Minimum sequence age is a precondition relating to time, but unlike [time bound](#time-bounds) which is an absolute time, minimum sequence age is relative to the transaction source account's sequence age field.
 
 #### Minimum Sequence Ledger Gap
 With this precondition, the transaction is only valid after the current network ledger number meets (or exceeds) a particular gap relative to the ledger corresponding to the source account's last sequence number change.
