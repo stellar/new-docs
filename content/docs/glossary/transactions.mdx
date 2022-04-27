@@ -46,9 +46,7 @@ The memo contains optional extra information. It is the responsibility of the cl
 
 There are a number of ways to control when a transaction should be considered valid. These conditions are checked first, prior to the validity of the operations or other parts of the transaction, so they're often referred to as "preconditions". They can all be combined, provided the combination is logically sound.
 
-For some of these, it's important to understand a related concept: the last time an account touched its sequence number. This occurs both when an account is the source account for a transaction and/or when it is the recipient of a [Bump Sequence](../start/list-of-operations.mdx#bump-sequence) operation. It's worth noting that even if the [Bump Sequence](../start/list-of-operations.mdx#bump-sequence) operation has no effect, i.e. does not change the sequence number, it still counts as a "touch". 
-
-Both the ledger number and timestamp of the last touch is tracked by the network, and these values enable some of the preconditions below (specifically, the minimum sequence [age](minimum-sequence-age) or [ledger gap](minimum-sequence-ledger-gap)).
+Some of the validity preconditions, namely the minimum sequence [age](minimum-sequence-age) or [ledger gap](minimum-sequence-ledger-gap) preconditions, are based on the account's [sequence number age](../accounts.mdx#sequence-time-and-ledger).
 
 #### Time Bounds
 The optional UNIX timestamp (in seconds), determined by ledger time, of a lower and upper bound of when this transaction will be valid. If a transaction is submitted too early or too late, it will fail to make it into the transaction set. `maxTime` equal `0` means that it's not set. _We highly advise for all transactions to use time bounds, and many SDKs enforce their usage._ If a transaction doesn't make it into the transaction set, it is kept around in memory in order to be added to the next transaction set on a best-effort basis. Because of this behavior, we highly advise that all transactions are created with time bounds in order to invalidate transactions after a certain amount of time, especially if you plan to resubmit your transaction at a later time.
@@ -62,12 +60,12 @@ If this precondition is set, the transaction will only be valid when its source 
 Note that after a transaction is executed, the account will always set its sequence number to the transaction's sequence number.
 
 #### Minimum Sequence Age
-With this precondition, the transaction is only valid after a particular duration (expressed in seconds) elapses since the last time the account's sequence number was touched.
+When the sequence age precondition is set, the transaction is only valid after a particular duration (expressed in seconds) elapses since the account's [sequence number age](./accounts.mdx#sequence-time-and-ledger).
 
 Minimum sequence age is a precondition relating to time, but unlike [time bounds](#time-bounds) which express absolute times, minimum sequence age is relative to when the transaction source account's sequence number was touched.
 
 #### Minimum Sequence Ledger Gap
-With this precondition, the transaction is only valid after the current network ledger number meets (or exceeds) a particular gap relative to the ledger corresponding to when the source account's sequence number was touched.
+When the ledger gap precondition is set, the transaction is only valid after the current network ledger number meets (or exceeds) a particular gap relative to the ledger corresponding to the account's [sequence number age](./accounts.mdx#sequence-time-and-ledger).
 
 This is similar to the [minimum sequence age](#minimum-sequence-age), except it's expressed as a number of ledgers rather than a duration of time.
 
@@ -75,7 +73,6 @@ This is similar to the [minimum sequence age](#minimum-sequence-age), except it'
 You can require that the transaction have up to two additional signatures beyond the ones required for transaction's authorization in general. There must additional, one-off signatures corresponding to every extra signer in this list, even if the signature is not otherwise required by the sourceAccount or operations.
 
 The additional signers can be of any type besides a pre-authorized transaction signer, since to pre-authorize a transaction, you need to know its hash, but the hash must include the extra signers. This Catch-22 relationship means including this type of extra signer will return a [`MALFORMED` error](#result-codes).
-
 
 ## Transaction Envelopes
 
@@ -102,8 +99,8 @@ To determine if a transaction is valid, many checks take place over the course o
   * **Time Bounds** — within the set time bounds of the transaction
   * **Ledger Bounds** — within the set ledger bounds of the transaction
   * **Minimum Sequence Number** — by a source account whose sequence number is greater than or equal to this value
-  * **Minimum Sequence Age** — refer [above](#minimum-sequence-age) for a thorough explanation
-  * **Minimum Sequence Ledger Gap** — refer [above](#minimum-sequence-ledger-gap) for a thorough explanation
+  * **Minimum Sequence Age** — after a duration meeting or exceeding the source account's [sequence number age](./accounts.mdx#sequence-time-and-ledger)
+  * **Minimum Sequence Ledger Gap** — in a ledger meeting or exceeding the source account's [sequence number age](./accounts.mdx#sequence-time-and-ledger)
   * **Extra Signers** — with signatures that fulfill each of the extra signers
 
 
