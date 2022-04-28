@@ -72,7 +72,7 @@ This is similar to the [minimum sequence age](#minimum-sequence-age), except it'
 #### Extra Signers
 A transaction can specify up to two extra signers as a precondition, meaning it must have signatures that correspond to those extra signers, even if those signatures would not otherwise be required to authorize the transaction (i.e. for its source account or operations).
 
-The additional signers can be of any type besides a pre-authorized transaction signer, since to pre-authorize a transaction, you need to know its hash, but the hash must include the extra signers. This Catch-22 relationship means including this type of extra signer will return a [`MALFORMED` error](#result-codes).
+The additional signers can be of any type besides a pre-authorized transaction signer, since to pre-authorize a transaction, you need to know its hash, but the hash must include the extra signers. This Catch-22 relationship means including this type of extra signer will return an error.
 
 ## Transaction Envelopes
 
