@@ -62,7 +62,7 @@ We'll demonstrate some of these in the [Examples](#examples).
 
 ## Examples
 
-In this section, we'll demonstrate how to create muxed accounts and how seamlessly they interface with their supported operations. To drive home the fact that custodial account workarounds based on transaction memos (as in [this tutorial](../building-apps/setup-custodial-account/index.mdx)) are superfluous now, we'll use that as a skeleton for our example structure.
+In this section, we'll demonstrate how to create muxed accounts and how seamlessly they interface with their supported operations. To drive home the fact that custodial account workarounds based on transaction memos (as in [this tutorial](../building-apps/setup-custodial-account.mdx)) are superfluous now, we'll use that as a skeleton for our example structure.
 
 After preparing some supporting code, we'll demonstrate three scenarios:
 
@@ -197,7 +197,7 @@ function doPayment(source, dest) {
 
 </CodeExample>
 
-We can use this block to make a payment between normal Stellar accounts with ease: `doPayment("GCIHA...", "GDS5N...")`. The main divergence from the [standard payments code](./tutorials/send-and-receive-payments.mdx#send-a-payment)--aside from the stubs to show XLM balances before and after--is the inclusion of the opt-in `withMuxing` flag.
+We can use this block to make a payment between normal Stellar accounts with ease: `doPayment("GCIHA...", "GDS5N...")`. The main divergence from the [standard payments code](../tutorials/send-and-receive-payments.mdx#send-a-payment)--aside from the stubs to show XLM balances before and after--is the inclusion of the opt-in `withMuxing` flag.
 
 #### Muxed to Unmuxed
 The codeblock above covers all payment operations, abstracting away any need for differentiating between muxed (`M...`) and unmuxed (`G...`) addresses. From a high level, then, it's still trivial to make payments between one of our "customers" and someone outside of the "custodian"'s organization:
