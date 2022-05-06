@@ -55,7 +55,7 @@ The optional UNIX timestamp (in seconds), determined by ledger time, of a lower 
 These are like [Time Bounds](#time-bounds), except they apply to ledger numbers. With them set, a transaction will only be valid for ledger numbers that fall into the range you set. The lower bound is inclusive while the upper bound is not. If you set the upper bound to zero, this indicates that there is no upper bound.
 
 #### Minimum Sequence Number
-If this precondition is set, the transaction will only be valid when its source account's sequence number (call it `S`) is large enough. Specifically, it's valid when `S` satisfies `minSeqNum <= S < tx.seqNum`. If this precondition is omitted, the default behavior applies: the transaction's sequence number must be exactly one greater than the account's sequence number.
+If a minimum sequence number is set, the transaction will only be valid when its source account's sequence number (call it `S`) is large enough. Specifically, it's valid when `S` satisfies `minSeqNum <= S < tx.seqNum`. If this precondition is omitted, the default behavior applies: the transaction's sequence number must be exactly one greater than the account's sequence number.
 
 Note that after a transaction is executed, the account will always set its sequence number to the transaction's sequence number.
 
