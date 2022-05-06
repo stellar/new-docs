@@ -33,6 +33,10 @@ The public key that was used to create the account. Even if you replace the sign
 
 The current transaction sequence number of the account. This number starts equal to the ledger number at which the account was created, and increments upward as the account signs transactions.
 
+### Sequence time and ledger
+
+These two fields reflect the last time an account touched its sequence number. This occurs both when an account is the source account for a transaction and when it's the target of a [Bump Sequence](../start/list-of-operations.mdx#bump-sequence) operation. Both the ledger number and timestamp (i.e. the close time of the ledger) of the last touch is tracked by the network. Note that even if the [Bump Sequence](../start/list-of-operations.mdx#bump-sequence) operation has no effect, i.e. does not increase the sequence number, it still counts as a "touch".
+
 ### Number of subentries
 
 Number of entries the account owns. This number is used to calculate the account's minimum balance: each subentry increases an account’s reserve by 0.5XLM. Subentries include:

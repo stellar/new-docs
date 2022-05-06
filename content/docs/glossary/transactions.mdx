@@ -42,9 +42,37 @@ The memo contains optional extra information. It is the responsibility of the cl
 - `MEMO_HASH` : A 32 byte hash.
 - `MEMO_RETURN` : A 32 byte hash intended to be interpreted as the hash of the transaction the sender is refunding.
 
-### Time Bounds
+### Validity Conditions
 
+There are a number of ways to control when a transaction should be considered valid. These conditions are checked first, prior to the validity of the operations or other parts of the transaction, so they're often referred to as "preconditions". They can all be combined, provided the combination is logically sound.
+
+Some of the validity preconditions, namely the minimum sequence [age](#minimum-sequence-age) or [ledger gap](#minimum-sequence-ledger-gap) preconditions, are based on the account's [sequence number age](./accounts.mdx#sequence-time-and-ledger).
+
+#### Time Bounds
 The optional UNIX timestamp (in seconds), determined by ledger time, of a lower and upper bound of when this transaction will be valid. If a transaction is submitted too early or too late, it will fail to make it into the transaction set. `maxTime` equal `0` means that it's not set. _We highly advise for all transactions to use time bounds, and many SDKs enforce their usage._ If a transaction doesn't make it into the transaction set, it is kept around in memory in order to be added to the next transaction set on a best-effort basis. Because of this behavior, we highly advise that all transactions are created with time bounds in order to invalidate transactions after a certain amount of time, especially if you plan to resubmit your transaction at a later time.
+
+#### Ledger Bounds
+These are like [Time Bounds](#time-bounds), except they apply to ledger numbers. With them set, a transaction will only be valid for ledger numbers that fall into the range you set. The lower bound is inclusive while the upper bound is not. If you set the upper bound to zero, this indicates that there is no upper bound.
+
+#### Minimum Sequence Number
+If a minimum sequence number is set, the transaction will only be valid when its source account's sequence number (call it `S`) is large enough. Specifically, it's valid when `S` satisfies `minSeqNum <= S < tx.seqNum`. If this precondition is omitted, the default behavior applies: the transaction's sequence number must be exactly one greater than the account's sequence number.
+
+Note that after a transaction is executed, the account will always set its sequence number to the transaction's sequence number.
+
+#### Minimum Sequence Age
+When the sequence age precondition is set, the transaction is only valid after a particular duration (expressed in seconds) elapses since the account's [sequence number age](./accounts.mdx#sequence-time-and-ledger).
+
+Minimum sequence age is a precondition relating to time, but unlike [time bounds](#time-bounds) which express absolute times, minimum sequence age is relative to when the transaction source account's sequence number was touched.
+
+#### Minimum Sequence Ledger Gap
+When the ledger gap precondition is set, the transaction is only valid after the current network ledger number meets (or exceeds) a particular gap relative to the ledger corresponding to the account's [sequence number age](./accounts.mdx#sequence-time-and-ledger).
+
+This is similar to the [minimum sequence age](#minimum-sequence-age), except it's expressed as a number of ledgers rather than a duration of time.
+
+#### Extra Signers
+A transaction can specify up to two extra signers as a precondition, meaning it must have signatures that correspond to those extra signers, even if those signatures would not otherwise be required to authorize the transaction (i.e. for its source account or operations).
+
+The additional signers can be of any type besides a pre-authorized transaction signer, since to pre-authorize a transaction, you need to know its hash, but the hash must include the extra signers. This Catch-22 relationship means including this type of extra signer will return an error.
 
 ## Transaction Envelopes
 
@@ -67,7 +95,14 @@ To determine if a transaction is valid, many checks take place over the course o
   - The appropriate network passphrase was part of the transaction hash that was signed by each of the signers. See [Network Passphrases](./network-passphrase.mdx) for more.
   - The combined weight of all signatures for the source account _of the transaction_ meets the low threshold for the source account. This is necessary in order for fees to be taken and the sequence number to be incremented later in the transaction lifecycle.
 - **Memo** — The memo type must be a valid type, and the memo itself must be adhere to the formatting of the memo type.
-- **Time Bounds** — The transaction must be submitted within the set time bounds of the transaction, otherwise it will be considered invalid.
+- **Preconditions** — refer to the [Validity Conditions](#validity-conditions) described above for thorough explanations of each of these. For each of these that are set, the transaction will be considered invalid unless the transaction is submitted:
+  * **Time Bounds** — within the set time bounds of the transaction
+  * **Ledger Bounds** — within the set ledger bounds of the transaction
+  * **Minimum Sequence Number** — by a source account whose sequence number is greater than or equal to this value
+  * **Minimum Sequence Age** — after a duration meeting or exceeding the source account's [sequence number age](./accounts.mdx#sequence-time-and-ledger)
+  * **Minimum Sequence Ledger Gap** — in a ledger meeting or exceeding the source account's [sequence number age](./accounts.mdx#sequence-time-and-ledger)
+  * **Extra Signers** — with signatures that fulfill each of the extra signers
+
 
 ## Transaction Lifecycle
 
@@ -162,5 +197,5 @@ found in [List of Operations](../start/list-of-operations.mdx) doc.
 | NOT_SUPPORTED | -12 | The transaction type is not supported. |
 | FEE_BUMP_INNER_FAILED | -13 | The fee bump inner transaction failed. |
 | BAD_SPONSORSHIP | -14 | The sponsorship is not confirmed. |
-
-
+| BAD_MIN_SEQ_AGE_OR_GAP | -15 | The minimum sequence age and/or minimum sequence ledger gap conditions aren't met |
+| MALFORMED | -16 | The precondition is somehow invalid |

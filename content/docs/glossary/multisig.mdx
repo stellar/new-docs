@@ -55,6 +55,10 @@ If the weight of the master key is updated to 0, it cannot be used to sign trans
 
 Each additional signer beyond the master key increases the account's [minimum balance](./minimum-balance.mdx).
 
+## Extra Signers
+
+You can require that a transaction have a particular signer that isn't associated with any of the accounts used in the transaction by including it in the [transaction validity precondition](./transactions.mdx#extra-signers). The extra signer applies only to that one transaction.
+
 ## Alternate Signature Types
 
 To enable some advanced smart contract features there are a couple of additional signature types. These signature types also have weights and can be added and removed similarly to normal signature types. But rather than check a cryptographic signature for authorization they have a different method of proving validity to the network.
@@ -69,9 +73,17 @@ This type of signer is especially useful in escrow accounts. You can pre-authori
 
 ### Hash(x)
 
-Adding a signature of type hash(x) allows anyone who knows `x` to sign the transaction. This type of signer is especially useful in [atomic cross-chain swaps](https://en.bitcoin.it/wiki/Atomic_cross-chain_trading) which are needed for inter-blockchain protocols like [lightning networks](https://lightning.network).
+Adding a signer of type hash(x) allows anyone who knows `x` to sign the transaction. This type of signer is especially useful in [atomic cross-chain swaps](https://en.bitcoin.it/wiki/Atomic_cross-chain_trading) which are needed for inter-blockchain protocols like [lightning networks](https://lightning.network).
 
 First, create a random 256 bit value, which we call `x`. The SHA256 hash of that value can be added as a signer of type hash(x). Then in order to authorize a transaction, `x` is added as one of the signatures of the transaction. Keep in mind that `x` will be known to the world as soon as a transaction is submitted to the network with `x` as a signature. This means anyone will be able to sign for that account with the hash(x) signer at that point. Often you want there to be additional signers so someone must have a particular secret key and know `x` in order to reach the weight threshold required to authorize transactions on the account.
+
+### Signed Payloads
+
+Adding a signed payload as a signer means that transactions are only valid if they are accompanied by a signature of the signer's payload. The signature must be produced using the private key corresponding to the public key specified in the signer.
+
+More verbosely, you add a signer of `(public key, payload)`, where the public key is the Stellar address of the expected signer and the payload is any arbitrary data of up to 64 bytes. A valid signature, then, is a signature on that payload by the private key corresponding to the public key. This is also described in [CAP-40](https://stellar.org/protocol/cap-40) which introduced this new signer.
+
+Like with [hash signers](#hashx), once the signed payload signature is revealed to the world, anyone can use the signature to authorize transactions that are contingent on that signed payload signer.
 
 ## Envelopes
 
