@@ -39,7 +39,7 @@ import {
   NavLogo,
   NavColumn,
 } from "components/Navigation/SharedStyles";
-import { Search } from "components/Search";
+import { AutocompleteSearch } from "components/AutocompleteSearch";
 
 import Clock from "assets/icons/clock.svg";
 import DevelopersPreview from "assets/images/og_developers.jpg";
@@ -174,7 +174,7 @@ const Documentation = ({ data, pageContext, location }) => {
   );
   const center = (
     <OriginalFileContext.Provider value={originalFilePath}>
-      <Search />
+      <AutocompleteSearch />
       <BetaNotice />
       <Article>
         <H1>{header}</H1>
