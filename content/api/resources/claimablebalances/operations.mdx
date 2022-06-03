@@ -75,6 +75,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+    print(server.operations().for_claimable_balance("000000000102030000000000000000000000000000000000000000000000000000000000").call())
+except Exception as err:
+    print(err)
+```
+  
 </CodeExample>
 
 
@@ -217,6 +227,17 @@ var es = server
   .cursor("now")
   .stream({ onmessage: callback });
 ```
+  
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+  
+def callback(tx):
+  print(tx)
 
+for tx in server.transactions().for_claimable_balance("000000000102030000000000000000000000000000000000000000000000000000000000").cursor("now").stream():
+  callback(tx)
+```
+  
 </CodeExample>
 
