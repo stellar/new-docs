@@ -68,6 +68,16 @@ server
   });
 ```
 
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+try:
+	print(server.assets().for_code("CNY").call())
+except Exception as e:
+	print(e)
+```
+  
 </CodeExample>
 
 
@@ -203,6 +213,17 @@ var es = server
   .forCode("CNY")
   .cursor("now")
   .stream({ onmessage: callback });
+```
+	
+```python
+from stellar_sdk import Server
+server = Server("https://horizon.stellar.org")
+
+def callback(resp):
+    print(resp)
+	
+for tx in server.assets().for_code("CNY").cursor("now").stream():
+	callback(tx)
 ```
 
 </CodeExample>
