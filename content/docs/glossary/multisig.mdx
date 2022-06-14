@@ -59,9 +59,9 @@ Each additional signer beyond the master key increases the account's [minimum ba
 
 You can require that a transaction have a particular signer that isn't associated with any of the accounts used in the transaction by including it in the [transaction validity precondition](./transactions.mdx#extra-signers). The extra signer applies only to that one transaction.
 
-## Alternate Signature Types
+## Alternative Signer Types
 
-To enable some advanced smart contract features there are a couple of additional signature types. These signature types also have weights and can be added and removed similarly to normal signature types. But rather than check a cryptographic signature for authorization they have a different method of proving validity to the network.
+To enable some advanced smart contract features there are a couple of additional signer types. These signer types also have weights and can be added and removed similarly to the regular ed25519 signer. But rather than check a cryptographic signature for authorization they have a different method of proving validity to the network.
 
 ### Pre-authorized Transaction
 
