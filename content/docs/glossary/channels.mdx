@@ -72,4 +72,22 @@ transaction.sign(baseAccountKey) # base account must sign to approve the payment
 transaction.sign(channelKeys[channelIndex]) # channel must sign to approve it being the source of the transaction
 ```
 
+```java
+// channelAccounts[] is an array of accountIDs, one for each channel
+// channelKeys[] is an array of secret keys, one for each channel
+// channelIndex is the channel you want to send this transaction over
+
+// create payment from baseAccount to customerAddress
+Transaction transaction = new Transaction.Builder(channelAccounts[channelIndex])
+  .addOperation(new PaymentOperation.Builder(customerAddress, new AssetTypeNative(), amountToSend)
+    .setSourceAccount(baseAccount.address())
+    .build())
+  // Wait a maximum of three minutes for the transaction
+  .setTimeout(180)
+  .build();
+
+transaction.sign(baseAccountKey); // base account must sign to approve the payment
+transaction.sign(channelKeys[channelIndex]); // channel must sign to approve it being the source of the transaction
+```
+
 </CodeExample>
