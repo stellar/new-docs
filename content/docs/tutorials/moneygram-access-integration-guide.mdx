@@ -16,7 +16,7 @@ This document does not describe the business requirements for integrating with M
 </Alert>
 
 
-# Resources
+## Resources
 
 - [MoneyGram Access Wallet MVP Implementation]
   - Use this MVP implementation as a reference for building your own integration. Many of the code snippets shared in this document are pulled from this project.
@@ -29,7 +29,7 @@ This document does not describe the business requirements for integrating with M
 - [Stellar Ecosystem Proposal 10 (SEP-10)]
   - The standardized API protocol for Stellar authentication, implemented by MoneyGram
 
-# Introduction
+## Introduction
 
 Applications seeking to integrate MoneyGram Access must implement the client side of [Stellar Ecosystem Proposal 24 (SEP-24)], a standardized protocol defined for applications to connect to businesses such as MoneyGram, more generally called anchors, that offer Stellar deposit & withdrawal services utilizing local payment rails.
 
@@ -39,7 +39,7 @@ The guide will assume your application is first being developed on Stellar’s t
 
 This guide also assumes your application is custodial, meaning the application has either direct or indirect access to its users’ funds on Stellar. Typically, custodial applications pool user funds into a smaller set of managed Stellar accounts. This custody model requires minor but concrete differences in how applications integrate with MoneyGram Access compared to non-custodial applications.
 
-# Application Flow & Architecture
+## Application Flow & Architecture
 
 This guide will assume the application has a basic client-server architecture. The application’s client will request resources and initiate actions with the application’s server, which will communicate directly with MoneyGram’s server.
 
@@ -53,7 +53,7 @@ After Step 4, the application should open the URL provided by MoneyGram in a mob
 
 The provided reference number would then be taken to any MoneyGram cash agent in order to receive cash in the user’s fiat currency. These steps document the cash-out, or withdrawal flow. The deposit flow is similar and detailed in the steps below.
 
-# Generate Stellar Keys
+## Generate Stellar Keys
 
 In this section, you will generate at least two Stellar key pairs, one that will be used to prove your application’s identity when authenticating with MoneyGram access, and another that will hold, send, & receive USDC on Stellar.
 
@@ -65,7 +65,7 @@ The first key pair will be called the “authentication” key pair (or public /
 
 Provide the public keys (starting with a G) of both the authentication and funds key pairs to MoneyGram. They will add these keys to their known lists of keys, granting them access to their deployment.
 
-# Get XLM & USDC
+## Get XLM & USDC
 
 Many cryptocurrency exchanges support purchasing XLM or USDC on Stellar. The SDF also maintains an [Anchor Directory] that attempts to list all the on & off ramps for the Stellar Network.
 
@@ -75,7 +75,7 @@ Some exchanges support XLM but do not support USDC on Stellar. This is not a pro
 
 To do this, send your XLM to the funds public key from the exchange, add a USDC trustline, and sell XLM for USDC using a [sell offer].
 
-# Authenticate
+## Authenticate
 
 This section emcompasses steps 1 & 2 of the diagram displayed in the Architecture section above. The application’s client should request a MoneyGram transaction URL from the application’s server on user initiation. This should trigger an authentication process between the application’s server and MoneyGram’s server. This process is standardized in [SEP-10].
 
@@ -128,7 +128,7 @@ def get_token() -> str:
 </CodeExample>
 
 
-# Initiate a Transaction
+## Initiate a Transaction
 
 This section encompasses step 3 & 4 of the architecture diagram displayed above. The application’s server will make a deposit or withdrawal initiation request to MoneyGram’s server, and MoneyGram will return a transaction ID, which will be used later to poll the transaction’s status, and a transaction URL, which should be returned to the application’s client and opened for the user.
 
@@ -173,7 +173,7 @@ The logic for initiating a deposit transaction looks very similar. See the SEP-2
 
 The `&callback=postmessage` query parameter added to the returned URL is critical; it informs MoneyGram that the application’s client would like to be notified when the user has completed the MGI experience and has requested to close the window. We’ll cover this in more detail in the subsequent section.
 
-# Listen for the Close Notification
+## Listen for the Close Notification
 
 The next step is to open the provided URL in the application’s client using a mobile webview, browser tab, or popup. The user will then go through KYC if they have not before in a prior transaction. In the deposit case, the user may also select a MoneyGram agent location to go to when providing cash.
 
@@ -198,13 +198,13 @@ function closeWebView(e) {
 </CodeExample>
 
 
-# Send or Receive Funds
+## Send or Receive Funds
 
 In withdrawal (or cash-out) transactions, applications must send USDC to the Stellar account MoneyGram specifies. In deposit (cash-in) transactions, applications must monitor their Stellar account for a payment from MoneyGram.
 
 In each case, the transaction submitted to Stellar must have a memo attached to it. This memo is provided by MoneyGram in the withdrawal case, and provided by the application in the deposit case. The memo is an identifier that allows the parties to tie the on-chain payment to the transaction record in the application’s or MoneyGram’s database.
 
-## Poll Until MoneyGram is Ready
+### Poll Until MoneyGram is Ready
 
 Before the application can send funds or instruct the user to provide cash to a MoneyGram agent, the application should confirm with MoneyGram’s server that the transaction is ready to proceed.
 
@@ -256,7 +256,7 @@ def poll_transaction_until_status(
 </CodeExample>
 
 
-## Sending Funds
+### Sending Funds
 
 Once MoneyGram is ready to receive funds, your application should extract the Stellar account and memo to use in the payment transaction, construct a Stellar transaction, and submit it to the Stellar network. You’ll need:
 
@@ -303,7 +303,7 @@ def submit_payment(destination: str, memo: str, amount: str):
 </CodeExample>
 
 
-## Receiving Funds
+### Receiving Funds
 
 Once MoneyGram is ready for the user to drop off cash at an MGI agent (in deposit or cash-in cases), the application’s server should begin monitoring its Stellar account for an inbound USDC payment sent by MoneyGram.
 
@@ -345,7 +345,7 @@ def stream_payments(account: str, cursor: str):
 </CodeExample>
 
 
-# Fetch the Reference Number
+## Fetch the Reference Number
 
 For deposit or cash-in transactions, MoneyGram does not provide reference numbers. All the user needs to do is drop off cash at the agent location chosen in the MoneyGram UI earlier in the flow, and the application should complete the transaction when a matching payment is detected on Stellar.
 
