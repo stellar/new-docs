@@ -47,7 +47,7 @@ Below are the 7 high-level steps to take to facilitate a cash-out (withdrawal) t
 
 ![Wallet - MoneyGram Page 1](../web-assets/wallet-mgi-architecture-1.png)
 
-After Step 4, the application should open the URL provided by MoneyGram in a mobile webview or browser tab and allow the user to complete KYC and transaction initiation with MoneyGram. On completion of this flow, the application’s client should initiate the disbursement of funds.
+After Step 4, the application should open the URL provided by MoneyGram in a mobile webview or browser tab. MoneyGram will then prompt the user to provide KYC and transaction information. On completion of this flow, the application’s client should close the MoneyGram tab or webview and initiate the disbursement of funds.
 
 ![Wallet - MoneyGram Page 2](../web-assets/wallet-mgi-architecture-2.png)
 
