@@ -24,20 +24,20 @@ This document does not describe the business requirements for integrating with M
   - Before getting access to MoneyGram's test environment, you can use the SDF's test anchor while developing your integration
 - [Stellar Demo Wallet]
   - This application visualizes the API calls necessary to connect to a Stellar Anchor
-- [Stellar Ecosystem Proposal 24 (SEP-24)]
+- [Stellar Ecosystem Proposal 24 (SEP-24)][sep-24]
   - The standardized API protocol for Stellar on & off ramps, implemented by MoneyGram
-- [Stellar Ecosystem Proposal 10 (SEP-10)]
+- [Stellar Ecosystem Proposal 10 (SEP-10)][sep-10]
   - The standardized API protocol for Stellar authentication, implemented by MoneyGram
 
 ## Introduction
 
-Applications seeking to integrate MoneyGram Access must implement the client side of [Stellar Ecosystem Proposal 24 (SEP-24)], a standardized protocol defined for applications to connect to businesses such as MoneyGram, more generally called anchors, that offer Stellar deposit & withdrawal services utilizing local payment rails.
+Applications seeking to integrate MoneyGram Access must implement the client side of [Stellar Ecosystem Proposal 24 (SEP-24)][sep-24], a standardized protocol defined for applications to connect to businesses such as MoneyGram, more generally called anchors, that offer Stellar deposit & withdrawal services utilizing local payment rails.
 
 This document will walk you through the necessary steps to develop a functional implementation of this standard.
 
 The guide will assume your application is first being developed on Stellar’s test network and using MoneyGram’s testing deployment of Access, but there are no functional differences deploying the application to Stellar’s public network and using MoneyGram’s production deployment.
 
-This guide also assumes your application is custodial, meaning the application has either direct or indirect access to its users’ funds on Stellar. Typically, custodial applications pool user funds into a smaller set of managed Stellar accounts. This custody model requires minor but concrete differences in how applications integrate with MoneyGram Access compared to non-custodial applications.
+This guide also assumes your application is custodial, meaning the application has either direct or indirect access to its users’ funds on Stellar. Typically, custodial applications pool user funds into a smaller set of managed Stellar accounts, called pooled, shared, or omnibus accounts. This custody model requires minor but concrete differences in how applications integrate with MoneyGram Access compared to non-custodial applications.
 
 ## Application Flow & Architecture
 
@@ -53,21 +53,21 @@ After Step 4, the application should open the URL provided by MoneyGram in a mob
 
 The provided reference number would then be taken to any MoneyGram cash agent in order to receive cash in the user’s fiat currency. These steps document the cash-out, or withdrawal flow. The deposit flow is similar and detailed in the steps below.
 
-## Generate Stellar Keys
+## Generate Stellar Keypairs
 
-In this section, you will generate at least two Stellar key pairs, one that will be used to prove your application’s identity when authenticating with MoneyGram access, and another that will hold, send, & receive USDC on Stellar.
+In this section, you will generate at least two Stellar keypairs, one that will be used to prove your application’s identity when authenticating with MoneyGram Access, and another that will hold, send, & receive USDC on Stellar. You should always use one keypair for authentication, but application could use many keypairs for sending & receiving payments. In this guide, we'll assume the application uses one keypair for each purpose.
 
-This section assumes that your application does not have any support for the Stellar network. If your application already supports deposits & withdrawals of XLM, you already have one or more Stellar accounts that can be used for these purposes, although it is heavily encouraged to use a new key pair (that is not funded on Stellar) for authentication.
+This section assumes that your application does not have any support for the Stellar network. If your application already supports deposits & withdrawals of XLM, you already have one or more Stellar accounts that can be used for these purposes, although it is heavily encouraged to use a new keypair for authentication.
 
-Go to [Stellar Lab] and generate 2 key pairs. The secret keys should be handled securely, because they will be used to authenticate with and disburse funds to MoneyGram.
+Go to [Stellar Lab] and generate 2 keypairs. The secret keys should be handled securely, because they will be used to authenticate with and disburse funds to MoneyGram.
 
-The first key pair will be called the “authentication” key pair (or public / secret key). The second key pair will be the “funds” key pair (or account, public key, or secret key).
+The first keypair will be called the “authentication” keypair (or public / secret key). The second keypair will be the “funds” keypair (or account, public key, or secret key). Unlike the authentication keypair, the funds keypair will reference a funded account on the Stellar network. The authentication keypair does not need to funded.
 
-Provide the public keys (starting with a G) of both the authentication and funds key pairs to MoneyGram. They will add these keys to their known lists of keys, granting them access to their deployment.
+Provide the public keys (starting with a G) of both the authentication and funds keypairs to MoneyGram. They will add these keys to their known lists of keys, granting them access to their deployment.
 
 ## Get XLM & USDC
 
-Many cryptocurrency exchanges support purchasing XLM or USDC on Stellar. The SDF also maintains an [Anchor Directory] that attempts to list all the on & off ramps for the Stellar Network.
+Many cryptocurrency exchanges support purchasing XLM or USDC on Stellar. The SDF also maintains an [Anchor Directory] that attempts to list all the on & off-ramps for the Stellar Network.
 
 When you’ve purchased XLM and / or USDC on an exchange, you can make a payment to an external account, specifically to the funds public key you generated in the previous step. Note that you will first need to send XLM to create the account, then add a USDC [trustline], then send the USDC. Creating a trustline to USDC can be done using [Stellar Lab] or any Stellar-enabled wallet application, such as [Lobstr].
 
@@ -77,7 +77,7 @@ To do this, send your XLM to the funds public key from the exchange, add a USDC 
 
 ## Authenticate
 
-This section emcompasses steps 1 & 2 of the diagram displayed in the Architecture section above. The application’s client should request a MoneyGram transaction URL from the application’s server on user initiation. This should trigger an authentication process between the application’s server and MoneyGram’s server. This process is standardized in [SEP-10].
+This section emcompasses steps 1 & 2 of the diagram displayed in the Architecture section above. The application’s client should request a MoneyGram transaction URL from the application’s server on user initiation. This should trigger an authentication process between the application’s server and MoneyGram’s server. This process is standardized in [SEP-10][sep-10].
 
 This section assumes that the application’s server has the following pieces of information:
 
@@ -130,14 +130,14 @@ def get_token() -> str:
 
 ## Initiate a Transaction
 
-This section encompasses step 3 & 4 of the architecture diagram displayed above. The application’s server will make a deposit or withdrawal initiation request to MoneyGram’s server, and MoneyGram will return a transaction ID, which will be used later to poll the transaction’s status, and a transaction URL, which should be returned to the application’s client and opened for the user.
+This section encompasses steps 3 & 4 of the architecture diagram displayed above. The application’s server will make a deposit or withdrawal initiation request to MoneyGram’s server, and MoneyGram will return a transaction ID, which will be used later to poll the transaction’s status, and a transaction URL, which should be returned to the application’s client and opened for the user.
 
 For the purpose of this guide, we will go through the withdrawal case.
 
 You will need the following pieces of information:
 
 - The authentication token provided by MoneyGram. This token can only be used for actions associated with the user identified by the ID used in the previous steps.
-- The public key of the key pair the application will use to send funds
+- The public key of the keypair the application will use to send funds
 - The language code MoneyGram should render their UI’s content with
 - The amount the user would like to withdraw / cash-out
   - This should be collected from the user prior to initiating this transaction
@@ -169,7 +169,7 @@ def initiate_withdraw(token: str, amount: str) -> Tuple[str, str]:
 </CodeExample>
 
 
-The logic for initiating a deposit transaction looks very similar. See the SEP-24 standard specification for detailed information. MoneyGram requires the `amount` field in both cases.
+The logic for initiating a deposit transaction looks very similar. See the [SEP-24][sep-24] standard specification for detailed information. MoneyGram requires the `amount` field in both cases.
 
 The `&callback=postmessage` query parameter added to the returned URL is critical; it informs MoneyGram that the application’s client would like to be notified when the user has completed the MGI experience and has requested to close the window. We’ll cover this in more detail in the subsequent section.
 
@@ -263,7 +263,7 @@ Once MoneyGram is ready to receive funds, your application should extract the St
 - A copy of MoneyGram’s transaction object
 - The application’s funds public & secret key
 
-Code for submitting transactions to Stellar should be developed thoughtfully. The SDF has a [documentation page] dedicated to this topic. Here are a few things you need to keep in mind:
+Code for submitting transactions to Stellar should be developed thoughtfully. The SDF has a documentation page dedicated to [submitting transactions and handling errors gracefully]. Here are a few things you need to keep in mind:
 
 - Offer a high fee. Your fee should be as high as you would offer before deciding the transaction is no longer worth sending. Stellar will only charge you the minimum necessary to be included in the ledger -- you won't be charged the amount you offer unless everyone else is offering the same amount or greater. Otherwise, you’ll pay the smallest fee offered in the set of transactions included in the ledger.
 - Set a maximum timebound on the transaction. This ensures that if your transaction is not included in a ledger before the set time, you can reconstruct the transaction with a higher offered fee and submit it again with better chances of inclusion.
@@ -363,8 +363,8 @@ response_body = poll_transaction_until_status(
 )
 tx_dict = response_body["transaction"]
 print(
-    f"Transaction reference number {tx_dict["external_transaction_id"]} "
-    f"also viewable at {tx_dict["more_info_url"]}"
+    f"Transaction reference number {tx_dict['external_transaction_id']} "
+    f"also viewable at {tx_dict['more_info_url']}"
 )
 ```
 
@@ -375,9 +375,7 @@ print(
 [moneygram access wallet mvp implementation]: https://github.com/stellar/moneygram-access-wallet-mvp
 [stellar test anchor]: https://testanchor.stellar.org/.well-known/stellar.toml
 [stellar demo wallet]: https://demo-wallet.stellar.org
-[stellar ecosystem proposal 24 (sep-24)]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md
 [sep-24]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md
-[stellar ecosystem proposal 10 (sep-10)]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md
 [sep-10]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md
 [stellar lab]: https://laboratory.stellar.org/
 [anchor directory]: https://resources.stellar.org/anchors?
@@ -385,6 +383,6 @@ print(
 [trustline]: https://developers.stellar.org/api/resources/operations/object/change-trust/
 [sell offer]: https://developers.stellar.org/api/resources/operations/object/sell-offer/
 [postmessage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
-[documentation page]: https://developers.stellar.org/docs/tutorials/handling-errors/
+[submitting transactions and handling errors gracefully]: https://developers.stellar.org/docs/tutorials/handling-errors/
 [path payments]: https://developers.stellar.org/api/resources/operations/object/path-payment-strict-receive/
 [claimable balances]: https://developers.stellar.org/api/resources/operations/object/create-claimable-balance/
