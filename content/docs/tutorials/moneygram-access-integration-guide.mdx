@@ -23,6 +23,29 @@ MoneyGram requires businesses to go through an onboarding process in order to ge
 - [Stellar Ecosystem Proposal 10 (SEP-10)][sep-10]
   - The standardized API protocol for Stellar authentication, implemented by MoneyGram
 
+## Asset Information
+
+Before you get access to MoneyGram's test environment, you should test your implementation with the SDF's [Stellar Test Anchor]. It implements the same APIs as MoneyGram's service but uses a different asset. The information for each asset is below.
+
+### Stellar Reference Token
+
+This token is only on testnet.
+
+- **Issuing Account**: [GCDNJUBQSX7AJWLJACMJ7I4BC3Z47BQUTMHEICZLE6MU4KQBRYG5JY6B]
+- **Asset Code**: SRT
+
+### USD Coin
+
+Testnet:
+
+- **Issuing Account**: [GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5]
+- **Asset Code**: USDC
+
+Pubnet:
+
+- **Issuing Account**: [GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN]
+- **Asset Code**: USDC
+
 ## Introduction
 
 Applications seeking to integrate MoneyGram Access must implement the client side of [Stellar Ecosystem Proposal 24 (SEP-24)][sep-24], a standardized protocol defined for applications to connect to businesses such as MoneyGram, more generally called anchors, that offer Stellar deposit & withdrawal services utilizing local payment rails.
@@ -381,3 +404,6 @@ print(
 [path payments]: https://developers.stellar.org/api/resources/operations/object/path-payment-strict-receive/
 [claimable balances]: https://developers.stellar.org/api/resources/operations/object/create-claimable-balance/
 [moneygram screening questionnaire]: https://stellarquestionnaire.typeform.com/to/RD1a71wQ
+[gcdnjubqsx7ajwljacmj7i4bc3z47bqutmheiczle6mu4kqbryg5jy6b]: https://stellar.expert/explorer/testnet/asset/SRT-GCDNJUBQSX7AJWLJACMJ7I4BC3Z47BQUTMHEICZLE6MU4KQBRYG5JY6B-1
+[gbbd47if6lwk7p7mdevscwr7dpuwv3ny3dtqevfl4nat4aqh3zllfla5]: https://stellar.expert/explorer/testnet/asset/USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5-1
+[ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn]: https://stellar.expert/explorer/public/asset/USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN-1
