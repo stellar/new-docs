@@ -323,7 +323,7 @@ This call is our first little bit of magic. Once we setup our `multipart/form-da
 ```json
 {
   "type": "interactive_customer_info_needed",
-  "url": "https://stellar-anchor-server.herokuapp.com/transactions/deposit/webapp?asset_code=SRT&transaction_id=3dcf204e-e3e8-4831-a840-8e36c0695a07&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3N0ZWxsYXItYW5jaG9yLXNlcnZlci5oZXJva3VhcHAuY29tL3RyYW5zYWN0aW9ucy9kZXBvc2l0L2ludGVyYWN0aXZlIiwiaWF0IjoxNTgxNDUyMjI0Ljk4NzcyNjcsImV4cCI6MTU4MTQ1MjI1NC45ODc3MjY3LCJzdWIiOiJHQjM0QVU2NlRTR1Q1RlMzRVVMSk9UUjMyTVdLQU9NRlpLNk1QV003VjRTSUJOTE41UDVURlJKRyIsImp0aSI6IjNkY2YyMDRlLWUzZTgtNDgzMS1hODQwLThlMzZjMDY5NWEwNyJ9.N4N_vIUGu6y7-Hd5IlvevX4DLg9PjisuYEl98ejvhf8",
+  "url": "https://<SEP24-ANCHOR-SERVER-DOMAIN>/transactions/deposit/webapp?asset_code=SRT&transaction_id=3dcf204e-e3e8-4831-a840-8e36c0695a07&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3N0ZWxsYXItYW5jaG9yLXNlcnZlci5oZXJva3VhcHAuY29tL3RyYW5zYWN0aW9ucy9kZXBvc2l0L2ludGVyYWN0aXZlIiwiaWF0IjoxNTgxNDUyMjI0Ljk4NzcyNjcsImV4cCI6MTU4MTQ1MjI1NC45ODc3MjY3LCJzdWIiOiJHQjM0QVU2NlRTR1Q1RlMzRVVMSk9UUjMyTVdLQU9NRlpLNk1QV003VjRTSUJOTE41UDVURlJKRyIsImp0aSI6IjNkY2YyMDRlLWUzZTgtNDgzMS1hODQwLThlMzZjMDY5NWEwNyJ9.N4N_vIUGu6y7-Hd5IlvevX4DLg9PjisuYEl98ejvhf8",
   "id": "3dcf204e-e3e8-4831-a840-8e36c0695a07"
 }
 ```
@@ -378,7 +378,7 @@ This request should return the deposit status for the request we just made.
       "external_extra_text": null,
       "deposit_memo": null,
       "deposit_memo_type": "text",
-      "more_info_url": "https://stellar-anchor-server.herokuapp.com/transaction/more_info?id=3dcf204e-e3e8-4831-a840-8e36c0695a07",
+      "more_info_url": "https://<SEP24-ANCHOR-SERVER-DOMAIN>/transaction/more_info?id=3dcf204e-e3e8-4831-a840-8e36c0695a07",
       "to": "GB34AU66TSGT5FS3EULJOTR32MWKAOMFZK6MPWM7V4SIBNLN5P5TFRJG",
       "from": null
     }
