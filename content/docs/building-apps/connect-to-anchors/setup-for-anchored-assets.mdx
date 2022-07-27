@@ -239,7 +239,7 @@ export default async function componentWillLoad() {
 
     this.error = null;
     this.server = new Server("https://horizon-testnet.stellar.org");
-    this.homeDomain = "stellar-anchor-server.herokuapp.com";
+    this.homeDomain = "testanchor.stellar.org";
     this.toml = await StellarTomlResolver.resolve(this.homeDomain);
 
     if (keystore) {
@@ -267,7 +267,7 @@ Here, the only changes we're making are to include of the `StellarTomlResolver` 
 <CodeExample>
 
 ```ts
-this.homeDomain = "stellar-anchor-server.herokuapp.com";
+this.homeDomain = "testanchor.stellar.org";
 this.toml = await StellarTomlResolver.resolve(this.homeDomain);
 ```
 
@@ -347,12 +347,12 @@ image="https://stablecoin.anchorusd.com/img/usdx.png"
 
 You can see the data provided by these companies that identifies who they are, what they do, and what services they provide. In this tutorial, we’re interested in the `[[CURRENCIES]]` they issue as that’s what we’re trying to get ahold of. We’re also looking for the `TRANSFER_SERVER` keyword, which indicates that an Anchor supports SEP-24, and the `WEB_AUTH_ENDPOINT`, which allows a wallet to set up an authenticated user session. Any time you find these three fields, and you’ve found an Anchor you can interoperate with.
 
-Once we’ve found an Anchor that supports deposit and withdrawal, we can begin the process of connecting with them from our wallet. This tutorial builds on the testnet, so from we’ll be use an SDF testing anchor server located at `stellar-anchor-server.herokuapp.com` You can [view the TOML file for this entity][5] here.
+Once we’ve found an Anchor that supports deposit and withdrawal, we can begin the process of connecting with them from our wallet. This tutorial builds on the testnet, so from we’ll be use an SDF testing anchor server located at `testanchor.stellar.org` You can [view the TOML file for this entity][5] here.
 
 [1]: https://github.com/stellar/docs-wallet/tree/trustline
 [2]: https://www.stellarx.com/.well-known/stellar.toml
 [3]: https://stablecoin.anchorusd.com/.well-known/stellar.toml
 [4]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md
-[5]: https://stellar-anchor-server.herokuapp.com/.well-known/stellar.toml
+[5]: https://testanchor.stellar.org/.well-known/stellar.toml
 [6]: /4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/1%20SEP-0024%20Explained.md
 [7]: /4%20SEP-0024%20%E2%80%93%20Make%20Use%20of%20Anchors/3%20Deposit%20Anchored%20Assets.md
