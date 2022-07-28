@@ -122,6 +122,10 @@ The following code demonstrates how to implement the application’s side of thi
 
 
 ```python
+import requests
+from stellar_sdk import Network
+from stellar_sdk.sep.stellar_web_authentication import read_challenge_transaction
+
 def get_token() -> str:
     query = f"{AUTH_URL}?account={AUTH_PUBLIC_KEY}&memo={USER_ID}"
     response = requests.get(query)
@@ -165,6 +169,8 @@ The following code can be used as a reference for implementing this logic yourse
 
 
 ```python
+import requests
+
 def initiate_withdraw(token: str, amount: str) -> Tuple[str, str]:
     post_body = {
         "asset_code": ASSET_CODE, # USDC
@@ -239,6 +245,8 @@ This code uses a simple polling mechanism with no bail-out condition. The applic
 
 
 ```python
+import requests
+
 response_body = poll_transaction_until_status(
     transaction_id,
     token=token,
@@ -292,6 +300,10 @@ Below is highly simplified code for submitting a payment transaction. It does no
 
 
 ```python
+from stellar_sdk import (
+    Server, TransactionBuilder, Network, Asset, IdMemo
+)
+
 submit_payment(
    destination=response_body["transaction"]["withdraw_anchor_account"],
    memo=response_body["transaction"]["withdraw_memo"],
@@ -334,6 +346,8 @@ Note that this code does not handle [path payments] or [claimable balances], two
 
 
 ```python
+from stellar_sdk import Server
+
 def stream_payments(account: str, cursor: str):
     s = Server()
     payments = s.payments().for_account(account).join("transactions")
