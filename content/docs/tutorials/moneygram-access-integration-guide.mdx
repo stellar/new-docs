@@ -347,6 +347,7 @@ Note that this code does not handle [path payments] or [claimable balances], two
 
 ```python
 from stellar_sdk import Server
+from .queries import get_transaction_by_memo
 
 def stream_payments(account: str, cursor: str):
     s = Server()
@@ -356,14 +357,14 @@ def stream_payments(account: str, cursor: str):
             payment["type"] != "payment"
             or payment["from"] == account
             or payment["asset_type"] == "native"
-            or payment["asset_code"] != "USDC"
-            or payment["asset_issuer"] != USDC_ISSUER
+            or payment["asset_code"] != ASSET_CODE
+            or payment["asset_issuer"] != ASSET_ISSUER
         ):
             continue
         transaction = get_transaction_by_memo(
             payment["transaction"]["memo"],
             payment["transaction"]["memo_type"]
-        )
+        )  # DB query
         if not transaction:
             continue
         print(
@@ -388,6 +389,8 @@ Note that MoneyGram’s transaction details page is protected with a JWT token i
 
 
 ```python
+from .api import poll_transction_until_status
+
 response_body = poll_transaction_until_status(
     transaction_id,
     "pending_user_transfer_complete"
