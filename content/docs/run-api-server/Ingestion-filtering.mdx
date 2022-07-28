@@ -123,9 +123,9 @@ Steps:
 1. Configure 4 whitelisted Assets via the Admin API. Also check the `HISTORY_RETENTION_COUNT` and set it to `0` if you don’t want any history purged anymore now that you are filtering, otherwise it will continue to reap all data older than the retention.
 
 2. Decide if you want to wipe existing history data on the DB first before the filtering starts running, you can effectively clear the history by running 
-  
+
   <CodeExample>
-    
+  
  ```   
   ‘history-retention-count=1 stellar-horizon db reap’ 
  ```
