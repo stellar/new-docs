@@ -69,7 +69,7 @@ EXP-ENABLE-INGESTION-FILTERING=True
 </CodeExample> 
   
 These should be included in addition to the standard ingestion parameters that must be set also to enable the ingestion engine to be running, such as `ingest=true`, etc.
-Once these flags are included at horizon runtime, filter configurations and their rules are initially empty and the filters are disabled by default. To enable filters, update the configuration settings, refer to the Admin API Docs which are published as Open API 3.0 doc on the Admin Port at `http://localhost:<admin_port>/`, you can paste the contents from that url into any OAPI tool such as [Swagger](https://editor.swagger.io/) which will render as a visual explorer of the API endpoints. Follow details and examples for endpoints:
+Once these flags are included at horizon runtime, filter configurations and their rules are initially empty and the filters are disabled by default. To enable filters, update the configuration settings, refer to the Admin API Docs which are published as Open API 3.0 doc on the Admin Port at `http://localhost:<admin_port>/`. You can paste the contents from that url into any OAPI tool such as [Swagger](https://editor.swagger.io/) which will render a visual explorer of the API endpoints. Follow details and examples for endpoints:
 
 <CodeExample> 
   
@@ -88,8 +88,7 @@ To add new filtered entities, submit an `HTTP PUT` request to the admin API endp
 To remove entities, submit an `HTTP PUT` request to update the list accordingly. 
 To retrieve what is currently configured, submit an `HTTP GET` request.
   
-The OAPI doc published by the Admin Server can be pulled directly from the Github repo here:
-https://github.com/stellar/go/blob/horizon-v2.18.0/services/horizon/internal/httpx/static/admin_oapi.yml
+The OAPI doc published by the Admin Server can be pulled directly from the Github repo [here](https://github.com/stellar/go/blob/horizon-v2.18.0/services/horizon/internal/httpx/static/admin_oapi.yml).
 
 ### Reverting Options:
 
@@ -127,7 +126,7 @@ Steps:
   <CodeExample>
   
  ```   
-  ‘history-retention-count=1 stellar-horizon db reap’ 
+  HISTORY_RETENTION_COUNT=1 stellar-horizon db reap
  ```
   
   </CodeExample>
