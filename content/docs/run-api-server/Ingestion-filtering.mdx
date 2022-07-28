@@ -3,7 +3,7 @@ title: Ingestion Filtering
 order: 46
 ---
 
-The Ingestion Filtering feature is now released for public beta testing available from Horizon [version 2.18.0](https://github.com/stellar/go/releases/tag/horizon-v2.18.0) and up
+The Ingestion Filtering feature is now released for public beta testing available from Horizon [version 2.18.0](https://github.com/stellar/go/releases/tag/horizon-v2.18.0) and up.
   
 ## Overview
 
@@ -11,14 +11,13 @@ Ingestion Filtering enables Horizon operators to drastically reduce storage foot
 
 ### Why is it useful: 
 
-Previoulsy, the only way to limit data storage is by limiting the amount of history Horizon ingests, either by configuring the starting ledger to be later than genesis block or via rolling retention (ie: last 30 days). This feature allows users to store the full history of assets and accounts (and related entities) that they care about. 
+Previously, the only way to limit data storage is by limiting the amount of history Horizon ingests, either by configuring the starting ledger to be later than genesis block or via rolling retention (ie: last 30 days). This feature allows users to store the full history of assets and accounts (and related entities) that they care about. 
 
 For further context, running a full history Horizon instance currently takes ~ 15TB of disk space (as of June 2022) with storage growing at a rate of ~ 1TB / month. As a benchmark, filtering by even 100 of the most active accounts and assets reduces storage by over 90%. For the majority of users who care about an even more limited set of assets and accounts, storage savings should be well over 99%. Other benefits are reducing operating costs for maintaining storage, improved DB health metrics and query performance. 
 
 ### How does it work:
 
 This feature provides an ability to select which ledger transactions are accepted at ingestion time to be stored in Horizon’s historical database. Filter whitelists are maintained via an admin REST API (and persisted in the DB). The ingestion process checks the list and persists transactions related to Accounts and Assets that are whitelisted. Note that the feature does not filter the current state of the ledger and related DB tables, only history tables. 
- 
 
 Whitelisting can include the following supported entities:
 
@@ -30,56 +29,36 @@ Given that all transactions related to the white listed entities are included, a
 ## Configuration:
 The filters and their configuration are optional features and must be enabled with horizon command line or environmental parameters: 
 
-<CodeExample>
-  
 ```
 admin-port=[your_choice] 
 ```
 
-</CodeExample>
-
 and 
 
-<CodeExample>
-  
 ```  
 exp-enable-ingestion-filtering=true 
 ```
 
-</CodeExample>
-  
 As Environment properties: 
-
-<CodeExample>
 
 ```
 ADMIN_PORT=<port> 
 ```
 
-</CodeExample>
-
 and 
 
-<CodeExample>
-  
 ```
 EXP-ENABLE-INGESTION-FILTERING=True
 ```
 
-</CodeExample> 
-  
 These should be included in addition to the standard ingestion parameters that must be set also to enable the ingestion engine to be running, such as `ingest=true`, etc.
 Once these flags are included at horizon runtime, filter configurations and their rules are initially empty and the filters are disabled by default. To enable filters, update the configuration settings, refer to the Admin API Docs which are published as Open API 3.0 doc on the Admin Port at `http://localhost:<admin_port>/`. You can paste the contents from that url into any OAPI tool such as [Swagger](https://editor.swagger.io/) which will render a visual explorer of the API endpoints. Follow details and examples for endpoints:
 
-<CodeExample> 
-  
 ```
 /ingestion/filters/account
 /ingestion/filters/asset
 ```
 
-</CodeExample> 
-  
 ## Operation:
 
 Adding and Removing Entities can be done by submitting PUT requests to the `http://localhost:<admin_port>/` endpoint.
@@ -123,14 +102,10 @@ Steps:
 
 2. Decide if you want to wipe existing history data on the DB first before the filtering starts running, you can effectively clear the history by running 
 
-<CodeExample>
-  
 ```   
 HISTORY_RETENTION_COUNT=1 stellar-horizon db reap
 ```
-  
-</CodeExample>
-  
+
   or drop/create the db and run `stellar-horizon db init`. 
   
   Alternatively, if you do not need to free up old history tables, you can effectively stop here, anytime changes or enablement of filter rules are done, the history tables will immediately reflect filtered data per those latest rules from the time the filter config is updated and forward. 
