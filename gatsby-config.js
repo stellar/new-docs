@@ -19,7 +19,8 @@ module.exports = {
       "Stellar is an open platform for building financial products that connect people everywhere.",
     siteUrl: SITE_URL,
   },
-  pathPrefix: "/",
+  // pathPrefix: "/",
+  pathPrefix: "/api",
   plugins: [
     "gatsby-transformer-sharp",
     "gatsby-plugin-react-helmet",

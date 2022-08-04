@@ -33,7 +33,8 @@ COPY plugins /app/src/plugins
 COPY src /app/src/src
 
 ARG AMPLITUDE_KEY
-RUN yarn build
+# RUN yarn build
+RUN yarn build:api
 
 FROM nginx:1.17
 
