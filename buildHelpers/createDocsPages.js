@@ -18,7 +18,7 @@ const isReference = (doc) => {
 const createDocsPages = ({ actions, docs }) => {
   // TODO: These pages don't support internationalization. This should be
   // refactored so that it can use createI18nPages.
-  // const docTemplate = path.resolve(".", "src", "templates", "Documentation.js");
+  const docTemplate = path.resolve(".", "src", "templates", "Documentation.js");
   const apiTemplate = path.resolve(".", "src", "templates", "ApiReference.js");
   const apiSeoTemplate = path.resolve(
     ".",
@@ -30,29 +30,29 @@ const createDocsPages = ({ actions, docs }) => {
   const allDocs = docs.map(({ node }) => node);
 
   const apiReference = allDocs.filter((doc) => isReference(doc));
-  // const documentation = allDocs.filter((doc) => !isReference(doc));
+  const documentation = allDocs.filter((doc) => !isReference(doc));
 
-  // documentation.forEach((doc) => {
-  //   const docPath = buildRoute(
-  //     defaultLocale,
-  //     buildPathFromFile(doc.relativePath),
-  //   );
-  //   actions.createPage({
-  //     path: docPath,
-  //     component: docTemplate,
-  //     context: {
-  //       mdxId: doc.childMdx.id,
-  //       urlPath: docPath,
-  //       locale: defaultLocale,
-  //       name: doc.name,
-  //       lastModified: doc.modifiedTime,
-  //       relativeDirectory: doc.relativeDirectory,
-  //       rootDir: DOCS_ROOT,
-  //       // None of these have translations set up. If we translate them in
-  //       // the future, we'll have to revisit this.
-  //     },
-  //   });
-  // });
+  documentation.forEach((doc) => {
+    const docPath = buildRoute(
+      defaultLocale,
+      buildPathFromFile(doc.relativePath),
+    );
+    actions.createPage({
+      path: docPath,
+      component: docTemplate,
+      context: {
+        mdxId: doc.childMdx.id,
+        urlPath: docPath,
+        locale: defaultLocale,
+        name: doc.name,
+        lastModified: doc.modifiedTime,
+        relativeDirectory: doc.relativeDirectory,
+        rootDir: DOCS_ROOT,
+        // None of these have translations set up. If we translate them in
+        // the future, we'll have to revisit this.
+      },
+    });
+  });
   // const apiRefRoute = buildRoute(defaultLocale, "api");
   const apiRefRoute = buildRoute(defaultLocale);
   const apiRefDocIds = apiReference.map(({ childMdx }) => childMdx.id);
