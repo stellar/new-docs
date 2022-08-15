@@ -154,7 +154,9 @@ const ApiReference = React.memo(function ApiReference({ data, pageContext }) {
                   ))}
                 </NavAbsoluteEl>
                 <AbsoluteNavFooterEl>
-                  <StyledLink href="/docs">Documentation</StyledLink>
+                  <StyledLink href="https://developers.stellar.org/docs">
+                    Documentation
+                  </StyledLink>
                 </AbsoluteNavFooterEl>
               </SideNavContainer>
             </NavColumn>

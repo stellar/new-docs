@@ -53,7 +53,8 @@ const createDocsPages = ({ actions, docs }) => {
       },
     });
   });
-  const apiRefRoute = buildRoute(defaultLocale, "api");
+  // const apiRefRoute = buildRoute(defaultLocale, "api");
+  const apiRefRoute = buildRoute(defaultLocale);
   const apiRefDocIds = apiReference.map(({ childMdx }) => childMdx.id);
   actions.createPage({
     path: apiRefRoute,
