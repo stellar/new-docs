@@ -51,9 +51,7 @@ export const LeftNav = ({
               if (topicPath === rootRelativePath) {
                 return Object.values(articles).map((rootArticle) => (
                   <RootItemEl key={id}>
-                    <RootLinkEl href="https://developers.stellar.org/docs">
-                      {rootArticle.title}
-                    </RootLinkEl>
+                    <RootLinkEl href="/docs">{rootArticle.title}</RootLinkEl>
                   </RootItemEl>
                 ));
               }
