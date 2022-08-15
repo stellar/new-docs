@@ -7,7 +7,6 @@
     "lint": "eslint --ext .js,.jsx --ignore-pattern public .",
     "test": "jest",
     "build": "gatsby build",
-    "build:api": "gatsby build --prefix-paths",
     "clean": "gatsby clean",
     "check-not-master": "[ \"$(git rev-parse --abbrev-ref HEAD)\" = \"master\" ] && echo \"\\033[31mDon't commit to master\" && exit 1 || exit 0",
     "prod:build": "cross-env TAG=new-docs:localbuild AMPLITUDE_KEY=$AMPLITUDE_KEY make docker-build",

@@ -131,9 +131,7 @@ const SingleApiReference = React.memo(function ApiReference({
               </SingleApiSideNavContainerEl>
             </SideNavProgressContext.Provider>
             <AbsoluteNavFooterEl>
-              <StyledLink href="https://developers.stellar.org/docs">
-                Documentation
-              </StyledLink>
+              <StyledLink href="/docs">Documentation</StyledLink>
             </AbsoluteNavFooterEl>
           </NavColumn>
           <Column xs={9} xl={18}>

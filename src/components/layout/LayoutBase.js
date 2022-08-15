@@ -40,16 +40,16 @@ export const LayoutBase = ({
   <>
     <Helmet
       link={[
-        { rel: "stylesheet", type: "text/css", href: "fonts.css" },
+        { rel: "stylesheet", type: "text/css", href: "/fonts.css" },
         {
           rel: "stylesheet",
           type: "text/css",
-          href: "docsearch-stellar.css",
+          href: "/docsearch-stellar.css",
         },
         {
           rel: "stylesheet",
           type: "text/css",
-          href: "autocomplete-stellar.css",
+          href: "/autocomplete-stellar.css",
         },
       ]}
       meta={[
