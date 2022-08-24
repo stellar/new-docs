@@ -14,10 +14,12 @@ Operations that can be returned by this endpoint include:
 
 - `create_account`
 - `payment`
-- `path_payment`
+- `path_payment_strict_receive`
+- `path_payment_strict_send`
 - `account_merge`
 
 <Endpoint>
+
 
 |  |  |
 | --- | --- |
@@ -25,7 +27,9 @@ Operations that can be returned by this endpoint include:
 
 </Endpoint>
 
+
 <AttributeTable>
+
 
 - ARGUMENT
   - REQUIRED
@@ -48,7 +52,9 @@ Operations that can be returned by this endpoint include:
 
 </AttributeTable>
 
+
 <CodeExample title="Example Request">
+
 
 ```curl
 curl "https://horizon.stellar.org/payments?limit=3"
@@ -71,7 +77,9 @@ server
 
 </CodeExample>
 
+
 <ExampleResponse title="Example Response">
+
 
 ```json
 {
@@ -186,7 +194,9 @@ server
 
 </ExampleResponse>
 
+
 <CodeExample title="JavaScript Streaming Example">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -200,3 +210,4 @@ var es = server.payments().cursor("now").stream({ onmessage: callback });
 ```
 
 </CodeExample>
+
