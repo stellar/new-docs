@@ -10,44 +10,46 @@ When you issue an asset on Stellar, anyone can hold it by default. In general, t
 
 However, if you need to control access to an asset to comply with regulations (or for any other reason), you can easily do so by enabling flags on your issuing account.
 
-
 ## Flags
 
 Flags are created on the _account level_ using a [`set_options`](../start/list-of-operations.mdx#set-options) operation. They can be set at any time in the life cycle of an asset, not just when you issue it:
 
 ### Authorization Required
-When `AUTHORIZATION REQUIRED` is enabled, an issuer must approve an account before that account can hold its asset. This setting allows issuers to vet potential token holders using whatever means they see fit, and to approve trustlines if and only if the holders pass muster. 
+
+When `AUTH_REQUIRED_FLAG` is enabled, an issuer must approve an account before that account can hold its asset. This setting allows issuers to vet potential token holders using whatever means they see fit, and to approve trustlines if and only if the holders pass muster.
 
 To allow access, the user creates a trustline, and the issuer approves it by changing the `AUTHORIZE` flag with the [`allow_trust`](../start/list-of-operations.mdx#allow-trust) operation.
 
 There are two levels of authorization an asset issuer can grant using the `allow_trust` operation:
 
-* `AUTHORIZED`: This flag signifies complete authorization allowing an account to transact freely with the asset to make and receive payments and place orders.
-* `AUTHORIZED_TO_MAINTAIN_LIABILITIES`: This flag denotes limited authorization that allows an account to maintain current orders, but not to otherwise transact with the asset.   
-
+- `AUTHORIZED_FLAG`: This flag signifies complete authorization allowing an account to transact freely with the asset to make and receive payments and place orders.
+- `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG`: This flag denotes limited authorization that allows an account to maintain current orders, but not to otherwise transact with the asset.
 
 ### Authorization Revocable
-When `AUTHORIZATION_REVOCABLE` is enabled, an issuer can revoke an existing trustline's authorization, thereby freezing the asset held by an account. Doing so prevents that account from transfering or trading the asset, and cancels the account’s open orders for the asset. 
 
-`AUTHORIZATION_REVOCABLE` also allows an issuer to reduce authorization from complete to limited, which prevents the account from transferring or trading the asset, but does not cancel the account's open orders for the asset.  This setting is useful for issuers of regulated assets who need to authorize transactions on a case-by-case basis to ensure each conforms to certain requirements.   
+When `AUTH_REVOCABLE_FLAG` is enabled, an issuer can revoke an existing trustline's authorization, thereby freezing the asset held by an account. Doing so prevents that account from transfering or trading the asset, and cancels the account’s open orders for the asset.
+
+`AUTH_REVOCABLE_FLAG` also allows an issuer to reduce authorization from complete to limited, which prevents the account from transferring or trading the asset, but does not cancel the account's open orders for the asset. This setting is useful for issuers of regulated assets who need to authorize transactions on a case-by-case basis to ensure each conforms to certain requirements.
 
 All changes to asset authorization are performed with the [`allow_trust`](../start/list-of-operations.mdx#allow-trust) operation.
 
 ### Authorization Immutable
+
 With this setting, neither of the other authorization flags can be set, and the issuing account can’t be merged. You set this flag to signal to potential token holders that your issuing account and its assets will persist on ledger in an open and accessible state.
 
 ### Clawback Enabled
-With the `AUTHORIZATION_CLAWBACK_ENABLED` flag set, any *subsequent* trustlines established with this account will have clawbacks enabled. You can read more about clawbacks (and selectively controlling them on a per-trustline basis) [here](../glossary/clawback.mdx).
+
+With the `AUTH_CLAWBACK_ENABLED_FLAG` flag set, any _subsequent_ trustlines established with this account will have clawbacks enabled. You can read more about clawbacks (and selectively controlling them on a per-trustline basis) [here](../glossary/clawback.mdx).
 
 Note that this flag requires that [revocable](#authorization-revocable) is also set.
 
-
 ## Example flow
-To get a sense of how authorization flags work, let's look at how an issuer of a regulated asset might use the `AUTHORIZED_TO_MAINTAIN_LIABILITIES` flag. 
 
-If the issuer wants to approve transactions on a case-by-base basis while allowing accounts to maintain offers, they can leave an account in the `AUTHORIZED_TO_MAINTAIN_LIABILITIES` state. That account can own offers, but cannot otherwise do anything with the asset. 
+To get a sense of how authorization flags work, let's look at how an issuer of a regulated asset might use the `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` flag.
 
-To intitiate a new operation, the holding account requests that the issuer approve and sign a transaction. Once the issuer inspects the operation and decides to approve it, they sandwich it between a set of operations, first granting authorization, then reducing it.  
+If the issuer wants to approve transactions on a case-by-base basis while allowing accounts to maintain offers, they can leave an account in the `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state. That account can own offers, but cannot otherwise do anything with the asset.
+
+To intitiate a new operation, the holding account requests that the issuer approve and sign a transaction. Once the issuer inspects the operation and decides to approve it, they sandwich it between a set of operations, first granting authorization, then reducing it.
 
 Here's a payment from A to B sandwiched between [`set_trust_line_flags`](../start/list-of-operations.mdx#set-trustline-flags) operations:
 
@@ -57,19 +59,22 @@ Here's a payment from A to B sandwiched between [`set_trust_line_flags`](../star
 - Operation 4: Issuer uses `SetTrustLineFlags` to set account B, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
 - Operation 5: Issuer uses `SetTrustLineFlags` to set account A, asset X to `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` state
 
-The authorization sandwich allows the issuer to inspect the specifc payment, and to grant authorization for it and it alone.  Since operations bundled in a transaction are simultaneous, A and B are only authorized for the specific, pre-approved payment operation.  Complete authorization does not extend beyond the specific transaction.
+The authorization sandwich allows the issuer to inspect the specifc payment, and to grant authorization for it and it alone. Since operations bundled in a transaction are simultaneous, A and B are only authorized for the specific, pre-approved payment operation. Complete authorization does not extend beyond the specific transaction.
 
 ## Sample code
 
 <Alert>
 
-In the following code samples, proper error checking is omitted for brevity. However, you should *always* validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
+
+In the following code samples, proper error checking is omitted for brevity. However, you should _always_ validate your results, as there are many ways that requests can fail. You should refer to the guide on [Handling Errors Gracefully](../tutorials/handling-errors.mdx) for tips on error management strategies.
 
 </Alert>
+
 
 The following example sets authorization to be both required and revocable:
 
 <CodeExample title="Asset Authorization">
+
 
 ```js
 var StellarSdk = require("stellar-sdk");
@@ -154,7 +159,7 @@ transaction = (
         base_fee=100,
     )
     .append_set_options_op(
-        set_flags=AuthorizationFlag.AUTHORIZATION_REVOCABLE | AuthorizationFlag.AUTHORIZATION_REQUIRED
+        set_flags=AuthorizationFlag.AUTH_REVOCABLE_FLAG | AuthorizationFlag.AUTHORIZATION_REQUIRED
     )
     .build()
 )
