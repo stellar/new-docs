@@ -1,5 +1,7 @@
 # Stellar [Documentation](https://developers.stellar.org/docs/) and [API Reference](https://developers.stellar.org/api/)
 
+### ⚠️ These docs are depreciated in favor of https://github.com/stellar/stellar-docs ⚠️ 
+
 # Contents
 
 - [Stellar Documentation and API Reference](#stellar-documentation-and-api-reference)
